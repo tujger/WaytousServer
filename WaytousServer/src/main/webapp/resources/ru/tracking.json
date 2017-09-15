@@ -1,0 +1,253 @@
+/**
+ * Part of Waytous <http://waytous.net>
+ * Copyright (C) Edeqa LLC <http://www.edeqa.com>
+ *
+ * Version 1.${SERVER_BUILD}
+ * Created 1/20/17.
+ */
+{
+  "// Common ": "",
+  "cancel": "Отмена",
+  "yes": "Да",
+  "no": "Нет",
+  "close": "Закрыть",
+  "maybe_later": "Возможно, позже",
+  "hide": "Скрыть",
+  "edit": "Правка",
+  "name": "Имя",
+  "delete": "Удалить",
+  "apply": "Применить",
+  "reset": "Сбросить",
+  "copy": "Скопировать",
+  "mail": "Письмо",
+  "loading":"Загрузка...",
+  "force_reload": "Перегрузить приложение",
+  "go": "Да!",
+  "s_ago": "(%s назад)",
+
+  "popup_blocked_dialog_1": "Похоже, что ваш браузер блокирует открытие новых окон. Если это так, пожалуйста, разблокируйте эту опцию и попытайтесь еще раз.",
+  "popup_blocked_dialog_2": "Как разблокировать открытие окон в браузере",
+  "popup_blocked_dialog_3": "Вы также можете отправить ссылку самостоятельно. Нажмите на кнопку ниже, чтобы скопировать ссылку в буфер обмена.",
+  "link_was_copied_into_clipboard": "Ссылка скопирована в буфер обмена.",
+
+
+  "// Main": "",
+
+  "general": "Основные",
+  "main": "Главные",
+  "language": "Язык",
+  "default": "Системный",
+  "russian": "Русский",
+  "notifications": "Уведомления",
+  "onscreen_notifications": "Экранные",
+  "dialogs_positions": "Положения диалогов",
+
+
+  "// ButtonHolder": "",
+
+  "users_d": "Всего (%d)",
+
+
+  "// CameraHolder": "",
+
+  "select": "Выбрать",
+  "unselect": "Исключить",
+  "fit_to_screen": "Показать всех",
+
+
+  "// DistanceHolder": "",
+
+  "show_distances": "Расстояния",
+  "hide_distances": "Скрыть расстояния",
+  "show_distance": "Расстояние",
+  "hide_distance": "Скрыть расстояние",
+  "close_to_s": "Вы близко к %s",
+  "you_are_closer_than_d_to_s": "Вы приблизились менее чем на %d к %s",
+  "away_from_s": "Уходим от %s",
+  "you_are_away_than_d_from_s": "Вы отошли более чем на %d от %s",
+
+
+  "// DrawerHolder": "",
+
+  "connecting": "Соединяемся...",
+  "be_always_on_the_same_way": "Будь на одной волне\nс друзьями",
+  "collapsed_drawer": "Компактное меню",
+  "map": "Карта",
+
+  "alpha_1": "Спасибо за то, что воспользовались",
+  "alpha_2": "БЕТА версией ${APP_NAME}.",
+  "alpha_3": "&nbsp;",
+  "alpha_4": "Пожалуйста, если вы обнаружите ошибки или странное поведение, либо придумаете, классную идею, ну или вообще просто так - не стесняйтесь написать нам письмо:",
+  "alpha_5": "<a href=\"mailto:${SUPPORT_EMAIL}\">${SUPPORT_EMAIL}</a>.",
+  "alpha_6": "&nbsp;",
+  "alpha_7": "<a href=\"/\" target=\"_blank\" rel=\"noopener\">Перейти на страницу проекта (в новом окне).</a>",
+
+  "privacy_policy": "Политика конфиденциальности",
+  "terms_and_conditions": "Условия использования",
+  "third_party_components": "Участие третьих лиц",
+  "d_selected": "%d выбрано",
+
+
+  "// GpsHolder": "",
+  "you_have_denied_geolocation": "Вы не разрешили геолокацию.",
+  "user_took_too_long_to_grant_deny_geolocation_permission": "Вы слишком долго думали, можно ли разрешить геолокацию.",
+  "geolocation_is_unavailable": "Геолокация недоступна.",
+  "request_to_geolocation_is_timed_out": "Слишком долго ожидался ответ на запрос по геолокации.",
+  "unknown_error_occurred_while_requesting_geolocation": "Возникла нераспознанная ошибка.",
+  "please_resolve_this_problem_and_try_again": "%s Пожалуйста, попробуйте еще раз. Если нужно, исправьте ошибки. Обратите внимание, что разрешение на геолокацию необходимо для полноценной работы сервиса.",
+
+  "enable_geolocation": "Включить геолокацию",
+
+  "ok_go_ahead": "OK",
+
+  "gps_allow_geolocation": "Нажмите &laquo;OK&raquo;, затем &laquo;Разрешить&raquo;",
+  "gps_learn_more": "Зачем? Нажмите здесь, чтобы узнать больше",
+  "gps_learn_more_body": "Цель данного сервиса - помочь друзьям не потеряться. Для этого нужно отправлять им ваше местоположение. Браузер спрашивает, можно ли использовать информацию о вашем положении. Скажите &laquo;Разрешить&raquo;.",
+
+  "gps_if_you_have_already_blocked": "Если вы уже не разрешили",
+  "gps_if_you_have_already_blocked_body": "Если вы ответили &laquo;Не разрешать&raquo;, браузер запомнит ваше решение. В этом случае вам нужно будет кое-что сделать, чтобы это исправить. Нажмите на значок вопроса в правом нижнем углу этого окошка, чтобы получить более подробную справку.",
+
+
+  "// HelpHolder": "",
+
+  "help": "Справка",
+
+
+  "// MapHolder": "",
+
+  "traffic": "Трафик",
+  "transit": "Транспорт",
+  "bicycle": "Велосипед",
+  "satellite": "Спутник",
+  "terrain": "Местность",
+  "re_center": "Re-center",
+
+
+  "// MessagesHolder": "",
+
+  "chat": "Чат",
+  "private_message": "Личное сообщение",
+  "incoming_message": "Входящее сообщение",
+  "too_long_message": "Слишком большое сообщение",
+
+
+  "// NavigationHolder": "",
+
+  "navigation": "Путь",
+  "hide_navigations": "Скрыть пути",
+  "show_navigation": "Показать путь",
+  "hide_navigation": "Скрыть путь",
+  "navigate_with_google_maps": "Google Maps",
+  "setting_up_direction": "Определение пути...",
+  "sorry_direction_request_was_failed": "Произошел сбой при определении пути.",
+  "navigation_options": "Параметры пути",
+  "avoid_highways": "Избегать магистрали",
+  "avoid_tolls": "Избегать платные дороги",
+  "avoid_ferries": "Избегать паромы",
+
+
+  "// OptionHolder": "",
+
+  "options": "Параметры",
+
+
+  "// PlaceHolder": "",
+
+  "search": "Поиск",
+  "sorry_incorrect_place_has_returned": "Получен странный результат.",
+  "hide_place": "Скрыть место",
+  "description": "Описание",
+
+
+  "// PropertiesHolder": "",
+
+  "your_name_is_not_defined": "Ваше имя не указано и будет использовано имя по умолчанию. Вы хотите указать другое имя?",
+  "set_my_name": "Изменить имя",
+  "properties": "Свойства",
+
+
+  "// SavedLocationHolder": "",
+
+  "save_location": "Сохранить место",
+  "send_to_group": "Отправить в группу",
+  "share": "Поделиться",
+  "you_have_added_location": "Вы сохранили место. Сохраненные места можно посмотреть в меню \"Сохраненные\". Сделать еще что-нибудь?",
+  "show": "Показать",
+  "edit_location": "Править место",
+  "let_your_email_client_compose_the_message_with_link_to_this_location": "Создать письмо со ссылкой на это место?<br>Или вы можете скопировать ссылку в буфер обмена и вставить куда угодно.",
+  "send_location": "Отправить место",
+  "you_re_going_to_send_the_location_s_to_all_continue": "Вы собираетесь отправить информацию о %s всем в группе. Продолжить?",
+  "delete_location": "Удалить место",
+  "delete_this_location": "Удалить это место из сохраненных?",
+  "saved_locations": "Сохраненные",
+  "show_location": "Показать место",
+  "show_direction_to_location": "Показать путь к месту",
+  "share_location": "Поделиться",
+  "you_ve_got_the_location_from_s_add_it_to_your_saved_locations_list": "Вы получили информацию о месте от %s. Добавить в ваш список сохраненных?",
+  "add_location": "Сохранить место",
+  "address_s": "Адрес: %s.",
+  "description_s": "Описание: %s.",
+
+
+  "// SocialHolder": "",
+
+  "share_link_dialog": "Поделиться этой ссылкой?<br>Или вы можете скопировать ссылку в буфер обмена и вставить где угодно.",
+  "share_to_facebook": "Поделиться на Facebook",
+  "share_to_whatsapp": "Поделиться в Whatsapp",
+  "share_to_telegram": "Поделиться в Telegram",
+  "share_to_twitter": "Поделиться в Twitter",
+  "share_to_facebook_dialog": "Поделиться на Фейсбуке ссылкой на группу?<br>Или вы можете скопировать ссылку в буфер обмена и вставить куда угодно.",
+  "share_to_whatsapp_dialog": "Поделиться в Whatsapp ссылкой на группу?<br>Или вы можете скопировать ссылку в буфер обмена и вставить куда угодно.",
+  "share_to_telegram_dialog": "Поделиться в Telegram ссылкой на группу?<br>Или вы можете скопировать ссылку в буфер обмена и вставить куда угодно.",
+  "share_to_twitter_dialog": "Поделиться в Twitter ссылкой на группу?<br>Или вы можете скопировать ссылку в буфер обмена и вставить куда угодно.",
+
+
+  "// StreetViewHolder": "",
+
+  "show_street_view": "Улица",
+  "hide_street_view": "Скрыть улицу",
+  "street_view": "Улица",
+  "street_view_is_still_not_available_for_this_place": "Обзор улицы недоступен для этого места.",
+  "street_view_available_only_for_one_point": "Обзор улицы возможен только для одного выбранного места.",
+
+
+  "// TrackHolder": "",
+
+  "show_tracks": "Следы",
+  "hide_tracks": "Скрыть следы",
+  "show_track": "Показать след",
+  "hide_track": "Скрыть след",
+
+
+  "// TrackingHolder": "",
+
+  "create_group": "Создать группу",
+  "exit_group": "Выйти из группы",
+  "share_group": "Поделиться ссылкой",
+  "connecting_s": "Соединяемся - %s",
+  "creating_group": "Создается группа...",
+  "joining_group": "Присоединяемся...",
+  "reconnecting": "Соединяемся...",
+  "beforeunload": "Вы находитесь онлайн в группе. Уходя с этой страницы, вы выйдете из группы..",
+
+  "share_by_mail": "Поделиться по почте",
+
+  "tracking_help_title": "Группа",
+  "tracking_help_title_1": "Вы создали новую группу",
+  "tracking_help_body_1": "Вы создали новую группу многопользовательской моментальной геолокации. Теперь вы можете пригласить друзей вступить в группу и видеть, кто и где находится прямо сейчас. У них просто должен быть смартфон или компьютер, подключенный к интернету. Для этого выберите в меню пункт \"Поделиться\". Или вы просто можете использовать группу в своих целях. <p>Обратите внимание: группа будет удалена спустя 15 минут неактивности. ",
+
+  "sound_on_join": "Звук при входе",
+  "none": "Нет",
+  "user_s_has_joined": "%s подключился.",
+  "waytous_online": "Waytous в группе",
+  "you_have_joined_to_the_group_s": "Подключились к группе %s.",
+
+  "sorry_you_have_requested_the_expired_group": "Вы попытались вступить в группу по устаревшгей ссылке.",
+  "expired_explanation": "Кто-то создавал эту группу, чтобы встретиться с друзьями. Вероятно, его цель была достигнута, потому что группа уже удалена. Вы можете создать вашу собственную группу и отправить ссылку на нее друзьям. Но не забудьте, что если в группе никого не будет онлайн, то она просуществует недолго. Впрочем, если вы хотите создать постоянную группу, это тоже возможно, обратитесь к администрации сервиса.",
+
+  "do_you_want_to_keep_screen_on_during_group_is_active": "Вы хотите, чтобы дисплей не отключался, пока группа активна?",
+
+  "// SampleHolder": "",
+  "sample_title_1": "Статья 1",
+  "sample_body_1": "Пример статьи справки, переведенной на русский язык"
+}

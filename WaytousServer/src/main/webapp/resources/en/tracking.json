@@ -1,0 +1,308 @@
+/**
+ * Part of Waytous <http://waytous.net>
+ * Copyright (C) Edeqa LLC <http://www.edeqa.com>
+ *
+ * Version 1.${SERVER_BUILD}
+ * Created 1/20/17.
+ */
+{
+  "// Common": "",
+  "ok": "OK",
+  "cancel": "Cancel",
+  "yes": "Yes",
+  "no": "No",
+  "close": "Close",
+  "maybe_later": "Maybe later",
+  "hide": "Hide",
+  "edit": "Edit",
+  "name": "Name",
+  "delete": "Delete",
+  "apply": "Apply",
+  "reset": "Reset",
+  "copy": "Copy",
+  "mail": "Mail",
+  "loading":"Loading...",
+  "s_s": "%s - %s",
+  "force_reload": "Force reload application",
+  "go": "Go",
+  "s_ago": "(%s ago)",
+
+  "popup_blocked_dialog_1": "Looks like your browser blocks pop-ups. If so please unlock this ability for calling e-mail properly.",
+  "popup_blocked_dialog_2": "Detailed information how to unblock this feature",
+  "popup_blocked_dialog_3": "Also, you can send the link manually. Copy it clicking on the button below.",
+  "link_was_copied_into_clipboard": "Link was copied into clipboard.",
+  "reset_customizations": "Reset customizations",
+  "filter": "Filter",
+
+  "// Main": "",
+
+  "general": "General",
+  "main": "Main",
+  "language": "Language",
+  "default": "Default",
+  "english": "English (US)",
+  "russian": "Russian",
+  "error_while_loading_service": "We are sorry but some error occurred while loading the service. Please wait a few minutes and try again.",
+  "error_while_loading_s_code_s": "Error while loading %s: code %s",
+  "error_while_initializing_s_s": "Error while initializing %s: %s",
+  "notifications": "Notifications",
+  "onscreen_notifications": "Onscreen notifications",
+  "dialogs_positions": "Dialogs positions",
+
+  "// ButtonHolder": "",
+
+  "users_d": "Users (%d)",
+
+
+  "// CameraHolder": "",
+
+  "select": "Select",
+  "unselect": "Unselect",
+  "fit_to_screen": "Fit to screen",
+
+
+  "// DistanceHolder": "",
+
+  "show_distances": "Distances",
+  "hide_distances": "Hide distances",
+  "show_distance": "Show distance",
+  "hide_distance": "Hide distance",
+  "close_to_s": "Close to %s",
+  "you_are_closer_than_d_to_s": "You are closer than %d to %s",
+  "away_from_s": "Away from %s",
+  "you_are_away_than_d_from_s": "You are away than %d from %s",
+
+
+  "// DrawerHolder": "",
+  "connecting": "Connecting...",
+  "be_always_on_the_same_way": "Be always on the same way\nwith your friends",
+  "collapsed_drawer": "Collapsed drawer",
+  "map": "Map",
+
+  "alpha_1": "Thank you for using the",
+  "alpha_2": "BETA version of ${APP_NAME}.",
+  "alpha_3": "&nbsp;",
+  "alpha_4": "Please if you found some errors, weird behaviour, new great idea or just because - feel free to send us an e-mail:",
+  "alpha_5": "<a href=\"mailto:${SUPPORT_EMAIL}\">${SUPPORT_EMAIL}</a>.",
+  "alpha_6": "&nbsp;",
+  "alpha_7": "<a href=\"/\" target=\"_blank\" rel=\"noopener\">Go to the main page of project (new window).</a>",
+
+  "privacy_policy": "Privacy policy",
+  "terms_and_conditions": "Terms and conditions",
+  "third_party_components":"Third party components",
+  "d_selected": "%d selected",
+
+  "// GpsHolder": "",
+  "enable_geolocation": "Enable geolocation",
+
+  "ok_go_ahead": "OK, go ahead",
+
+  "gps_allow_geolocation": "Click &laquo;OK&raquo; and then click &laquo;Allow&raquo;",
+  "gps_learn_more": "Why? Click here to learn more",
+  "gps_learn_more_body": "The purpose of this service is to help friends to find each other. To get it, you have to send your location to your friends. Browser asks you about using your location information. Answer him &laquo;Allow&raquo;, otherwise your friends will not be able to see where you are.",
+
+  "gps_if_you_have_already_blocked": "If you have already blocked",
+  "gps_if_you_have_already_blocked_body": "If you have already blocked the geolocation before then the browser can remember your decision. Then you have to clear the settings for this site. Click question mark in the right bottom corner of this window to get the detailed instruction.",
+
+  "user_took_too_long_to_grant_deny_geolocation_permission": "User took too long to grant/deny geolocation permission.",
+  "geolocation_is_unavailable": "Geolocation is unavailable.",
+  "request_to_geolocation_is_timed_out": "The request to geolocation is timed out.",
+  "unknown_error_occurred_while_requesting_geolocation": "An unknown error occurred while requesting geolocation.",
+  "please_resolve_this_problem_and_try_again": "%s Please resolve this problem and try again. Note that geolocation is required for working this service properly.",
+  "you_have_denied_geolocation": "You have denied geolocation.",
+
+  "gps_help_title": "Geolocation",
+  "gps_help_1_title": "How geolocation is using in application",
+  "gps_help_1_body": "Instruction how to allow geolocation",
+
+  "gps_help_2_title": "Allow geolocation - Safari (iOS)",
+  "gps_help_2_body": "<ul><li>Close all tabs in safari with the domain in question open. <li>Close Safari (hold home button and cross off). <li>Settings -> General -> Reset -> Reset Location Warnings / Reset Location & Privacy. <li>Open Safari and try again.</ul>",
+
+  "gps_help_3_title": "Allow geolocation - iPhone or iPad (iOS 8)",
+  "gps_help_3_body": "To turn on Location Services on an iPhone or iPad (iOS 8) <ul><li>Tap the Settings application <li>Tap Privacy <li>Tap Location Services <li>Toggle the switch to On</ul>",
+
+  "gps_help_4_title": "Allow geolocation - iPhone or iPad (iOS 9)",
+  "gps_help_4_body": "To turn on Location Services on an iPhone or iPad (iOS 9) <ul><li>Tap the Settings appliction <li>Go to Chrome (or whatever browser you are using to access Buddy Punch) <li>Make sure the GPS setting states allow while using the app. </ul>",
+
+  "gps_help_5_title": "Allow geolocation - OS X (Mountain, Lion or later)",
+  "gps_help_5_body": "<ul><li>Choose System Preferences from the Apple menu. <li>Click the Security & Privacy icon in the System Preferences window. <li>Click the Privacy tab. <li>If the padlock icon in the lower left is locked, click it and enter an admin name and password to unlock it. <li>Select Location Services. <li>Check the \"Enable Location Services\" checkbox.</ul>",
+
+  "gps_help_6_title": "Allow geolocation - Safari 6 or later",
+  "gps_help_6_body": "When you visit a geolocation-enabled website in Safari, you are asked if you want to share your location with the site. In the box that appears, select the option \"Remember my decision for one day\" if you want to allow or disable authorization for the next 24 hours.  You can reset all website authorizations in Safari by choosing Reset Safari from the Safari menu. Select the \"Reset all location warnings\" option in the Reset Safari window. (Don't select the other checkboxes unless you are sure you want to reset those items as well.)",
+
+  "gps_help_7_title": "Allow geolocation - Android devices",
+  "gps_help_7_body": "<ul><li>Tap the Settings application <li>Tap Location <li>Tap Google Location Reporting <li>Tap Location Reporting <li>Toggle the switch to On</ul>",
+
+  "gps_help_8_title": "Allow geolocation - Android devices (4.4 Kitkat to 5.0)",
+  "gps_help_8_body": "<ul><li>Open the Settings app. <li>Touch Location. <li>Make sure \"Location\" is turned on.</ul>",
+
+  "gps_help_9_title": "Allow geolocation - Chrome (Android)",
+  "gps_help_9_body": "<ul><li>Touch the menu at the upper right corner of the screen. <li>Touch Settings > Site Settings > Location. <li>Make sure Location is enabled on the top of the screen (not blocked). <li>Find ${WEB_PAGE} in the list & click it. <li>To grant access to your location, turn on Location access or click to allow.</ul>",
+
+  "gps_help_10_title": "Allow geolocation - Chrome (Windows)",
+  "gps_help_10_body": "<ul><li>Open Chrome. <li>In the top right, click the Chrome menu. <li>Click Settings > Show advanced settings. <li>In the \"Privacy\" section, click Content settings. <li>In the dialog that appears, scroll down to the \"Location\" section. Select your default permission for future location requests: <ul><li>Allow all sites to track your physical location - select this option to let all sites automatically see your location. <li>Ask when a site tries to track your physical location - select this option if you want Google Chrome to alert you whenever a site wants to see your location. <li>Do not allow any site to track your physical location - select this option to automatically deny requests for your location.</ul> <li>Click Manage exceptions if you want to remove permissions you gave before to specific sites.</ul>",
+
+
+  "// HelpHolder": "",
+
+  "help": "Help",
+
+
+  "// MapHolder": "",
+  "traffic": "Traffic",
+  "transit": "Transit",
+  "bicycle": "Bicycle",
+  "satellite": "Satellite",
+  "terrain": "Terrain",
+  "re_center": "Re-center",
+
+
+  "// MessagesHolder": "",
+
+  "chat": "Chat",
+  "private_message": "Private message",
+  "incoming_message": "Incoming message",
+  "too_long_message": "Too long message",
+
+
+  "// NavigationHolder": "",
+
+  "navigation": "Navigation",
+  "hide_navigations": "Hide navigations",
+  "show_navigation": "Show navigation",
+  "hide_navigation": "Hide navigation",
+  "navigate_with_google_maps": "Google Maps",
+  "setting_up_direction": "Setting up direction...",
+  "direction_failed_will_try_again_later": "Direction failed. Will try again later.",
+  "navigation_options": "Navigation options",
+  "avoid_highways": "Avoid highways",
+  "avoid_tolls": "Avoid tolls",
+  "avoid_ferries": "Avoid ferries",
+
+
+  "// OptionHolder": "",
+
+  "options": "Options",
+
+
+  "// PlaceHolder": "",
+
+  "search": "Search",
+  "sorry_incorrect_place_has_returned": "Sorry, incorrect place has returned.",
+  "hide_place": "Hide place",
+  "description": "Description",
+
+
+  "// PropertiesHolder": "",
+
+  "your_name_is_not_defined": "Your name is not defined. Set up your name now?",
+  "set_my_name": "Set my name",
+  "properties": "Properties",
+
+
+  "// SavedLocationHolder": "",
+
+  "save_location": "Save location",
+  "send_to_group": "Send to group",
+  "share": "Share",
+  "you_have_added_location": "You have added location. It can be found under \"Saved locations\" menu. Would you like to do something else?",
+  "show": "Show",
+  "edit_location": "Edit location",
+  "let_your_email_client_compose_the_message_with_link_to_this_location": "Let your e-mail client compose the message with link to this location?<br>Or you may copy the link into clipboard and paste wherever you'd like.",
+  "send_location": "Send location",
+  "you_re_going_to_send_the_location_s_to_all_continue": "You're going to send the location %s to all. Continue?",
+  "delete_location": "Delete location",
+  "delete_this_location": "Delete this location?",
+  "saved_locations": "Saved locations",
+  "show_location": "Show location",
+  "show_direction_to_location": "Show direction to location",
+  "share_location": "Share location",
+  "you_ve_got_the_location_from_s_add_it_to_your_saved_locations_list": "You've got the location from %s. Add it to your saved locations list?",
+  "add_location": "Add location",
+  "address_s": "Address: %s.",
+  "description_s": "Description: %s.",
+
+
+  "// SocialHolder": "",
+
+  "share_link_dialog": "Let's share this link?<br>Or you may copy the link into clipboard and paste wherever you'd like.",
+  "share_to_facebook": "Share to Facebook",
+  "share_to_whatsapp": "Share to Whatsapp",
+  "share_to_telegram": "Share to Telegram",
+  "share_to_twitter": "Share to Twitter",
+  "share_to_facebook_dialog": "Let Facebook share the link to this group?<br>Or you may copy the link into clipboard and paste wherever you'd like.",
+  "share_to_whatsapp_dialog": "Let Whatsapp share the link to this group?<br>Or you may copy the link into clipboard and paste wherever you'd like.",
+  "share_to_telegram_dialog": "Let Telegram share the link to this group?<br>Or you may copy the link into clipboard and paste wherever you'd like.",
+  "share_to_twitter_dialog": "Let Twitter share the link to this group?<br>Or you may copy the link into clipboard and paste wherever you'd like.",
+
+
+  "// StreetViewHolder": "",
+
+  "show_street_view": "Street view",
+  "hide_street_view": "Hide street view",
+  "street_view": "Street view",
+  "street_view_is_still_not_available_for_this_place": "Street view is still not available for this place.",
+  "street_view_available_only_for_one_point": "Street view available only for one point.",
+
+
+  "// TrackHolder": "",
+
+  "show_tracks": "Tracks",
+  "hide_tracks": "Hide tracks",
+  "show_track": "Show track",
+  "hide_track": "Hide track",
+
+
+  "// TrackingHolder": "",
+
+  "create_group": "Create group",
+  "join_group": "Join group",
+  "exit_group": "Exit group",
+  "share_group": "Share group",
+  "connecting_s": "Connecting - %s",
+  "reconnecting": "Reconnecting...",
+  "creating_group": "Creating group...",
+  "joining_group": "Joining group...",
+  "beforeunload": "You are online in the group with your friends. Leaving this page you will exit the group.",
+  "information": "Information",
+  "you_may_create_the_group": "You may create the group and invite your friends for real-time sharing your locations. Any time you can leave the group and join back until somebody is online there. Are you agree?",
+  "you_are_joining_the_group": "You're joining the group. Are you agree that online members of this group will be able to watch your position until you leave the group or it will be finished?",
+
+  "share_by_mail": "Share by mail",
+
+  "tracking_help_title": "Tracking",
+  "tracking_help_title_1": "You have created new group",
+  "tracking_help_body_1": "You have created the new tracking group. Now, you may invite your friends to follow you using their ${APP_NAME} client or mobile or desktop browser. Click the main menu item to share the link. Or you may use it yourself for some reasons. <p>Note: the group will be deleted after 15 minutes of inactivity. <p><span class='help-dialog-link-inline' onclick='Waytous.fire(EVENTS.HIDE_HELP);Waytous.fire(EVENTS.SHARE_LINK)'>Click here to invite your friends.</span> ",
+
+  "sound_on_join": "Sound on join",
+  "none": "None",
+  "user_s_has_joined": "User %s has joined.",
+  "waytous_online": "Waytous online",
+  "you_have_joined_to_the_group_s": "You have joined to the group %s.",
+
+  "sorry_you_have_requested_the_expired_group": "Sorry, you have requested the expired group.",
+  "expired_explanation": "Somebody has created this group to meet with his friends. Perhaps that goal was succeded because the group was removed. <p>You can create your own group and send the link to your friends. Note that the group expires soon if nobody will be online. If you'd like to create the permanent group please ask the administration.",
+
+  "do_you_want_to_keep_screen_on_during_group_is_active": "Do you want to keep screen on during group is active?",
+  "group_has_been_removed": "Group has been removed.",
+
+  "terms_of_service": "Terms of service (click for expand/collapse)",
+  "terms_of_service_body": "Terms of service (click for expand/collapse)",
+  "i_have_read_and_agree_with_terms_of_service": "I've read and agree with terms of service",
+
+
+  "// WelcomeHolder": "",
+
+  "welcome_help_title_1": "Article 2",
+  "welcome_help_body_1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras pellentesque aliquam tellus, quis finibus odio faucibus sed. Nunc nec dictum ipsum, a efficitur sem. Nullam suscipit quis neque in cursus. Etiam tempus imperdiet scelerisque. Integer ut nisi at est varius rutrum quis eget urna. Morbi blandit vehicula laoreet. Curabitur tincidunt turpis dui, at venenatis risus volutpat et. Donec cursus molestie ligula eu convallis. Curabitur sed quam id ex tristique ultricies. Duis id felis eget massa venenatis vehicula. Aenean eget varius dui. ",
+  "welcome_help_title_2": "Article 2",
+  "welcome_help_body_2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras pellentesque aliquam tellus, quis finibus odio faucibus sed. Nunc nec dictum ipsum, a efficitur sem. Nullam suscipit quis neque in cursus. Etiam tempus imperdiet scelerisque. Integer ut nisi at est varius rutrum quis eget urna. Morbi blandit vehicula laoreet. Curabitur tincidunt turpis dui, at venenatis risus volutpat et. Donec cursus molestie ligula eu convallis. Curabitur sed quam id ex tristique ultricies. Duis id felis eget massa venenatis vehicula. Aenean eget varius dui. ",
+
+
+  "// Sample": "",
+
+  "sample_item": "Sample item",
+  "sample_menu": "Sample menu",
+  "sample_title_1": "Article 1",
+  "sample_body_1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+}

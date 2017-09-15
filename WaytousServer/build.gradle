@@ -1,0 +1,145 @@
+// If you would like more information on the gradle-appengine-plugin please refer to the github page
+// https://github.com/GoogleCloudPlatform/gradle-appengine-plugin
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.51'
+//        classpath 'com.google.javascript:closure-compiler:v20150609'
+//        classpath 'com.yahoo.platform.yui:yuicompressor:2.4.6'
+    }
+}
+
+plugins {
+    id "com.eriwen.gradle.js" version "2.14.1"
+//    id "com.eriwen.gradle.css" version "2.14.0"
+}
+
+/**
+ * NOTE!
+ * You must use different run configuraitons depending on this installation type.
+ * "App Engine DevAppServer" ("WaytousServlet") means installation type 'google-appengine'.
+ * "Application" ("WaytousServer") means installation type 'standalone-server'.
+ */
+//def installationType = 'google-appengine'
+def installationType = 'standalone-server'
+
+apply plugin: 'js'
+//apply plugin: 'css'
+apply plugin: 'java'
+apply plugin: 'war'
+
+if (installationType.compareTo('google-appengine') == 0) {
+    apply plugin: 'appengine'
+}
+
+//minifyCss {
+//    source = file("${projectDir}/src/main/webapp/css/tracking.js")
+//    dest = file("${buildDir}/exploded-app/css/tracking.js")
+//    yuicompressor { // Optional
+//        lineBreakPos = -1
+//    }
+//}
+
+dependencies {
+    print "Applying dependencies for ${installationType}...\n"
+// common rows
+    compile 'org.java-websocket:Java-WebSocket:1.3.4'
+//    compile 'org.json:json:20160212'
+//    compile 'com.github.edeqa:eventbus:0.3'
+
+// gae servlet rows
+    if (installationType.compareTo('google-appengine') == 0) {
+        appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.54'
+        compile 'com.google.appengine:appengine-api-1.0-sdk:1.9.54'
+        compile 'com.google.firebase:firebase-server-sdk:3.0.3'
+        compile 'com.google.guava:guava:21.0'
+        compile 'javax.servlet:javax.servlet-api:3.1.0'
+        compile 'org.apache.httpcomponents:httpcomponents-client:4.5.3'
+    }
+
+// server rows
+    if (installationType.compareTo('standalone-server') == 0) {
+        compile 'com.google.firebase:firebase-admin:5.2.0'
+        compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
+    }
+
+    configurations {
+        compile.exclude group: "org.apache.httpcomponents", module: "httpclient"
+//        compile.exclude group: "org.json", module: "json"
+    }
+
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    targetCompatibility = '1.7'
+    sourceCompatibility = '1.7'
+    print "Dependencies done.\n"
+//    compile project(path: ':WaytousFramework')
+}
+//
+import com.eriwen.gradle.js.tasks.MinifyJsTask
+//import com.eriwen.gradle.js.tasks.MinifyJsTask
+
+def all = file("${projectDir}/src/main/webapp/js/all.js")
+def allMap = file("${projectDir}/src/main/webapp/all.sourcemap.json")
+
+minifyJs {
+    source = "${projectDir}/src/main/webapp/js"
+    dest = all
+    sourceMap = allMap
+    closure {
+        warningLevel = 'QUIET'
+        compilationLevel = 'SIMPLE_OPTIMIZATIONS'
+        compilerOptions.languageIn = 'ECMASCRIPT6'
+        compilerOptions.languageOut = 'ECMASCRIPT5'
+    }
+}
+
+task minifyAllJS {
+    def path = new File("${projectDir}/src/main/webapp");
+    print "Minifying from ${path}\n"
+    print "    to \"${buildDir}/exploded-app\nProcessing:\n"
+    fileTree(path).eachWithIndex { file, index ->
+        def name = file.toString().replace(path.toString(), "")
+        if (!(name.toString() ==~ /.*\.js$/)) { return }
+        print "--- ${name}..."
+        def dynamicTask = "minify$index"
+        task "$dynamicTask" (type: MinifyJsTask) {
+            source = file
+            dest = new File("${buildDir}/exploded-app${name}")
+            closure {
+                warningLevel = 'QUIET'
+                compilationLevel = 'SIMPLE_OPTIMIZATIONS'
+                compilerOptions.languageIn = 'ECMASCRIPT6'
+                compilerOptions.languageOut = 'ECMASCRIPT5'
+            }
+        }
+        tasks."$dynamicTask".execute()
+        print " done.\n"
+    }
+    print "Minifying done.\n"
+}
+
+war {
+    it.dependsOn minifyJs
+    all.delete()
+    allMap.delete()
+    tasks.minifyJs.execute()
+    it.dependsOn minifyAllJS
+//    exclude '**/*.js'
+
+    print "Final stage...\n"
+}
+
+if (installationType.compareTo('google-appengine') == 0) {
+    appengine {
+        downloadSdk = true
+        appcfg {
+            oauth2 = true
+        }
+        httpAddress = "0.0.0.0"
+        httpPort = 8180
+    }
+}

@@ -1,0 +1,28 @@
+/**
+ * Part of Waytous <http://waytous.net>
+ * Copyright (C) Edeqa LLC <http://www.edeqa.com>
+ *
+ * Version 1.${SERVER_BUILD}
+ * Created 1/20/17.
+ */
+{
+
+
+  "about": "О сайте",
+  "contact": "Контакт",
+  "docs": "Документация",
+  "feedback": "Обратная связь",
+  "help": "Справка",
+  "home": "Главная",
+  "info": "Информация",
+  "legal_information": "Информация",
+  "loading": "Загружается...",
+  "privacy": "Конфиденциальность",
+  "privacy_policy": "Политика конфиденциальности",
+  "signing_in": "Подключаемся...",
+  "site_is_under_construction": "Сайт в разработке.",
+  "support": "Поддержка",
+  "terms": "Условия",
+  "terms_and_conditions": "Условия использования"
+
+}

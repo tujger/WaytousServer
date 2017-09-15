@@ -1,0 +1,315 @@
+/**
+ * Created 1/19/17.
+ */
+
+h2 {
+    margin-top: 20px;
+    margin-bottom: -10px;
+}
+.layout {
+    padding-left: 5px;
+    padding-right: 5px;
+    overflow-y: auto;
+    flex: 1 1;
+    display: block;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.inactive {
+    font-style: italic;
+    font-size: smaller;
+}
+.italic {
+    color: darkgray;
+}
+.selected {
+    background-color: lightcyan;
+}
+.highlight {
+    transition: 0.4s ease-in-out all;
+}
+.highlight:hover {
+    transition: 0.1s ease-in-out all;
+}
+.changed {
+    color: indianred;
+    background-color: cornsilk;
+}
+.th.option {
+    text-align: left;
+    width: 250px;
+}
+.td.th {
+    text-align: left;
+    width: 250px;
+    background: #ffffdd;
+}
+.td.option {
+    text-align: left;
+    border: none;
+}
+.td.option input {
+    width: 250px;
+}
+.question {
+    font-weight: bold;
+    color: red;
+}
+.create-dialog {
+    width: 400px;
+    max-width: 90%;
+}
+.create-dialog-button-generate, .group-button-set-password {
+    display: inline-block;
+    font-size: x-small;
+    padding: 2px;
+    margin-left: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    border-color: darkslategray;
+    background-color: antiquewhite;
+}
+.settings-dialog {
+    width: 400px;
+    max-width: 90%;
+}
+.logs-header {
+    padding-top: 5px;
+}
+.logs-header-label {
+    display: inline-block;
+    padding-left: 16px;
+    padding-right: 4px;
+}
+.logs-header-input {
+    margin: 4px;
+    width: 30px;
+}
+.table {
+    margin-bottom: 5px;
+}
+.table-logs {
+    white-space: pre-wrap;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-bottom: 5px;
+}
+.table-placeholder {
+    border: none;
+}
+.table-logs-caption {
+    display: block;
+}
+.table-logs-caption-cell {
+    display: block;
+    width: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+.table-logs-body {
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+}
+.table-logs-row {
+    display: block;
+    width: 100%;
+}
+.table-logs-row-cell {
+    overflow: auto;
+    display: block;
+    width: 100%;
+    user-select: initial;
+    -moz-user-select: initial;
+    -webkit-user-select: initial;
+    border: none;
+}
+.buttons {
+    display: inline-flex;
+    margin-bottom: 5px;
+    font-size: initial;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.button-clean {
+    font-family: "Material Icons";
+    font-feature-settings: "liga" 1;
+    font-style: normal;
+    stroke: darkslategray;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+.welcome-input {
+    width: 100%;
+}
+.chat-dialog {
+    right: 10px;
+    bottom: 10px;
+    width: 30%;
+    height: 300px;
+}
+.chat-dialog-messages {
+    font-size: x-small;
+}
+.chat-dialog-message {
+    display: block;
+    text-align: left;
+}
+.chat-dialog-message-content {
+    display: flex;
+    flex-wrap: wrap;
+}
+.chat-dialog-message-group {
+    flex: 0 0 80px;
+    cursor: pointer;
+}
+.chat-dialog-message-group:hover {
+    color: blue;
+}
+.chat-dialog-message-name {
+    flex: 0 0 100px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.chat-dialog-message-name:hover {
+    color: blue;
+}
+.chat-dialog-message-timestamp {
+    flex: 1 1;
+    text-align: right;
+}
+.chat-dialog-message-body {
+    padding-bottom: 8px;
+    white-space: pre-wrap;
+    flex: 0 0 100%;
+}
+.two-divs {
+    display: flex;
+    width: 100%;
+}
+.summary-place {
+    flex: 1 1 100%;
+}
+.map-place {
+    margin-top: 22px;
+    flex: 1 1 100%;
+}
+.map {
+    width: 100%;
+    height: 100%;
+    border-style: groove;
+    border-width: 1px;
+}
+.statistics-chart{
+    padding: 10px;
+}
+
+@media screen and (max-width: 1000px) {
+    button {
+        font-size: 16px;
+        min-width: 100px;
+        border-style: solid;
+        border-radius: 10px;
+        margin: 1px;
+        padding: 10px;
+    }
+
+    /* CLASSES */
+    .alert {
+        margin: 0px;
+    }
+    .layout {
+        padding: 0px;
+        position: fixed;
+        top: 50px;
+        bottom: 0px;
+        min-height: unset;
+        height: auto;
+    }
+    .td.th {
+        width: 50%;
+        min-width: 120px;
+    }
+    .th.option {
+        text-align: left;
+        width: 40%;
+    }
+    .td.option input {
+        width: 100%;
+        border-style: solid;
+        border-width: 1px;
+        font-size:16px;
+        height: 25px;
+    }
+    .logs-header-input {
+        font-size: 16px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        background-color: antiquewhite;
+    }
+    .table-logs-body {
+        font-size: 12px;
+    }
+    .table-logs-row-cell {
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+    .two-divs {
+        flex-direction: column;
+    }
+    .map-place {
+        display: none;
+    }
+    .statistics-row {
+    }
+    .statistics-row:focus {
+        background-color: lightcyan;
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        width: 100%;
+    }
+    .statistics-row:focus .td {
+        display: block;
+        width: 100%;
+        border: none;
+        font-weight: bold;
+        padding: 4px;
+    }
+    .statistics-row:focus .td:nth-child(1)::before {
+        content: "Timestamp: ";
+        font-weight: initial;
+    }
+    .statistics-row:focus .td:nth-child(2)::before {
+        content: "Action: ";
+        font-weight: initial;
+    }
+    .statistics-row:focus .td:nth-child(3)::before {
+        content: "Group ID: ";
+        font-weight: initial;
+    }
+    .statistics-row:focus .td:nth-child(4)::before {
+        content: "User ID: ";
+        font-weight: initial;
+    }
+    .statistics-row:focus .td:nth-child(5)::before {
+        content: "Message: ";
+        font-weight: initial;
+    }
+
+
+    /* media specific classes */
+    .hideable {
+        display: none;
+    }
+
+}

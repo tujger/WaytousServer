@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
+
+    <servlet>
+        <servlet-name>MainServlet</servlet-name>
+        <servlet-class>com.edeqa.waytousserver.servers.MainServletHandler</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RestServlet</servlet-name>
+        <servlet-class>com.edeqa.waytousserver.servers.RestServletHandler</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TrackingServlet</servlet-name>
+        <servlet-class>com.edeqa.waytousserver.servers.TrackingServletHandler</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminServlet</servlet-name>
+        <servlet-class>com.edeqa.waytousserver.servers.AdminServletHandler</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>MainServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RestServlet</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TrackingServlet</servlet-name>
+        <url-pattern>/track/*</url-pattern>
+        <url-pattern>/group/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminServlet</servlet-name>
+        <url-pattern>/admin/*</url-pattern>
+    </servlet-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>all</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <context-param>
+        <param-name>sensitiveData</param-name>
+        <param-value>WEB-INF/options_developer.json</param-value>
+    </context-param>
+</web-app>

@@ -1,0 +1,39 @@
+/**
+ * Part of Waytous <http://waytous.net>
+ * Copyright (C) Edeqa LLC <http://www.edeqa.com>
+ *
+ * Version 1.${SERVER_BUILD}
+ */
+{
+
+  "about": "About",
+  "about_body": "\nAbout is coming soon.",
+  "api": "API",
+  "api_body": "\nOur API is coming soon.",
+  "close": "Close",
+  "contact": "Contact",
+  "default": "Default",
+  "docs": "Docs",
+  "english": "English",
+  "feedback": "Feedback",
+  "feedback_body": "\nFeedback is coming soon.",
+  "help": "Help",
+  "help_body": "\nHelp is coming soon.",
+  "home": "Home",
+  "info": "Information",
+  "legal_information": "Legal information",
+  "loading": "Loading...",
+  "ok": "OK",
+  "privacy": "Privacy",
+  "privacy_policy": "Privacy policy",
+  "russian": "Russian",
+  "signing_in": "Signing in...",
+  "site_is_under_construction": "Under construction.",
+  "start": "Start",
+  "support": "Support",
+  "support_body": "\nSupport is coming soon.",
+  "terms": "Terms",
+  "terms_and_conditions": "Terms and conditions",
+  "track": "Track"
+
+}

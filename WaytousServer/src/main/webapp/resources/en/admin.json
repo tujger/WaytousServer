@@ -1,0 +1,25 @@
+/**
+ * Part of Waytous <http://waytous.net>
+ * Copyright (C) Edeqa LLC <http://www.edeqa.com>
+ *
+ * Version 1.${SERVER_BUILD}
+ */
+{
+  "admin": "Admin",
+  "alert": "Alert",
+  "feedback": "Feedback",
+  "help": "Help",
+  "home": "Home",
+  "legal_information": "Legal information",
+  "loading": "Loading...",
+  "ok": "OK",
+  "privacy": "Privacy",
+  "privacy_policy": "Privacy policy",
+  "reload": "Reload",
+  "russian": "Russian",
+  "signing_in": "Signing in...",
+  "support": "Support",
+  "terms": "Terms",
+  "terms_and_conditions": "Terms and conditions"
+
+}
