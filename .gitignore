@@ -5,6 +5,7 @@
 /.idea/libraries
 .DS_Store
 /build
+/.idea
 /app/src/release/
 /app/build/
 /app/app-release.apk

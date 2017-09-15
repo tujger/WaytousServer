@@ -76,7 +76,7 @@ dependencies {
     targetCompatibility = '1.7'
     sourceCompatibility = '1.7'
     print "Dependencies done.\n"
-//    compile project(path: ':WaytousFramework')
+    compile project(path: ':WaytousFramework')
 }
 //
 import com.eriwen.gradle.js.tasks.MinifyJsTask
