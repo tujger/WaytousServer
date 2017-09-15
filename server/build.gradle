@@ -62,7 +62,7 @@ dependencies {
 
 // server rows
     if (installationType.compareTo('standalone-server') == 0) {
-        compile 'com.google.firebase:firebase-admin:5.2.0'
+        compile 'com.google.firebase:firebase-admin:5.3.1'
         compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
     }
 

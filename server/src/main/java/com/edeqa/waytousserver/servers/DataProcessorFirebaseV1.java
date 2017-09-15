@@ -21,7 +21,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.internal.Log;
 import com.google.firebase.internal.NonNull;
 import com.google.firebase.tasks.OnFailureListener;
 import com.google.firebase.tasks.OnSuccessListener;
@@ -97,24 +96,32 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
         FirebaseOptions options = createFirebaseOptions();
 
-        try {
-//            if(FirebaseApp.getApps().size() < 1) {
-            FirebaseApp.initializeApp(options);
-//            }
+        FirebaseApp defaultApp = FirebaseApp.initializeApp(options);
+//        System.out.println(defaultApp.getName());  // "[DEFAULT]"
+//        System.out.println(FirebaseDatabase.getInstance(defaultApp));
+
+
+        /*try {
+            if(FirebaseApp.getApps().size() < 1) {
+                FirebaseApp.initializeApp(options);
+//            FirebaseApp.initializeApp(options);
+            }
         } catch (Exception e) {
 //            Common.log("already exists...");
 //            e.printStackTrace();
-        }
+        }*/
 
-        try {
-            FirebaseApp.getInstance();
+        /*try {
+            FirebaseDatabase.getInstance(defaultApp);
+//            FirebaseApp.getInstance();
         } catch (Exception e) {
 //            Common.log("doesn't exist...");
 //            e.printStackTrace();
-        }
+        }*/
+
 
         try {
-            ref = FirebaseDatabase.getInstance().getReference();
+            ref = FirebaseDatabase.getInstance(defaultApp).getReference();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -179,6 +186,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 //                .setServiceAccount(new FileInputStream(SENSITIVE.getFirebasePrivateKeyFile()))
 //                .setDatabaseUrl(SENSITIVE.getFirebaseDatabaseUrl())
 //                .build();
+
         return builder.setDatabaseUrl(SENSITIVE.getFirebaseDatabaseUrl()).build();
     }
 
@@ -1298,7 +1306,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         @Override
         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
             // Transaction completed
-            Log.d("DPF1", "postTransaction:onComplete:" + databaseError);
+            Common.log(LOG, "postTransaction:onComplete:" + databaseError);
         }
     };
 
