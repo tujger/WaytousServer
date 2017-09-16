@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.helpers;
 
+import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -71,7 +72,7 @@ public class MyUser {
     }
 
     public String calculateHash(String control) {
-        return Utils.getEncryptedHash(control + ":" + deviceId);
+        return Misc.getEncryptedHash(control + ":" + deviceId);
     }
 
     public String getControl() {
@@ -79,7 +80,7 @@ public class MyUser {
     }
 
     public String newControl() {
-        control = Utils.getUnique();
+        control = Misc.getUnique();
         return control;
     }
 
@@ -96,7 +97,7 @@ public class MyUser {
     }
 
     public String getUid() {
-        return Utils.getEncryptedHash(deviceId);
+        return Misc.getEncryptedHash(deviceId);
     }
 
     public String getAddress() {

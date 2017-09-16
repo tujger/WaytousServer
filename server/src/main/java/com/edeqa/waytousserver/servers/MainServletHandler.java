@@ -1,6 +1,6 @@
 package com.edeqa.waytousserver.servers;
 
-import com.edeqa.waytous.Mime;
+import com.edeqa.helpers.Mime;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.RequestWrapper;
 import com.google.common.net.HttpHeaders;

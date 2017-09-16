@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
@@ -332,7 +333,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                 public void call(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.getValue() != null) { //join as existing member, go to check
                                         CheckReq check = new CheckReq();
-                                        check.setControl(Utils.getUnique());
+                                        check.setControl(Misc.getUnique());
                                         check.setGroupId(groupId);
                                         check.setUid(dataSnapshot.getKey());
                                         check.setNumber((long) dataSnapshot.getValue());
@@ -360,7 +361,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                 public void call(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.getValue() != null) {
                                         String deviceId = request.getString(REQUEST_DEVICE_ID);
-                                        final String uid = Utils.getEncryptedHash(deviceId);
+                                        final String uid = Misc.getEncryptedHash(deviceId);
 
                                         numberForKeyTask.setRef(refGroup.child(Firebase.SECTION_USERS_KEYS).child(uid)).start();
                                     } else {
@@ -374,7 +375,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                         groupOptionsTask.setRef(refGroup.child(Firebase.SECTION_OPTIONS)).start();
                     } else {
                         CheckReq check = new CheckReq();
-                        check.setControl(Utils.getUnique());
+                        check.setControl(Misc.getUnique());
                         check.setGroupId(groupId);
 
                         response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
@@ -405,7 +406,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             public void call(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.getValue() != null) { //join as existing member
                                     try {
-                                        String calculatedHash = Utils.getEncryptedHash(check.getControl() + ":" + ((HashMap) dataSnapshot.getValue()).get("device_id"));
+                                        String calculatedHash = Misc.getEncryptedHash(check.getControl() + ":" + ((HashMap) dataSnapshot.getValue()).get("device_id"));
 
                                         if (calculatedHash.equals(hash)) {
                                             Common.log(LOG, "onMessage:joinAsExisting:" + conn.getRemoteSocketAddress(), "group:" + check.getGroupId(), "user:{ number:" + dataSnapshot.getKey(), "properties:" + dataSnapshot.getValue(), " }");
@@ -481,7 +482,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                             ArrayList<HashMap<String, Object>> users = (ArrayList<HashMap<String, Object>>) dataSnapshot.getValue();
                                             for (HashMap<String, Object> user : users) {
                                                 if (user != null && user.containsKey(REQUEST_DEVICE_ID) && user.containsKey(REQUEST_KEY)) {
-                                                    String calculatedHash = Utils.getEncryptedHash(check.getControl() + ":" + user.get(REQUEST_DEVICE_ID).toString());
+                                                    String calculatedHash = Misc.getEncryptedHash(check.getControl() + ":" + user.get(REQUEST_DEVICE_ID).toString());
                                                     if (calculatedHash.equals(hash)) {
                                                         check.setUid(user.get(REQUEST_KEY).toString());
                                                         userGetNumberTask.setRef(refGroup.child(Firebase.SECTION_USERS_KEYS).child(check.getUid())).start();
@@ -707,7 +708,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
         user.setColor(Utils.selectColor(user.getNumber()));
 
-        final String uid = Utils.getEncryptedHash(user.getDeviceId());
+        final String uid = Misc.getEncryptedHash(user.getDeviceId());
 
         final Map<String, Object> childUpdates = new HashMap<>();
 

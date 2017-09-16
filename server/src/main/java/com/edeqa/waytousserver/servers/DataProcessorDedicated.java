@@ -1,11 +1,11 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytousserver.helpers.CheckReq;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
-import com.edeqa.waytousserver.helpers.Utils;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 
 import org.json.JSONException;
@@ -231,7 +231,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
 
                 System.out.println("NEW:response:" + response);
 
-                Utils.pause(2);//FIXME remove pause
+                Misc.pause(2);//FIXME remove pause
 
                 conn.send(response.toString());
             } else if (REQUEST_JOIN_GROUP.equals(req)) {
@@ -252,7 +252,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                             if (user != null) {
                                 user.setChanged();
                                 CheckReq check = new CheckReq();
-                                check.setControl(Utils.getUnique());
+                                check.setControl(Misc.getUnique());
                                 check.setToken(token);
                                 if (request.has(USER_NAME))
                                     check.setName(request.getString(USER_NAME));
@@ -292,7 +292,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
 
                         } else {
                             CheckReq check = new CheckReq();
-                            check.setControl(Utils.getUnique());
+                            check.setControl(Misc.getUnique());
                             check.setToken(token);
 
                             response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
@@ -309,7 +309,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                     response.put(RESPONSE_MESSAGE, "Wrong request (token not defined).");
                     disconnect = true;
                 }
-                Utils.pause(2);//FIXME remove pause
+                Misc.pause(2);//FIXME remove pause
                 conn.send(response.toString());
                 System.out.println("JOIN:response:" + response);
             } else if (REQUEST_CHECK_USER.equals(req)) {
@@ -379,7 +379,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                 }
 
                 System.out.println("CHECK:response:" + response);
-                Utils.pause(2);//FIXME remove pause
+                Misc.pause(2);//FIXME remove pause
                 conn.send(response.toString());
             } else {
                 if (ipToToken.containsKey(ip)) {

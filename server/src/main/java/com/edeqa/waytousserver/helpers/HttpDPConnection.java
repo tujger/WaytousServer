@@ -1,6 +1,6 @@
 package com.edeqa.waytousserver.helpers;
 
-import com.edeqa.waytous.Mime;
+import com.edeqa.helpers.Mime;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 
 import java.net.InetSocketAddress;

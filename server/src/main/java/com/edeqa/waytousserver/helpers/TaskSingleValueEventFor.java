@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.helpers;
 
+import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.firebase.auth.FirebaseAuth;
@@ -154,7 +155,7 @@ public class TaskSingleValueEventFor<T> {
         try {
             String url = "" + ref.getDatabase().getReference() + ref.getPath() + ".json?shallow=true&print=pretty&access_token=" + customToken;
             Common.log(LOG, "restRequest:"+url);
-            String res = Utils.getUrl(url, "UTF-8");
+            String res = Misc.getUrl(url, "UTF-8");
             if(res == null || res.length() == 0 || res.startsWith("null")) {
                 return;
             }

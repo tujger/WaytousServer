@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.helpers;
 
+import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 
 import org.json.JSONException;
@@ -341,7 +342,7 @@ public class MyGroup {
     }
 
     public void fetchNewId() {
-        id = Utils.getUnique();
+        id = Misc.getUnique();
     }
 
     public boolean isRequirePassword() {
