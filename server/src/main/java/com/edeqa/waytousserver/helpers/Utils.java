@@ -1,9 +1,9 @@
 package com.edeqa.waytousserver.helpers;
 
+import com.edeqa.helpers.interfaces.Runnable2;
+import com.edeqa.helpers.interfaces.Runnable3;
+import com.edeqa.helpers.interfaces.Runnable4;
 import com.edeqa.waytous.Mime;
-import com.edeqa.waytous.interfaces.Runnable2;
-import com.edeqa.waytous.interfaces.Runnable3;
-import com.edeqa.waytous.interfaces.Runnable4;
 import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;

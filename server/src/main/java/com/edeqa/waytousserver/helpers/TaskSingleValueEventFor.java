@@ -1,6 +1,6 @@
 package com.edeqa.waytousserver.helpers;
 
-import com.edeqa.waytous.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Runnable1;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;

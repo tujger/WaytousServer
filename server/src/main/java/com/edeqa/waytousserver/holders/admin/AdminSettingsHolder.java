@@ -1,6 +1,6 @@
 package com.edeqa.waytousserver.holders.admin;
 
-import com.edeqa.waytousserver.helpers.HtmlGenerator;
+import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.waytousserver.helpers.RequestWrapper;
 import com.edeqa.waytousserver.interfaces.PageHolder;
 import com.edeqa.waytousserver.servers.AdminServletHandler;

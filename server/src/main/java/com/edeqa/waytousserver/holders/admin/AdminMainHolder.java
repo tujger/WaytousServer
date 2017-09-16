@@ -1,6 +1,6 @@
 package com.edeqa.waytousserver.holders.admin;
 
-import com.edeqa.waytousserver.helpers.HtmlGenerator;
+import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.waytousserver.helpers.RequestWrapper;
 import com.edeqa.waytousserver.interfaces.PageHolder;
 import com.edeqa.waytousserver.servers.AdminServletHandler;
@@ -10,11 +10,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.edeqa.helpers.HtmlGenerator.SCRIPT;
+import static com.edeqa.helpers.HtmlGenerator.SRC;
+import static com.edeqa.helpers.HtmlGenerator.TITLE;
 import static com.edeqa.waytous.Constants.SENSITIVE;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.SCRIPT;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.SRC;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.TITLE;
 
 
 /**

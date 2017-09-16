@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Rest;
-import com.edeqa.waytous.interfaces.Runnable1;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.HttpDPConnection;
 import com.edeqa.waytousserver.helpers.RequestWrapper;

@@ -1,8 +1,8 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.waytous.Mime;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.helpers.HtmlGenerator;
 import com.edeqa.waytousserver.helpers.RequestWrapper;
 import com.edeqa.waytousserver.helpers.Utils;
 import com.google.common.net.HttpHeaders;
@@ -17,12 +17,12 @@ import java.util.Arrays;
 
 import javax.servlet.ServletException;
 
+import static com.edeqa.helpers.HtmlGenerator.ONLOAD;
+import static com.edeqa.helpers.HtmlGenerator.SCRIPT;
+import static com.edeqa.helpers.HtmlGenerator.SRC;
+import static com.edeqa.helpers.HtmlGenerator.TITLE;
 import static com.edeqa.waytous.Constants.SENSITIVE;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.ONLOAD;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.SCRIPT;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.SRC;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.TITLE;
 
 
 /**

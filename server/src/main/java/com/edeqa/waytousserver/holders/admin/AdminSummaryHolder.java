@@ -1,8 +1,8 @@
 package com.edeqa.waytousserver.holders.admin;
 
+import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.waytousserver.helpers.CheckReq;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.helpers.HtmlGenerator;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.RequestWrapper;
@@ -18,12 +18,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.edeqa.helpers.HtmlGenerator.CLASS;
+import static com.edeqa.helpers.HtmlGenerator.DIV;
+import static com.edeqa.helpers.HtmlGenerator.SCRIPT;
+import static com.edeqa.helpers.HtmlGenerator.SRC;
+import static com.edeqa.helpers.HtmlGenerator.TITLE;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.CLASS;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.DIV;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.SCRIPT;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.SRC;
-import static com.edeqa.waytousserver.helpers.HtmlGenerator.TITLE;
 
 
 /**

@@ -1,6 +1,6 @@
 package com.edeqa.waytousserver.helpers;
 
-import com.edeqa.waytous.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Runnable1;
 import com.google.common.net.HttpHeaders;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;

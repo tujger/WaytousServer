@@ -1,1 +1,1 @@
-include ':server', ':WaytousFramework'
+include ':server', ':WaytousFramework', ':Helpers'
