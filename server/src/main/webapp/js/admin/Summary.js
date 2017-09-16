@@ -119,7 +119,7 @@ function Summary() {
 
     }
 
-   var renderInterfaceIpToSome = function(node,some,columnCounter) {
+    var renderInterfaceIpToSome = function(node,some,columnCounter) {
         u.clear(node)
         if(some && some.length > 0) {
             for(var i in some) {
@@ -209,7 +209,7 @@ function Summary() {
 
     var renderInterfaceIpToTokenHeader = function () {
 
-       var div = u.create("div", {className: "two_tables_one"});
+        var div = u.create("div", {className: "two_tables_one"});
         u.create("h2", { innerHTML: "IP to Group corresponds" }, div);
         var table = u.create("table", {className:"summary"}, div);
 
@@ -237,7 +237,7 @@ function Summary() {
 
     var renderInterfaceIpToCheckHeader = function () {
 
-       var div = u.create("div");
+        var div = u.create("div");
         u.create("h2", { innerHTML: "Checks" }, div);
         var table = u.create("table", {className:"summary"}, div);
 

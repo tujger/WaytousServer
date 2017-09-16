@@ -7,8 +7,6 @@
  */
 function User() {
 
-    var title = "User";
-
     var positions;
     var div;
     var groupId;

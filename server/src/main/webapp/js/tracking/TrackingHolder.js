@@ -201,7 +201,7 @@ function TrackingHolder(main) {
     function startTracking(group) {
         if(group && u.load("tracking:terms_of_service_confirmed")) {
             //setTimeout(function(){
-                u.require("/js/helpers/TrackingFB.js").then(startTrackingReady.bind(self));
+            u.require("/js/helpers/TrackingFB.js").then(startTrackingReady.bind(self));
             //}, 0);
             //startTrackingReady();
         } else {

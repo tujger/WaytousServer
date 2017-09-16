@@ -15,7 +15,7 @@ function Home() {
 
         u.create("p", "To be implemented soon...", div);
 
-    }
+    };
 
     return {
         start: start,
@@ -23,6 +23,6 @@ function Home() {
         icon: "home",
         title: title,
         menu: title,
-        move:true,
+        move:true
     }
 }

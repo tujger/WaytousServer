@@ -1,6 +1,7 @@
 .gradle
 .idea
 /gradle
+/conf
 /server/.idea
 /server/conf
 /server/build
@@ -8,3 +9,6 @@
 /local.properties
 all.js
 all.sourcemap.json
+deploy_aws_beta.sh
+deploy_aws_prod.sh
+generate_letsencrypt_jks.sh

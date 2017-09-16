@@ -206,7 +206,7 @@ function Main() {
                     content: u.create(HTML.DIV).place(HTML.SPAN, {className: "drawer-footer-link", innerHTML: "${APP_NAME} &copy;2017 Edeqa", onclick: function(e){
                         dialogAbout.open();
                         e.preventDefault();
-                        e.stopPropagation;
+                        e.stopPropagation();
                         return false;
                     }}).place(HTML.SPAN, "\nBuild " + data.version)
                 }
@@ -217,12 +217,12 @@ function Main() {
             actionbar = u.actionBar({
                 title: holders[page].title,
                 onbuttonclick: function(){
-                     try {
-                         drawer.open();
-                     } catch(e) {
-                         console.error(e);
-                     }
-                 }
+                    try {
+                        drawer.open();
+                    } catch(e) {
+                        console.error(e);
+                    }
+                }
             }, document.body);
             u.create({className:"alert"}, document.body);
 
@@ -262,7 +262,7 @@ function Main() {
             }
         }
         xhr.send();
-    }
+    };
 
     var switchTo = function(to) {
         var parts = to.split("/");
@@ -295,7 +295,7 @@ function Main() {
     return {
         start: start,
         switchTo: switchTo,
-        resign: resign,
+        resign: resign
     }
 }
 document.addEventListener("readystatechange", function(){if(document.readyState == "complete"){(window.WTU = new Main()).start()}});

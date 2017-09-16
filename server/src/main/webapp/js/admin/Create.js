@@ -16,55 +16,55 @@ function Create() {
 
         div = document.getElementsByClassName("layout")[0];
         dialog = dialog || u.dialog({
-                title: "Create group",
-                className: "create-dialog",
-                items: [
-                    {
-                        type: HTML.INPUT,
-                        label: u.create(HTML.DIV, "ID ").place(HTML.BUTTON, {
-                            className: "create-dialog-button-generate",
-                            innerHTML:"Generate ID",
-                            onclick: function(){
-                                dialog.items[0].value = Math.random().toString(32).toUpperCase().replace(/0\./,"");
-                            }
-                        }),
-                        oninput: validate_id
-                    },
-                    {
-                        type: HTML.CHECKBOX, label: "Requires password", onchange: function() {
-                        dialog.items[2].disabled = !this.checked;
-                        dialog.items[2].parentNode.classList[this.checked ? "remove" : "add"]("disabled");
-                        dialog.items[2].focus();
-                    } },
-                    { type: HTML.PASSWORD, itemClassName: "disabled", disabled: true, label: "&#150; password" },
-                    { type: HTML.INPUT, label: "Welcome message" },
-                    {
-                        type: HTML.CHECKBOX, label: "Persistent group",
-                        onchange: function() {
-                            dialog.items[5].disabled = this.checked;
-                            dialog.items[5].parentNode.classList[this.checked ? "add" : "remove"]("disabled");
-                            dialog.items[5].focus();
+            title: "Create group",
+            className: "create-dialog",
+            items: [
+                {
+                    type: HTML.INPUT,
+                    label: u.create(HTML.DIV, "ID ").place(HTML.BUTTON, {
+                        className: "create-dialog-button-generate",
+                        innerHTML:"Generate ID",
+                        onclick: function(){
+                            dialog.items[0].value = Math.random().toString(32).toUpperCase().replace(/0\./,"");
                         }
-                    },
-                    { type: HTML.NUMBER, label: "&#150; time to live, min", oninput: validate_ttl, value: 24 * 60 },
-                    { type: HTML.CHECKBOX, label: "Dismiss inactive users", onchange: function() {
-                        dialog.items[7].disabled = !!this.checked;
-                        dialog.items[7].parentNode.classList[this.checked ? "add" : "remove"]("disabled");
-                        dialog.items[7].focus();
-                    }, checked: true },
-                    { type: HTML.NUMBER, itemClassName: "", label: "&#150; delay to dismiss, sec", title:"Minimal value 300", onchange: validate_delay, oninput: validate_delay, value: 3600 },
-                ],
-                positive: {
-                    label: u.create(HTML.SPAN, "OK"),
-                    onclick: validate_submit
+                    }),
+                    oninput: validate_id
                 },
-                negative: {
-                    label: u.create(HTML.SPAN, "Cancel")
+                {
+                    type: HTML.CHECKBOX, label: "Requires password", onchange: function() {
+                    dialog.items[2].disabled = !this.checked;
+                    dialog.items[2].parentNode.classList[this.checked ? "remove" : "add"]("disabled");
+                    dialog.items[2].focus();
+                } },
+                { type: HTML.PASSWORD, itemClassName: "disabled", disabled: true, label: "&#150; password" },
+                { type: HTML.INPUT, label: "Welcome message" },
+                {
+                    type: HTML.CHECKBOX, label: "Persistent group",
+                    onchange: function() {
+                        dialog.items[5].disabled = this.checked;
+                        dialog.items[5].parentNode.classList[this.checked ? "add" : "remove"]("disabled");
+                        dialog.items[5].focus();
+                    }
                 },
-                help: function() {
-                    console.log("HELP");
-                }
-            });
+                { type: HTML.NUMBER, label: "&#150; time to live, min", oninput: validate_ttl, value: 24 * 60 },
+                { type: HTML.CHECKBOX, label: "Dismiss inactive users", onchange: function() {
+                    dialog.items[7].disabled = !!this.checked;
+                    dialog.items[7].parentNode.classList[this.checked ? "add" : "remove"]("disabled");
+                    dialog.items[7].focus();
+                }, checked: true },
+                { type: HTML.NUMBER, itemClassName: "", label: "&#150; delay to dismiss, sec", title:"Minimal value 300", onchange: validate_delay, oninput: validate_delay, value: 3600 },
+            ],
+            positive: {
+                label: u.create(HTML.SPAN, "OK"),
+                onclick: validate_submit
+            },
+            negative: {
+                label: u.create(HTML.SPAN, "Cancel")
+            },
+            help: function() {
+                console.log("HELP");
+            }
+        });
         dialog.open();
         inputId = dialog.items[0];
         inputRequiresPassword = dialog.items[1];

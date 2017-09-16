@@ -17,21 +17,21 @@ function Settings() {
             title: "Settings",
             className: "settings-dialog",
             items: [
-                { type: HTML.DIV, label: "To be implemented soon..." },
+                { type: HTML.DIV, label: "To be implemented soon..." }
             ],
             positive: {
-                label: "OK",
-            },
+                label: "OK"
+            }
         });
         dialog.open();
 
-   }
+    };
 
     return {
         start: start,
         page: "settings",
         icon: "settings",
         title: title,
-        menu: title,
+        menu: title
     }
 }

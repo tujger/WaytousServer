@@ -217,7 +217,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
     @Override
     public void onMessage(final DataProcessorConnection conn, String message) {
-
         try {
             final String ip = conn.getRemoteSocketAddress().toString();
             final JSONObject request, response = new JSONObject();

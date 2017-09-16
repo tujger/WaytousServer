@@ -25,8 +25,7 @@ var urlsToCache = [
     "/icons/favicon-32x32.png",
     "/icons/favicon-16x16.png",
     "/icons/favicon-194x194.png",
-    "/icons/favicon.ico",
-
+    "/icons/favicon.ico"
 ];
 
 self.addEventListener("install", function(event) {

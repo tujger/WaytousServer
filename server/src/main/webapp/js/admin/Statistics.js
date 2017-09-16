@@ -9,17 +9,11 @@ function Statistics() {
 
     var title = "Statistics";
 
-    var alertArea;
-    var trhead;
     var tableSummaryGroups;
     var tableSummaryUsers;
     var tableMessages;
-    var user;
-    var firebaseToken;
     var div;
-    var groupNodes = {};
     var ref;
-    var chartNode;
     var groupsChart;
     var groupsStat;
     var usersChart;
@@ -43,8 +37,6 @@ function Statistics() {
 
         div = document.getElementsByClassName("layout")[0];
         u.clear(div);
-//        u.create("div", {className:"summary"}, div);
-//        u.create("h2", "Groups", div);
         ref = database.ref();
 
         u.create(HTML.H2, "Summary", div);
@@ -63,12 +55,6 @@ function Statistics() {
                 ]
             }
         }, u.create(HTML.DIV, null, columns));
-//        tableSummaryGroups.add({
-//            cells: [
-//                { className:"th", innerHTML: "Groups" },
-//                { className:"option", innerHTML: 0 }
-//            ]
-//        });
         tableSummaryGroups.groupsCreatedPersistentItem = tableSummaryGroups.add({
             cells: [
                 { className:"th", innerHTML: "New persistent" },
@@ -80,21 +66,21 @@ function Statistics() {
             cells: [
                 { className:"th", innerHTML: "New temporary" },
                 { className:"option", innerHTML: "0" },
-                { className:"option", innerHTML: "0" },
+                { className:"option", innerHTML: "0" }
             ]
         });
         tableSummaryGroups.groupsDeletedItem = tableSummaryGroups.add({
             cells: [
                 { className:"th", innerHTML: "Deleted" },
                 { className:"option", innerHTML: "0" },
-                { className:"option", innerHTML: "0" },
+                { className:"option", innerHTML: "0" }
             ]
         });
         tableSummaryGroups.groupsRejectedItem = tableSummaryGroups.add({
             cells: [
                 { className:"th", innerHTML: "Rejected" },
                 { className:"option", innerHTML: "0" },
-                { className:"option", innerHTML: "0" },
+                { className:"option", innerHTML: "0" }
             ]
         });
 
@@ -115,28 +101,28 @@ function Statistics() {
             cells: [
                 { className:"th", innerHTML: "Joined" },
                 { className:"option", innerHTML: "0" },
-                { className:"option", innerHTML: "0" },
+                { className:"option", innerHTML: "0" }
             ]
         });
         tableSummaryUsers.usersReconnectedItem = tableSummaryUsers.add({
             cells: [
                 { className:"th", innerHTML: "Reconnected" },
                 { className:"option", innerHTML: "0" },
-                { className:"option", innerHTML: "0" },
+                { className:"option", innerHTML: "0" }
             ]
         });
         tableSummaryUsers.usersRejectedItem = tableSummaryUsers.add({
             cells: [
                 { className:"th", innerHTML: "Rejected" },
                 { className:"option", innerHTML: "0" },
-                { className:"option", innerHTML: "0" },
+                { className:"option", innerHTML: "0" }
             ]
         });
 
         groupsChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
         usersChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
 
-       // Create the data table.
+        // Create the data table.
         groupsStat = new google.visualization.DataTable();
         groupsStat.addColumn("string", "Date");
         groupsStat.addColumn("number", "Persistent groups created");
@@ -144,38 +130,24 @@ function Statistics() {
         groupsStat.addColumn("number", "Deleted");
         groupsStat.addColumn("number", "Rejected");
         groupsStat.addRow(["Loading...",0,0,0,0]);
-//        groupsStat.addRows([
-//            ['2004',  1,1,1,1],
-//            ['2005',  2,3,4,2],
-//            ['2006',  1,4,12,2],
-//            ['2007',  5,4,6,23]
-//        ]);
 
         // Set chart options
         groupsChartOptions = {
-                  title: "Groups",
-//                  legend: { position: "bottom" },
-                };
+            title: "Groups"
+        };
 
-       // Create the data table.
+        // Create the data table.
         usersStat = new google.visualization.DataTable();
         usersStat.addColumn("string", "Date");
         usersStat.addColumn("number", "Joined");
         usersStat.addColumn("number", "Reconnected");
         usersStat.addColumn("number", "Rejected");
         usersStat.addRow(["Loading...",0,0,0]);
-//        usersStat.addRows([
-//            ['2004',  1,1,1],
-//            ['2005',  2,3,4],
-//            ['2006',  1,4,1],
-//            ['2007',  5,4,6]
-//        ]);
 
         // Set chart options
         usersChartOptions = {
-                  title: "Users",
-//                  legend: { position: "bottom" },
-                };
+            title: "Users"
+        };
 
         // Instantiate and draw our chart, passing in some options.
         groupsChart = new google.charts.Line(groupsChartNode);
@@ -224,13 +196,13 @@ function Statistics() {
         u.clear(tableMessages.body);
 
         var updateValue = function(node, value) {
-            if(!value) return;
+            if(value == undefined) return;
             value = +value;
             var oldValue = +node.innerHTML;
             if(value != oldValue) {
-                node.updateHTML(value, {noflick: !oldValue});
+                node.updateHTML(""+value, {noflick: !oldValue});
             }
-        }
+        };
 
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_TOTAL).off();
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_TOTAL).on("value", function(data) {
@@ -246,55 +218,55 @@ function Statistics() {
 
         }, function(err) {
             console.err("ERR", err);
-        })
+        });
 
 
         var addValueToChart = function(data) {
-              resign = false;
-              var json = data.val();
+            resign = false;
+            var json = data.val();
 
-              var groupsData = [data.key,0,0,0,0];
-              if(json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT]) {
-                  groupsData[1] = json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT];
-              }
-              if(json[DATABASE.STAT_GROUPS_CREATED_TEMPORARY]) {
-                  groupsData[2] = json[DATABASE.STAT_GROUPS_CREATED_TEMPORARY];
-              }
-              if(json[DATABASE.STAT_GROUPS_DELETED]) {
-                  groupsData[3] = json[DATABASE.STAT_GROUPS_DELETED];
-              }
-              if(json[DATABASE.STAT_GROUPS_REJECTED]) {
-                  groupsData[4] = json[DATABASE.STAT_GROUPS_REJECTED];
-              }
-              var index = groupsStat.getFilteredRows([{column:0, value:data.key}])[0]
-              if(index != undefined) {
-                  var row = groupsStat.getRowProperties(index);
-                  for(var i in groupsData) {
-                      groupsStat.setValue(index, +i, groupsData[i]);
-                  }
-              } else {
-                  groupsStat.addRow(groupsData);
-              }
+            var groupsData = [data.key,0,0,0,0];
+            if(json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT]) {
+                groupsData[1] = json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT];
+            }
+            if(json[DATABASE.STAT_GROUPS_CREATED_TEMPORARY]) {
+                groupsData[2] = json[DATABASE.STAT_GROUPS_CREATED_TEMPORARY];
+            }
+            if(json[DATABASE.STAT_GROUPS_DELETED]) {
+                groupsData[3] = json[DATABASE.STAT_GROUPS_DELETED];
+            }
+            if(json[DATABASE.STAT_GROUPS_REJECTED]) {
+                groupsData[4] = json[DATABASE.STAT_GROUPS_REJECTED];
+            }
+            var index = groupsStat.getFilteredRows([{column:0, value:data.key}])[0]
+            if(index != undefined) {
+                var row = groupsStat.getRowProperties(index);
+                for(var i in groupsData) {
+                    groupsStat.setValue(index, +i, groupsData[i]);
+                }
+            } else {
+                groupsStat.addRow(groupsData);
+            }
 
-              var usersData = [data.key,0,0,0];
-              if(json[DATABASE.STAT_USERS_JOINED]) {
-                  usersData[1] = json[DATABASE.STAT_USERS_JOINED];
-              }
-              if(json[DATABASE.STAT_USERS_RECONNECTED]) {
-                  usersData[2] = json[DATABASE.STAT_USERS_RECONNECTED];
-              }
-              if(json[DATABASE.STAT_USERS_REJECTED]) {
-                  usersData[3] = json[DATABASE.STAT_USERS_REJECTED];
-              }
-              var index = usersStat.getFilteredRows([{column:0, value:data.key}])[0]
-              if(index != undefined) {
-                  var row = usersStat.getRowProperties(index);
-                  for(var i in usersData) {
-                      usersStat.setValue(index, +i, usersData[i]);
-                  }
-              } else {
-                  usersStat.addRow(usersData);
-              }
+            var usersData = [data.key,0,0,0];
+            if(json[DATABASE.STAT_USERS_JOINED]) {
+                usersData[1] = json[DATABASE.STAT_USERS_JOINED];
+            }
+            if(json[DATABASE.STAT_USERS_RECONNECTED]) {
+                usersData[2] = json[DATABASE.STAT_USERS_RECONNECTED];
+            }
+            if(json[DATABASE.STAT_USERS_REJECTED]) {
+                usersData[3] = json[DATABASE.STAT_USERS_REJECTED];
+            }
+            index = usersStat.getFilteredRows([{column:0, value:data.key}])[0]
+            if(index != undefined) {
+                var row = usersStat.getRowProperties(index);
+                for(var i in usersData) {
+                    usersStat.setValue(index, +i, usersData[i]);
+                }
+            } else {
+                usersStat.addRow(usersData);
+            }
 
             google.visualization.events.addOneTimeListener(groupsChart, "ready", function(){
                 usersChart.draw(usersStat, google.charts.Line.convertOptions(usersChartOptions));
@@ -311,7 +283,7 @@ function Statistics() {
                 updateValue(tableSummaryUsers.usersJoinedItem.cells[1], json[DATABASE.STAT_USERS_JOINED]);
                 updateValue(tableSummaryUsers.usersReconnectedItem.cells[1], json[DATABASE.STAT_USERS_RECONNECTED]);
                 updateValue(tableSummaryUsers.usersRejectedItem.cells[1], json[DATABASE.STAT_USERS_REJECTED]);
-           }
+            }
         };
 
         var addValueToChartError = function(e) {
@@ -328,21 +300,21 @@ function Statistics() {
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MESSAGES).on("child_added", function(data) {
             var json = data.val();
             tableMessages.add({
-                  id: data.key,
-                  className: "statistics-row highlight",
-                  tabindex: -1,
+                id: data.key,
+                className: "statistics-row highlight",
+                tabindex: -1,
 //                  onclick: function(){
 //                      WTU.switchTo("/admin/group/"+data.key);
 //                      return false;
 //                  },
-                  cells: [
-                      { innerHTML: data.key },
-                      { className: "media-hidden", innerHTML: json["action"]},
-                      { className: "media-hidden", innerHTML: json["group"] },
-                      { className: "media-hidden", innerHTML: json["user"] },
-                      { innerHTML: json["message"] }
-                  ]
-              });
+                cells: [
+                    { innerHTML: data.key },
+                    { className: "media-hidden", innerHTML: json["action"]},
+                    { className: "media-hidden", innerHTML: json["group"] },
+                    { className: "media-hidden", innerHTML: json["user"] },
+                    { innerHTML: json["message"] }
+                ]
+            });
             messagesCounterNode.innerHTML = +messagesCounterNode.innerHTML + 1;
         }, function(error) {
             console.error("REMOVE",error);
@@ -356,7 +328,7 @@ function Statistics() {
             }
             messagesCounterNode.innerHTML = +messagesCounterNode.innerHTML - 1;
             u.toast.show("Message at "+data.key+" was removed.");
-       }, function(error){
+        }, function(error){
             console.error("REMOVED",error);
 
         })
@@ -371,17 +343,14 @@ function Statistics() {
         u.clear(buttons);
         u.create({className:"question", innerHTML: "All messages will be removed. Continue?"}, buttons);
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
-           renderButtons(buttons);
-           u.toast.show("Messages removing is performing.");
-           u.get("/admin/rest/v1/stat/clean")
-            .then(function(xhr){
-//               WTU.switchTo("/admin/groups");
-            }).catch(function(code,xhr){
-//               console.warn("Resign because of",code,xhr);
-//               WTU.resign(updateData);
-               var res = JSON.parse(xhr.responseText) || {};
-               u.toast.show(res.message || xhr.statusText);
-             });
+            renderButtons(buttons);
+            u.toast.show("Messages removing is performing.");
+            u.get("/admin/rest/v1/stat/clean")
+                .then(function(xhr){
+                }).catch(function(code,xhr){
+                var res = JSON.parse(xhr.responseText) || {};
+                u.toast.show(res.message || xhr.statusText);
+            });
         }}, buttons);
         u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){
             renderButtons(buttons);

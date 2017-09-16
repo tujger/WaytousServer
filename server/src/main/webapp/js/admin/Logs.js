@@ -20,30 +20,30 @@ function Logs() {
 
         var divHeader = u.create({className: "logs-header"}, div)
             .place(HTML.BUTTON, {innerHTML:"Refresh", onclick: function(){
-               updateData();
-           }})
-           .place({ className: "logs-header-label hidden", content: u.create(HTML.DIV)
+                updateData();
+            }})
+            .place({ className: "logs-header-label hidden", content: u.create(HTML.DIV)
                 .place(HTML.DIV, { className: "logs-header-label question", innerHTML: "Clear logs?"})
                 .place(HTML.BUTTON, { className: "question", innerHTML:"Yes, clear logs", onclick: function(){
-                   this.parentNode.parentNode.hide();
-                   this.parentNode.parentNode.nextSibling.classList.remove("hidden");
-                   u.get("/admin/logs/clear")
+                    this.parentNode.parentNode.hide();
+                    this.parentNode.parentNode.nextSibling.classList.remove("hidden");
+                    u.get("/admin/logs/clear")
                         .then(updateData);
                 }})
                 .place(HTML.BUTTON, { innerHTML:"No", onclick: function(){
-                   this.parentNode.parentNode.hide();
-                   this.parentNode.parentNode.nextSibling.classList.remove("hidden");
-               }})
-           })
+                    this.parentNode.parentNode.hide();
+                    this.parentNode.parentNode.nextSibling.classList.remove("hidden");
+                }})
+            })
             .place(HTML.BUTTON, { innerHTML:"Clear logs", onclick: function(){
                 this.previousSibling.classList.add("hidden");
                 this.classList.add("hidden");
                 this.previousSibling.show();
 
             }})
-           .place(HTML.DIV, { className: "logs-header-label", innerHTML: "Autorefresh each, sec"})
-           .place(HTML.INPUT, { className: "logs-header-input", value: 5})
-           .place(HTML.BUTTON, {innerHTML:"Start", onclick: function(){
+            .place(HTML.DIV, { className: "logs-header-label", innerHTML: "Autorefresh each, sec"})
+            .place(HTML.INPUT, { className: "logs-header-input", value: 5})
+            .place(HTML.BUTTON, {innerHTML:"Start", onclick: function(){
                 clearInterval(refreshTask);
                 refreshTask = setInterval(updateData, this.previousSibling.value*1000);
                 this.classList.add("hidden");
@@ -72,7 +72,7 @@ function Logs() {
             placeholder: "Loading..."
         }, div);
 
-    }
+    };
 
 
     function updateData(){
@@ -83,11 +83,11 @@ function Logs() {
             var rows = xhr.response.split("\n");
             for(var i in rows) {
                 table.add({
-                  className: "table-logs-row",
-                  cells: [
-                      { className: "table-logs-row-cell", innerHTML: rows[i] },
-                  ]
-              });
+                    className: "table-logs-row",
+                    cells: [
+                        { className: "table-logs-row-cell", innerHTML: rows[i] },
+                    ]
+                });
             }
             table.body.scrollTop = scroll
         }).catch(function(code,xhr){
@@ -106,7 +106,7 @@ function Logs() {
         icon: "receipt",
         title: title,
         menu: title,
-        move:true,
+        move:true
     }
 }
 

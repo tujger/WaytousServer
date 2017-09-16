@@ -18,8 +18,6 @@ function GpsHolder(main) {
 
 //        u.save("gps:asked");
 //        u.save("gps:allowed");
-
-
     }
 
     function onEvent(EVENT,object){
