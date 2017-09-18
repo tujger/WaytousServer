@@ -1267,7 +1267,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         ref.child(Firebase.SECTION_STAT).child(Firebase.STAT_MESSAGES).child(today).setValue(map);
     }
 
-
     @Override
     public void cleanStatisticsMessages(final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
 
