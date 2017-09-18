@@ -1294,7 +1294,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     private Transaction.Handler incrementValue = new Transaction.Handler() {
         @Override
         public Transaction.Result doTransaction(MutableData mutableData) {
-
             Integer value = mutableData.getValue(Integer.class);
             if (value == null) {
                 value = 0;
@@ -1306,7 +1305,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         @Override
         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
             // Transaction completed
-            Common.log(LOG, "postTransaction:onComplete:" + databaseError);
+            Common.log(LOG, "incrementValue:onComplete:" + databaseError);
         }
     };
 
