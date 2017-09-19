@@ -720,7 +720,7 @@ p.bottom-desc {
 .share-dialog-item-message {
     padding-bottom: 10px;
 }
-.share-dialog-item-button {
+.dialog-item-button {
     display: flex;
     width: 100%;
     justify-content: center;
@@ -729,10 +729,10 @@ p.bottom-desc {
     color: white;
     margin: 1px !important;
 }
-.share-dialog-item-button:hover, .share-dialog-item-button:focus {
+.dialog-item-button:hover/*, .dialog-item-button:focus*/ {
     background-color: #2e5d7d;
 }
-.share-dialog-item-icon {
+.dialog-item-icon {
     font-family: "Material Icons";
     font-feature-settings: "liga" 1;
     font-style: normal;
@@ -773,6 +773,9 @@ p.bottom-desc {
 }
 .wizard-dialog-button-disabled:hover {
     background-color: lightgray;
+}
+.user-profile-dialog {
+    width: 400px;
 }
 
 @media screen and (max-width: 1000px) {

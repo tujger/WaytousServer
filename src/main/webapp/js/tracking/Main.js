@@ -190,6 +190,7 @@ function Main() {
             "/js/tracking/StreetViewHolder",
             "/js/tracking/TrackingHolder",
             "/js/tracking/TrackHolder",
+            "/js/tracking/UserProfileHolder",
 //            "/js/tracking/WelcomeHolder",
 //            "/js/tracking/SampleHolder",
         ] : [

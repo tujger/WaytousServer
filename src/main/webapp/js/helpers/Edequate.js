@@ -3,7 +3,8 @@
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
  * History:
- * 1.3 - sprintf redesigned; table#options.sort=true/false; table#options.filter=true/false
+ * 1.3 - sprintf redesigned; table#options.sort=true/false; table#options.filter=true/false;
+ *       dialog#options.autoclose=true/false
  * 1.2 - HTMLElement#updateHTML(text)
  * 1.1 - some fixes and improvements
  * 1 - initial release
@@ -92,7 +93,8 @@ function Edequate(options) {
         NOT_AN_OBJECT: 2,
         INCORRECT_JSON: 4,
         ERROR_LOADING: 8,
-        ERROR_SENDING_REQUEST: 16
+        ERROR_SENDING_REQUEST: 16,
+        INVALID_MODULE: 32,
     };
     this.ERRORS = ERRORS;
 
@@ -627,10 +629,14 @@ function Edequate(options) {
                 var a;
                 if(needInstantiate) {
                     if(this.instance && window[this.instance] && window[this.instance].constructor === Function) {
-                        a = new window[this.instance](context);
-                        a.moduleName = this.instance;
-                        a.module = this.module;
-                        a.origin = this.origin;
+                        try {
+                            a = new window[this.instance](context);
+                            a.moduleName = this.instance;
+                            a.module = this.module;
+                            a.origin = this.origin;
+                        } catch(e) {
+                            returned.onRejected(ERRORS.INVALID_MODULE, this.instance, e);
+                        }
                     } else {
                         returned.onRejected(ERRORS.NOT_AN_OBJECT, this.instance, e);
                         return;
@@ -771,8 +777,15 @@ function Edequate(options) {
         var dialog = create(HTML.DIV, {
             className:"modal shadow hidden"+(options.className ? " "+options.className : ""),
             tabindex:-1,
-            onblur: options.onblur,
-            onfocus: options.onfocus
+            onblur: function(evt) {
+                if(this._onblur) this._onblur(evt);
+                if(this.autoclose) {
+                    this.close();
+                }
+            },
+            onfocus: options.onfocus,
+            autoclose: options.autoclose,
+            _onblur: options.onblur
         }, appendTo);
         dialog.options = options;
 
@@ -879,7 +892,8 @@ function Edequate(options) {
                 if(item.onclick && item.type != HTML.BUTTON) {
                     var a = item.onclick;
                     item.onclick = function(e) { this.focus(); a.call(this); e.stopPropagation(); };
-                } else {
+                } else if(item.onclick) {
+                } else{
                     item.onclick = function(e) { this.focus(); e.stopPropagation(); };
                 }
                 item.onkeyup = function(e){
@@ -1169,7 +1183,7 @@ function Edequate(options) {
                 dialog.filterButton = u.create(HTML.DIV, {
                     className: "dialog-filter-button notranslate",
                     innerHTML: "search",
-                    onclick: function() {
+                    onclick: function(evt) {
                         dialog.filterButton.hide();
                         dialog.filterInput.classList.remove("hidden");
                         dialog.filterInput.focus();
@@ -1192,6 +1206,10 @@ function Edequate(options) {
                         dialog.filterInput.updateTask = setTimeout(function(){
                             dialog.filterInput.apply();
                         }, 300);
+                    },
+                    onfocus: function(evt) {
+                        evt.preventDefault();
+                        evt.stopPropagation();
                     },
                     onblur: function() {
                         if(!this.value) {

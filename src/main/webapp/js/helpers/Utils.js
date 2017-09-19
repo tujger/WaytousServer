@@ -572,8 +572,13 @@ function Utils(main) {
         return res;
     }
 
+    function brightness(r, g, b){
+        return (r * 299 + g * 587 + b * 114) / 1000
+    }
+
     return {
         showAlert: showAlert,
+        brightness: brightness,
         getHexColor: getHexColor,
         getRGBAColor:getRGBAColor,
         getDecimalColor:getDecimalColor,

@@ -153,7 +153,7 @@ function ShareHolder(main) {
                     });
                     var icon  = u.create(HTML.PATH, facebook_path, u.create(HTML.SVG, facebook_svg)).parentNode;
                     u.create(HTML.BUTTON, {
-                        className: "dialog-button share-dialog-item-button",
+                        className: "dialog-button dialog-item-button",
                         onclick: function() {
                             shareDialog.close();
                             FB.ui({
@@ -166,7 +166,7 @@ function ShareHolder(main) {
                             });
                          }
                     }, shareDialog.itemFacebook).place(HTML.DIV, {
-                        className: "share-dialog-item-icon",
+                        className: "dialog-item-icon",
                         content: icon
                     }).place(HTML.DIV, {
                         innerHTML: u.lang.share_to_facebook
@@ -180,7 +180,7 @@ function ShareHolder(main) {
                     });
                     var icon = u.create(HTML.PATH, twitter_path, u.create(HTML.SVG, twitter_svg)).parentNode;
                     u.create(HTML.BUTTON, {
-                        className: "dialog-button share-dialog-item-button",
+                        className: "dialog-button dialog-item-button",
                         onclick: function() {
                             shareDialog.close();
                             var popup = window.open("https://twitter.com/intent/tweet?text=Way%20to%20us&url="+encodeURIComponent(itemLink.value),"_blank");
@@ -189,7 +189,7 @@ function ShareHolder(main) {
                             });
                          }
                     }, shareDialog.itemTwitter).place(HTML.DIV, {
-                        className: "share-dialog-item-icon",
+                        className: "dialog-item-icon",
                         content: icon
                     }).place(HTML.DIV, {
                         innerHTML: u.lang.share_to_twitter
@@ -203,7 +203,7 @@ function ShareHolder(main) {
                     });
                     var icon = u.create(HTML.PATH, whatsapp_path, u.create(HTML.SVG, whatsapp_svg)).parentNode;
                     u.create(HTML.BUTTON, {
-                        className: "dialog-button share-dialog-item-button",
+                        className: "dialog-button dialog-item-button",
                         onclick: function() {
                             shareDialog.close();
                             var popup = window.open("whatsapp://send?text=Way%20to%20us&body="+encodeURIComponent(itemLink.value),"_blank");
@@ -212,7 +212,7 @@ function ShareHolder(main) {
                             });
                          }
                     }, shareDialog.itemWhatsapp).place(HTML.DIV, {
-                        className: "share-dialog-item-icon",
+                        className: "dialog-item-icon",
                         content: icon
                     }).place(HTML.DIV, {
                         innerHTML: u.lang.share_to_whatsapp
@@ -226,7 +226,7 @@ function ShareHolder(main) {
                     });
                     var icon = u.create(HTML.PATH, telegram_path, u.create(HTML.SVG, telegram_svg)).parentNode;
                     u.create(HTML.BUTTON, {
-                        className: "dialog-button share-dialog-item-button",
+                        className: "dialog-button dialog-item-button",
                         onclick: function() {
                             shareDialog.close();
                             var popup = window.open("https://t.me/share/url?url="+encodeURIComponent(itemLink.value),"_blank");
@@ -235,7 +235,7 @@ function ShareHolder(main) {
                             });
                          }
                     }, shareDialog.itemTelegram).place(HTML.DIV, {
-                        className: "share-dialog-item-icon",
+                        className: "dialog-item-icon",
                         content: icon
                     }).place(HTML.DIV, {
                         innerHTML: u.lang.share_to_telegram
@@ -248,7 +248,7 @@ function ShareHolder(main) {
                         className: "share-dialog-item"
                     });
                     u.create(HTML.BUTTON, {
-                        className: "dialog-button share-dialog-item-button",
+                        className: "dialog-button dialog-item-button",
                         onclick: function() {
                             shareDialog.close();
                             var popup = window.open("mailto:?subject=Way%20to%20us&body="+encodeURIComponent(itemLink.value),"_blank");
@@ -269,7 +269,7 @@ function ShareHolder(main) {
                             });
                          }
                     }, shareDialog.itemShare).place(HTML.DIV, {
-                        className: "share-dialog-item-icon",
+                        className: "dialog-item-icon",
                         innerHTML: "share"
                     }).place(HTML.DIV, {
                         innerHTML: u.lang.share_by_mail

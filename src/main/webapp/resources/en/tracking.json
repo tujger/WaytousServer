@@ -291,6 +291,16 @@
   "i_have_read_and_agree_with_terms_of_service": "I've read and agree with terms of service",
 
 
+  "// UserProfileHolder": "",
+
+  "user_profile": "User Profile",
+  "sign_in_with_facebook": "Sign in with Facebook",
+  "sign_in_with_google": "Sign in with Google",
+  "sign_in_with_twitter": "Sign in with Twitter",
+  "sign_in_with_phone": "Sign in with phone",
+  "sign_in_with_email": "Sign in with e-mail",
+
+
   "// WelcomeHolder": "",
 
   "welcome_help_title_1": "Article 2",
