@@ -212,6 +212,28 @@ h2 {
 .statistics-chart{
     padding: 10px;
 }
+.admin-splash-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: azure;
+}
+.admin-splash-logo {
+    width: 100px;
+    height: 100px;
+}
+.admin-splash-title {
+    font-size: large;
+    font-weight: bold;
+    padding-top: 10px;
+}
+.admin-splash-subtitle {
+
+}
+
 
 @media screen and (max-width: 1000px) {
     button {

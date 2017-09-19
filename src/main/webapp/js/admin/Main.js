@@ -250,18 +250,34 @@ function Main() {
     }
 
     var logout = function() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/admin", true);
-        xhr.setRequestHeader("Authorization", "Digest logout");
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState==4) {
+        u.clear(document.body);
+        u.create(HTML.DIV, {
+            className: "admin-splash-layout"
+        }, document.body).place(HTML.IMG, {
+            className: "admin-splash-logo",
+            src: "/images/waytous-transparent-256.png"
+        }).place(HTML.SPAN, {
+            className: "admin-splash-title",
+            innerHTML: "${APP_NAME} 1.${SERVER_BUILD}"
+        }).place(HTML.SPAN, {
+            className: "admin-splash-subtitle",
+            innerHTML: "Admin"
+        });
 
-                var url = new URL(window.location.href);
-                url = "https://" + url.hostname + (data.HTTPS_PORT == 443 ? "" : ":"+ data.HTTPS_PORT) + "/";
-                window.location = url
-            }
-        }
-        xhr.send();
+        setTimeout(function () {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/admin", true);
+            xhr.setRequestHeader("Authorization", "Digest logout");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState==4) {
+
+                    var url = new URL(window.location.href);
+                    url = "https://" + url.hostname + (data.HTTPS_PORT == 443 ? "" : ":"+ data.HTTPS_PORT) + "/";
+                    window.location = url
+                }
+            };
+            xhr.send();
+        }, 0);
     };
 
     var switchTo = function(to) {

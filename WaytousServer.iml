@@ -11,9 +11,9 @@
       <configuration>
         <option name="HTTP_ADDRESS" value="0.0.0.0" />
         <option name="HTTP_PORT" value="8180" />
-        <option name="WAR_DIR" value="C:\Users\eduardm\AndroidStudioProjects\Waytous\WaytousServer\build\exploded-app" />
-        <option name="WEB_APP_DIR" value="C:\Users\eduardm\AndroidStudioProjects\Waytous\WaytousServer\src\main\webapp" />
-        <option name="APPENGINE_SDKROOT" value="C:\Users\eduardm\.gradle\appengine-sdk\appengine-java-sdk-1.9.54" />
+        <option name="WAR_DIR" value="$MODULE_DIR$/build/exploded-app" />
+        <option name="WEB_APP_DIR" value="$MODULE_DIR$/src/main/webapp" />
+        <option name="APPENGINE_SDKROOT" value="$USER_HOME$/.gradle/appengine-sdk/appengine-java-sdk-1.9.54" />
       </configuration>
     </facet>
     <facet type="android-gradle" name="Android-Gradle">
