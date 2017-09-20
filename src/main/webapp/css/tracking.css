@@ -739,9 +739,10 @@ p.bottom-desc {
     font-size: 16px;
     min-width: 16px;
     padding-right: 5px;
-    color: white;
+    color: black;
     width: 16px;
     height: 16px;
+    filter: invert(100%);
 }
 .wizard-dialog {
     position: absolute;
@@ -777,6 +778,10 @@ p.bottom-desc {
 .user-profile-dialog {
     width: 400px;
 }
+.icon-whatsapp {
+    fill: white;
+}
+
 
 @media screen and (max-width: 1000px) {
 
@@ -784,6 +789,10 @@ p.bottom-desc {
         position: absolute;
         padding-top:15px;
         padding-left: 52px;
+    }
+    .actionbar-label {
+        filter: drop-shadow(1px 1px gray);
+        mix-blend-mode: difference;
     }
     .alert {
         margin: 0px;

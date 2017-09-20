@@ -480,7 +480,7 @@ function Edequate(options) {
                             if(properties[x] instanceof HTMLElement) {
                                 el.appendChild(properties[x]);
                             } else if(typeof properties[x] === "string") {
-                                properties[x] = properties[x].replace(/\$\{(\w+)\}/g, function(x,y){return u.lang[y] ? u.lang[y].outerHTML : y})
+                                properties[x] = properties[x].replace(/\$\{(\w+)\}/g, function(x,y){return lang[y] ? lang[y].outerHTML : y})
                                 el[x] = properties[x];
                             } else {
                                 el[x] = properties[x];
@@ -862,7 +862,7 @@ function Edequate(options) {
                     value:item.value || ""
                 }, div);
                 for(var y in item.values) {
-                    u.create(HTML.OPTION, {value:y, innerHTML:item.values[y], selected: item.default == y}, x);
+                    create(HTML.OPTION, {value:y, innerHTML:item.values[y], selected: item.default == y}, x);
                 }
             } else {
                 item.itemClassName = "dialog-item dialog-item-input" + (item.itemClassName ? " " + item.itemClassName : "");
@@ -975,7 +975,7 @@ function Edequate(options) {
         };
 
         if(options.modal) {
-            modalBackground = modalBackground || u.create(HTML.DIV, {className:"dim"}, appendTo);
+            modalBackground = modalBackground || create(HTML.DIV, {className:"dim"}, appendTo);
             dialog.modal = modalBackground;
         }
 
@@ -1176,11 +1176,10 @@ function Edequate(options) {
             }
 
             if(options.title.filter) {
-                dialog.filterPlaceholder = u.create(HTML.DIV, {className:"dialog-items hidden", innerHTML:"Nothing found"}, dialog);
-                dialog.filterLayout = u.create(HTML.DIV, {
+                dialog.filterLayout = create(HTML.DIV, {
                     className: "dialog-filter"
                 }, titleLayout);
-                dialog.filterButton = u.create(HTML.DIV, {
+                dialog.filterButton = create(HTML.DIV, {
                     className: "dialog-filter-button notranslate",
                     innerHTML: "search",
                     onclick: function(evt) {
@@ -1189,7 +1188,7 @@ function Edequate(options) {
                         dialog.filterInput.focus();
                     }
                 }, dialog.filterLayout);
-                dialog.filterInput = u.create(HTML.INPUT, {
+                dialog.filterInput = create(HTML.INPUT, {
                     className: "dialog-filter-input hidden",
                     tabindex: -1,
                     onkeyup: function(evt) {
@@ -1247,7 +1246,7 @@ function Edequate(options) {
                         }
                     }
                 }, dialog.filterLayout);
-                dialog.filterClear = u.create(HTML.DIV, {
+                dialog.filterClear = create(HTML.DIV, {
                     className: "dialog-filter-clear hidden notranslate",
                     innerHTML: "clear",
                     onclick: function() {
@@ -1260,15 +1259,20 @@ function Edequate(options) {
 
         }
 
-        if(options.header) {
-            var item = options.header;
+        dialog.header = create(HTML.DIV, {className:"hidden"}, dialog);
+        dialog.setHeader = function(item) {
             item.className = "dialog-header" + (item.className ? " " + item.className : "");
             item.innerHTML = item.label || item.title || item.innerHTML || "";
             delete item.label;
             delete item.title;
             var type = item.type;
             delete item.type;
-            dialog.header = create(type, item, dialog);
+            var node = create(type, item);
+            dialog.header.parentNode.replaceChild(node, dialog.header);
+            dialog.header = node;
+        };
+        if(options.header) {
+            dialog.setHeader(options.header);
         }
 
         dialog.itemsLayout = create(HTML.DIV, {className:"dialog-items" +(options.itemsClassName ? " "+options.itemsClassName : "")}, dialog);
@@ -1276,17 +1280,26 @@ function Edequate(options) {
             var item = options.items[i];
             dialog.addItem(item);
         }
+
+        if(options.title && options.title.filter) {
+            dialog.filterPlaceholder = create(HTML.DIV, {className: "dialog-items hidden",innerHTML: "Nothing found"}, dialog);
+        }
         dialog.items = items;
 
-        if(options.footer) {
-            var item = options.footer;
+        dialog.footer = create(HTML.DIV, {className:"hidden"}, dialog);
+        dialog.setFooter = function(item) {
             item.className = "dialog-footer" + (item.className ? " " + item.className : "");
             item.innerHTML = item.label || item.title || item.innerHTML || "";
             delete item.label;
             delete item.title;
             var type = item.type;
             delete item.type;
-            dialog.footer = create(type, item, dialog);
+            var node = create(type, item, dialog);
+            dialog.footer.parentNode.replaceChild(node, dialog.footer);
+            dialog.footer = node;
+        };
+        if(options.footer) {
+            dialog.setFooter(options.footer);
         }
 
         var buttons = create(HTML.DIV, {className:"dialog-buttons hidden" + (options.buttonsClassName ? " " + options.buttonsClassName : "")}, dialog);
@@ -2168,7 +2181,7 @@ function Edequate(options) {
             }
 
             if((options.filter == undefined || options.filter) || (options.sort == undefined || options.sort)) {
-                table.resetButton = u.create(HTML.DIV, {
+                table.resetButton = create(HTML.DIV, {
                     className: "table-reset-button notranslate",
                     innerHTML: "clear_all",
                     title: "Reset customizations",
@@ -2193,11 +2206,11 @@ function Edequate(options) {
 
             if(options.filter == undefined || options.filter) {
 
-                table.filterLayout = u.create(HTML.DIV, {
+                table.filterLayout = create(HTML.DIV, {
                     className: "table-filter"
                 }, table);
 
-                table.filterButton = u.create(HTML.DIV, {
+                table.filterButton = create(HTML.DIV, {
                     className: "table-filter-button notranslate",
                     innerHTML: "search",
                     title: "Filter",

@@ -92,12 +92,13 @@ function TrackingHolder(main) {
                     main.fire(EVENTS.TRACKING_NEW);
                 });
                 drawerItemNew.hide();
-                drawerItemExit = object.add(DRAWER.SECTION_LAST,EVENTS.TRACKING_STOP, u.lang.exit_group,"clear",function(){
+                drawerItemExit = object.add(DRAWER.SECTION_LAST,EVENTS.TRACKING_STOP, u.lang.exit_group,"exit_to_app",function(){
                     main.fire(EVENTS.TRACKING_STOP);
                 });
                 drawerItemExit.hide();
                 break;
             case EVENTS.MAP_READY:
+console.log("CURRENTUSER:",firebase.auth().currentUser);
                 drawerItemNew.show();
                 var path = window.location.pathname.split("/");
                 var group = path[2];

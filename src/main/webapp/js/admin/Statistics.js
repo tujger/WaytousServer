@@ -122,45 +122,22 @@ function Statistics() {
         groupsChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
         usersChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
 
-        // Create the data table.
-        groupsStat = new google.visualization.DataTable();
-        groupsStat.addColumn("string", "Date");
-        groupsStat.addColumn("number", "Persistent groups created");
-        groupsStat.addColumn("number", "Temporary groups created");
-        groupsStat.addColumn("number", "Deleted");
-        groupsStat.addColumn("number", "Rejected");
-        groupsStat.addRow(["Loading...",0,0,0,0]);
-
-        // Set chart options
-        groupsChartOptions = {
-            title: "Groups"
-        };
-
-        // Create the data table.
-        usersStat = new google.visualization.DataTable();
-        usersStat.addColumn("string", "Date");
-        usersStat.addColumn("number", "Joined");
-        usersStat.addColumn("number", "Reconnected");
-        usersStat.addColumn("number", "Rejected");
-        usersStat.addRow(["Loading...",0,0,0]);
-
-        // Set chart options
-        usersChartOptions = {
-            title: "Users"
-        };
-
-        // Instantiate and draw our chart, passing in some options.
-        groupsChart = new google.charts.Line(groupsChartNode);
-        google.visualization.events.addOneTimeListener(groupsChart, "ready", function(){
-            groupsStat.removeRow(0);
-            usersChart = new google.charts.Line(usersChartNode);
-            google.visualization.events.addOneTimeListener(usersChart, "ready", function(){
-                usersStat.removeRow(0);
-                updateData();
-            });
-            usersChart.draw(usersStat);
-        });
-        groupsChart.draw(groupsStat);
+        /*
+                // Instantiate and draw our chart, passing in some options.
+                groupsChart = new google.visualization.LineChart(groupsChartNode);
+                //groupsChart = new google.charts.Line(groupsChartNode);
+                google.visualization.events.addOneTimeListener(groupsChart, "ready", function(){
+                    groupsStat.removeRow(0);
+                    usersChart = new google.visualization.LineChart(groupsChartNode);
+                    //usersChart = new google.charts.Line(usersChartNode);
+                    google.visualization.events.addOneTimeListener(usersChart, "ready", function(){
+                        usersStat.removeRow(0);
+                        updateData();
+                    });
+                    usersChart.draw(usersStat, usersChartOptions);
+                });
+                groupsChart.draw(groupsStat, groupsChartOptions);
+        */
 
 
         var node = u.create(HTML.H2, null, div);
@@ -185,6 +162,51 @@ function Statistics() {
         }, div);
 
         u.create("br", null, div);
+
+        // Create the data table.
+        groupsStat = new google.visualization.DataTable();
+        groupsStat.addColumn("string", "Date");
+        groupsStat.addColumn("number", "Persistent groups created");
+        groupsStat.addColumn("number", "Temporary groups created");
+        groupsStat.addColumn("number", "Deleted");
+        groupsStat.addColumn("number", "Rejected");
+        groupsStat.addRow(["Loading...",0,0,0,0]);
+
+        // Set chart options
+        groupsChartOptions = {
+            title: "Groups",
+            legend: { position: 'bottom', alignment: 'start' }
+        };
+
+        // Create the data table.
+        usersStat = new google.visualization.DataTable();
+        usersStat.addColumn("string", "Date");
+        usersStat.addColumn("number", "Joined");
+        usersStat.addColumn("number", "Reconnected");
+        usersStat.addColumn("number", "Rejected");
+        usersStat.addRow(["Loading...",0,0,0]);
+
+        // Set chart options
+        usersChartOptions = {
+            title: "Users",
+            legend: { position: 'bottom', alignment: 'start' }
+        };
+
+        // Instantiate and draw our chart, passing in some options.
+        groupsChart = new google.visualization.LineChart(groupsChartNode);
+        //groupsChart = new google.charts.Line(groupsChartNode);
+        google.visualization.events.addOneTimeListener(groupsChart, "ready", function(){
+            groupsStat.removeRow(0);
+            usersChart = new google.visualization.LineChart(usersChartNode);
+            //usersChart = new google.charts.Line(usersChartNode);
+            google.visualization.events.addOneTimeListener(usersChart, "ready", function(){
+                usersStat.removeRow(0);
+                updateData();
+            });
+            usersChart.draw(usersStat, usersChartOptions);
+        });
+        groupsChart.draw(groupsStat, groupsChartOptions);
+
     }
 
 
@@ -269,9 +291,9 @@ function Statistics() {
             }
 
             google.visualization.events.addOneTimeListener(groupsChart, "ready", function(){
-                usersChart.draw(usersStat, google.charts.Line.convertOptions(usersChartOptions));
+                usersChart.draw(usersStat, usersChartOptions);
             });
-            groupsChart.draw(groupsStat, google.charts.Line.convertOptions(groupsChartOptions));
+            groupsChart.draw(groupsStat, groupsChartOptions);
 
             var date = new Date();
             date = "%04d-%02d-%02d".sprintf(date.getFullYear(), date.getMonth()+1, date.getDate());

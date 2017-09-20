@@ -59,11 +59,16 @@ function TrackingFB(main) {
         }
 
         if(ref) {
-            ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).update(updates).catch(function (error) {
-                console.error(error);
-            });
+            ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).update(updates)
+                .then(function() {
+                    ref.database.goOffline();
+                })
+                .catch(function (error) {
+                    console.error(error);
+                    ref.database.goOffline();
+                });
         }
-        firebase.auth().signOut();
+        //firebase.auth().signOut();
         window.removeEventListener("focus", updateActive);
         document.removeEventListener("visibilitychange", updateActive);
         trackingListener.onStop();
