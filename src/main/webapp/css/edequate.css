@@ -245,6 +245,8 @@ button:active {
     color: gray;
 }
 .dialog-header {
+    padding: 10px;
+    text-align: center;
 }
 .dialog-items {
     padding: 10px;
@@ -932,8 +934,6 @@ button:active {
     .actionbar-label {
         align-self: center;
         padding-left: 50px;
-        filter: drop-shadow(1px 1px gray);
-        mix-blend-mode: difference;
     }
     .actionbar-label-title {
         font-size: 16px;
