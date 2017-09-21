@@ -1027,9 +1027,9 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         }).start();
 
         /*try {
-            System.out.println("https://waytous-beta.firebaseio.com/.json?shallow=true&print=pretty&auth="+SENSITIVE.getFirebaseWebApiKey());
+            System.out.println("https://waytous-beta.firebaseio.com/.json?shallow=true&print=pretty&auth="+SENSITIVE.getFirebaseApiKey());
 
-            String res = Utils.getUrl("https://waytous-beta.firebaseio.com/.json?shallow=true&print=pretty&auth="+SENSITIVE.getFirebaseWebApiKey(),"UTF-8");
+            String res = Utils.getUrl("https://waytous-beta.firebaseio.com/.json?shallow=true&print=pretty&auth="+SENSITIVE.getFirebaseApiKey(),"UTF-8");
 
             JSONObject groups = new JSONObject(res);
 
