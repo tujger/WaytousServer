@@ -131,6 +131,7 @@ war {
     it.dependsOn minifyAllJS
 //    exclude '**/*.js'
 
+//    print "TYPE ${buildType}"
     print "Final stage...\n"
 }
 
