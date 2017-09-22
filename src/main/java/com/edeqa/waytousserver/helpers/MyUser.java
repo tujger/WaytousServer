@@ -13,7 +13,9 @@ import static com.edeqa.waytous.Constants.REQUEST_DEVICE_ID;
 import static com.edeqa.waytous.Constants.REQUEST_MANUFACTURER;
 import static com.edeqa.waytous.Constants.REQUEST_MODEL;
 import static com.edeqa.waytous.Constants.REQUEST_OS;
+import static com.edeqa.waytous.Constants.REQUEST_SIGN_PROVIDER;
 import static com.edeqa.waytous.Constants.REQUEST_TIMESTAMP;
+import static com.edeqa.waytous.Constants.REQUEST_USER_ID;
 import static com.edeqa.waytous.Constants.USER_ACCURACY;
 import static com.edeqa.waytous.Constants.USER_ALTITUDE;
 import static com.edeqa.waytous.Constants.USER_BEARING;
@@ -39,9 +41,11 @@ public class MyUser {
 //    private ArrayList<MyPosition> positions;
     transient private MyPosition position;
     private String deviceId;
+    private String userId;
     private String control;
     private String model;
     private String manufacturer;
+    private String signProvider;
     private String os;
 
 
@@ -63,6 +67,8 @@ public class MyUser {
         if (request.has(REQUEST_MANUFACTURER)) setManufacturer(request.getString(REQUEST_MANUFACTURER));
         if (request.has(REQUEST_MODEL)) setModel(request.getString(REQUEST_MODEL));
         if (request.has(REQUEST_OS)) setOs(request.getString(REQUEST_OS));
+        if (request.has(REQUEST_USER_ID)) setUserId(request.getString(REQUEST_USER_ID));
+        if (request.has(REQUEST_SIGN_PROVIDER)) setSignProvider(request.getString(REQUEST_SIGN_PROVIDER));
         if (request.has(USER_NAME)) setName(request.getString(USER_NAME));
 
     }
@@ -127,10 +133,12 @@ public class MyUser {
         this.os = os;
     }
 
+    @Override
     public String toString() {
         String res = "";
         res += "number:" + number;
         res += ", deviceId:" + deviceId;
+        if (userId != null) res += ", userId:" + userId;
         res += ", address:" + connection.getRemoteSocketAddress();
         res += ", created:" + getCreated() + "/" + new Date(getCreated()).toString();
         res += ", changed:" + getChanged() + "/" + new Date(getChanged()).toString();
@@ -234,6 +242,22 @@ public class MyUser {
 
     public void setChanged() {
         changed = new Date().getTime();
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getSignProvider() {
+        return signProvider;
+    }
+
+    public void setSignProvider(String signProvider) {
+        this.signProvider = signProvider;
     }
 
     public class MyPosition {

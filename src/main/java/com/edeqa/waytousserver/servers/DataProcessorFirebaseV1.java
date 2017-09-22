@@ -60,8 +60,10 @@ import static com.edeqa.waytous.Constants.REQUEST_KEY;
 import static com.edeqa.waytous.Constants.REQUEST_MODEL;
 import static com.edeqa.waytous.Constants.REQUEST_NEW_GROUP;
 import static com.edeqa.waytous.Constants.REQUEST_OS;
+import static com.edeqa.waytous.Constants.REQUEST_SIGN_PROVIDER;
 import static com.edeqa.waytous.Constants.REQUEST_TIMESTAMP;
 import static com.edeqa.waytous.Constants.REQUEST_TOKEN;
+import static com.edeqa.waytous.Constants.REQUEST_USER_ID;
 import static com.edeqa.waytous.Constants.RESPONSE_CONTROL;
 import static com.edeqa.waytous.Constants.RESPONSE_MESSAGE;
 import static com.edeqa.waytous.Constants.RESPONSE_NUMBER;
@@ -418,6 +420,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                 update.put(Firebase.USER_ACTIVE, true);
                                                 update.put(Firebase.USER_COLOR, Utils.selectColor((int) check.getNumber()));
                                                 update.put(Firebase.USER_CHANGED, new Date().getTime());
+                                                System.out.println("SIGNPROVIDER2:"+check.getUser().getSignProvider());
                                                 if (check.getName() != null && check.getName().length() > 0) {
                                                     update.put(USER_NAME, check.getName());
                                                 }
@@ -708,8 +711,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
         user.setColor(Utils.selectColor(user.getNumber()));
 
-        final String uid = Misc.getEncryptedHash(user.getDeviceId());
-
         final Map<String, Object> childUpdates = new HashMap<>();
 
         Map<String, Object> o = new HashMap<>();
@@ -728,6 +729,15 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         o.put(REQUEST_MODEL, user.getModel());
         o.put(REQUEST_DEVICE_ID, user.getDeviceId());
         o.put(REQUEST_OS, user.getOs());
+        if(user.getSignProvider() != null) o.put(REQUEST_SIGN_PROVIDER, user.getSignProvider());
+
+        System.out.println("SIGNPROVIDER:"+user.getSignProvider());
+        final String uid;
+        if(user.getUserId() != null && user.getUserId().length() > 0) {
+            uid = user.getUserId();
+        } else {
+            uid = Misc.getEncryptedHash(user.getDeviceId());
+        }
         o.put(REQUEST_KEY, uid);
         childUpdates.put(Firebase.SECTION_USERS_DATA_PRIVATE + "/" + user.getNumber(), o);
 

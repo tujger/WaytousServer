@@ -265,7 +265,8 @@ function Group() {
                     { label: "Created", className: "media-hidden" },
                     { label: "Updated" },
                     { label: "Platform", className: "media-hidden" },
-                    { label: "Device", className: "media-hidden" }
+                    { label: "Device", className: "media-hidden" },
+                    { label: "Sign provider", className: "media-hidden" }
                 ]
             },
             placeholder: "Loading..."
@@ -366,6 +367,7 @@ function Group() {
                     { className: "media-hidden", sort: snapshot.val()[DATABASE.USER_CREATED], innerHTML: snapshot.val()[DATABASE.USER_CREATED] ? new Date(snapshot.val()[DATABASE.USER_CREATED]).toLocaleString() : "&#150;" },
                     { sort: 0, innerHTML: "..." },
                     { className: "media-hidden", innerHTML: "..." },
+                    { className: "media-hidden", innerHTML: "..." },
                     { className: "media-hidden", innerHTML: "..." }
                 ]
             });
@@ -373,6 +375,7 @@ function Group() {
             var userChangedNode = row.cells[4];
             var userOsNode = row.cells[5];
             var userDeviceNode = row.cells[6];
+            var userSignProviderNode = row.cells[7];
 
             tableSummary.usersNode.lastChild.innerHTML = +tableSummary.usersNode.lastChild.innerHTML + 1;
             if(snapshot.val()[DATABASE.USER_ACTIVE]) {
@@ -445,8 +448,9 @@ function Group() {
             });
             ref.child(groupId).child(DATABASE.SECTION_USERS_DATA_PRIVATE).child(userNumber).once("value").then(function(snapshot){
                 if(!snapshot.val()) return;
-                userOsNode.innerHTML = snapshot.val().os;
-                userDeviceNode.innerHTML = snapshot.val().model;
+                userOsNode.innerHTML = snapshot.val()[REQUEST.OS];
+                userDeviceNode.innerHTML = snapshot.val()[REQUEST.MODEL];
+                userSignProviderNode.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous";
                 tableUsers.update();
             }).catch(function(error){
                 if(!reload) {

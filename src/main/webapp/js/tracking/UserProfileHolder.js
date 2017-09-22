@@ -11,14 +11,23 @@ function UserProfileHolder(main) {
 
     var type = "user";
     var profileDialog;
-    var userId;
     var user;
+    var userBackup;
+    var resign;
+    var placeholder;
 
     function start() {
         console.log("USERPROFILEHOLDER", this);
 
-        userId = u.load("userprofile:id");
-
+        placeholder = u.create(HTML.DIV, {className:"dialog-dim hidden"}, document.body);
+        u.dialog({
+            queue: true,
+            className: "progress-dialog",
+            items: [
+                { type: HTML.DIV, className: "progress-dialog-circle" },
+                { type: HTML.DIV, className: "progress-dialog-title", innerHTML: "Waiting for signing in..." }
+            ]
+        }, placeholder).show();
     }
 
     function onEvent(EVENT,object){
@@ -27,48 +36,6 @@ function UserProfileHolder(main) {
             case EVENTS.CREATE_DRAWER:
                 var menuItem = object.add(DRAWER.SECTION_MISCELLANEOUS, EVENT.SAMPLE_EVENT, u.lang.user_profile, "person", function(){
                     main.fire(EVENTS.SHOW_USER_PROFILE);
-                    console.log("USERPROFILEEVENTDRAWERCALLBACK", EVENT);
-                });
-//                menuItem.classList.add("disabled");
-                break;
-            /*case EVENTS.CREATE_CONTEXT_MENU:
-                var user = this;
-                if(user) {
-                    object.add(MENU.SECTION_PRIMARY, "USERPROFILE:AAAAAA", u.lang.sample_menu, "person", function () {
-//                        u.save("sample:show:"+user.number, true);
-                        console.log("USERPROFILEEVENTMENUCALLBACK", user);
-                    });
-                }
-                break;*/
-            case EVENTS.MAP_READY:
-                firebase.auth().onAuthStateChanged(function(userOptions) {
-                    if (userOptions) {
-                        user = userOptions;
-                        // User is signed in.
-                        var displayName = user.displayName;
-                        var email = user.email;
-                        var emailVerified = user.emailVerified;
-                        var photoURL = user.photoURL;
-                        var isAnonymous = user.isAnonymous;
-                        userId = user.uid;
-                        var providerData = user.providerData;
-                        console.log("AUTH:",user.toJSON());
-
-                        //u.save("uuid", userId);
-                        //initProfileDialog("email");
-
-                        user.providerData.forEach(function (profile) {
-                            console.log("Sign-in provider: "+profile.providerId);
-                            console.log("  Provider-specific UID: "+profile.uid);
-                            console.log("  Name: "+profile.displayName);
-                            console.log("  Email: "+profile.email);
-                            console.log("  Photo URL: "+profile.photoURL);
-                        });
-
-                    } else {
-                        console.log("OUT:");
-                        // User is signed out.
-                    }
                 });
                 break;
             case EVENTS.SHOW_USER_PROFILE:
@@ -166,37 +133,39 @@ function UserProfileHolder(main) {
             default:
 
                 profileDialog.clearItems();
-                if(main.tracking && main.tracking.getStatus() != EVENTS.TRACKING_DISABLED) {
-                    profileDialog.setHeader({
-                        type: HTML.DIV,
-                        innerHTML: "You must exit group to be able sign in with other login."
-                    });
-                    profileDialog.addItem({
-                        content: u.create(HTML.BUTTON, {
-                            className:"dialog-button dialog-item-button",
-                            onclick: function() {
-                                main.fire(EVENTS.TRACKING_STOP);
-                            }
-                        }).place(HTML.DIV, {
-                            className: "dialog-item-icon",
-                            innerHTML: "exit_to_app"
-                        }).place(HTML.DIV, {
-                            innerHTML: u.lang.exit_group
-                        })
-                    });
-                    break;
-                }
+                //if(main.tracking && main.tracking.getStatus() != EVENTS.TRACKING_DISABLED) {
+                //    profileDialog.setHeader({
+                //        type: HTML.DIV,
+                //        innerHTML: "You must exit group to be able sign in with other login."
+                //    });
+                //    profileDialog.addItem({
+                //        content: u.create(HTML.BUTTON, {
+                //            className:"dialog-button dialog-item-button",
+                //            onclick: function() {
+                //                main.fire(EVENTS.TRACKING_STOP);
+                //            }
+                //        }).place(HTML.DIV, {
+                //            className: "dialog-item-icon",
+                //            innerHTML: "exit_to_app"
+                //        }).place(HTML.DIV, {
+                //            innerHTML: u.lang.exit_group
+                //        })
+                //    });
+                //    break;
+                //}
                 profileDialog.addItem({
                     content: u.create(HTML.BUTTON, {
                         className:"dialog-button dialog-item-button",
                         onclick: function() {
-                            console.log("LOGIN FACEBOOK", this);
 
-                            var provider = new firebase.auth.FacebookAuthProvider();
-                            provider.setCustomParameters({
-                                'display': 'popup'
+                            signOtherLogin(function() {
+                                console.log("LOGIN FACEBOOK", this);
+                                var provider = new firebase.auth.FacebookAuthProvider();
+                                provider.setCustomParameters({
+                                    display: "popup"
+                                });
+                                firebase.auth().signInWithPopup(provider).then(onAuthStateChanged).catch(onAuthStateError);
                             });
-                            firebase.auth().signInWithPopup(provider);
 
                             //initProfileDialog("facebook");
                         }
@@ -211,10 +180,14 @@ function UserProfileHolder(main) {
                     content: u.create(HTML.BUTTON, {
                         className:"dialog-button dialog-item-button",
                         onclick: function() {
-                            console.log("LOGIN GOOGLE", this);
 
-                            var provider = new firebase.auth.GoogleAuthProvider();
-                            firebase.auth().signInWithPopup(provider)/*.then(function(result) {
+                            signOtherLogin(function() {
+                                console.log("LOGIN GOOGLE", this);
+
+                                var provider = new firebase.auth.GoogleAuthProvider();
+                                firebase.auth().signInWithPopup(provider).then(onAuthStateChanged).catch(onAuthStateError);
+                            });
+                            /*.then(function(result) {
                                 // This gives you a Google Access Token. You can use it to access the Google API.
                                 var token = result.credential.accessToken;
                                 // The signed-in user info.
@@ -243,10 +216,12 @@ function UserProfileHolder(main) {
                     content: u.create(HTML.BUTTON, {
                         className:"dialog-button dialog-item-button",
                         onclick: function() {
-                            console.log("LOGIN TWITTER", this);
+                            signOtherLogin(function() {
+                                console.log("LOGIN TWITTER", this);
 
-                            var provider = new firebase.auth.TwitterAuthProvider();
-                            firebase.auth().signInWithPopup(provider);
+                                var provider = new firebase.auth.TwitterAuthProvider();
+                                firebase.auth().signInWithPopup(provider).then(onAuthStateChanged).catch(onAuthStateError);
+                            });
                         }
                     }).place(HTML.DIV, {
                         className: "dialog-item-icon",
@@ -259,13 +234,10 @@ function UserProfileHolder(main) {
                     content: u.create(HTML.BUTTON, {
                         className:"dialog-button dialog-item-button",
                         onclick: function() {
-                            console.log("LOGIN EMAIL", this);
-                            firebase.auth().createUserWithEmailAndPassword("test1@gmail.com", "testpassword").catch(function(error) {
-                                // Handle Errors here.
-                                var errorCode = error.code;
-                                var errorMessage = error.message;
-                                // ...
-                                console.log("ERROR:"+error);
+                            signOtherLogin(function() {
+                                console.log("LOGIN EMAIL", this);
+
+                                firebase.auth().signInWithEmailAndPassword("test1@gmail.com", "testpassword").then(onAuthStateChanged).catch(onAuthStateError);
                             });
                         }
                     }).place(HTML.DIV, {
@@ -290,7 +262,81 @@ function UserProfileHolder(main) {
                 });
                 break;
         }
+    }
 
+    function signOtherLogin(signProcedureCallback) {
+        placeholder.show(HIDING.OPACITY);
+        if(main.tracking && main.tracking.getStatus() != EVENTS.TRACKING_DISABLED) {
+            resign = true;
+            main.tracking.stop(function(e){
+                console.log("STOPPED");
+            });
+        }
+        signProcedureCallback();
+    }
+
+    function onAuthStateChanged(result) {
+        placeholder.hide(HIDING.OPACITY);
+        if (result) {
+            try {
+                var user = result.user.toJSON();
+                // User is signed in.
+                var displayName = user.displayName;
+                var email = user.email;
+                var emailVerified = user.emailVerified;
+                var photoURL = user.photoURL;
+                var isAnonymous = user.isAnonymous;
+                var providerData = user.providerData;
+                console.log("AUTH:", user);
+
+                u.save("uuid", utils.getEncryptedHash(user.uid));
+                u.save("uid", user.uid);
+                //initProfileDialog("email");
+
+                user.providerData.forEach(function (profile) {
+                    u.save(REQUEST.SIGN_PROVIDER, profile.providerId);
+                    console.log("Sign-in provider: " + profile.providerId);
+                    console.log("  Provider-specific UID: " + profile.uid);
+                    console.log("  Name: " + profile.displayName);
+                    console.log("  Email: " + profile.email);
+                    console.log("  Photo URL: " + profile.photoURL);
+                });
+// {uuid: "e30a815be353be517c2f07498c2193aa", uid: null}
+            }catch(e) {
+                console.error(e);
+            }
+        } else {
+            console.log("OUT:");
+            // User is signed out.
+        }
+        if(resign) {
+            window.location = window.location.href;
+            resign = false;
+        }
+    }
+
+    function onAuthStateError(error) {
+        placeholder.hide(HIDING.OPACITY);
+        // Handle Errors here.
+        console.log("ERROR",error);
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        if(resign) {
+            window.location = window.location.href;
+            resign = false;
+        }
+    }
+
+    function saveUid() {
+        userBackup = {
+            uuid: u.load("uuid"),
+            uid: u.load("uid")
+        };
+        console.log(userBackup);
     }
 
     return {

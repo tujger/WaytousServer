@@ -98,7 +98,7 @@ function TrackingHolder(main) {
                 drawerItemExit.hide();
                 break;
             case EVENTS.MAP_READY:
-console.log("CURRENTUSER:",firebase.auth().currentUser);
+//console.log("CURRENTUSER:",firebase.auth().currentUser);
                 drawerItemNew.show();
                 var path = window.location.pathname.split("/");
                 var group = path[2];
@@ -125,6 +125,14 @@ console.log("CURRENTUSER:",firebase.auth().currentUser);
                 break;
             case EVENTS.TRACKING_NEW:
                 startTracking();
+                break;
+            case EVENTS.TRACKING_JOIN:
+                var path = window.location.pathname.split("/");
+                var token = object || path[2];
+                path[2] = token;
+                path = path.join("/");
+                window.history.pushState({}, null, path);
+                startTracking(token);
                 break;
             case EVENTS.TRACKING_ACTIVE:
                 u.context = main.tracking.getToken();
@@ -268,7 +276,7 @@ console.log("CURRENTUSER:",firebase.auth().currentUser);
             window.history.pushState({}, null, a.join("/"));
 //            window.history.pushState({}, null, "/track/" + token);
 
-            main.fire(EVENTS.TRACKING_JOIN, window.location.href);
+            main.fire(EVENTS.TRACKING_RECONNECTING);
             this.tracking.setLink(window.location.href);
             u.saveForContext("group", a[2]);
         } else {

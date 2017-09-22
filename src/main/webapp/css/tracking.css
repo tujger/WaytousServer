@@ -286,15 +286,6 @@ p.bottom-desc {
     padding-left: 10px;
     padding-right: 10px;
 }
-.dim {
-    position: fixed;
-    z-index: 11000;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    background-color: rgba(128, 128, 128, 0.4);
-}
 .progress-dialog {
     min-width: 20%;
     padding-top: 20px;

@@ -445,6 +445,19 @@ button:active {
     height: 10px;
     cursor: se-resize;
 }
+.dialog-dim {
+    position: fixed;
+    z-index: 11000;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(128, 128, 128, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /* Drawer */
 .drawer {
     border-right-style: solid;

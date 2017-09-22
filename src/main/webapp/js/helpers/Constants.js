@@ -73,10 +73,12 @@ function Constants() {
         ADMIN : "admin",
 
         DEVICE_ID : "device_id",
+        USER_ID : "user_id",
         MODEL : "model",
         MANUFACTURER : "manufacturer",
         OS : "os",
         KEY : "key",
+        SIGN_PROVIDER : "sign_provider",
 
         TRACKING : "tracking",
         MESSAGE : "message",

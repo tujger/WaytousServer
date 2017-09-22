@@ -93,6 +93,11 @@ function User() {
             { className: "option", innerHTML: "..." }
         ]});
 
+        tableSummary.userSignProviderNode = tableSummary.add({ cells: [
+            { className: "th", innerHTML: "Sign provider" },
+            { className: "option", innerHTML: "..." }
+        ]});
+
         tableSummary.userLocations = tableSummary.add({ cells: [
             { className: "th", innerHTML: "Locations" },
             { className: "option", innerHTML: 0 }
@@ -147,9 +152,10 @@ function User() {
         ref.child(groupId).child(DATABASE.SECTION_USERS_DATA_PRIVATE).off();
         ref.child(groupId).child(DATABASE.SECTION_USERS_DATA_PRIVATE).child(userNumber).once("value").then(function(snapshot){
             if(!snapshot || !snapshot.val()) return;
-            tableSummary.userOsNode.lastChild.innerHTML = snapshot.val().os;
-            tableSummary.userDeviceNode.lastChild.innerHTML = snapshot.val().model;
-            tableSummary.userKeyNode.lastChild.innerHTML = snapshot.val().key;
+            tableSummary.userOsNode.lastChild.innerHTML = snapshot.val()[REQUEST.OS];
+            tableSummary.userDeviceNode.lastChild.innerHTML = snapshot.val()[REQUEST.MODEL];
+            tableSummary.userSignProviderNode.lastChild.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER];
+            tableSummary.userKeyNode.lastChild.innerHTML = snapshot.val()[REQUEST.KEY];
         }).catch(function(error){
             console.warn("Resign because of",error.message);
             WTU.resign(updateSummary);
@@ -161,11 +167,11 @@ function User() {
 
             tableSummary.placeholder.hide();
 
-            tableSummary.userNameNode.lastChild.innerHTML = snapshot.val().name || "&lt;Friend "+userNumber+"&gt;";
-            tableSummary.userActiveNode.lastChild.innerHTML = snapshot.val().active ? "Yes" : "No";
-            tableSummary.userColorNode.lastChild.style.backgroundColor = utils.getHexColor(snapshot.val().color);
-            tableSummary.userCreatedNode.lastChild.innerHTML = snapshot.val().created ? new Date(snapshot.val().created).toLocaleString() : "&#150;";
-            tableSummary.userUpdatedNode.lastChild.innerHTML = snapshot.val().created ? new Date(snapshot.val().changed).toLocaleString() : "&#150;";
+            tableSummary.userNameNode.lastChild.innerHTML = snapshot.val()[DATABASE.USER_NAME] || "&lt;Friend "+userNumber+"&gt;";
+            tableSummary.userActiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.USER_ACTIVE] ? "Yes" : "No";
+            tableSummary.userColorNode.lastChild.style.backgroundColor = utils.getHexColor(snapshot.val()[DATABASE.USER_COLOR]);
+            tableSummary.userCreatedNode.lastChild.innerHTML = snapshot.val()[DATABASE.USER_CREATED] ? new Date(snapshot.val()[DATABASE.USER_CREATED]).toLocaleString() : "&#150;";
+            tableSummary.userUpdatedNode.lastChild.innerHTML = snapshot.val()[DATABASE.USER_CHANGED] ? new Date(snapshot.val()[DATABASE.USER_CHANGED]).toLocaleString() : "&#150;";
 
         },function(error){
             console.warn("Resign because of",error.message);

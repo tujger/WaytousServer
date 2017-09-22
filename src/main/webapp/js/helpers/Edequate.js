@@ -975,7 +975,7 @@ function Edequate(options) {
         };
 
         if(options.modal) {
-            modalBackground = modalBackground || create(HTML.DIV, {className:"dim"}, appendTo);
+            modalBackground = modalBackground || create(HTML.DIV, {className:"dialog-dim"}, appendTo);
             dialog.modal = modalBackground;
         }
 

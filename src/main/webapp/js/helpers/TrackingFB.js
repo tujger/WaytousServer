@@ -45,7 +45,7 @@ function TrackingFB(main) {
 
     }
 
-    function stop(){
+    function stop(callback){
         status = EVENTS.TRACKING_DISABLED;
 
         var updates = {};
@@ -73,8 +73,12 @@ function TrackingFB(main) {
         document.removeEventListener("visibilitychange", updateActive);
         trackingListener.onStop();
 
-        var uri = new URL(serverUri);
-        window.location.href = "/group/";
+        if(callback) {
+            callback(this);
+        } else {
+            //var uri = new URL(serverUri);
+            window.location.href = "/group/";
+        }
 //        window.location.href = "https://" + uri.hostname + (data.HTTPS_PORT == 443 ? "" : ":"+ data.HTTPS_PORT) + "/track/";
     }
 
@@ -83,28 +87,38 @@ function TrackingFB(main) {
         var sendOriginal = send;
         var onopen =  function(event) {
             opened = true;
-            if(newTracking) {
+            if(newTracking) { // create group
                 put(REQUEST.REQUEST, REQUEST.NEW_GROUP);
                 put(REQUEST.DEVICE_ID, utils.getUuid());
-            } else if(reconnect) {
-                var parts = link.split("/");
+                var userId = u.load("uid");
+                if(userId) put(REQUEST.USER_ID, userId);
+            } else if(reconnect) { // reconnect to group
+                parts = link.split("/");
                 var groupId = parts[parts.length-1];
                 setToken(groupId);
 
                 put(REQUEST.REQUEST, REQUEST.JOIN_GROUP);
                 put(REQUEST.TOKEN, groupId);
-            } else {
-                var parts = link.split("/");
-                var groupId = parts[parts.length-1];
+            } else { // join to grouup
+                parts = link.split("/");
+                groupId = parts[parts.length-1];
                 setToken(groupId);
 
                 put(REQUEST.REQUEST, REQUEST.JOIN_GROUP);
                 put(REQUEST.TOKEN, groupId);
                 put(REQUEST.DEVICE_ID, utils.getUuid());
+                userId = u.load("uid");
+                if(userId) put(REQUEST.USER_ID, userId);
             }
             put(REQUEST.MODEL, navigator.appCodeName );
             put(REQUEST.MANUFACTURER, navigator.appCodeName);
             put(REQUEST.OS, navigator.platform);
+
+            var signProvider = u.load(REQUEST.SIGN_PROVIDER) || "anonymous";
+            if(signProvider) {
+                put(REQUEST.SIGN_PROVIDER, signProvider);
+            }
+
             // put("aaa", navigator.appVersion);
             var name = u.load(USER.NAME);
             if(name) put(USER.NAME, name);
