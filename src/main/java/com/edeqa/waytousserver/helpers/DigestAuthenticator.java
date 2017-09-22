@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 
 
 @SuppressWarnings("restriction")
@@ -98,11 +98,11 @@ public class DigestAuthenticator extends Authenticator {
         if (realm == null || realm.length() == 0 || username == null || username.length() == 0) {
             return null;
         }
-        if(!SENSITIVE.getLogin().equals(username)) {
+        if(!OPTIONS.getLogin().equals(username)) {
             return null;
         }
 
-        String password = SENSITIVE.getPassword();//passwords.getProperty(username);
+        String password = OPTIONS.getPassword();//passwords.getProperty(username);
         // FIXME implement check for login and password
         if (password == null) {
             return null;

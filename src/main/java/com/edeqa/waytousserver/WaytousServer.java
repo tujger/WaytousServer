@@ -1,6 +1,6 @@
 package com.edeqa.waytousserver;
 
-import com.edeqa.waytous.SensitiveData;
+import com.edeqa.waytous.Options;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.DigestAuthenticator;
 import com.edeqa.waytousserver.servers.AdminServletHandler;
@@ -32,7 +32,7 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManagerFactory;
 
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 
 
@@ -50,7 +50,7 @@ public class WaytousServer {
     public static void main(final String[] args ) throws Exception {
 
         Common.log(LOG, "====== Waytous server v1."+SERVER_BUILD+". Copyright (C) Edeqa. http://www.edeqa.com ======");
-        SENSITIVE = new SensitiveData(args);
+        OPTIONS = new Options(args);
 
         Common.getInstance().setDataProcessor(new DataProcessorFirebaseV1());
 
@@ -58,15 +58,15 @@ public class WaytousServer {
             throw new RuntimeException("\n\nThis configuration can not be runned in stand-alone server mode. Set the installation type in build.gradle with the following property:\n\tdef installationType = 'standalone-server'\n");
         }
 
-        wsServer = new MyWsServer(SENSITIVE.getWsPortFirebase());
-        wssServer = new MyWsServer(SENSITIVE.getWssPortFirebase());
+        wsServer = new MyWsServer(OPTIONS.getWsPortFirebase());
+        wssServer = new MyWsServer(OPTIONS.getWssPortFirebase());
 
-        Common.log(LOG,"Server web root directory: "+new File(SENSITIVE.getWebRootDirectory()).getCanonicalPath());
+        Common.log(LOG,"Server web root directory: "+new File(OPTIONS.getWebRootDirectory()).getCanonicalPath());
 
-        String storePassword = SENSITIVE.getSSLCertificatePassword();
+        String storePassword = OPTIONS.getSSLCertificatePassword();
 
         KeyStore keyStore = KeyStore.getInstance("JKS");
-        File kf = new File(SENSITIVE.getKeystoreFilename());
+        File kf = new File(OPTIONS.getKeystoreFilename());
 
         Common.log(LOG, "Keystore file: " + kf.getCanonicalPath());
         keyStore.load(new FileInputStream(kf), storePassword.toCharArray());
@@ -89,9 +89,9 @@ public class WaytousServer {
             public void run() {
                 try {
                     WebSocketImpl.DEBUG = false;
-                    Common.log(LOG, "WS FB\t\t\t\t| " + SENSITIVE.getWsPortFirebase() + "\t|");
+                    Common.log(LOG, "WS FB\t\t\t\t| " + OPTIONS.getWsPortFirebase() + "\t|");
                     wsServer.start();
-                    Common.log(LOG, "WSS FB\t\t\t\t| " + SENSITIVE.getWssPortFirebase() + "\t|");
+                    Common.log(LOG, "WSS FB\t\t\t\t| " + OPTIONS.getWssPortFirebase() + "\t|");
                     wssServer.start();
 
                         /*BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
@@ -112,10 +112,10 @@ public class WaytousServer {
         }.start();
 
         HttpServer server = HttpServer.create();
-        server.bind(new InetSocketAddress(SENSITIVE.getHttpPort()), 0);
+        server.bind(new InetSocketAddress(OPTIONS.getHttpPort()), 0);
 
         RedirectHandler redirectServer = new RedirectHandler();
-        Common.log(LOG, "Redirect HTTP\t\t| " + SENSITIVE.getHttpPort() + "\t| " + "/" + (SENSITIVE.getHttpPort() == SENSITIVE.getHttpPortMasked() ? " (masked by "+SENSITIVE.getHttpPortMasked() +")" : ""));
+        Common.log(LOG, "Redirect HTTP\t\t| " + OPTIONS.getHttpPort() + "\t| " + "/" + (OPTIONS.getHttpPort() == OPTIONS.getHttpPortMasked() ? " (masked by "+ OPTIONS.getHttpPortMasked() +")" : ""));
         server.createContext("/", redirectServer);
 
         MainServletHandler mainServer = new MainServletHandler();
@@ -123,15 +123,15 @@ public class WaytousServer {
         TrackingServletHandler trackingServer = new TrackingServletHandler();
         AdminServletHandler adminServer = new AdminServletHandler();
 
-        HttpsServer sslServer = HttpsServer.create(new InetSocketAddress(SENSITIVE.getHttpsPort()), 0);
-        HttpsServer sslAdminServer = HttpsServer.create(new InetSocketAddress(SENSITIVE.getHttpsAdminPort()), 0);
+        HttpsServer sslServer = HttpsServer.create(new InetSocketAddress(OPTIONS.getHttpsPort()), 0);
+        HttpsServer sslAdminServer = HttpsServer.create(new InetSocketAddress(OPTIONS.getHttpsAdminPort()), 0);
 
  /*           SSLContext sslContext = SSLContext.getInstance("TLS");
 
             // initialise the keystore
-            char[] password = SENSITIVE.getSSLCertificatePassword().toCharArray();
+            char[] password = OPTIONS.getSSLCertificatePassword().toCharArray();
             KeyStore ks = KeyStore.getInstance("JKS");
-            FileInputStream fis = new FileInputStream(SENSITIVE.getKeystoreFilename());
+            FileInputStream fis = new FileInputStream(OPTIONS.getKeystoreFilename());
             ks.load(fis, password);
 
             // setup the key manager factory
@@ -186,24 +186,24 @@ public class WaytousServer {
         });
 
         sslServer.createContext("/", mainServer);
-        Common.log(LOG, "Main HTTPS\t\t\t| " + SENSITIVE.getHttpsPort() + "\t| /, /*" + (SENSITIVE.getHttpsPort() == SENSITIVE.getHttpsPortMasked() ? " (masked by "+SENSITIVE.getHttpsPortMasked() +")" : ""));
+        Common.log(LOG, "Main HTTPS\t\t\t| " + OPTIONS.getHttpsPort() + "\t| /, /*" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
 
         sslServer.createContext("/track/", trackingServer);
-        Common.log(LOG, "Tracking HTTPS\t\t| " + SENSITIVE.getHttpsPort() + "\t| /track/" + (SENSITIVE.getHttpsPort() == SENSITIVE.getHttpsPortMasked() ? " (masked by "+SENSITIVE.getHttpsPortMasked() +")" : ""));
+        Common.log(LOG, "Tracking HTTPS\t\t| " + OPTIONS.getHttpsPort() + "\t| /track/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
 
         sslServer.createContext("/group/", trackingServer);
-        Common.log(LOG, "Tracking HTTPS\t\t| " + SENSITIVE.getHttpsPort() + "\t| /group/" + (SENSITIVE.getHttpsPort() == SENSITIVE.getHttpsPortMasked() ? " (masked by "+SENSITIVE.getHttpsPortMasked() +")" : ""));
+        Common.log(LOG, "Tracking HTTPS\t\t| " + OPTIONS.getHttpsPort() + "\t| /group/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
 
         sslServer.createContext("/rest/", restServer);
-        Common.log(LOG, "Rest HTTPS\t\t\t| " + SENSITIVE.getHttpsPort() + "\t| /rest/" + (SENSITIVE.getHttpsPort() == SENSITIVE.getHttpsPortMasked() ? " (masked by "+SENSITIVE.getHttpsPortMasked() +")" : ""));
+        Common.log(LOG, "Rest HTTPS\t\t\t| " + OPTIONS.getHttpsPort() + "\t| /rest/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
 
         sslAdminServer.createContext("/rest/", restServer);
         sslAdminServer.createContext("/", adminServer).setAuthenticator(new DigestAuthenticator("waytous"));
         sslAdminServer.createContext("/admin/logout", adminServer);
-        Common.log(LOG, "Admin HTTPS\t\t\t| " + SENSITIVE.getHttpsAdminPort() + "\t| " + "/");
+        Common.log(LOG, "Admin HTTPS\t\t\t| " + OPTIONS.getHttpsAdminPort() + "\t| " + "/");
 
 //        sslAdminServer.createContext("/", mainServer);
-//        Common.log(LOG, "Main HTTPS\t\t\t| " + SENSITIVE.getHttpsAdminPort() + "\t| /, /*");
+//        Common.log(LOG, "Main HTTPS\t\t\t| " + OPTIONS.getHttpsAdminPort() + "\t| /, /*");
 
         ExecutorService executor = Executors.newCachedThreadPool();
         server.setExecutor(executor);
@@ -216,7 +216,7 @@ public class WaytousServer {
 
         Common.log("Web\t\t", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort());
         Common.log("Track\t", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort() + "/track/");
-        Common.log("Admin\t", "https://" + InetAddress.getLocalHost().getHostAddress() + ":" + SENSITIVE.getHttpsAdminPort() + "/admin/");
+        Common.log("Admin\t", "https://" + InetAddress.getLocalHost().getHostAddress() + ":" + OPTIONS.getHttpsAdminPort() + "/admin/");
 
     }
 

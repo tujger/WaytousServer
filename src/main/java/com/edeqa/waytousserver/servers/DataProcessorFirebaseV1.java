@@ -71,7 +71,7 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ACCEPTED;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_CHECK;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ERROR;
 import static com.edeqa.waytous.Constants.RESPONSE_TOKEN;
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.USER_NAME;
 
 
@@ -90,7 +90,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         super();
 
         try {
-            Common.log(LOG, "Data Processor Firebase " + VERSION + ", config file: " + new File(SENSITIVE.getFirebasePrivateKeyFile()).getCanonicalPath());
+            Common.log(LOG, "Data Processor Firebase " + VERSION + ", config file: " + new File(OPTIONS.getFirebasePrivateKeyFile()).getCanonicalPath());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -126,7 +126,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        throw new ServletException("SENSITIVE:"+FirebaseDatabase.getInstance());
+//        throw new ServletException("OPTIONS:"+FirebaseDatabase.getInstance());
 
     }
 
@@ -164,31 +164,31 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 Method fromCertificate = tempClass.getDeclaredMethod("fromCertificate", InputStream.class);
 
                 assert method != null;
-                builder = (FirebaseOptions.Builder) method.invoke(builder, fromCertificate.invoke(null, new FileInputStream(SENSITIVE.getFirebasePrivateKeyFile())));
-//                builder = (FirebaseOptions.Builder) method.invoke(builder, FirebaseCredentials.fromCertificate(new FileInputStream(SENSITIVE.getFirebasePrivateKeyFile())));
+                builder = (FirebaseOptions.Builder) method.invoke(builder, fromCertificate.invoke(null, new FileInputStream(OPTIONS.getFirebasePrivateKeyFile())));
+//                builder = (FirebaseOptions.Builder) method.invoke(builder, FirebaseCredentials.fromCertificate(new FileInputStream(OPTIONS.getFirebasePrivateKeyFile())));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             try {
                 assert method != null;
-                builder = (FirebaseOptions.Builder) method.invoke(builder, new FileInputStream(SENSITIVE.getFirebasePrivateKeyFile()));
+                builder = (FirebaseOptions.Builder) method.invoke(builder, new FileInputStream(OPTIONS.getFirebasePrivateKeyFile()));
             } catch (IllegalAccessException | InvocationTargetException | IOException e) {
                 e.printStackTrace();
             }
         }
 
 //        FirebaseOptions options = new FirebaseOptions.Builder()
-//                .setCredential(com.google.firebase.auth.FirebaseCredentials.fromCertificate(new FileInputStream(SENSITIVE.getFirebasePrivateKeyFile())))
-//                .setDatabaseUrl(SENSITIVE.getFirebaseDatabaseUrl())
+//                .setCredential(com.google.firebase.auth.FirebaseCredentials.fromCertificate(new FileInputStream(OPTIONS.getFirebasePrivateKeyFile())))
+//                .setDatabaseUrl(OPTIONS.getFirebaseDatabaseUrl())
 //                .build();
 
 //        FirebaseOptions options = new FirebaseOptions.Builder()
-//                .setServiceAccount(new FileInputStream(SENSITIVE.getFirebasePrivateKeyFile()))
-//                .setDatabaseUrl(SENSITIVE.getFirebaseDatabaseUrl())
+//                .setServiceAccount(new FileInputStream(OPTIONS.getFirebasePrivateKeyFile()))
+//                .setDatabaseUrl(OPTIONS.getFirebaseDatabaseUrl())
 //                .build();
 
-        return builder.setDatabaseUrl(SENSITIVE.getFirebaseDatabaseUrl()).build();
+        return builder.setDatabaseUrl(OPTIONS.getFirebaseDatabaseUrl()).build();
     }
 
     @Override
@@ -1027,9 +1027,9 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         }).start();
 
         /*try {
-            System.out.println("https://waytous-beta.firebaseio.com/.json?shallow=true&print=pretty&auth="+SENSITIVE.getFirebaseApiKey());
+            System.out.println("https://waytous-beta.firebaseio.com/.json?shallow=true&print=pretty&auth="+OPTIONS.getFirebaseApiKey());
 
-            String res = Utils.getUrl("https://waytous-beta.firebaseio.com/.json?shallow=true&print=pretty&auth="+SENSITIVE.getFirebaseApiKey(),"UTF-8");
+            String res = Utils.getUrl("https://waytous-beta.firebaseio.com/.json?shallow=true&print=pretty&auth="+OPTIONS.getFirebaseApiKey(),"UTF-8");
 
             JSONObject groups = new JSONObject(res);
 

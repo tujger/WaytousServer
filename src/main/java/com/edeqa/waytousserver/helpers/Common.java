@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 
 
 /**
@@ -46,7 +46,7 @@ public class Common {
         JSONObject o = new JSONObject();
 
         try {
-            String wss = "ws://" + InetAddress.getLocalHost().getHostAddress() + ":" + SENSITIVE.getWssPortDedicated();
+            String wss = "ws://" + InetAddress.getLocalHost().getHostAddress() + ":" + OPTIONS.getWssPortDedicated();
             o.put("uri", wss);
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -92,11 +92,11 @@ public class Common {
     }
 
     public static String getWrappedHttpPort(){
-        return SENSITIVE.getHttpPortMasked() == 80 ? "" : ":" + SENSITIVE.getHttpPortMasked();
+        return OPTIONS.getHttpPortMasked() == 80 ? "" : ":" + OPTIONS.getHttpPortMasked();
     }
 
     public static String getWrappedHttpsPort(){
-        return SENSITIVE.getHttpsPortMasked() == 443 ? "" : ":" + SENSITIVE.getHttpsPortMasked();
+        return OPTIONS.getHttpsPortMasked() == 443 ? "" : ":" + OPTIONS.getHttpsPortMasked();
     }
 
     public AbstractDataProcessor getDataProcessor(String version) {

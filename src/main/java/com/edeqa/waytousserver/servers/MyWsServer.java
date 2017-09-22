@@ -16,7 +16,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static com.edeqa.waytous.Constants.LIFETIME_INACTIVE_USER;
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 
 /**
  * Created 10/5/16.
@@ -29,7 +29,7 @@ public class MyWsServer extends WebSocketServer {
     public MyWsServer(int port) {
         super(new InetSocketAddress(port));
 
-        if(!MyWsServer.isValidationStarted() && !SENSITIVE.isDebugMode()) {
+        if(!MyWsServer.isValidationStarted() && !OPTIONS.isDebugMode()) {
             ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleAtFixedRate(new Runnable() {
                 @Override

@@ -23,7 +23,7 @@ import javax.servlet.ServletException;
 import static com.edeqa.helpers.HtmlGenerator.SCRIPT;
 import static com.edeqa.helpers.HtmlGenerator.SRC;
 import static com.edeqa.helpers.HtmlGenerator.TITLE;
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 
 
@@ -91,13 +91,13 @@ public class AdminServletHandler extends AbstractServletHandler {
 
                     final JSONObject o = new JSONObject();
                     o.put("version", SERVER_BUILD);
-                    o.put("HTTP_PORT", SENSITIVE.getHttpPortMasked());
-                    o.put("HTTPS_PORT", SENSITIVE.getHttpsPortMasked());
-                    o.put("WS_FB_PORT", SENSITIVE.getWsPortFirebase());
-                    o.put("WSS_FB_PORT", SENSITIVE.getWssPortFirebase());
-                    o.put("WS_PORT", SENSITIVE.getWsPortDedicated());
-                    o.put("WSS_PORT", SENSITIVE.getWssPortDedicated());
-                    o.put("firebase_config", SENSITIVE.getFirebaseConfig());
+                    o.put("HTTP_PORT", OPTIONS.getHttpPortMasked());
+                    o.put("HTTPS_PORT", OPTIONS.getHttpsPortMasked());
+                    o.put("WS_FB_PORT", OPTIONS.getWsPortFirebase());
+                    o.put("WSS_FB_PORT", OPTIONS.getWssPortFirebase());
+                    o.put("WS_PORT", OPTIONS.getWsPortDedicated());
+                    o.put("WSS_PORT", OPTIONS.getWssPortDedicated());
+                    o.put("firebase_config", OPTIONS.getFirebaseConfig());
                     o.put("sign", customToken);
 
                     HtmlGenerator html = new HtmlGenerator();

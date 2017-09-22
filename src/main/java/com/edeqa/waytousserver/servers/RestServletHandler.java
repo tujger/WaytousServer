@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 
 
 /**
@@ -124,7 +124,7 @@ public class RestServletHandler extends AbstractServletHandler {
         }
 
         boolean getSounds(JSONObject json) {
-            File dir = new File(SENSITIVE.getWebRootDirectory() + "/sounds");
+            File dir = new File(OPTIONS.getWebRootDirectory() + "/sounds");
             File[] files = dir.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
@@ -162,7 +162,7 @@ public class RestServletHandler extends AbstractServletHandler {
         }
 
         boolean getLocales(final JSONObject json, final RequestWrapper requestWrapper) {
-            File dir = new File(SENSITIVE.getWebRootDirectory() + "/resources");
+            File dir = new File(OPTIONS.getWebRootDirectory() + "/resources");
             try {
                 File[] files = dir.listFiles(/*new FilenameFilter() {
                 @Override
@@ -203,17 +203,17 @@ public class RestServletHandler extends AbstractServletHandler {
 
                     if (options.has("type")) {
                         if (options.has("locale") && options.has("resource")) {
-                            files.add(new File(SENSITIVE.getWebRootDirectory() + "/" + options.getString("type") + "/" + options.getString("locale") + "/" + options.getString("resource")));
+                            files.add(new File(OPTIONS.getWebRootDirectory() + "/" + options.getString("type") + "/" + options.getString("locale") + "/" + options.getString("resource")));
                         }
                         if (options.has("resource")) {
-                            files.add(new File(SENSITIVE.getWebRootDirectory() + "/" + options.getString("type") + "/" + options.getString("resource")));
+                            files.add(new File(OPTIONS.getWebRootDirectory() + "/" + options.getString("type") + "/" + options.getString("resource")));
                         }
                     } else {
                         if (options.has("locale") && options.has("resource")) {
-                            files.add(new File(SENSITIVE.getWebRootDirectory() + "/content/" + options.getString("locale") + "/" + options.getString("resource")));
+                            files.add(new File(OPTIONS.getWebRootDirectory() + "/content/" + options.getString("locale") + "/" + options.getString("resource")));
                         }
                         if (options.has("resource")) {
-                            files.add(new File(SENSITIVE.getWebRootDirectory() + "/content/" + options.getString("resource")));
+                            files.add(new File(OPTIONS.getWebRootDirectory() + "/content/" + options.getString("resource")));
                         }
                     }
 
@@ -284,17 +284,17 @@ public class RestServletHandler extends AbstractServletHandler {
 
                     if (options.has("type")) {
                         if (options.has("locale") && options.has("resource")) {
-                            files.add(new File(SENSITIVE.getWebRootDirectory() + "/" + options.getString("type") + "/" + options.getString("locale") + "/" + options.getString("resource")));
+                            files.add(new File(OPTIONS.getWebRootDirectory() + "/" + options.getString("type") + "/" + options.getString("locale") + "/" + options.getString("resource")));
                         }
                         if (options.has("resource")) {
-                            files.add(new File(SENSITIVE.getWebRootDirectory() + "/" + options.getString("type") + "/en/" + options.getString("resource")));
+                            files.add(new File(OPTIONS.getWebRootDirectory() + "/" + options.getString("type") + "/en/" + options.getString("resource")));
                         }
                     } else {
                         if (options.has("locale") && options.has("resource")) {
-                            files.add(new File(SENSITIVE.getWebRootDirectory() + "/content/" + options.getString("locale") + "/" + options.getString("resource")));
+                            files.add(new File(OPTIONS.getWebRootDirectory() + "/content/" + options.getString("locale") + "/" + options.getString("resource")));
                         }
                         if (options.has("resource")) {
-                            files.add(new File(SENSITIVE.getWebRootDirectory() + "/content/en/" + options.getString("resource")));
+                            files.add(new File(OPTIONS.getWebRootDirectory() + "/content/en/" + options.getString("resource")));
                         }
                     }
 
@@ -311,7 +311,7 @@ public class RestServletHandler extends AbstractServletHandler {
                     }
 
                     if (exists) {
-                        String path = file.getAbsolutePath().replace(SENSITIVE.getWebRootDirectory(), "");
+                        String path = file.getAbsolutePath().replace(OPTIONS.getWebRootDirectory(), "");
                         Common.log(LOG, "->", path);
                         try {
                             requestWrapper.sendRedirect(path);
@@ -351,17 +351,17 @@ public class RestServletHandler extends AbstractServletHandler {
 
                 if(options.has("type")) {
                     if (options.has("locale") && options.has("resource")) {
-                        files.add(new File(SENSITIVE.getWebRootDirectory() + "/" + options.getString("type") + "/" + options.getString("locale") + "/" + options.getString("resource")));
+                        files.add(new File(OPTIONS.getWebRootDirectory() + "/" + options.getString("type") + "/" + options.getString("locale") + "/" + options.getString("resource")));
                     }
                     if (options.has("resource")) {
-                        files.add(new File(SENSITIVE.getWebRootDirectory() + "/" + options.getString("type") + "/en/" + options.getString("resource")));
+                        files.add(new File(OPTIONS.getWebRootDirectory() + "/" + options.getString("type") + "/en/" + options.getString("resource")));
                     }
                 } else {
                     if (options.has("locale") && options.has("resource")) {
-                        files.add(new File(SENSITIVE.getWebRootDirectory() + "/content/" + options.getString("locale") + "/" + options.getString("resource")));
+                        files.add(new File(OPTIONS.getWebRootDirectory() + "/content/" + options.getString("locale") + "/" + options.getString("resource")));
                     }
                     if (options.has("resource")) {
-                        files.add(new File(SENSITIVE.getWebRootDirectory() + "/content/en/" + options.getString("resource")));
+                        files.add(new File(OPTIONS.getWebRootDirectory() + "/content/en/" + options.getString("resource")));
                     }
                 }
 
@@ -378,8 +378,8 @@ public class RestServletHandler extends AbstractServletHandler {
                 }
 
                 if(exists) {
-                    String path = file.getAbsolutePath().replace(SENSITIVE.getWebRootDirectory(), "");
-//                    path = "https://" + SENSITIVE.getServerHost() + Common.getWrappedHttpsPort() + path;
+                    String path = file.getAbsolutePath().replace(OPTIONS.getWebRootDirectory(), "");
+//                    path = "https://" + OPTIONS.getServerHost() + Common.getWrappedHttpsPort() + path;
                     Common.log(LOG,"->", path);
                     requestWrapper.sendRedirect(path);
                     return false;

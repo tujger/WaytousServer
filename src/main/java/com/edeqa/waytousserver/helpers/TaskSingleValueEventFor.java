@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 
 /**
  * Created 6/13/2017.
@@ -117,7 +117,7 @@ public class TaskSingleValueEventFor<T> {
     private void restRequestWithTokenUpdate() {
 
         try {
-            GoogleCredential googleCred = GoogleCredential.fromStream(new FileInputStream(SENSITIVE.getFirebasePrivateKeyFile()));
+            GoogleCredential googleCred = GoogleCredential.fromStream(new FileInputStream(OPTIONS.getFirebasePrivateKeyFile()));
             GoogleCredential scoped = googleCred.createScoped(
                     Arrays.asList(
                             "https://www.googleapis.com/auth/firebase.database",

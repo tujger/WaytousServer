@@ -18,7 +18,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.util.zip.GZIPOutputStream;
 
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 
 
 /**
@@ -82,7 +82,7 @@ public class AdminLogsHolder implements PageHolder {
     @SuppressWarnings("HardCodedStringLiteral")
     private void clearLog(RequestWrapper requestWrapper) {
         try {
-            File file = new File(SENSITIVE.getLogFile());
+            File file = new File(OPTIONS.getLogFile());
             Common.log(LOG, "Clear:", file.getCanonicalPath());
 
             PrintWriter writer = new PrintWriter(file);
@@ -105,7 +105,7 @@ public class AdminLogsHolder implements PageHolder {
     @SuppressWarnings("HardCodedStringLiteral")
     private void printLog(RequestWrapper requestWrapper) {
         try {
-            File file = new File(SENSITIVE.getLogFile());
+            File file = new File(OPTIONS.getLogFile());
 
             Common.log(LOG,"Update:",file.getCanonicalPath());
 

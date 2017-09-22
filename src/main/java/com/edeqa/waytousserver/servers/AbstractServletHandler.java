@@ -6,7 +6,7 @@
 
 package com.edeqa.waytousserver.servers;
 
-import com.edeqa.waytous.SensitiveData;
+import com.edeqa.waytous.Options;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.RequestWrapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 
 abstract public class AbstractServletHandler extends HttpServlet implements HttpHandler {
 
@@ -30,10 +30,10 @@ abstract public class AbstractServletHandler extends HttpServlet implements Http
     public void init() throws ServletException {
         super.init();
 
-        if(SENSITIVE == null) {
+        if(OPTIONS == null) {
             //noinspection HardCodedStringLiteral
-            String sensitiveData = getServletContext().getInitParameter("sensitiveData");
-            SENSITIVE = new SensitiveData(new String[]{sensitiveData});
+            String options = getServletContext().getInitParameter("options");
+            OPTIONS = new Options(new String[]{options});
         }
     }
 

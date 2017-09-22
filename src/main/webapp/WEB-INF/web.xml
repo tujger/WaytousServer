@@ -56,7 +56,7 @@
     </security-constraint>
 
     <context-param>
-        <param-name>sensitiveData</param-name>
+        <param-name>options</param-name>
         <param-value>WEB-INF/options_developer.json</param-value>
     </context-param>
 </web-app>

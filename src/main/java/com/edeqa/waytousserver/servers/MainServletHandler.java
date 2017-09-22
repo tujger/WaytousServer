@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 
 
@@ -37,10 +37,10 @@ public class MainServletHandler extends AbstractServletHandler {
         if(substitutions == null) {
             substitutions = new LinkedHashMap<>();
             substitutions.put("\\$\\{SERVER_BUILD\\}", "" + SERVER_BUILD);
-            substitutions.put("\\$\\{APP_NAME\\}", SENSITIVE.getAppName() + (SENSITIVE.isDebugMode() ? " &beta;" : ""));
-            substitutions.put("\\$\\{SUPPORT_EMAIL\\}", SENSITIVE.getSupportEmail());
-            substitutions.put("\\$\\{WEB_PAGE\\}", SENSITIVE.getAppLink());
-            substitutions.put("\\$\\{REFERER\\}", "https://" + SENSITIVE.getServerHost());
+            substitutions.put("\\$\\{APP_NAME\\}", OPTIONS.getAppName() + (OPTIONS.isDebugMode() ? " &beta;" : ""));
+            substitutions.put("\\$\\{SUPPORT_EMAIL\\}", OPTIONS.getSupportEmail());
+            substitutions.put("\\$\\{WEB_PAGE\\}", OPTIONS.getAppLink());
+            substitutions.put("\\$\\{REFERER\\}", "https://" + OPTIONS.getServerHost());
 
             try {
                 //noinspection LoopStatementThatDoesntLoop
@@ -73,7 +73,7 @@ public class MainServletHandler extends AbstractServletHandler {
                 return;
             }
 
-            File root = new File(SENSITIVE.getWebRootDirectory());
+            File root = new File(OPTIONS.getWebRootDirectory());
             File file = new File(root + uri.getPath()).getCanonicalFile();
             int resultCode = 200;
 
@@ -116,7 +116,7 @@ public class MainServletHandler extends AbstractServletHandler {
 
                 boolean text = false;
                 String type = Mime.APPLICATION_OCTET_STREAM;
-                JSONArray types = SENSITIVE.getTypes();
+                JSONArray types = OPTIONS.getTypes();
                 types.put(new JSONObject("{\"type\":\"\",\"mime\":\"application/unknown\"}"));
                 JSONObject json = null;
                 for (int i = 0; i < types.length(); i++) {
@@ -134,14 +134,14 @@ public class MainServletHandler extends AbstractServletHandler {
                 assert json != null;
                 if(type.startsWith("text") || (json.has("text") && json.getBoolean("text"))) text = true;
                 if (json.has("gzip") && !json.getBoolean("gzip")) gzip = false;
-                if(!SENSITIVE.isGzip()) gzip = false;
+                if(!OPTIONS.isGzip()) gzip = false;
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
                 dateFormat.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
                 String lastModified = dateFormat.format(file.lastModified());
 
                 requestWrapper.setHeader(HttpHeaders.LAST_MODIFIED, lastModified);
-                requestWrapper.setHeader(HttpHeaders.CACHE_CONTROL, SENSITIVE.isDebugMode() ? "max-age=10" : "max-age=60");
+                requestWrapper.setHeader(HttpHeaders.CACHE_CONTROL, OPTIONS.isDebugMode() ? "max-age=10" : "max-age=60");
                 requestWrapper.setHeader(HttpHeaders.ETAG, etag);
                 requestWrapper.setHeader(HttpHeaders.SERVER, "Waytous/" + SERVER_BUILD);
                 requestWrapper.setHeader(HttpHeaders.ACCEPT_RANGES, "bytes");

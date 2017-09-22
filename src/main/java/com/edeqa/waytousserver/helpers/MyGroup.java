@@ -23,7 +23,7 @@ import static com.edeqa.waytous.Constants.REQUEST_WELCOME_MESSAGE;
 import static com.edeqa.waytous.Constants.RESPONSE_INITIAL;
 import static com.edeqa.waytous.Constants.RESPONSE_NUMBER;
 import static com.edeqa.waytous.Constants.RESPONSE_TOKEN;
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.USER_COLOR;
 import static com.edeqa.waytous.Constants.USER_NAME;
 import static com.edeqa.waytous.Constants.USER_NUMBER;
@@ -262,7 +262,7 @@ public class MyGroup {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Authorization", "key=" + SENSITIVE.getFirebaseApiKey());
+            conn.setRequestProperty("Authorization", "key=" + OPTIONS.getFirebaseApiKey());
             conn.setRequestMethod("POST");
 
             conn.setDoOutput(true);

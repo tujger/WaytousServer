@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 
 /**
  * Created 10/5/16.
@@ -57,7 +57,7 @@ public class RedirectHandler implements HttpHandler {
                 exchange.sendResponseHeaders(200, 0);
                 OutputStream os = exchange.getResponseBody();
 
-                File root = new File(SENSITIVE.getWebRootDirectory());
+                File root = new File(OPTIONS.getWebRootDirectory());
                 File file = new File(root + uri.getPath()).getCanonicalFile();
 
                 FileInputStream fs = new FileInputStream(file);
@@ -74,7 +74,7 @@ public class RedirectHandler implements HttpHandler {
                 String webRedirect = "https://" + host + Common.getWrappedHttpsPort() + "/group/" + tokenId;
                 String mainLink = "https://" + host + Common.getWrappedHttpsPort() + "/track/" + tokenId;
 
-                String redirectLink = "http://" + SENSITIVE.getFirebaseDynamicLinkHost() + "/?"
+                String redirectLink = "http://" + OPTIONS.getFirebaseDynamicLinkHost() + "/?"
                         + "link=" + mainLink
                         + "&apn=com.edeqa.waytous"
                         + "&al=" + mobileRedirect
@@ -94,7 +94,7 @@ public class RedirectHandler implements HttpHandler {
                 exchange.close();
 
             } else if(uri.getPath().startsWith("/admin")) {
-                String redirectLink = "https://" + host + ":" + SENSITIVE.getHttpsAdminPort() + uri.getPath();
+                String redirectLink = "https://" + host + ":" + OPTIONS.getHttpsAdminPort() + uri.getPath();
                 Headers responseHeaders = exchange.getResponseHeaders();
                 responseHeaders.set(HttpHeaders.CONTENT_TYPE, Mime.TEXT_PLAIN);
                 responseHeaders.set(HttpHeaders.DATE, new Date().toString());

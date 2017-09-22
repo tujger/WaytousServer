@@ -21,7 +21,7 @@ import static com.edeqa.helpers.HtmlGenerator.ONLOAD;
 import static com.edeqa.helpers.HtmlGenerator.SCRIPT;
 import static com.edeqa.helpers.HtmlGenerator.SRC;
 import static com.edeqa.helpers.HtmlGenerator.TITLE;
-import static com.edeqa.waytous.Constants.SENSITIVE;
+import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 
 
@@ -64,7 +64,7 @@ public class TrackingServletHandler extends AbstractServletHandler {
         ArrayList<String> parts = new ArrayList<>();
         parts.addAll(Arrays.asList(uri.getPath().split("/")));
 
-//        File root = new File(SENSITIVE.getWebRootDirectory());
+//        File root = new File(OPTIONS.getWebRootDirectory());
 //        File file = new File(root + uri.getPath()).getCanonicalFile();
 
         if(uri.getPath().startsWith("/track/")) {
@@ -85,7 +85,7 @@ public class TrackingServletHandler extends AbstractServletHandler {
                 mainLink = "http://" + requestWrapper.getRequestHeader(HttpHeaders.HOST).get(0) + "/group/" + tokenId;
             }
 
-            String redirectLink = "http://" + SENSITIVE.getFirebaseDynamicLinkHost() + "/?"
+            String redirectLink = "http://" + OPTIONS.getFirebaseDynamicLinkHost() + "/?"
                     + "link=" + mainLink
                     + "&apn=com.edeqa.waytous"
                     + "&al=" + mobileRedirect
@@ -104,15 +104,15 @@ public class TrackingServletHandler extends AbstractServletHandler {
         JSONObject o = new JSONObject();
         o.put("request", parts);
         o.put("version", SERVER_BUILD);
-        o.put("HTTP_PORT", SENSITIVE.getHttpPortMasked());
-        o.put("HTTPS_PORT", SENSITIVE.getHttpsPortMasked());
-        o.put("WS_FB_PORT", SENSITIVE.getWsPortFirebase());
-        o.put("WSS_FB_PORT", SENSITIVE.getWssPortFirebase());
-        o.put("WS_PORT", SENSITIVE.getWsPortDedicated());
-        o.put("WSS_PORT", SENSITIVE.getWssPortDedicated());
-        o.put("firebase_config", SENSITIVE.getFirebaseConfig());
+        o.put("HTTP_PORT", OPTIONS.getHttpPortMasked());
+        o.put("HTTPS_PORT", OPTIONS.getHttpsPortMasked());
+        o.put("WS_FB_PORT", OPTIONS.getWsPortFirebase());
+        o.put("WSS_FB_PORT", OPTIONS.getWssPortFirebase());
+        o.put("WS_PORT", OPTIONS.getWsPortDedicated());
+        o.put("WSS_PORT", OPTIONS.getWssPortDedicated());
+        o.put("firebase_config", OPTIONS.getFirebaseConfig());
         o.put("isStandAlone", Common.getInstance().getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode());
-        if(SENSITIVE.isDebugMode()) o.put("isDebugMode", true);
+        if(OPTIONS.isDebugMode()) o.put("isDebugMode", true);
 
 
         html.clear();
