@@ -10,7 +10,6 @@
 /local.properties
 all.js
 all.sourcemap.json
-deploy_aws_beta.sh
-deploy_aws_prod.sh
+aws*.sh
 generate_letsencrypt_jks.sh
 waytous-beta.log
