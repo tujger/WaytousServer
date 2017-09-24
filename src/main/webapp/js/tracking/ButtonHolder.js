@@ -292,11 +292,11 @@ function ButtonHolder(main) {
             }
         });
         var icon = (user && user.origin && user.origin.buttonIcon) || "person";
-        u.create(HTML.DIV, {className:"user-button-icon notranslate", innerHTML:icon}, b);
+        u.create(HTML.DIV, {className:"icon user-button-icon notranslate", innerHTML:icon}, b);
         var badge = u.create(HTML.DIV, {className:"user-button-badge hidden"}, b);
 //        console.log(user)
         var div = u.create(HTML.DIV, {className:"user-button-label"}, b);
-        var divText = u.create(HTML.DIV, null, div)
+        var divText = u.create(HTML.DIV, null, div);
         var prefix = u.create(HTML.DIV, {className:"user-button-prefix hidden", innerHTML:""}, divText);
         var title = u.create(HTML.DIV, {className:"user-button-title", innerHTML:user.properties.getDisplayName()}, divText);
         var suffix = u.create(HTML.DIV, {className:"user-button-suffix hidden", innerHTML:""}, divText);

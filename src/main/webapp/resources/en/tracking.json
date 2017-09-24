@@ -97,7 +97,7 @@
 
   "ok_go_ahead": "OK, go ahead",
 
-  "gps_allow_geolocation": "Click &laquo;OK&raquo; and then click &laquo;Allow&raquo;",
+  "gps_allow_geolocation": "Browser will ask about geolocation. Click &laquo;OK&raquo; and then click &laquo;Allow&raquo;",
   "gps_learn_more": "Why? Click here to learn more",
   "gps_learn_more_body": "The purpose of this service is to help friends to find each other. To get it, you have to send your location to your friends. Browser asks you about using your location information. Answer him &laquo;Allow&raquo;, otherwise your friends will not be able to see where you are.",
 
@@ -299,6 +299,11 @@
   "sign_in_with_twitter": "Sign in with Twitter",
   "sign_in_with_phone": "Sign in with phone",
   "sign_in_with_email": "Sign in with e-mail",
+
+  "sign_in": "Sign in",
+  "sign_up": "Sign up",
+  "back": "Back",
+
 
 
   "// WelcomeHolder": "",

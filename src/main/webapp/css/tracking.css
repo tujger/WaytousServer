@@ -107,6 +107,16 @@
   height: 100%;
   width: 100%;
 }
+.menu-item-icon {
+    font-size: 16px;
+    min-width: 16px;
+    padding-right: 5px;
+    width: 16px;
+    height: 16px;
+}
+.dialog-header .menu-item-icon {
+    padding-left: 5px;
+}
 
 .kd-tabbed-vert.header-links .kd-tabbutton a {
   color: #757575;
@@ -190,20 +200,9 @@ p.bottom-desc {
     padding: 3px;
 }
 .user-button-icon {
-    font-family: 'Material Icons';
-    font-feature-settings: "liga" 1;
-    font-weight: normal;
-    font-style: normal;
     font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    -webkit-font-feature-settings: 'liga';
-    -webkit-font-smoothing: antialiased;
+    width: 24px;
+    height: 24px;
 }
 .user-button-badge {
     background-color: red;
@@ -769,10 +768,64 @@ p.bottom-desc {
 .user-profile-dialog {
     width: 400px;
 }
-.icon-whatsapp {
-    fill: white;
+.user-profile-dialog-header {
+    justify-content: space-between;
 }
-
+.user-profile-dialog-avatar {
+    height: 80px;
+    width: 80px;
+    object-fit: cover;
+    border-color: darkgray;
+    border-width: 2px;
+    border-style: solid;
+    margin-right: 20px;
+}
+.user-profile-dialog-resume {
+    text-align: right;
+    display: flex;
+}
+.user-profile-dialog-summary {
+    justify-content: center;
+    font-size: large;
+    display: flex;
+    flex-direction: column;
+}
+.user-profile-dialog-name {
+    font-weight: bold;
+    font-size: larger;
+}
+.user-profile-dialog-email {
+    color: gray;
+    text-decoration: none;
+}
+.user-profile-dialog-menu-button {
+    font-size: large;
+    height: 20px;
+    width: 20px;
+    margin-left: 5px;
+    background: none;
+    box-shadow: none;
+    color: darkslategray;
+}
+.user-profile-dialog-menu-button:hover {
+    background-color: #4c93af;
+    color: white;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+}
+.user-profile-dialog-menu-button:active {
+    background-color: #aaaaaa;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+}
+.user-profile-forgot-password {
+    padding-top: 10px;
+    font-size: 10px;
+    cursor: default;
+}
+.user-profile-dialog-error {
+    color: red;
+    font-size: small;
+    padding-top: 5px;
+}
 
 @media screen and (max-width: 1000px) {
 
@@ -1098,6 +1151,11 @@ p.bottom-desc {
         bottom: 20px !important;
         transform: translate(-50%,0%) !important;
     }
+    .user-profile-dialog-menu-button {
+        height: 32px;
+        width: 32px;
+    }
+
 
     /* shift zoom control */
     .gm-bundled-control {

@@ -82,7 +82,7 @@ function Utils(main) {
                             return (c=='x' ? r : (r&0x3|0x8)).toString(16);
                         });
                     }
-                    u.save("uuid", result);
+                    u.save("uuid", utils.getEncryptedHash(result));
                     callback();
                 });
             } else {

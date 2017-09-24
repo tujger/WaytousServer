@@ -10,7 +10,6 @@ import static com.edeqa.waytous.Constants.REQUEST_DEVICE_ID;
 import static com.edeqa.waytous.Constants.REQUEST_MANUFACTURER;
 import static com.edeqa.waytous.Constants.REQUEST_MODEL;
 import static com.edeqa.waytous.Constants.REQUEST_OS;
-import static com.edeqa.waytous.Constants.REQUEST_USER_ID;
 import static com.edeqa.waytous.Constants.USER_NAME;
 
 /**
@@ -97,7 +96,7 @@ public class CheckReq {
         user.setManufacturer(request.getString(REQUEST_MANUFACTURER));
         user.setModel(request.getString(REQUEST_MODEL));
         user.setOs(request.getString(REQUEST_OS));
-        if (request.has(REQUEST_USER_ID)) user.setUserId(request.getString(REQUEST_USER_ID));
+//        if (request.has(REQUEST_USER_ID)) user.setUserId(request.getString(REQUEST_USER_ID));
         if (request.has(USER_NAME)) user.setName(request.getString(USER_NAME));
 
     }

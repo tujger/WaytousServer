@@ -51,19 +51,18 @@ import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletException;
 
+import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.REQUEST;
 import static com.edeqa.waytous.Constants.REQUEST_CHECK_USER;
 import static com.edeqa.waytous.Constants.REQUEST_DEVICE_ID;
 import static com.edeqa.waytous.Constants.REQUEST_HASH;
 import static com.edeqa.waytous.Constants.REQUEST_JOIN_GROUP;
-import static com.edeqa.waytous.Constants.REQUEST_KEY;
 import static com.edeqa.waytous.Constants.REQUEST_MODEL;
 import static com.edeqa.waytous.Constants.REQUEST_NEW_GROUP;
 import static com.edeqa.waytous.Constants.REQUEST_OS;
 import static com.edeqa.waytous.Constants.REQUEST_SIGN_PROVIDER;
 import static com.edeqa.waytous.Constants.REQUEST_TIMESTAMP;
 import static com.edeqa.waytous.Constants.REQUEST_TOKEN;
-import static com.edeqa.waytous.Constants.REQUEST_USER_ID;
 import static com.edeqa.waytous.Constants.RESPONSE_CONTROL;
 import static com.edeqa.waytous.Constants.RESPONSE_MESSAGE;
 import static com.edeqa.waytous.Constants.RESPONSE_NUMBER;
@@ -73,7 +72,6 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ACCEPTED;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_CHECK;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ERROR;
 import static com.edeqa.waytous.Constants.RESPONSE_TOKEN;
-import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.USER_NAME;
 
 
@@ -363,9 +361,9 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                 public void call(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.getValue() != null) {
                                         String deviceId = request.getString(REQUEST_DEVICE_ID);
-                                        final String uid = Misc.getEncryptedHash(deviceId);
+//                                        final String uid = Misc.getEncryptedHash(deviceId);
 
-                                        numberForKeyTask.setRef(refGroup.child(Firebase.SECTION_USERS_KEYS).child(uid)).start();
+                                        numberForKeyTask.setRef(refGroup.child(Firebase.SECTION_USERS_KEYS).child(deviceId/*uid*/)).start();
                                     } else {
                                         rejectUser(response, conn, groupId, null, "This group is expired. (001)");
                                     }
@@ -420,7 +418,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                 update.put(Firebase.USER_ACTIVE, true);
                                                 update.put(Firebase.USER_COLOR, Utils.selectColor((int) check.getNumber()));
                                                 update.put(Firebase.USER_CHANGED, new Date().getTime());
-                                                System.out.println("SIGNPROVIDER2:"+check.getUser().getSignProvider());
                                                 if (check.getName() != null && check.getName().length() > 0) {
                                                     update.put(USER_NAME, check.getName());
                                                 }
@@ -484,10 +481,9 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                         if (dataSnapshot.getValue() != null) {
                                             ArrayList<HashMap<String, Object>> users = (ArrayList<HashMap<String, Object>>) dataSnapshot.getValue();
                                             for (HashMap<String, Object> user : users) {
-                                                if (user != null && user.containsKey(REQUEST_DEVICE_ID) && user.containsKey(REQUEST_KEY)) {
+                                                if (user != null && user.containsKey(REQUEST_DEVICE_ID)) {
                                                     String calculatedHash = Misc.getEncryptedHash(check.getControl() + ":" + user.get(REQUEST_DEVICE_ID).toString());
                                                     if (calculatedHash.equals(hash)) {
-                                                        check.setUid(user.get(REQUEST_KEY).toString());
                                                         userGetNumberTask.setRef(refGroup.child(Firebase.SECTION_USERS_KEYS).child(check.getUid())).start();
                                                         return;
                                                     }
@@ -696,7 +692,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                         }
                     }
                 }).start();
-
     }
 
     @Override
@@ -732,13 +727,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         if(user.getSignProvider() != null) o.put(REQUEST_SIGN_PROVIDER, user.getSignProvider());
 
         System.out.println("SIGNPROVIDER:"+user.getSignProvider());
-        final String uid;
-        if(user.getUserId() != null && user.getUserId().length() > 0) {
-            uid = user.getUserId();
-        } else {
-            uid = Misc.getEncryptedHash(user.getDeviceId());
-        }
-        o.put(REQUEST_KEY, uid);
         childUpdates.put(Firebase.SECTION_USERS_DATA_PRIVATE + "/" + user.getNumber(), o);
 
         for (Map.Entry<String, RequestHolder> entry : requestHolders.entrySet()) {
@@ -747,16 +735,16 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             }
         }
 
-        childUpdates.put(Firebase.SECTION_USERS_KEYS + "/" + uid, user.getNumber());
+        childUpdates.put(Firebase.SECTION_USERS_KEYS + "/" + user.getDeviceId(), user.getNumber());
 
         final Task<Void> updateUserTask = ref.child(groupId).updateChildren(childUpdates);
         try {
             Tasks.await(updateUserTask);
 
-            Common.log(LOG, "registerUser:" + user.getNumber(), "uid:" + uid, "group:" + groupId);
+            Common.log(LOG, "registerUser:" + user.getNumber(), "uid:" + user.getDeviceId(), "group:" + groupId);
 
             if(action != null) {
-                String customToken = createCustomToken(uid);
+                String customToken = createCustomToken(user.getDeviceId());
 
                 response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
                 if (!REQUEST_JOIN_GROUP.equals(action) && !REQUEST_CHECK_USER.equals(action)) {

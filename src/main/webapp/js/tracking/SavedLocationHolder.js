@@ -524,7 +524,6 @@ function SavedLocationHolder(main) {
              },
              location: user
          }, main.right).open();
-
     }
 
     return {

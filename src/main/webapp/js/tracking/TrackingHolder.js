@@ -21,24 +21,11 @@ function TrackingHolder(main) {
     var wakeLockEnabled;
     var shareDialog;
     var shareBlockedDialog;
-    var drawerItemNewIcon;
     var sound;
     var sounds;
     var joinSound;
     var defaultSound = "oringz-w427.mp3";
     var agreementDialog;
-
-    var drawerItemNewIconSvg = {
-        xmlns:"http://www.w3.org/2000/svg",
-        viewbox:"0 0 24 24",
-        version:"1.1",
-        className: "menu-item"
-    };
-    var drawerItemNewIconPath = {
-        xmlns:"http://www.w3.org/2000/svg",
-        fill:"darkslategray",
-        d: "M10,2l-6.5,15 0.5,0.5L9,15L12.29,7.45z M14,5.5l-6.5,15 0.5,0.5 6,-3l6,3 0.5,-0.5z"
-    };
 
     function start(){
 
@@ -87,10 +74,13 @@ function TrackingHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                drawerItemNewIcon = drawerItemNewIcon || u.create(HTML.PATH, drawerItemNewIconPath, u.create(HTML.SVG, drawerItemNewIconSvg)).parentNode;
-                drawerItemNew = object.add(DRAWER.SECTION_PRIMARY,EVENTS.TRACKING_NEW, u.lang.create_group, drawerItemNewIcon,function(){
-                    main.fire(EVENTS.TRACKING_NEW);
-                });
+                drawerItemNew = object.add(DRAWER.SECTION_PRIMARY,EVENTS.TRACKING_NEW, u.lang.create_group,
+                    u.create(HTML.IMG, {
+                        src: "/images/navigation_twinks.svg",
+                        className: "icon drawer-menu-item-icon"
+                    }),function(){
+                        main.fire(EVENTS.TRACKING_NEW);
+                    });
                 drawerItemNew.hide();
                 drawerItemExit = object.add(DRAWER.SECTION_LAST,EVENTS.TRACKING_STOP, u.lang.exit_group,"exit_to_app",function(){
                     main.fire(EVENTS.TRACKING_STOP);
@@ -98,7 +88,6 @@ function TrackingHolder(main) {
                 drawerItemExit.hide();
                 break;
             case EVENTS.MAP_READY:
-//console.log("CURRENTUSER:",firebase.auth().currentUser);
                 drawerItemNew.show();
                 var path = window.location.pathname.split("/");
                 var group = path[2];

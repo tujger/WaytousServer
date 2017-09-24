@@ -50,26 +50,51 @@ function TrackingFB(main) {
 
         var updates = {};
         clearInterval(updateTask);
+        window.removeEventListener("focus", updateActive);
+        document.removeEventListener("visibilitychange", updateActive);
+
         updates[DATABASE.USER_ACTIVE] = false;
         updates[DATABASE.USER_CHANGED] = firebase.database.ServerValue.TIMESTAMP;
 
 //console.log("UPDATE",DATABASE.SECTION_USERS_DATA + "/" + main.me.number,updates);
         for(var i in refs) {
-            ref.database.ref().child(refs[i]).off();
+            try {
+                refs[i].off();
+            } catch(e) {
+                console.log("OFF",refs[i].toString(),e);
+            }
         }
+        refs = [];
 
         if(ref) {
-            ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).update(updates)
-                .then(function() {
-                    ref.database.goOffline();
-                })
-                .catch(function (error) {
-                    console.error(error);
-                    ref.database.goOffline();
-                });
+            ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).update(updates).then(function () {
+                ref.database.goOffline();
+
+                trackingListener.onStop();
+
+                if (callback) {
+                    callback(this);
+                } else {
+                    //var uri = new URL(serverUri);
+                    window.location.href = "/group/";
+                }
+            })
+            .catch(function (error) {
+                console.error(error);
+                ref.database.goOffline();
+                //firebase.auth().signOut();
+                trackingListener.onStop();
+
+                if (callback) {
+                    callback(this);
+                } else {
+                    //var uri = new URL(serverUri);
+                    window.location.href = "/group/";
+                }
+            });
         }
         //firebase.auth().signOut();
-        window.removeEventListener("focus", updateActive);
+        /*window.removeEventListener("focus", updateActive);
         document.removeEventListener("visibilitychange", updateActive);
         trackingListener.onStop();
 
@@ -78,7 +103,7 @@ function TrackingFB(main) {
         } else {
             //var uri = new URL(serverUri);
             window.location.href = "/group/";
-        }
+        }*/
 //        window.location.href = "https://" + uri.hostname + (data.HTTPS_PORT == 443 ? "" : ":"+ data.HTTPS_PORT) + "/track/";
     }
 
@@ -90,8 +115,8 @@ function TrackingFB(main) {
             if(newTracking) { // create group
                 put(REQUEST.REQUEST, REQUEST.NEW_GROUP);
                 put(REQUEST.DEVICE_ID, utils.getUuid());
-                var userId = u.load("uid");
-                if(userId) put(REQUEST.USER_ID, userId);
+                //var userId = u.load("uid");
+                //if(userId) put(REQUEST.USER_ID, userId);
             } else if(reconnect) { // reconnect to group
                 parts = link.split("/");
                 var groupId = parts[parts.length-1];
@@ -99,7 +124,7 @@ function TrackingFB(main) {
 
                 put(REQUEST.REQUEST, REQUEST.JOIN_GROUP);
                 put(REQUEST.TOKEN, groupId);
-            } else { // join to grouup
+            } else { // join to group
                 parts = link.split("/");
                 groupId = parts[parts.length-1];
                 setToken(groupId);
@@ -107,8 +132,8 @@ function TrackingFB(main) {
                 put(REQUEST.REQUEST, REQUEST.JOIN_GROUP);
                 put(REQUEST.TOKEN, groupId);
                 put(REQUEST.DEVICE_ID, utils.getUuid());
-                userId = u.load("uid");
-                if(userId) put(REQUEST.USER_ID, userId);
+                //userId = u.load("uid");
+                //if(userId) put(REQUEST.USER_ID, userId);
             }
             put(REQUEST.MODEL, navigator.appCodeName );
             put(REQUEST.MANUFACTURER, navigator.appCodeName);
@@ -165,6 +190,7 @@ function TrackingFB(main) {
                                 o[RESPONSE.INITIAL] = true;
 
                                 ref = database.ref().child(getToken());
+                                ref.database.goOnline();
 
                                 if(main.me && main.me.number != undefined) {
                                     ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).child(DATABASE.USER_ACTIVE).set(true);
@@ -431,12 +457,12 @@ function TrackingFB(main) {
         } else {
             ref.on("child_added", listener);
         }
-        refs.push(ref.path.toString());
+        refs.push(ref);
     }
 
     function registerValueListener(ref, listener, errorListener) {
         ref.on("value", listener, errorListener);
-        refs.push(ref.path.toString());
+        refs.push(ref);
     }
 
     function userActiveListener(data) {
