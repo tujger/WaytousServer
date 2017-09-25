@@ -249,7 +249,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                         public void call(JSONObject json) {
 
 //                            ref.child(Constants.DATABASE.SECTION_GROUPS).child(groupId).setValue(user.getUid());
-//                            DatabaseReference nodeNumber = ref.child(groupId).child(Constants.DATABASE.SECTION_USERS_ORDER).push();
+//                            DatabaseReference nodeNumber = ref.child(groupId).child(Constants.DATABASE.USERS_ORDER).push();
 //                            nodeNumber.setValue(user.getUid());
 
                             registerUser(group.getId(), user, REQUEST_NEW_GROUP, new Runnable1<JSONObject>() {
@@ -297,7 +297,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
                             if (value == null) {
                                 dataSnapshot.getRef().push().setValue(user.getUid());
-                                requestDataPrivateTask[0].setRef(refGroup.child(Firebase.SECTION_USERS_ORDER)).start();
+                                requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.ORDER)).start();
                                 return;
                             }
 
@@ -319,9 +319,9 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             } else {
 //                                Common.log(LOG, "onMessage:newGroup:", "user not found adding:", user.getUid());
                                 ref.child(Firebase.SECTION_GROUPS).child(groupId).setValue(user.getUid());
-                                DatabaseReference nodeNumber = ref.child(groupId).child(Firebase.SECTION_USERS_ORDER).push();
+                                DatabaseReference nodeNumber = ref.child(groupId).child(Firebase.USERS).child(Firebase.ORDER).push();
                                 nodeNumber.setValue(user.getUid());
-                                requestDataPrivateTask[0].setRef(refGroup.child(Firebase.SECTION_USERS_ORDER)).start();
+                                requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.ORDER)).start();
                             }
                         }
                     });
@@ -349,7 +349,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                             e.printStackTrace();
                                         }
                                     } else { // join as new member
-                                        requestDataPrivateTask[0].setRef(refGroup.child(Firebase.SECTION_USERS_ORDER)).start();
+                                        requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.ORDER)).start();
                                     }
                                 }
                             });
@@ -360,7 +360,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                 public void call(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.getValue() != null) {
                                         String uid = request.getString(REQUEST_UID);
-                                        numberForKeyTask.setRef(refGroup.child(Firebase.SECTION_USERS_KEYS).child(uid)).start();
+                                        numberForKeyTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.KEYS).child(uid)).start();
                                     } else {
                                         rejectUser(response, conn, groupId, null, "This group is expired. (001)");
                                     }
@@ -369,7 +369,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
                     if (request.has(REQUEST_UID)) {
                         Common.log(LOG, "onMessage:requestJoin:" + conn.getRemoteSocketAddress(), "{ groupId:" + groupId, "uid:" + request.getString(REQUEST_UID) + " }");
-                        groupOptionsTask.setRef(refGroup.child(Firebase.SECTION_OPTIONS)).start();
+                        groupOptionsTask.setRef(refGroup.child(Firebase.OPTIONS)).start();
                     } else {
                         CheckReq check = new CheckReq();
                         check.setControl(Misc.getUnique());
@@ -412,20 +412,28 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                 String customToken = createCustomToken(check.getUid());
 
                                                 Map<String, Object> update = new HashMap<>();
-                                                update.put(Firebase.USER_ACTIVE, true);
-                                                update.put(Firebase.USER_COLOR, Utils.selectColor((int) check.getNumber()));
-                                                update.put(Firebase.USER_CHANGED, new Date().getTime());
+                                                update.put(Firebase.ACTIVE, true);
+                                                update.put(Firebase.COLOR, Utils.selectColor((int) check.getNumber()));
+                                                update.put(Firebase.CHANGED, new Date().getTime());
                                                 if (check.getName() != null && check.getName().length() > 0) {
                                                     update.put(USER_NAME, check.getName());
                                                 }
 
-                                                Task<Void> updateUserTask = refGroup.child(Firebase.SECTION_USERS_DATA).child("" + check.getNumber()).updateChildren(update);
+                                                Task<Void> updateUserTask = refGroup.child(Firebase.USERS).child(Firebase.PUBLIC).child("" + check.getNumber()).updateChildren(update);
                                                 try {
                                                     Tasks.await(updateUserTask);
                                                     response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
                                                     response.put(RESPONSE_NUMBER, check.getNumber());
                                                     response.put(RESPONSE_SIGN, customToken);
                                                     conn.send(response.toString());
+
+                                                    Map<String, Object> accountUpdates = new HashMap<>();
+                                                    if (check.getName() != null && check.getName().length() > 0) {
+                                                        accountUpdates.put(Firebase.NAME, check.getName());
+                                                    }
+                                                    accountUpdates.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
+                                                    ref.child(Firebase.SECTION_USERS).child(check.getUid()).updateChildren(accountUpdates);
+
                                                     Common.log(LOG, "onMessage:joined:" + conn.getRemoteSocketAddress(), "signToken: [provided]"/*+customToken*/);
                                                     conn.close();
                                                     putStaticticsUser(check.getGroupId(), check.getName(), UserAction.USER_RECONNECTED, null);
@@ -462,7 +470,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                         if (dataSnapshot.getValue() != null) {
                                             Common.log(LOG, "onMessage:joinNumberFound:" + conn.getRemoteSocketAddress(), "number:", dataSnapshot.getValue().toString());
                                             check.setNumber(Long.parseLong(dataSnapshot.getValue().toString()));
-                                            userCheckTask.setRef(refGroup.child(Firebase.SECTION_USERS_DATA_PRIVATE).child(dataSnapshot.getValue().toString())).start();
+                                            userCheckTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE).child(dataSnapshot.getValue().toString())).start();
 
                                         } else {
                                             Common.err(LOG, "onMessage:joinNumberNotFound:" + conn.getRemoteSocketAddress());
@@ -481,7 +489,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                 if (user != null && user.containsKey(REQUEST_UID)) {
                                                     String calculatedHash = Misc.getEncryptedHash(check.getControl() + ":" + user.get(REQUEST_UID).toString());
                                                     if (calculatedHash.equals(hash)) {
-                                                        userGetNumberTask.setRef(refGroup.child(Firebase.SECTION_USERS_KEYS).child(check.getUid())).start();
+                                                        userGetNumberTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.KEYS).child(check.getUid())).start();
                                                         return;
                                                     }
                                                 }
@@ -501,19 +509,19 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                     public void call(DataSnapshot dataSnapshot) {
                                         if (check.getUid() != null) {
                                             if (dataSnapshot.getValue() != null) {
-                                                userCheckTask.setRef(refGroup.child(Firebase.SECTION_USERS_DATA_PRIVATE).child("" + check.getNumber())).start();
+                                                userCheckTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE).child("" + check.getNumber())).start();
                                             } else {
                                                 Common.err(LOG, "onMessage:joinUserNotExists:" + conn.getRemoteSocketAddress());
                                                 rejectUser(response, conn, check.getGroupId(), null, "This group is expired. (002)");
                                             }
                                         } else {
-                                            userSearchTask.setRef(refGroup.child(Firebase.SECTION_USERS_DATA_PRIVATE)).start();
+                                            userSearchTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE)).start();
                                         }
                                     }
                                 });
 
 
-                        groupOptionsTask.setRef(refGroup.child(Firebase.SECTION_OPTIONS)).start();
+                        groupOptionsTask.setRef(refGroup.child(Firebase.OPTIONS)).start();
                     } else {
                         Common.err(LOG, "onMessage:joinNotAuthorized:" + conn.getRemoteSocketAddress());
                         rejectUser(response, conn, null, null, "Cannot join to group (user not authorized).");
@@ -552,22 +560,22 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                     public void call(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.getValue() == null) {
                             Map<String, Object> childUpdates = new HashMap<>();
-                            childUpdates.put(Firebase.SECTION_OPTIONS + "/"
+                            childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.OPTION_WELCOME_MESSAGE, group.getWelcomeMessage());
-                            childUpdates.put(Firebase.SECTION_OPTIONS + "/"
+                            childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.OPTION_REQUIRES_PASSWORD, group.isRequirePassword());
-                            childUpdates.put(Firebase.SECTION_OPTIONS + "/"
+                            childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.OPTION_TIME_TO_LIVE_IF_EMPTY, group.getTimeToLiveIfEmpty());
-                            childUpdates.put(Firebase.SECTION_OPTIONS + "/"
+                            childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.OPTION_PERSISTENT, group.isPersistent());
-                            childUpdates.put(Firebase.SECTION_OPTIONS + "/"
+                            childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.OPTION_DISMISS_INACTIVE, group.isDismissInactive());
-                            childUpdates.put(Firebase.SECTION_OPTIONS + "/"
+                            childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.OPTION_DELAY_TO_DISMISS, group.getDelayToDismiss());
-                            childUpdates.put(Firebase.SECTION_OPTIONS + "/"
-                                    + Firebase.OPTION_DATE_CREATED, ServerValue.TIMESTAMP);
-                            childUpdates.put(Firebase.SECTION_OPTIONS + "/"
-                                    + Firebase.OPTION_DATE_CHANGED, ServerValue.TIMESTAMP);
+                            childUpdates.put(Firebase.OPTIONS + "/"
+                                    + Firebase.CREATED, ServerValue.TIMESTAMP);
+                            childUpdates.put(Firebase.OPTIONS + "/"
+                                    + Firebase.CHANGED, ServerValue.TIMESTAMP);
                             ref.child(group.getId()).updateChildren(childUpdates);
                             ref.child(Firebase.SECTION_GROUPS).child(group.getId()).setValue(0);
 
@@ -642,7 +650,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             }
         };
 
-        new TaskSingleValueEventFor<DataSnapshot>(ref.child(groupId).child(Firebase.SECTION_OPTIONS).child(property))
+        new TaskSingleValueEventFor<DataSnapshot>(ref.child(groupId).child(Firebase.OPTIONS).child(property))
                 .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                     @Override
                     public void call(DataSnapshot dataSnapshot) {
@@ -650,7 +658,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                         if (value != null) {
                             res.put(Rest.OLD_VALUE, value);
                             value = !value;
-                            ref.child(groupId).child(Firebase.SECTION_OPTIONS).child(property).setValue(value).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            ref.child(groupId).child(Firebase.OPTIONS).child(property).setValue(value).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     res.put(Rest.STATUS, Rest.SUCCESS);
@@ -672,14 +680,14 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         res.put(Rest.PROPERTY, property);
         res.put(Rest.VALUE, value);
 
-        new TaskSingleValueEventFor<DataSnapshot>(ref.child(groupId).child(Firebase.SECTION_OPTIONS).child(property))
+        new TaskSingleValueEventFor<DataSnapshot>(ref.child(groupId).child(Firebase.OPTIONS).child(property))
                 .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                     @Override
                     public void call(DataSnapshot dataSnapshot) {
                         Serializable oldValue = (Serializable) dataSnapshot.getValue();
                         if (oldValue != null && value != null) {
                             res.put(Rest.OLD_VALUE, oldValue);
-                            ref.child(groupId).child(Firebase.SECTION_OPTIONS).child(property).setValue(value);
+                            ref.child(groupId).child(Firebase.OPTIONS).child(property).setValue(value);
                             res.put(Rest.STATUS, Rest.SUCCESS);
                             onsuccess.call(res);
                         } else {
@@ -697,7 +705,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
         if(REQUEST_NEW_GROUP.equals(action)) {
             ref.child(Firebase.SECTION_GROUPS).child(groupId).setValue(user.getUid());
-            DatabaseReference nodeNumber = ref.child(groupId).child(Firebase.SECTION_USERS_ORDER).push();
+            DatabaseReference nodeNumber = ref.child(groupId).child(Firebase.USERS).child(Firebase.ORDER).push();
             nodeNumber.setValue(user.getUid());
         }
 
@@ -706,14 +714,14 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         final Map<String, Object> childUpdates = new HashMap<>();
 
         Map<String, Object> o = new HashMap<>();
-        o.put(Firebase.USER_COLOR, user.getColor());
-        o.put(Firebase.USER_NAME, user.getName());
+        o.put(Firebase.COLOR, user.getColor());
+        o.put(Firebase.NAME, user.getName());
         if(!user.getUid().startsWith("server:")) {
-            o.put(Firebase.USER_ACTIVE, true);
+            o.put(Firebase.ACTIVE, true);
         }
-        o.put(Firebase.USER_CREATED, user.getCreated());
-        o.put(Firebase.USER_CHANGED, ServerValue.TIMESTAMP);
-        childUpdates.put(Firebase.SECTION_USERS_DATA + "/" + user.getNumber(), o);
+        o.put(Firebase.CREATED, user.getCreated());
+        o.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
+        childUpdates.put(Firebase.USERS + "/" + Firebase.PUBLIC + "/" + user.getNumber(), o);
 
         o = new HashMap<>();
 
@@ -723,15 +731,26 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         o.put(REQUEST_OS, user.getOs());
         if(user.getSignProvider() != null) o.put(REQUEST_SIGN_PROVIDER, user.getSignProvider());
 
-        childUpdates.put(Firebase.SECTION_USERS_DATA_PRIVATE + "/" + user.getNumber(), o);
+        childUpdates.put(Firebase.USERS + "/" + Firebase.PRIVATE + "/" + user.getNumber(), o);
 
         for (Map.Entry<String, RequestHolder> entry : requestHolders.entrySet()) {
             if (entry.getValue().isSaveable()) {
-                childUpdates.put(Firebase.SECTION_PUBLIC + "/" + entry.getKey() + "/" + user.getNumber(), "{}");
+                childUpdates.put(Firebase.PUBLIC + "/" + entry.getKey() + "/" + user.getNumber(), "{}");
             }
         }
 
-        childUpdates.put(Firebase.SECTION_USERS_KEYS + "/" + user.getUid(), user.getNumber());
+        childUpdates.put(Firebase.USERS + "/" + Firebase.KEYS + "/" + user.getUid(), user.getNumber());
+
+        // user account
+        Map<String, Object> accountUpdates = new HashMap<>();
+        if (user.getName() != null && user.getName().length() > 0) {
+            accountUpdates.put(Firebase.NAME, user.getName());
+        }
+        accountUpdates.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
+        accountUpdates.put(Firebase.CREATED, ServerValue.TIMESTAMP);
+        ref.child(Firebase.SECTION_USERS).child(user.getUid()).updateChildren(accountUpdates);
+
+
 
         final Task<Void> updateUserTask = ref.child(groupId).updateChildren(childUpdates);
         try {
@@ -816,13 +835,13 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         };
         onFailureListener.onFailure(new Exception("Not implemented yet."));
 
-        /*ref.child(groupId).child(DATABASE.SECTION_USERS_DATA_PRIVATE).child(user).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+        /*ref.child(groupId).child(DATABASE.USERS_DATA_PRIVATE).child(user).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).child(user).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        new TaskSingleValueEventFor(ref.child(groupId).child(DATABASE.SECTION_USERS_KEYS))
+                        new TaskSingleValueEventFor(ref.child(groupId).child(DATABASE.USERS_KEYS))
                                 .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                                     @Override
                                     public void call(DataSnapshot dataSnapshot) {
@@ -830,7 +849,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                         for(Map.Entry<String,Serializable> x:val.entrySet()) {
                                             System.out.println(userNumber +":"+x.getKey() + ":" + x.getValue() + ":"+x.getValue().getClass()+":"+(x.getValue() == userNumber));
                                             if(x.getValue() == userNumber) {
-                                                ref.child(groupId).child(DATABASE.SECTION_USERS_KEYS).child(x.getKey()).removeValue().addOnCompleteListener(new OnSuccessListener<Void>() {
+                                                ref.child(groupId).child(DATABASE.USERS_KEYS).child(x.getKey()).removeValue().addOnCompleteListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
                                                         json.put(Constants.REST.STATUS, Constants.REST.SUCCESS);
@@ -866,7 +885,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             }
         };
 
-        new TaskSingleValueEventFor<DataSnapshot>(ref.child(groupId).child(Firebase.SECTION_USERS_DATA).child(String.valueOf(userNumber)).child(property))
+        new TaskSingleValueEventFor<DataSnapshot>(ref.child(groupId).child(Firebase.USERS).child(Firebase.PUBLIC).child(String.valueOf(userNumber)).child(property))
                 .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                     @Override
                     public void call(DataSnapshot dataSnapshot) {
@@ -875,7 +894,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             res.put(Rest.OLD_VALUE, oldValue);
                             Boolean newValue = !oldValue;
                             if (value != null) newValue = value;
-                            ref.child(groupId).child(Firebase.SECTION_USERS_DATA).child(String.valueOf(userNumber)).child(property).setValue(newValue).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            ref.child(groupId).child(Firebase.USERS).child(Firebase.PUBLIC).child(String.valueOf(userNumber)).child(property).setValue(newValue).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     res.put(Rest.STATUS, Rest.SUCCESS);
@@ -904,7 +923,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             continue;
                         }
 
-                        new TaskSingleValueEventFor<DataSnapshot>(ref.child(group).child(Firebase.SECTION_OPTIONS))
+                        new TaskSingleValueEventFor<DataSnapshot>(ref.child(group).child(Firebase.OPTIONS))
                                 .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                                     @Override
                                     public void call(DataSnapshot dataSnapshot) {
@@ -946,7 +965,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                             timeToLiveIfEmpty = Long.parseLong("0" + object.toString());
                                         else timeToLiveIfEmpty = 0;
 
-                                        new TaskSingleValueEventFor<DataSnapshot>(ref.child(group).child(Firebase.SECTION_USERS_DATA))
+                                        new TaskSingleValueEventFor<DataSnapshot>(ref.child(group).child(Firebase.USERS).child(Firebase.PUBLIC))
                                                 .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                                                     @Override
                                                     public void call(DataSnapshot dataSnapshot) {
@@ -972,12 +991,12 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                             Map<String, Serializable> user = users.get(i);
                                                             if (user == null) continue;
 
-                                                            String name = (String) user.get(Firebase.USER_NAME);
-                                                            Long changed = (Long) user.get(Firebase.USER_CHANGED);
+                                                            String name = (String) user.get(Firebase.NAME);
+                                                            Long changed = (Long) user.get(Firebase.CHANGED);
                                                             if (changed != null && changed > groupChanged)
                                                                 groupChanged = changed;
                                                             boolean active = false;
-                                                            Object object = user.get(Firebase.USER_ACTIVE);
+                                                            Object object = user.get(Firebase.ACTIVE);
                                                             if (object != null) {
                                                                 active = (Boolean) object;
                                                             }
@@ -988,12 +1007,12 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                                 Long current = new Date().getTime();
                                                                 if (changed == null) {
                                                                     Common.log(LOG, "--- user:", i, "name:", name, "is NULL");
-                                                                    dataSnapshot.getRef().child("" + i).child(Firebase.USER_ACTIVE).setValue(false);
+                                                                    dataSnapshot.getRef().child("" + i).child(Firebase.ACTIVE).setValue(false);
                                                                 } else if (current - delayToDismiss * 1000 > changed) {
                                                                     Common.log(LOG, "--- user:", i, "name:", name, "is EXPIRED for", ((current - delayToDismiss * 1000 - changed) / 1000), "seconds");
-                                                                    dataSnapshot.getRef().child("" + i).child(Firebase.USER_ACTIVE).setValue(false);
+                                                                    dataSnapshot.getRef().child("" + i).child(Firebase.ACTIVE).setValue(false);
                                                                 } else {
-                                                                    dataSnapshot.getRef().getParent().getParent().child(Firebase.SECTION_OPTIONS).child(Firebase.OPTION_DATE_CHANGED).setValue(changed);
+                                                                    dataSnapshot.getRef().getParent().getParent().child(Firebase.OPTIONS).child(Firebase.CHANGED).setValue(changed);
                                                                     Common.log(LOG, "--- user:", i, "name:", name, "is OK");
                                                                 }
                                                             }
@@ -1032,7 +1051,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 final String group = iter.next();
                 if(Constants.DATABASE.SECTION_GROUPS.equals(group) || "overview".equals(group)) continue;
 
-                new TaskSingleValueEventFor<DataSnapshot>(ref.child(group).child(Constants.DATABASE.SECTION_OPTIONS))
+                new TaskSingleValueEventFor<DataSnapshot>(ref.child(group).child(Constants.DATABASE.OPTIONS))
                         .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                             @Override
                             public void call(DataSnapshot dataSnapshot) {
@@ -1097,12 +1116,12 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                     Map<String, Serializable> user = users.get(i);
                                                     if (user == null) continue;
 
-                                                    String name = (String) user.get(Constants.DATABASE.USER_NAME);
-                                                    Long changed = (Long) user.get(Constants.DATABASE.USER_CHANGED);
+                                                    String name = (String) user.get(Constants.DATABASE.NAME);
+                                                    Long changed = (Long) user.get(Constants.DATABASE.CHANGED);
                                                     if (changed != null && changed > groupChanged)
                                                         groupChanged = changed;
                                                     boolean active = false;
-                                                    Object object = user.get(Constants.DATABASE.USER_ACTIVE);
+                                                    Object object = user.get(Constants.DATABASE.ACTIVE);
                                                     if (object != null) {
                                                         active = (Boolean) object;
                                                     }
@@ -1113,12 +1132,12 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                         Long current = new Date().getTime();
                                                         if (changed == null) {
                                                             Common.log(LOG, "--- user:", i, "name:", name, "is NULL");
-                                                            dataSnapshot.getRef().child("" + i).child(Constants.DATABASE.USER_ACTIVE).setValue(false);
+                                                            dataSnapshot.getRef().child("" + i).child(Constants.DATABASE.ACTIVE).setValue(false);
                                                         } else if (current - delayToDismiss * 1000 > changed) {
                                                             Common.log(LOG, "--- user:", i, "name:", name, "is EXPIRED for", ((current - delayToDismiss * 1000 - changed) / 1000), "seconds");
-                                                            dataSnapshot.getRef().child("" + i).child(Constants.DATABASE.USER_ACTIVE).setValue(false);
+                                                            dataSnapshot.getRef().child("" + i).child(Constants.DATABASE.ACTIVE).setValue(false);
                                                         } else {
-                                                            dataSnapshot.getRef().getParent().getParent().child(Constants.DATABASE.SECTION_OPTIONS).child(Constants.DATABASE.OPTION_DATE_CHANGED).setValue(changed);
+                                                            dataSnapshot.getRef().getParent().getParent().child(Constants.DATABASE.OPTIONS).child(Constants.DATABASE.CHANGED).setValue(changed);
                                                             Common.log(LOG, "--- user:", i, "name:", name, "is OK");
                                                         }
                                                     }

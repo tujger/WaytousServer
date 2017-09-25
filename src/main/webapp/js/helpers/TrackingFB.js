@@ -54,7 +54,7 @@ function TrackingFB(main) {
         document.removeEventListener("visibilitychange", updateActive);
 
         updates[DATABASE.USER_ACTIVE] = false;
-        updates[DATABASE.USER_CHANGED] = firebase.database.ServerValue.TIMESTAMP;
+        updates[DATABASE.CHANGED] = firebase.database.ServerValue.TIMESTAMP;
 
 //console.log("UPDATE",DATABASE.SECTION_USERS_DATA + "/" + main.me.number,updates);
         for(var i in refs) {
@@ -200,7 +200,7 @@ function TrackingFB(main) {
                                 window.addEventListener("focus", updateActive);
                                 document.addEventListener("visibilitychange", updateActive);
 
-                                registerValueListener(ref.child(DATABASE.SECTION_OPTIONS).child(DATABASE.OPTION_DATE_CREATED), groupListener, groupErrorListener);
+                                registerValueListener(ref.child(DATABASE.SECTION_OPTIONS).child(DATABASE.CREATED), groupListener, groupErrorListener);
                                 registerValueListener(ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).child(DATABASE.USER_ACTIVE), userActiveListener);
                                 registerChildListener(ref.child(DATABASE.SECTION_USERS_DATA), usersDataListener, -1);
                                 main.eventBus.chain(function(holder){
@@ -360,7 +360,7 @@ function TrackingFB(main) {
             if(type == REQUEST.CHANGE_NAME) {
                 updates = {};
                 updates[USER.NAME] = jsonMessage[USER.NAME];
-                updates[DATABASE.USER_CHANGED] = firebase.database.ServerValue.TIMESTAMP;
+                updates[DATABASE.CHANGED] = firebase.database.ServerValue.TIMESTAMP;
 
 //console.log("UPDATE1",DATABASE.SECTION_USERS_DATA + "/" + main.me.number,updates);
                 ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).update(updates).catch(function(error) {
@@ -394,7 +394,7 @@ function TrackingFB(main) {
 
             updates = {};
             updates[path + "/" + key] = jsonMessage;
-            updates[DATABASE.SECTION_USERS_DATA + "/" + main.me.number + "/" + DATABASE.USER_CHANGED] = firebase.database.ServerValue.TIMESTAMP;
+            updates[DATABASE.SECTION_USERS_DATA + "/" + main.me.number + "/" + DATABASE.CHANGED] = firebase.database.ServerValue.TIMESTAMP;
 
 //console.log("UPDATE2",updates);
             ref.update(updates).catch(function(error) {
@@ -511,11 +511,11 @@ function TrackingFB(main) {
                 //registers
                 registerValueListener(ref.child(DATABASE.SECTION_USERS_DATA).child(user.number).child(DATABASE.USER_NAME), usersDataNameListener);
                 registerValueListener(ref.child(DATABASE.SECTION_USERS_DATA).child(user.number).child(DATABASE.USER_ACTIVE), usersDataActiveListener);
-                registerValueListener(ref.child(DATABASE.SECTION_USERS_DATA).child(user.number).child(DATABASE.USER_CHANGED), usersDataChangedListener);
+                registerValueListener(ref.child(DATABASE.SECTION_USERS_DATA).child(user.number).child(DATABASE.CHANGED), usersDataChangedListener);
 
                 //usersDataNameListener(data.child(DATABASE.USER_NAME));
                 //usersDataActiveListener(data.child(DATABASE.USER_ACTIVE));
-                //usersDataChangedListener(data.child(DATABASE.USER_CHANGED));
+                //usersDataChangedListener(data.child(DATABASE.CHANGED));
 
                 main.eventBus.chain(function(holder){
                     if(holder.saveable) {
@@ -615,7 +615,7 @@ function TrackingFB(main) {
         try {
             if(main.me && main.me.number != undefined) {
                 ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).child(DATABASE.USER_ACTIVE).set(true);
-                ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).child(DATABASE.USER_CHANGED).set(firebase.database.ServerValue.TIMESTAMP);
+                ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).child(DATABASE.CHANGED).set(firebase.database.ServerValue.TIMESTAMP);
             }
         } catch(e) {
             console.error(e.message);

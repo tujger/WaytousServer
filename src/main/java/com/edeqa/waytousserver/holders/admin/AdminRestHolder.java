@@ -161,7 +161,7 @@ public class AdminRestHolder implements PageHolder {
                 @Override
                 public void call(JSONObject json) {
                     ref.child(Constants.DATABASE.SECTION_GROUPS).child(group.getId()).setValue(user.getUid());
-                    DatabaseReference nodeNumber = ref.child(group.getId()).child(Constants.DATABASE.SECTION_USERS_ORDER).push();
+                    DatabaseReference nodeNumber = ref.child(group.getId()).child(Constants.DATABASE.USERS_ORDER).push();
                     nodeNumber.setValue(user.getUid());
 
                     registerUser(group.getId(), user, request);

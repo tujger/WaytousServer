@@ -16,19 +16,19 @@ function UserProfileHolder(main) {
     var placeholder;
     var nameUpdateDialog;
     var menu;
+    var waitingDialog;
 
     function start() {
-        console.log("USERPROFILEHOLDER", this);
-
-        placeholder = u.create(HTML.DIV, {className:"dialog-dim hidden"}, document.body);
-        u.dialog({
+//        placeholder = u.create(HTML.DIV, {className:"dialog-dim hidden"}, document.body);
+        waitingDialog = u.dialog({
             queue: true,
             className: "progress-dialog",
+            modal: true,
             items: [
                 { type: HTML.DIV, className: "progress-dialog-circle" },
                 { type: HTML.DIV, className: "progress-dialog-title", innerHTML: "Waiting for signing in..." }
             ]
-        }, placeholder).show();
+        }, document.body).show();
     }
 
     function onEvent(EVENT,object){
@@ -164,7 +164,8 @@ function UserProfileHolder(main) {
                                     initProfileDialog();
                                     utils.getUuid(function(uuid){
                                         //signOtherLogin()
-                                        placeholder.hide(HIDING.OPACITY);
+//                                        placeholder.hide(HIDING.OPACITY);
+                                        waitingDialog.close();
                                         onAuthStateChanged(result);
                                     });
                                 }).catch(function (error) {
@@ -172,7 +173,8 @@ function UserProfileHolder(main) {
                                     main.toast.show("Signed out");
 
                                     initProfileDialog();
-                                    placeholder.hide(HIDING.OPACITY);
+                                    waitingDialog.close();
+//                                    placeholder.hide(HIDING.OPACITY);
                                 });
                             });
                         }
@@ -534,7 +536,8 @@ function UserProfileHolder(main) {
     }
 
     function signOtherLogin(signProcedureCallback) {
-        placeholder.show(HIDING.OPACITY);
+//        placeholder.show(HIDING.OPACITY);
+        waitingDialog.open();
         if(main.tracking && main.tracking.getStatus() != EVENTS.TRACKING_DISABLED) {
             resign = true;
             main.tracking.stop(function(e){
@@ -547,7 +550,8 @@ function UserProfileHolder(main) {
     }
 
     function onAuthStateChanged(result) {
-        placeholder.hide(HIDING.OPACITY);
+//        placeholder.hide(HIDING.OPACITY);
+        waitingDialog.close();
         if (result) {
             try {
                 var user = result.user.toJSON();
@@ -586,7 +590,8 @@ function UserProfileHolder(main) {
     }
 
     function onAuthStateError(error) {
-        placeholder.hide(HIDING.OPACITY);
+//        placeholder.hide(HIDING.OPACITY);
+        waitingDialog.close();
         // Handle Errors here.
         console.log("ERROR",error);
         var errorCode = error.code;

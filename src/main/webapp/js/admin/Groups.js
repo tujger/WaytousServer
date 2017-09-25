@@ -138,7 +138,7 @@ function Groups() {
                         { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.OPTION_PERSISTENT] ? "&#150;" : snapshot.val()[DATABASE.OPTION_TIME_TO_LIVE_IF_EMPTY] },
                         { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.OPTION_DISMISS_INACTIVE] ? snapshot.val()[DATABASE.OPTION_DELAY_TO_DISMISS] : "&#150;" },
                         { innerHTML: "..." },
-                        { className: "media-hidden", sort: snapshot.val()[DATABASE.OPTION_DATE_CREATED], innerHTML:snapshot.val()[DATABASE.OPTION_DATE_CREATED] ? new Date(snapshot.val()[DATABASE.OPTION_DATE_CREATED]).toLocaleString() : "&#150;" },
+                        { className: "media-hidden", sort: snapshot.val()[DATABASE.CREATED], innerHTML:snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
                         { sort: 0, innerHTML:"..." }
                     ]
                 });
@@ -152,7 +152,7 @@ function Groups() {
                     var changed = 0, active = 0, total = 0;
                     for(var i in snapshot.val()) {
                         total++;
-                        var c = parseInt(snapshot.val()[i][DATABASE.USER_CREATED]);
+                        var c = parseInt(snapshot.val()[i][DATABASE.CREATED]);
                         if(c > changed) changed = c;
                         if(snapshot.val()[i][DATABASE.USER_ACTIVE]) active ++;
                     }
@@ -160,7 +160,7 @@ function Groups() {
 
                     var changed = 0;
                     for(var i in snapshot.val()) {
-                        var c = parseInt(snapshot.val()[i][DATABASE.USER_CHANGED]);
+                        var c = parseInt(snapshot.val()[i][DATABASE.CHANGED]);
                         if(c > changed) changed = c;
                     }
                     changedNode.sort = changed;

@@ -170,8 +170,8 @@ function User() {
             tableSummary.userNameNode.lastChild.innerHTML = snapshot.val()[DATABASE.USER_NAME] || "&lt;Friend "+userNumber+"&gt;";
             tableSummary.userActiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.USER_ACTIVE] ? "Yes" : "No";
             tableSummary.userColorNode.lastChild.style.backgroundColor = utils.getHexColor(snapshot.val()[DATABASE.USER_COLOR]);
-            tableSummary.userCreatedNode.lastChild.innerHTML = snapshot.val()[DATABASE.USER_CREATED] ? new Date(snapshot.val()[DATABASE.USER_CREATED]).toLocaleString() : "&#150;";
-            tableSummary.userUpdatedNode.lastChild.innerHTML = snapshot.val()[DATABASE.USER_CHANGED] ? new Date(snapshot.val()[DATABASE.USER_CHANGED]).toLocaleString() : "&#150;";
+            tableSummary.userCreatedNode.lastChild.innerHTML = snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;";
+            tableSummary.userUpdatedNode.lastChild.innerHTML = snapshot.val()[DATABASE.CHANGED] ? new Date(snapshot.val()[DATABASE.CHANGED]).toLocaleString() : "&#150;";
 
         },function(error){
             console.warn("Resign because of",error.message);

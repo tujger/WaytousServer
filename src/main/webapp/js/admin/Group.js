@@ -315,8 +315,8 @@ function Group() {
 
                 tableSummary.delayToDismissNode.lastChild.innerHTML = snapshot.val()[DATABASE.OPTION_DELAY_TO_DISMISS] || 300;
 
-                tableSummary.createdNode.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.OPTION_DATE_CREATED]).toLocaleString();
-//                tableSummary.changedNode.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.OPTION_DATE_CHANGED]).toLocaleString();
+                tableSummary.createdNode.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString();
+//                tableSummary.changedNode.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CHANGED]).toLocaleString();
 
             });
         }).catch(function(error){
@@ -364,7 +364,7 @@ function Group() {
                     { innerHTML: userNumber, sort: parseInt(userNumber) },
                     { innerHTML: snapshot.val()[DATABASE.USER_NAME] },
                     { style: { backgroundColor: utils.getHexColor(snapshot.val()[DATABASE.USER_COLOR]), opacity: 0.5 } },
-                    { className: "media-hidden", sort: snapshot.val()[DATABASE.USER_CREATED], innerHTML: snapshot.val()[DATABASE.USER_CREATED] ? new Date(snapshot.val()[DATABASE.USER_CREATED]).toLocaleString() : "&#150;" },
+                    { className: "media-hidden", sort: snapshot.val()[DATABASE.CREATED], innerHTML: snapshot.val()[DATABASE.USER_CREATED] ? new Date(snapshot.val()[DATABASE.USER_CREATED]).toLocaleString() : "&#150;" },
                     { sort: 0, innerHTML: "..." },
                     { className: "media-hidden", innerHTML: "..." },
                     { className: "media-hidden", innerHTML: "..." },
@@ -382,7 +382,7 @@ function Group() {
                 tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
             }
 
-            ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).child(userNumber).child(DATABASE.USER_CHANGED).on("value", function(snapshot){
+            ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).child(userNumber).child(DATABASE.CHANGED).on("value", function(snapshot){
                 if(!snapshot.val()) return;
                 userChangedNode.sort = snapshot.val();
                 userChangedNode.innerHTML = new Date(snapshot.val()).toLocaleString();

@@ -131,8 +131,6 @@ function Constants() {
         SECTION_USERS_DATA : "u/b", // users/data-public
         USER_NAME : "name", // name
         USER_ACTIVE : "active", // active
-        USER_CREATED : "created", // created
-        USER_CHANGED : "changed", // changed
         USER_COLOR : "color", // color
         SECTION_USERS_DATA_PRIVATE : "u/p", // users/data-private
         SECTION_USERS_KEYS : "u/k", // users/keys
@@ -144,8 +142,8 @@ function Constants() {
         OPTION_DISMISS_INACTIVE : "dismiss-inactive",
         OPTION_REQUIRES_PASSWORD : "requires-password",
         OPTION_WELCOME_MESSAGE : "welcome-message",
-        OPTION_DATE_CREATED : "date-created",
-        OPTION_DATE_CHANGED : "date-changed",
+        CREATED : "created",
+        CHANGED : "changed",
 
         SECTION_STAT: "_stat",
         STAT_TOTAL: "total",
