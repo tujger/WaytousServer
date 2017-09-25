@@ -6,10 +6,10 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-import static com.edeqa.waytous.Constants.REQUEST_DEVICE_ID;
 import static com.edeqa.waytous.Constants.REQUEST_MANUFACTURER;
 import static com.edeqa.waytous.Constants.REQUEST_MODEL;
 import static com.edeqa.waytous.Constants.REQUEST_OS;
+import static com.edeqa.waytous.Constants.REQUEST_UID;
 import static com.edeqa.waytous.Constants.USER_NAME;
 
 /**
@@ -91,7 +91,7 @@ public class CheckReq {
     }
 
     public void setUser(DataProcessorConnection connection, JSONObject request) {
-        user = new MyUser(connection, request.getString(REQUEST_DEVICE_ID));
+        user = new MyUser(connection, request.getString(REQUEST_UID));
 
         user.setManufacturer(request.getString(REQUEST_MANUFACTURER));
         user.setModel(request.getString(REQUEST_MODEL));

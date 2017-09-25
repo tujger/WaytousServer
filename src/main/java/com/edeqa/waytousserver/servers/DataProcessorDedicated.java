@@ -24,7 +24,6 @@ import static com.edeqa.waytous.Constants.LIFETIME_INACTIVE_GROUP;
 import static com.edeqa.waytous.Constants.LIFETIME_INACTIVE_USER;
 import static com.edeqa.waytous.Constants.REQUEST;
 import static com.edeqa.waytous.Constants.REQUEST_CHECK_USER;
-import static com.edeqa.waytous.Constants.REQUEST_DEVICE_ID;
 import static com.edeqa.waytous.Constants.REQUEST_HASH;
 import static com.edeqa.waytous.Constants.REQUEST_JOIN_GROUP;
 import static com.edeqa.waytous.Constants.REQUEST_MANUFACTURER;
@@ -33,6 +32,7 @@ import static com.edeqa.waytous.Constants.REQUEST_NEW_GROUP;
 import static com.edeqa.waytous.Constants.REQUEST_OS;
 import static com.edeqa.waytous.Constants.REQUEST_TIMESTAMP;
 import static com.edeqa.waytous.Constants.REQUEST_TOKEN;
+import static com.edeqa.waytous.Constants.REQUEST_UID;
 import static com.edeqa.waytous.Constants.RESPONSE_CONTROL;
 import static com.edeqa.waytous.Constants.RESPONSE_MESSAGE;
 import static com.edeqa.waytous.Constants.RESPONSE_NUMBER;
@@ -195,9 +195,9 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
 
             String req = request.getString(REQUEST);
             if (REQUEST_NEW_GROUP.equals(req)) {
-                if (request.has(REQUEST_DEVICE_ID)) {
+                if (request.has(REQUEST_UID)) {
                     MyGroup token = new MyGroup();
-                    MyUser user = new MyUser(conn, request.getString(REQUEST_DEVICE_ID));
+                    MyUser user = new MyUser(conn, request.getString(REQUEST_UID));
                     user.setManufacturer(request.getString(REQUEST_MANUFACTURER));
                     user.setModel(request.getString(REQUEST_MODEL));
                     user.setOs(request.getString(REQUEST_OS));
@@ -240,11 +240,11 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                     if (groups.containsKey(tokenId)) {
                         MyGroup token = groups.get(tokenId);
 
-                        if (request.has(REQUEST_DEVICE_ID)) {
-                            String deviceId1 = request.getString(REQUEST_DEVICE_ID);
+                        if (request.has(REQUEST_UID)) {
+                            String uid = request.getString(REQUEST_UID);
                             MyUser user = null;
                             for (Map.Entry<String, MyUser> x : token.users.entrySet()) {
-                                if (deviceId1.equals(x.getValue().getDeviceId())) {
+                                if (uid.equals(x.getValue().getUid())) {
                                     user = x.getValue();
                                     break;
                                 }
@@ -262,7 +262,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                                 ipToCheck.put(ip, check);
                             } else {
 
-                                user = new MyUser(conn, request.getString(REQUEST_DEVICE_ID));
+                                user = new MyUser(conn, request.getString(REQUEST_UID));
                                 user.setManufacturer(request.getString(REQUEST_MANUFACTURER));
                                 user.setModel(request.getString(REQUEST_MODEL));
                                 user.setOs(request.getString(REQUEST_OS));
@@ -323,7 +323,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
 
                         MyUser user = null;
                         for (Map.Entry<String, MyUser> x : check.getToken().users.entrySet()) {
-                            System.out.println("CHECK:looking for device: [control=" + check.getControl() + ", deviceId=" + x.getValue().getDeviceId().substring(0, 20) + "..., calculatedHash=" + x.getValue().calculateHash(check.getControl()) + "]");
+                            System.out.println("CHECK:looking for device: [control=" + check.getControl() + ", uid=" + x.getValue().getUid().substring(0, 20) + "..., calculatedHash=" + x.getValue().calculateHash(check.getControl()) + "]");
                             if (hash.equals(x.getValue().calculateHash(check.getControl()))) {
                                 user = x.getValue();
                                 break;

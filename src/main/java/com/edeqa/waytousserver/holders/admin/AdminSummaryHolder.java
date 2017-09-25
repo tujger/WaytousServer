@@ -102,7 +102,7 @@ public class AdminSummaryHolder implements PageHolder {
 
                 uo.put("number",y.getValue().getNumber());
                 uo.put("model",y.getValue().getModel());
-                uo.put("deviceId",y.getValue().getDeviceId().substring(0, 30) + "...");
+                uo.put("uid",y.getValue().getUid().substring(0, 30) + "...");
                 uo.put("address",y.getValue().getAddress());
                 uo.put("created",new Date(y.getValue().getCreated()).toString());
                 uo.put("changed",new Date(y.getValue().getChanged()).toString());
@@ -120,7 +120,7 @@ public class AdminSummaryHolder implements PageHolder {
             JSONArray ua = new JSONArray();
             a.put(ua);
             ua.put(x.getKey());
-            ua.put(x.getValue().getDeviceId().substring(0,30)+"...");
+            ua.put(x.getValue().getUid().substring(0,30)+"...");
         }
         return a;
     }

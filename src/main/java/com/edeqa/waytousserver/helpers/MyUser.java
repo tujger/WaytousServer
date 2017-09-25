@@ -9,12 +9,12 @@ import org.json.JSONObject;
 import java.beans.Transient;
 import java.util.Date;
 
-import static com.edeqa.waytous.Constants.REQUEST_DEVICE_ID;
 import static com.edeqa.waytous.Constants.REQUEST_MANUFACTURER;
 import static com.edeqa.waytous.Constants.REQUEST_MODEL;
 import static com.edeqa.waytous.Constants.REQUEST_OS;
 import static com.edeqa.waytous.Constants.REQUEST_SIGN_PROVIDER;
 import static com.edeqa.waytous.Constants.REQUEST_TIMESTAMP;
+import static com.edeqa.waytous.Constants.REQUEST_UID;
 import static com.edeqa.waytous.Constants.USER_ACCURACY;
 import static com.edeqa.waytous.Constants.USER_ALTITUDE;
 import static com.edeqa.waytous.Constants.USER_BEARING;
@@ -39,8 +39,7 @@ public class MyUser {
     public int number;
 //    private ArrayList<MyPosition> positions;
     transient private MyPosition position;
-    private String deviceId;
-//    private String userId;
+    private String uid;
     private String control;
     private String model;
     private String manufacturer;
@@ -48,9 +47,9 @@ public class MyUser {
     private String os;
 
 
-    public MyUser(DataProcessorConnection connection, String deviceId) {
+    public MyUser(DataProcessorConnection connection, String uid) {
         this.connection = connection;
-        this.deviceId = deviceId;
+        this.uid = uid;
         created = new Date().getTime();
         setChanged();
 //        positions = new ArrayList<MyPosition>();
@@ -61,7 +60,7 @@ public class MyUser {
     }
 
     public MyUser(DataProcessorConnection conn, JSONObject request) {
-        this(conn, request.getString(REQUEST_DEVICE_ID));
+        this(conn, request.getString(REQUEST_UID));
 
         if (request.has(REQUEST_MANUFACTURER)) setManufacturer(request.getString(REQUEST_MANUFACTURER));
         if (request.has(REQUEST_MODEL)) setModel(request.getString(REQUEST_MODEL));
@@ -76,7 +75,7 @@ public class MyUser {
     }
 
     public String calculateHash(String control) {
-        return Misc.getEncryptedHash(control + ":" + deviceId);
+        return Misc.getEncryptedHash(getControl() + ":" + getUid());
     }
 
     public String getControl() {
@@ -96,12 +95,8 @@ public class MyUser {
         this.model = model;
     }
 
-    public String getDeviceId() {
-        return deviceId;
-    }
-
     public String getUid() {
-        return deviceId/*Misc.getEncryptedHash(deviceId)*/;
+        return uid;
     }
 
     public String getAddress() {
@@ -135,8 +130,7 @@ public class MyUser {
     public String toString() {
         String res = "";
         res += "number:" + number;
-        res += ", deviceId:" + deviceId;
-//        if (userId != null) res += ", userId:" + userId;
+        res += ", uid:" + uid;
         res += ", address:" + connection.getRemoteSocketAddress();
         res += ", created:" + getCreated() + "/" + new Date(getCreated()).toString();
         res += ", changed:" + getChanged() + "/" + new Date(getChanged()).toString();

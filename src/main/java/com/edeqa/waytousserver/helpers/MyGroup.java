@@ -75,9 +75,9 @@ public class MyGroup {
     public void addUser(MyUser user){
 
 //        user.setToken(id);
-        users.put(user.getDeviceId(),user);
+        users.put(user.getUid(),user);
         user.setNumber(count++);
-        if(owner == null) setOwner(user.getDeviceId());
+        if(owner == null) setOwner(user.getUid());
 
         if(user.getColor() == 0){
             user.setColor(Utils.selectColor(user.getNumber()));
@@ -255,7 +255,7 @@ public class MyGroup {
                 o.put("content_available",true);
             }
 
-            o.put("to", to.getDeviceId());
+            o.put("to", to.getUid());
             o.put("data", dataSection);
 
             URL url = new URL("https://android.googleapis.com/gcm/send");
@@ -290,7 +290,7 @@ public class MyGroup {
 
             System.out.println("\nSending push FCM to device");
             System.out.println("--- device name: "+to.getName()+", platform: "+to.getOs());
-            System.out.println("--- token: "+to.getDeviceId().substring(0,30)+"...");
+            System.out.println("--- token: "+to.getUid().substring(0,30)+"...");
             System.out.println("--- body: "+o.toString(3));
             System.out.println("--- response: "+resp.toString());
 

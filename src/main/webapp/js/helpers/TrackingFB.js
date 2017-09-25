@@ -114,7 +114,7 @@ function TrackingFB(main) {
             opened = true;
             if(newTracking) { // create group
                 put(REQUEST.REQUEST, REQUEST.NEW_GROUP);
-                put(REQUEST.DEVICE_ID, utils.getUuid());
+                put(REQUEST.UID, utils.getUuid());
                 //var userId = u.load("uid");
                 //if(userId) put(REQUEST.USER_ID, userId);
             } else if(reconnect) { // reconnect to group
@@ -131,7 +131,7 @@ function TrackingFB(main) {
 
                 put(REQUEST.REQUEST, REQUEST.JOIN_GROUP);
                 put(REQUEST.TOKEN, groupId);
-                put(REQUEST.DEVICE_ID, utils.getUuid());
+                put(REQUEST.UID, utils.getUuid());
                 //userId = u.load("uid");
                 //if(userId) put(REQUEST.USER_ID, userId);
             }
@@ -158,8 +158,8 @@ function TrackingFB(main) {
                 case RESPONSE.STATUS_CHECK:
                     if(RESPONSE.CONTROL) {
                         var control = o[RESPONSE.CONTROL];
-                        var deviceId = utils.getUuid();
-                        var hash = utils.getEncryptedHash(control +":"+ deviceId);
+                        var uid = utils.getUuid();
+                        var hash = utils.getEncryptedHash(control +":"+ uid);
                         put(REQUEST.REQUEST, REQUEST.CHECK_USER);
                         put(REQUEST.HASH, hash);
                         send();

@@ -60,8 +60,8 @@ function User() {
             ]
         });
 
-        tableSummary.userKeyNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Key" },
+        tableSummary.userUidNode = tableSummary.add({ cells: [
+            { className: "th", innerHTML: "UID" },
             { className: "option", innerHTML: "..." }
         ] });
 
@@ -155,7 +155,7 @@ function User() {
             tableSummary.userOsNode.lastChild.innerHTML = snapshot.val()[REQUEST.OS];
             tableSummary.userDeviceNode.lastChild.innerHTML = snapshot.val()[REQUEST.MODEL];
             tableSummary.userSignProviderNode.lastChild.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER];
-            tableSummary.userKeyNode.lastChild.innerHTML = snapshot.val()[REQUEST.KEY];
+            tableSummary.userUidNode.lastChild.innerHTML = snapshot.val()[REQUEST.UID];
         }).catch(function(error){
             console.warn("Resign because of",error.message);
             WTU.resign(updateSummary);
