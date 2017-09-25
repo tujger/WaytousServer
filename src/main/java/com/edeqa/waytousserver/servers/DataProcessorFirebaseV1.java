@@ -338,7 +338,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                         check.setNumber((long) dataSnapshot.getValue());
                                         check.setUser(conn, request);
 
-                                        Common.log(LOG, "onMessage:checkRequest:" + conn.getRemoteSocketAddress(), "{ number:" + dataSnapshot.getValue(), "key:" + dataSnapshot.getKey(), "control:" + check.getControl() + " }");
+                                        Common.log(LOG, "onMessage:checkRequest:" + conn.getRemoteSocketAddress(), "{ number:" + dataSnapshot.getValue(), "uid:" + dataSnapshot.getKey(), "control:" + check.getControl() + " }");
 
                                         response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
                                         response.put(RESPONSE_CONTROL, check.getControl());
@@ -445,7 +445,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                 e.printStackTrace();
                                             }
                                         } else {
-                                            Common.err(LOG, "onMessage:joinNotAuthenticated:" + conn.getRemoteSocketAddress(), "group:" + check.getGroupId(), "{ number:" + dataSnapshot.getKey(), "properties:" + dataSnapshot.getValue(), "} got:", hash, " waited:", calculatedHash);
+                                            Common.err(LOG, "onMessage:joinNotAuthenticated:" + conn.getRemoteSocketAddress(), "group:" + check.getGroupId(), "{ number:" + dataSnapshot.getKey(), "properties:" + dataSnapshot.getValue(), "} waited:", calculatedHash, " got:", hash);
                                             rejectUser(response, conn, check.getGroupId(), check.getName(), "Cannot join to group (user not authenticated).");
                                         }
 

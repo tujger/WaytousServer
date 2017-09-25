@@ -751,7 +751,6 @@ function Edequate(options) {
     }
     this.loadForContext = loadForContext;
 
-    var modalBackground;
     var dialogQueue = [];
     var performingDialogInQueue;
 
@@ -821,6 +820,11 @@ function Edequate(options) {
         appendTo = appendTo || document.body;
         options = options || {};
 
+        var dim;
+        if(options.modal) {
+            dim = create(HTML.DIV, {className:"dialog-dim hidden"}, appendTo);
+        }
+
         var dialog = create(HTML.DIV, {
             className:"modal shadow hidden" + optionalClassName(options.className),
             tabindex:-1,
@@ -835,6 +839,9 @@ function Edequate(options) {
             _onblur: options.onblur
         }, appendTo);
         dialog.options = options;
+        if(dim) {
+            dialog.modal = dim;
+        }
 
         dialog.opened = false;
 
@@ -1041,11 +1048,6 @@ function Edequate(options) {
             }
         };
 
-        if(options.modal) {
-            modalBackground = modalBackground || create(HTML.DIV, {className:"dialog-dim"}, appendTo);
-            dialog.modal = modalBackground;
-        }
-
         var backButtonAction = function(event) {
             window.history.pushState(null, document.title, location.href);
             event.preventDefault();
@@ -1098,7 +1100,10 @@ function Edequate(options) {
             }
 
             clearInterval(dialog.intervalTask);
-            dialog.modal && dialog.modal.show();
+            if(dialog.modal) {
+                dialog.modal.show();
+                dialog.style.zIndex += 10000;
+            }
             dialog.show(dialog.options.hiding.open);
             dialog.opened = true;
             dialog.adjustPosition();
@@ -1139,7 +1144,10 @@ function Edequate(options) {
             }
             clearInterval(dialog.intervalTask);
             dialog.hide(dialog.options.hiding.close);
-            dialog.modal && dialog.modal.hide();
+            if(dialog.modal) {
+                dialog.modal.hide();
+                dialog.style.zIndex -= 10000;
+            }
             dialog.opened = false;
 
             window.removeEventListener("popstate", backButtonAction);

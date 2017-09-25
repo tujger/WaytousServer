@@ -28,7 +28,7 @@ function UserProfileHolder(main) {
                 { type: HTML.DIV, className: "progress-dialog-circle" },
                 { type: HTML.DIV, className: "progress-dialog-title", innerHTML: "Waiting for signing in..." }
             ]
-        }, document.body).show();
+        }, document.body);
     }
 
     function onEvent(EVENT,object){
@@ -257,34 +257,57 @@ function UserProfileHolder(main) {
                     className: "user-profile-dialog-summary",
                     innerHTML: "Signing in to account"
                 });
-                profileDialog.setItems([
-                    { type: HTML.INPUT, label: "E-mail" },
-                    { type: HTML.PASSWORD, label: "Password" },
-                    {
-                        type: HTML.DIV,
-                        className: "user-profile-forgot-password",
-                        innerHTML: "Forgot password?",
-                        onclick: function (evt) {
-                            initProfileDialog("email_restore");
-                            profileDialog.open();
-                            return false;
-                        }
+                var email = profileDialog.loginNode ? profileDialog.loginNode.value : "";
+                profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: "E-mail", value: email });
+                profileDialog.passwordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: "Password" });
+                profileDialog.addItem({
+                    type: HTML.DIV,
+                    className: "user-profile-forgot-password",
+                    innerHTML: "Forgot password?",
+                    onclick: function (evt) {
+                        initProfileDialog("email_restore");
+                        profileDialog.open();
+                        return false;
                     }
-                ]);
-                profileDialog.errorNode = profileDialog.addItem({
-                    innerHTML: "",
-                    className: "user-profile-dialog-error hidden"
                 });
                 profileDialog.setPositive({
                     label: u.lang.sign_in,
                     dismiss: false,
                     onclick: function() {
                         console.log("SIGN IN", profileDialog.items[0].value, profileDialog.items[1].value);
-                        firebase.auth().signInWithEmailAndPassword(profileDialog.items[0].value, profileDialog.items[1].value).then(onAuthStateChanged).catch(function(error) {
-
+                        firebase.auth().signInWithEmailAndPassword(profileDialog.items[0].value, profileDialog.items[1].value)
+                        .then(onAuthStateChanged)
+                        .catch(function(error) {
                             profileDialog.errorNode.innerHTML = error.message;
                             profileDialog.errorNode.show();
-                            console.log("ERROR",error)
+
+                            switch(error.code) {
+                             case "auth/invalid-email":
+                                  profileDialog.errorNode.innerHTML = error.message;
+                                  profileDialog.errorNode.show();
+                                  profileDialog.loginNode.focus();
+                                  break;
+                             case "auth/user-not-found":
+                                  profileDialog.errorNode.innerHTML = error.message;
+                                  profileDialog.errorNode.show();
+                                  profileDialog.loginNode.focus();
+                                  break;
+                             case "auth/wrong-password":
+                                  profileDialog.errorNode.innerHTML = error.message;
+                                  profileDialog.errorNode.show();
+                                  profileDialog.passwordNode.focus();
+                                  break;
+                             case "auth/popup-closed-by-user":
+                                 profileDialog.errorNode.innerHTML = error.message;
+                                 profileDialog.errorNode.show();
+                                 profileDialog.loginNode.focus();
+                                 break;
+                             default:
+                                 profileDialog.errorNode.innerHTML = error.message;
+                                 profileDialog.errorNode.show();
+                                 profileDialog.loginNode.focus();
+                                 console.error("ERROR", error);
+                             }
                         });
                     }
                 });
@@ -304,19 +327,47 @@ function UserProfileHolder(main) {
                     className: "user-profile-dialog-summary",
                     innerHTML: "Creating new account"
                 });
-                profileDialog.setItems([
-                    { type: HTML.INPUT, label: "E-mail"},
-                    { type: HTML.PASSWORD, label: "Password"},
-                    { type: HTML.PASSWORD, label: "Confirm password"},
-                ]);
+                profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: "E-mail", value: profileDialog.loginNode.value });
+                profileDialog.passwordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: "Password" });
+                profileDialog.confirmPasswordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: "Confirm password" });
                 profileDialog.setPositive({
                     label: u.lang.sign_up,
                     dismiss: false,
                     onclick: function() {
                         console.log("SIGN UP", profileDialog.items[0].value, profileDialog.items[1].value);
-                        /*firebase.auth().createUserWithEmailAndPassword(profileDialog.items[0].value, profileDialog.items[1].value).then(onAuthStateChanged).catch(function(error) {
-                            console.log("ERROR",error)
-                        });  */               }
+
+                        if(profileDialog.passwordNode.value != profileDialog.confirmPasswordNode.value) {
+                            profileDialog.errorNode.innerHTML = "Confirm password not equals to password";
+                             profileDialog.errorNode.show();
+                             profileDialog.passwordNode.focus();
+                             return;
+                        }
+
+                        firebase.auth().createUserWithEmailAndPassword(profileDialog.loginNode.value, profileDialog.passwordNode.value)
+                        .then(onAuthStateChanged)
+                        .catch(function(error) {
+                            profileDialog.errorNode.innerHTML = error.message;
+                            profileDialog.errorNode.show();
+
+                            switch(error.code) {
+                            case "auth/email-already-in-use":
+                                 profileDialog.errorNode.innerHTML = error.message;
+                                 profileDialog.errorNode.show();
+                                 profileDialog.loginNode.focus();
+                                break;
+                            case "auth/weak-password":
+                                 profileDialog.errorNode.innerHTML = error.message;
+                                 profileDialog.errorNode.show();
+                                 profileDialog.passwordNode.focus();
+                                break;
+                             default:
+                                 profileDialog.errorNode.innerHTML = error.message;
+                                 profileDialog.errorNode.show();
+                                 profileDialog.loginNode.focus();
+                                 console.error("ERROR", error);
+                             }
+                        });
+                    }
                 });
                 profileDialog.setNeutral({
                     label: u.lang.back,
@@ -334,30 +385,28 @@ function UserProfileHolder(main) {
                     className: "user-profile-dialog-summary",
                     innerHTML: "Resetting password"
                 });
-                profileDialog.setItems([
-                    { type: HTML.INPUT, label: "E-mail"},
-                ]);
+                profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: "E-mail", value: profileDialog.loginNode.value});
                 profileDialog.setPositive({
                     label: u.lang.reset,
                     dismiss: false,
                     onclick: function() {
-                        firebase.auth().sendPasswordResetEmail(profileDialog.items[0].value).then(function() {
+                        firebase.auth().sendPasswordResetEmail(profileDialog.items[0].value)
+                        .then(function() {
                             initProfileDialog("email_sent");
                         }).catch(function(error) {
+                            console.log("ERROR",error);
                             profileDialog.errorNode.innerHTML = error.message;
                             profileDialog.errorNode.show();
-                            // An error happened.
+                            profileDialog.loginNode.focus();
                         });
-                        /*firebase.auth().createUserWithEmailAndPassword(profileDialog.items[0].value, profileDialog.items[1].value).then(onAuthStateChanged).catch(function(error) {
-                            console.log("ERROR",error)
-                        });  */               }
+                    }
                 });
                 profileDialog.setNeutral({
                     label: u.lang.back,
                     dismiss: false,
                     onclick: function() {
                         console.log("BACK");
-                        initProfileDialog("email_signup");
+                        initProfileDialog("email_signin");
                     }
                 });
                 break;
@@ -532,6 +581,7 @@ function UserProfileHolder(main) {
                     })
                 );
         }
+        profileDialog.errorNode = profileDialog.addItem({innerHTML: "", className: "user-profile-dialog-error hidden"});
 
     }
 
@@ -552,9 +602,11 @@ function UserProfileHolder(main) {
     function onAuthStateChanged(result) {
 //        placeholder.hide(HIDING.OPACITY);
         waitingDialog.close();
+//        debugger;
         if (result) {
             try {
-                var user = result.user.toJSON();
+                var result = result.user ? result.user.toJSON() : result.toJSON();
+//                var user = result.user.toJSON();
                 //// User is signed in.
                 //var displayName = user.displayName;
                 //var email = user.email;
@@ -564,13 +616,13 @@ function UserProfileHolder(main) {
                 //var providerData = user.providerData;
                 //console.log("AUTH:", user);
 
-                u.save("uuid", user.uid);
                 //u.save("uid", user.uid);
 
-                user.providerData.forEach(function (profile) {
+                u.save("uuid", result.uid);
+                result.providerData.forEach(function (profile) {
                     u.save(REQUEST.SIGN_PROVIDER, profile.providerId);
 
-                    main.toast.show("Signed as " + user.displayName + " using " + profile.providerId);
+                    main.toast.show("Signed as " + (profile.displayName || profile.email) + " using " + profile.providerId);
                 });
                 initProfileDialog();
 
@@ -597,6 +649,20 @@ function UserProfileHolder(main) {
         var errorCode = error.code;
         var errorMessage = error.message;
         // The email of the user's account used.
+
+        switch(error.code) {
+        case "auth/unauthorized-domain":
+            profileDialog.errorNode.innerHTML = error.message;
+            profileDialog.errorNode.show();
+            break;
+        case "auth/popup-closed-by-user":
+            profileDialog.errorNode.innerHTML = error.message;
+            profileDialog.errorNode.show();
+            break;
+        default:
+            console.error("ERROR", error);
+        }
+
         var email = error.email;
         // The firebase.auth.AuthCredential type that was used.
         var credential = error.credential;
