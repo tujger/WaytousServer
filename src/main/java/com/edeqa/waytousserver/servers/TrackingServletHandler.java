@@ -85,12 +85,11 @@ public class TrackingServletHandler extends AbstractServletHandler {
                 mainLink = "http://" + requestWrapper.getRequestHeader(HttpHeaders.HOST).get(0) + "/group/" + tokenId;
             }
 
-            String redirectLink = "http://" + OPTIONS.getFirebaseDynamicLinkHost() + "/?"
+            String redirectLink = "https://" + OPTIONS.getFirebaseDynamicLinkHost() + "/?"
                     + "link=" + mainLink
                     + "&apn=com.edeqa.waytous"
                     + "&al=" + mobileRedirect
                     + "&afl=" + webRedirect
-                    + "&ifl=" + webRedirect
                     + "&st=Waytous"
                     + "&sd=Be+always+on+the+same+way+with+your+friends"
                     + "&si=https://www.waytous.net/icons/favicon-256x256.png";

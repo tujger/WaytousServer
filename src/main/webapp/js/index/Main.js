@@ -262,7 +262,7 @@ function Main() {
 
     function showTerms(e) {
         showTerms.dialog = showTerms.dialog || u.dialog({
-                title: u.lang.terms_and_conditions,
+                title: u.lang.terms_of_service,
                 items: [
                     { type: HTML.DIV, className: "terms-dialog-body", innerHTML: u.lang.loading }
                 ],
@@ -274,7 +274,7 @@ function Main() {
         showTerms.dialog.open();
 
         var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);
-        u.post("/rest/v1/getContent", {resource: "terms-and-conditions.html", locale: lang}).then(function(xhr){
+        u.post("/rest/v1/getContent", {resource: "terms-of-service.html", locale: lang}).then(function(xhr){
             showTerms.dialog.items[0].innerHTML = xhr.response;
         }).catch(function(error, json) {
             showTerms.dialog.items[0].innerHTML = "Error";

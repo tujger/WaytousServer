@@ -40,12 +40,12 @@ function DrawerHolder(main) {
         });
         dialogAbout.addItem({
             enclosed: true,
-            label: u.lang.terms_and_conditions,
+            label: u.lang.terms_of_service,
             body: u.lang.loading.outerHTML,
             className: "dialog-about-terms",
             onopen: function(e) {
                 var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);
-                u.post("/rest/v1/getContent", {resource: "terms-and-conditions.html", locale: lang}).then(function(xhr){
+                u.post("/rest/v1/getContent", {resource: "terms-of-service.html", locale: lang}).then(function(xhr){
                     e.body.innerHTML = xhr.response;
                 }).catch(function(error, json) {
                     e.body.innerHTML = u.lang.error;

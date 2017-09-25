@@ -88,7 +88,7 @@
   "alpha_7": "<a href=\"/\" target=\"_blank\" rel=\"noopener\">Go to the main page of project (new window).</a>",
 
   "privacy_policy": "Privacy policy",
-  "terms_and_conditions": "Terms and conditions",
+  "terms_of_service": "Terms of Service",
   "third_party_components":"Third party components",
   "d_selected": "%d selected",
 
@@ -286,7 +286,7 @@
   "do_you_want_to_keep_screen_on_during_group_is_active": "Do you want to keep screen on during group is active?",
   "group_has_been_removed": "Group has been removed.",
 
-  "terms_of_service": "Terms of service (click for expand/collapse)",
+  "terms_of_service_click": "Terms of service (click for expand/collapse)",
   "terms_of_service_body": "Terms of service (click for expand/collapse)",
   "i_have_read_and_agree_with_terms_of_service": "I've read and agree with terms of service",
 
