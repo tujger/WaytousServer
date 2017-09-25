@@ -135,21 +135,21 @@ public class AdminRestHolder implements PageHolder {
 
                 final MyGroup group = new MyGroup();
                 if(json.has(Rest.GROUP_ID)) group.setId(json.getString(Rest.GROUP_ID));
-                if(json.has(Firebase.OPTION_REQUIRES_PASSWORD)) group.setRequiresPassword(json.getBoolean(Firebase.OPTION_REQUIRES_PASSWORD));
+                if(json.has(Firebase.REQUIRES_PASSWORD)) group.setRequiresPassword(json.getBoolean(Firebase.REQUIRES_PASSWORD));
                 if(json.has("password")) group.setPassword(json.get("password").toString());
-                if(json.has(Firebase.OPTION_WELCOME_MESSAGE)) group.setWelcomeMessage(json.getString(Firebase.OPTION_WELCOME_MESSAGE));
-                if(json.has(Firebase.OPTION_PERSISTENT)) group.setPersistent(json.getBoolean(Firebase.OPTION_PERSISTENT));
-                if(json.has(Firebase.OPTION_TIME_TO_LIVE_IF_EMPTY)) {
+                if(json.has(Firebase.WELCOME_MESSAGE)) group.setWelcomeMessage(json.getString(Firebase.WELCOME_MESSAGE));
+                if(json.has(Firebase.PERSISTENT)) group.setPersistent(json.getBoolean(Firebase.PERSISTENT));
+                if(json.has(Firebase.TIME_TO_LIVE_IF_EMPTY)) {
                     try {
-                        group.setTimeToLiveIfEmpty(Integer.parseInt(json.getString(Firebase.OPTION_TIME_TO_LIVE_IF_EMPTY)));
+                        group.setTimeToLiveIfEmpty(Integer.parseInt(json.getString(Firebase.TIME_TO_LIVE_IF_EMPTY)));
                     } catch (Exception e) {
                         group.setTimeToLiveIfEmpty(15);
                     }
                 }
-                if(json.has(Firebase.OPTION_DISMISS_INACTIVE)) group.setDismissInactive(json.getBoolean(Firebase.OPTION_DISMISS_INACTIVE));
-                if(json.has(Firebase.OPTION_DELAY_TO_DISMISS)) {
+                if(json.has(Firebase.DISMISS_INACTIVE)) group.setDismissInactive(json.getBoolean(Firebase.DISMISS_INACTIVE));
+                if(json.has(Firebase.DELAY_TO_DISMISS)) {
                     try {
-                        group.setDelayToDismiss(Integer.parseInt(json.getString(Firebase.OPTION_DELAY_TO_DISMISS)));
+                        group.setDelayToDismiss(Integer.parseInt(json.getString(Firebase.DELAY_TO_DISMISS)));
                     } catch(Exception e){
                         group.setDelayToDismiss(300);
                     }

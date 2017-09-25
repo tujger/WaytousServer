@@ -436,6 +436,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
                                                     Common.log(LOG, "onMessage:joined:" + conn.getRemoteSocketAddress(), "signToken: [provided]"/*+customToken*/);
                                                     conn.close();
+
                                                     putStaticticsUser(check.getGroupId(), check.getName(), UserAction.USER_RECONNECTED, null);
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
@@ -561,17 +562,17 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                         if (dataSnapshot.getValue() == null) {
                             Map<String, Object> childUpdates = new HashMap<>();
                             childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.OPTION_WELCOME_MESSAGE, group.getWelcomeMessage());
+                                    + Firebase.WELCOME_MESSAGE, group.getWelcomeMessage());
                             childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.OPTION_REQUIRES_PASSWORD, group.isRequirePassword());
+                                    + Firebase.REQUIRES_PASSWORD, group.isRequirePassword());
                             childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.OPTION_TIME_TO_LIVE_IF_EMPTY, group.getTimeToLiveIfEmpty());
+                                    + Firebase.TIME_TO_LIVE_IF_EMPTY, group.getTimeToLiveIfEmpty());
                             childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.OPTION_PERSISTENT, group.isPersistent());
+                                    + Firebase.PERSISTENT, group.isPersistent());
                             childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.OPTION_DISMISS_INACTIVE, group.isDismissInactive());
+                                    + Firebase.DISMISS_INACTIVE, group.isDismissInactive());
                             childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.OPTION_DELAY_TO_DISMISS, group.getDelayToDismiss());
+                                    + Firebase.DELAY_TO_DISMISS, group.getDelayToDismiss());
                             childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.CREATED, ServerValue.TIMESTAMP);
                             childUpdates.put(Firebase.OPTIONS + "/"
@@ -741,16 +742,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
         childUpdates.put(Firebase.USERS + "/" + Firebase.KEYS + "/" + user.getUid(), user.getNumber());
 
-        // user account
-        Map<String, Object> accountUpdates = new HashMap<>();
-        if (user.getName() != null && user.getName().length() > 0) {
-            accountUpdates.put(Firebase.NAME, user.getName());
-        }
-        accountUpdates.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
-        accountUpdates.put(Firebase.CREATED, ServerValue.TIMESTAMP);
-        ref.child(Firebase.SECTION_USERS).child(user.getUid()).updateChildren(accountUpdates);
-
-
 
         final Task<Void> updateUserTask = ref.child(groupId).updateChildren(childUpdates);
         try {
@@ -790,6 +781,23 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 user.connection.close();
             }
             putStaticticsUser(groupId, user.getName(), UserAction.USER_REJECTED, e.getMessage());
+        }
+
+        // user account
+        Map<String, Object> accountUpdates = new HashMap<>();
+        if (user.getName() != null && user.getName().length() > 0) {
+            accountUpdates.put(Firebase.NAME, user.getName());
+        }
+        accountUpdates.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
+        accountUpdates.put(Firebase.CREATED, ServerValue.TIMESTAMP);
+
+        final Task<Void> createAccountTask = ref.child(Firebase.SECTION_USERS).child(user.getUid()).updateChildren(accountUpdates);
+        try {
+            Tasks.await(createAccountTask);
+            Common.log(LOG, "createUserAccount:" + user.getNumber(), "uid:" + user.getUid());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Common.err(LOG, "createUserAccount:error:",user, e);
         }
     }
 
@@ -946,21 +954,21 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                         final long timeToLiveIfEmpty;
 
 
-                                        Object object = value.get(Firebase.OPTION_REQUIRES_PASSWORD);
+                                        Object object = value.get(Firebase.REQUIRES_PASSWORD);
                                         requiresPassword = object != null && (boolean) object;
 
-                                        object = value.get(Firebase.OPTION_DISMISS_INACTIVE);
+                                        object = value.get(Firebase.DISMISS_INACTIVE);
                                         dismissInactive = object != null && (boolean) object;
 
-                                        object = value.get(Firebase.OPTION_PERSISTENT);
+                                        object = value.get(Firebase.PERSISTENT);
                                         persistent = object != null && (boolean) object;
 
-                                        object = value.get(Firebase.OPTION_DELAY_TO_DISMISS);
+                                        object = value.get(Firebase.DELAY_TO_DISMISS);
                                         if (object != null)
                                             delayToDismiss = Long.parseLong("0" + object.toString());
                                         else delayToDismiss = 0;
 
-                                        object = value.get(Firebase.OPTION_TIME_TO_LIVE_IF_EMPTY);
+                                        object = value.get(Firebase.TIME_TO_LIVE_IF_EMPTY);
                                         if (object != null)
                                             timeToLiveIfEmpty = Long.parseLong("0" + object.toString());
                                         else timeToLiveIfEmpty = 0;
@@ -1073,21 +1081,21 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                 final long timeToLiveIfEmpty;
 
 
-                                Object object = value.get(Constants.DATABASE.OPTION_REQUIRES_PASSWORD);
+                                Object object = value.get(Constants.DATABASE.REQUIRES_PASSWORD);
                                 requiresPassword = object != null && (boolean) object;
 
-                                object = value.get(Constants.DATABASE.OPTION_DISMISS_INACTIVE);
+                                object = value.get(Constants.DATABASE.DISMISS_INACTIVE);
                                 dismissInactive = object != null && (boolean) object;
 
-                                object = value.get(Constants.DATABASE.OPTION_PERSISTENT);
+                                object = value.get(Constants.DATABASE.PERSISTENT);
                                 persistent = object != null && (boolean) object;
 
-                                object = value.get(Constants.DATABASE.OPTION_DELAY_TO_DISMISS);
+                                object = value.get(Constants.DATABASE.DELAY_TO_DISMISS);
                                 if (object != null)
                                     delayToDismiss = Long.parseLong("0" + object.toString());
                                 else delayToDismiss = 0;
 
-                                object = value.get(Constants.DATABASE.OPTION_TIME_TO_LIVE_IF_EMPTY);
+                                object = value.get(Constants.DATABASE.TIME_TO_LIVE_IF_EMPTY);
                                 if (object != null)
                                     timeToLiveIfEmpty = Long.parseLong("0" + object.toString());
                                 else timeToLiveIfEmpty = 0;

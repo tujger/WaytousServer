@@ -149,8 +149,8 @@ function User() {
         var ref = database.ref();
         tableSummary.placeholder.show();
 
-        ref.child(groupId).child(DATABASE.SECTION_USERS_DATA_PRIVATE).off();
-        ref.child(groupId).child(DATABASE.SECTION_USERS_DATA_PRIVATE).child(userNumber).once("value").then(function(snapshot){
+        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).off();
+        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).child(userNumber).once("value").then(function(snapshot){
             if(!snapshot || !snapshot.val()) return;
             tableSummary.userOsNode.lastChild.innerHTML = snapshot.val()[REQUEST.OS];
             tableSummary.userDeviceNode.lastChild.innerHTML = snapshot.val()[REQUEST.MODEL];
@@ -161,15 +161,15 @@ function User() {
             WTU.resign(updateSummary);
         });
 
-        ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).child(userNumber).off();
-        ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).child(userNumber).on("value",function(snapshot) {
+        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).off();
+        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).on("value",function(snapshot) {
             if(!snapshot || !snapshot.val()) return;
 
             tableSummary.placeholder.hide();
 
-            tableSummary.userNameNode.lastChild.innerHTML = snapshot.val()[DATABASE.USER_NAME] || "&lt;Friend "+userNumber+"&gt;";
-            tableSummary.userActiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.USER_ACTIVE] ? "Yes" : "No";
-            tableSummary.userColorNode.lastChild.style.backgroundColor = utils.getHexColor(snapshot.val()[DATABASE.USER_COLOR]);
+            tableSummary.userNameNode.lastChild.innerHTML = snapshot.val()[DATABASE.NAME] || "&lt;Friend "+userNumber+"&gt;";
+            tableSummary.userActiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.ACTIVE] ? "Yes" : "No";
+            tableSummary.userColorNode.lastChild.style.backgroundColor = utils.getHexColor(snapshot.val()[DATABASE.COLOR]);
             tableSummary.userCreatedNode.lastChild.innerHTML = snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;";
             tableSummary.userUpdatedNode.lastChild.innerHTML = snapshot.val()[DATABASE.CHANGED] ? new Date(snapshot.val()[DATABASE.CHANGED]).toLocaleString() : "&#150;";
 
@@ -193,8 +193,8 @@ function User() {
         var initial = true;
         setTimeout(function(){initial = false;}, 3000);
 
-        ref.child(groupId).child(DATABASE.SECTION_PUBLIC).child("tracking").child(userNumber).off();
-        ref.child(groupId).child(DATABASE.SECTION_PUBLIC).child("tracking").child(userNumber).limitToLast(limit).on("child_added", function(snapshot) {
+        ref.child(groupId).child(DATABASE.PUBLIC).child("tracking").child(userNumber).off();
+        ref.child(groupId).child(DATABASE.PUBLIC).child("tracking").child(userNumber).limitToLast(limit).on("child_added", function(snapshot) {
 
             if(!snapshot || !snapshot.val()){
                 tableLocations.placeholder.show("No locations");
@@ -206,7 +206,7 @@ function User() {
             var lng = snapshot.val()[USER.LONGITUDE];
 
             var row = tableLocations.add({
-                className: "highlight"/* + (snapshot.val()[DATABASE.USER_ACTIVE] ? "" : " inactive")*/,
+                className: "highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
                 cells: [
                     { className: "media-hidden", innerHTML: new Date(snapshot.val()[REQUEST.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[REQUEST.TIMESTAMP] },
                     { innerHTML: snapshot.val()[USER.PROVIDER] },
@@ -271,7 +271,7 @@ function User() {
     function switchActive(number, active) {
         u.progress.show("Switching...");
         var ref = database.ref();
-        u.post("/admin/rest/v1/user/switch", JSON.stringify({group_id:groupId, user_number:userNumber,property:DATABASE.USER_ACTIVE,value:active}))
+        u.post("/admin/rest/v1/user/switch", JSON.stringify({group_id:groupId, user_number:userNumber,property:DATABASE.ACTIVE,value:active}))
             .then(function(){
                 u.progress.hide();
                 if(!active) {

@@ -126,22 +126,21 @@ function Constants() {
     };
     window.DATABASE = {
         SECTION_GROUPS : "_groups",
-        SECTION_PUBLIC : "b", // public
-        SECTION_PRIVATE : "p", // private
-        SECTION_USERS_DATA : "u/b", // users/data-public
-        USER_NAME : "name", // name
-        USER_ACTIVE : "active", // active
-        USER_COLOR : "color", // color
-        SECTION_USERS_DATA_PRIVATE : "u/p", // users/data-private
-        SECTION_USERS_KEYS : "u/k", // users/keys
-        SECTION_USERS_ORDER : "u/n", // users/order
-        SECTION_OPTIONS : "o", // options
-        OPTION_PERSISTENT : "persistent",
-        OPTION_TIME_TO_LIVE_IF_EMPTY : "time-to-live-if-empty",
-        OPTION_DELAY_TO_DISMISS : "delay-to-dismiss",
-        OPTION_DISMISS_INACTIVE : "dismiss-inactive",
-        OPTION_REQUIRES_PASSWORD : "requires-password",
-        OPTION_WELCOME_MESSAGE : "welcome-message",
+        PUBLIC : "b", // public
+        PRIVATE : "p", // private
+        USERS : "u", // users
+        NAME : "name", // name
+        ACTIVE : "active", // active
+        COLOR : "color", // color
+        KEYS: "k",
+        ORDER: "n",
+        OPTIONS : "o", // options
+        PERSISTENT : "persistent",
+        TIME_TO_LIVE_IF_EMPTY : "time-to-live-if-empty",
+        DELAY_TO_DISMISS : "delay-to-dismiss",
+        DISMISS_INACTIVE : "dismiss-inactive",
+        REQUIRES_PASSWORD : "requires-password",
+        WELCOME_MESSAGE : "welcome-message",
         CREATED : "created",
         CHANGED : "changed",
 

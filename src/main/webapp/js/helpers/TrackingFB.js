@@ -53,10 +53,9 @@ function TrackingFB(main) {
         window.removeEventListener("focus", updateActive);
         document.removeEventListener("visibilitychange", updateActive);
 
-        updates[DATABASE.USER_ACTIVE] = false;
+        updates[DATABASE.ACTIVE] = false;
         updates[DATABASE.CHANGED] = firebase.database.ServerValue.TIMESTAMP;
 
-//console.log("UPDATE",DATABASE.SECTION_USERS_DATA + "/" + main.me.number,updates);
         for(var i in refs) {
             try {
                 refs[i].off();
@@ -67,7 +66,7 @@ function TrackingFB(main) {
         refs = [];
 
         if(ref) {
-            ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).update(updates).then(function () {
+            ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).update(updates).then(function () {
                 ref.database.goOffline();
 
                 trackingListener.onStop();
@@ -193,19 +192,19 @@ function TrackingFB(main) {
                                 ref.database.goOnline();
 
                                 if(main.me && main.me.number != undefined) {
-                                    ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).child(DATABASE.USER_ACTIVE).set(true);
+                                    ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.ACTIVE).set(true);
                                 }
 
                                 updateTask = setInterval(updateActive, 60000);
                                 window.addEventListener("focus", updateActive);
                                 document.addEventListener("visibilitychange", updateActive);
 
-                                registerValueListener(ref.child(DATABASE.SECTION_OPTIONS).child(DATABASE.CREATED), groupListener, groupErrorListener);
-                                registerValueListener(ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).child(DATABASE.USER_ACTIVE), userActiveListener);
-                                registerChildListener(ref.child(DATABASE.SECTION_USERS_DATA), usersDataListener, -1);
+                                registerValueListener(ref.child(DATABASE.OPTIONS).child(DATABASE.CREATED), groupListener, groupErrorListener);
+                                registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.ACTIVE), userActiveListener);
+                                registerChildListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC), usersDataListener, -1);
                                 main.eventBus.chain(function(holder){
                                     if(holder.saveable) {
-                                        registerChildListener(ref.child(DATABASE.SECTION_PRIVATE).child(holder.type).child(main.me.number), userPrivateDataListener, -1);
+                                        registerChildListener(ref.child(DATABASE.PRIVATE).child(holder.type).child(main.me.number), userPrivateDataListener, -1);
                                     }
                                 });
                                 try {
@@ -362,8 +361,7 @@ function TrackingFB(main) {
                 updates[USER.NAME] = jsonMessage[USER.NAME];
                 updates[DATABASE.CHANGED] = firebase.database.ServerValue.TIMESTAMP;
 
-//console.log("UPDATE1",DATABASE.SECTION_USERS_DATA + "/" + main.me.number,updates);
-                ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).update(updates).catch(function(error) {
+                ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).update(updates).catch(function(error) {
                     console.error(error);
                 });
 
@@ -386,15 +384,15 @@ function TrackingFB(main) {
                 var to = jsonMessage.to;
                 delete jsonMessage.to;
                 jsonMessage.from = main.me.number;
-                path = DATABASE.SECTION_PRIVATE + "/" + type + "/" + to;
+                path = DATABASE.PRIVATE + "/" + type + "/" + to;
             } else {
-                path = DATABASE.SECTION_PUBLIC + "/" + type + "/" + main.me.number;
+                path = DATABASE.PUBLIC + "/" + type + "/" + main.me.number;
             }
             var key = ref.push().key;
 
             updates = {};
             updates[path + "/" + key] = jsonMessage;
-            updates[DATABASE.SECTION_USERS_DATA + "/" + main.me.number + "/" + DATABASE.CHANGED] = firebase.database.ServerValue.TIMESTAMP;
+            updates[DATABASE.USERS + "/" + DATABASE.PUBLIC + "/" + main.me.number + "/" + DATABASE.CHANGED] = firebase.database.ServerValue.TIMESTAMP;
 
 //console.log("UPDATE2",updates);
             ref.update(updates).catch(function(error) {
@@ -509,18 +507,18 @@ function TrackingFB(main) {
                 user.type = "user";
 
                 //registers
-                registerValueListener(ref.child(DATABASE.SECTION_USERS_DATA).child(user.number).child(DATABASE.USER_NAME), usersDataNameListener);
-                registerValueListener(ref.child(DATABASE.SECTION_USERS_DATA).child(user.number).child(DATABASE.USER_ACTIVE), usersDataActiveListener);
-                registerValueListener(ref.child(DATABASE.SECTION_USERS_DATA).child(user.number).child(DATABASE.CHANGED), usersDataChangedListener);
+                registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.NAME), usersDataNameListener);
+                registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.ACTIVE), usersDataActiveListener);
+                registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.CHANGED), usersDataChangedListener);
 
-                //usersDataNameListener(data.child(DATABASE.USER_NAME));
-                //usersDataActiveListener(data.child(DATABASE.USER_ACTIVE));
+                //usersDataNameListener(data.child(DATABASE.NAME));
+                //usersDataActiveListener(data.child(DATABASE.ACTIVE));
                 //usersDataChangedListener(data.child(DATABASE.CHANGED));
 
                 main.eventBus.chain(function(holder){
                     if(holder.saveable) {
                         var loadSaved = holder.loadsaved || 1;
-                        registerChildListener(ref.child(DATABASE.SECTION_PUBLIC).child(holder.type).child(user.number), userPublicDataListener, loadSaved);
+                        registerChildListener(ref.child(DATABASE.PUBLIC).child(holder.type).child(user.number), userPublicDataListener, loadSaved);
                     }
                 });
 
@@ -614,8 +612,8 @@ function TrackingFB(main) {
     function updateActive() {
         try {
             if(main.me && main.me.number != undefined) {
-                ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).child(DATABASE.USER_ACTIVE).set(true);
-                ref.child(DATABASE.SECTION_USERS_DATA).child(main.me.number).child(DATABASE.CHANGED).set(firebase.database.ServerValue.TIMESTAMP);
+                ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.ACTIVE).set(true);
+                ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.CHANGED).set(firebase.database.ServerValue.TIMESTAMP);
             }
         } catch(e) {
             console.error(e.message);

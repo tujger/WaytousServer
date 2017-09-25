@@ -7,7 +7,7 @@
  *       dialog#options.autoclose=true/false; dialog#setHeader; dialog#getHeader;
  *       dialog#setFooter; dialog#getFooter; dialog#setPositive; dialog#getPositive;
  *       dialog#setNeutral; dialog#getNeutral; dialog#setNegative; dialog#getNegative;
- *       menu; create#options.children
+ *       menu; create#options.children; create#options.variable; create#options.childName
  * 1.2 - HTMLElement#updateHTML(text)
  * 1.1 - some fixes and improvements
  * 1 - initial release
@@ -492,6 +492,19 @@ function Edequate(options) {
                         }
                     } else if(x == "variable") {
                         create.variables[properties[x]] = el;
+                    } else if(x == "childName") {
+                        if(appendTo ) {
+                            if(appendTo instanceof HTMLElement) {
+                                if(appendTo.hasOwnProperty(properties[x])) {
+                                    console.warn("Property " + properties[x] + " of node has overrided.");
+                                }
+                                appendTo[properties[x]] = el;
+                            } else {
+                                console.error("Property " + properties[x] + " can not be defined for non-HTMLElement.")
+                            }
+                        } else {
+                            console.error("Property " + properties[x] + " can not be defined for null.")
+                        }
                     } else if(x == "content" && properties[x].constructor === Array) {
                         for(var i = 0; i < properties[x].length; i++) {
                             el.appendChild(properties[x][i]);

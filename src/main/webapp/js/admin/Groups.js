@@ -121,7 +121,7 @@ function Groups() {
         ref.child(DATABASE.SECTION_GROUPS).off();
         ref.child(DATABASE.SECTION_GROUPS).on("child_added", function(data) {
             resign = false;
-            ref.child(data.key).child(DATABASE.SECTION_OPTIONS).once("value").then(function(snapshot) {
+            ref.child(data.key).child(DATABASE.OPTIONS).once("value").then(function(snapshot) {
                 if(!snapshot || !snapshot.val()) return;
 
                 var row = tableGroups.add({
@@ -133,10 +133,10 @@ function Groups() {
                     },
                     cells: [
                         { innerHTML: data.key },
-                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.OPTION_REQUIRES_PASSWORD] ? "Yes" : "No" },
-                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.OPTION_PERSISTENT] ? "Yes" : "No" },
-                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.OPTION_PERSISTENT] ? "&#150;" : snapshot.val()[DATABASE.OPTION_TIME_TO_LIVE_IF_EMPTY] },
-                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.OPTION_DISMISS_INACTIVE] ? snapshot.val()[DATABASE.OPTION_DELAY_TO_DISMISS] : "&#150;" },
+                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No" },
+                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No" },
+                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "&#150;" : snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY] },
+                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.DISMISS_INACTIVE] ? snapshot.val()[DATABASE.DELAY_TO_DISMISS] : "&#150;" },
                         { innerHTML: "..." },
                         { className: "media-hidden", sort: snapshot.val()[DATABASE.CREATED], innerHTML:snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
                         { sort: 0, innerHTML:"..." }
@@ -146,7 +146,7 @@ function Groups() {
                 var changedNode = row.cells[7]
                 updateTableSummary();
 
-                ref.child(data.key).child(DATABASE.SECTION_USERS_DATA).on("value", function(snapshot){
+                ref.child(data.key).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("value", function(snapshot){
                     if(!snapshot.val()) return;
 
                     var changed = 0, active = 0, total = 0;
@@ -154,7 +154,7 @@ function Groups() {
                         total++;
                         var c = parseInt(snapshot.val()[i][DATABASE.CREATED]);
                         if(c > changed) changed = c;
-                        if(snapshot.val()[i][DATABASE.USER_ACTIVE]) active ++;
+                        if(snapshot.val()[i][DATABASE.ACTIVE]) active ++;
                     }
                     usersNode.innerHTML = active + " / " + total;
 

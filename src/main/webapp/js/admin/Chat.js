@@ -48,17 +48,17 @@ function Chat() {
                 ons.push(on);
                 on.on("child_added", function(group) {
                     var groupId = group.key;
-                    var on = ref.child(groupId).child(DATABASE.SECTION_PUBLIC).child("message");
+                    var on = ref.child(groupId).child(DATABASE.PUBLIC).child("message");
                     ons.push(on);
                     on.on("child_added", function(user) {
                         var userNumber = user.key;
 
-                        ref.child(groupId).child(DATABASE.SECTION_PUBLIC).child("message").child(userNumber);
+                        ref.child(groupId).child(DATABASE.PUBLIC).child("message").child(userNumber);
 
-                        ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).child(userNumber).once("value").then(function(snapshot){
+                        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).once("value").then(function(snapshot){
                             var userName = snapshot.val() ? snapshot.val().name : userNumber;
 
-                            var on = ref.child(groupId).child(DATABASE.SECTION_PUBLIC).child("message").child(userNumber);
+                            var on = ref.child(groupId).child(DATABASE.PUBLIC).child("message").child(userNumber);
                             ons.push(on);
                             on.limitToLast(maximumMessagesLoad).on("child_added", function(message) {
                                 if(dialogChat.items.length > maximumMessagesLoad) {

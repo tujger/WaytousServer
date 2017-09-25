@@ -53,7 +53,7 @@ function Group() {
         /*var requiresPasswordNode = tableSummary.add({
             onclick: function() {
                 this.lastChild.innerHTML += " ...wait";
-                u.post("/admin/rest/v1/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.OPTION_REQUIRES_PASSWORD}))
+                u.post("/admin/rest/v1/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.REQUIRES_PASSWORD}))
                 .catch(function(code,xhr){
                    console.error(code,xhr);
                    WTU.resign(updateSummary);
@@ -63,12 +63,12 @@ function Group() {
             },
             cells: [
                 { className: "th", innerHTML: "Requires password" },
-                { className: "option", innerHTML: snapshot.val()[DATABASE.OPTION_REQUIRES_PASSWORD] ? "Yes" : "No" }
+                { className: "option", innerHTML: snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No" }
         ]});
 
 
         var passwordNode = tableSummary.add({
-            className: snapshot.val()[DATABASE.OPTION_REQUIRES_PASSWORD] ? "" : "hidden",
+            className: snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "" : "hidden",
             cells: [
                 { className: "th", innerHTML: "&#150; password" },
                 { className: "option", innerHTML: u.create(HTML.DIV, {innerHTML: "Not set"}).place(HTML.BUTTON, {className:"group-button-set-password", innerHTML:"Set password", onclick: function(e){
@@ -80,7 +80,7 @@ function Group() {
 
         tableSummary.welcomeMessageNode = tableSummary.add({
             onclick: function() {
-                ref.child(groupId).child(DATABASE.SECTION_OPTIONS).child(DATABASE.OPTION_WELCOME_MESSAGE).once("value").then(function(snapshot){
+                ref.child(groupId).child(DATABASE.OPTIONS).child(DATABASE.WELCOME_MESSAGE).once("value").then(function(snapshot){
                     u.dialog({
                         title: "Welcome message",
                         items: [
@@ -92,7 +92,7 @@ function Group() {
                                 var newValue = items[0].value;
                                 if(tableSummary.welcomeMessageNode.lastChild.innerHTML != newValue) {
                                     tableSummary.welcomeMessageNode.lastChild.innerHTML += " ...wait";
-                                    u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.OPTION_WELCOME_MESSAGE, value:newValue}))
+                                    u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.WELCOME_MESSAGE, value:newValue}))
                                         .catch(function(code,xhr){
                                             console.error(code,xhr);
                                             WTU.resign(updateSummary);
@@ -117,7 +117,7 @@ function Group() {
         tableSummary.persistentNode = tableSummary.add({
             onclick: function() {
                 this.lastChild.innerHTML += " ...wait";
-                u.post("/admin/rest/v1/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.OPTION_PERSISTENT}))
+                u.post("/admin/rest/v1/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.PERSISTENT}))
                     .catch(function(code,xhr){
                         console.warn("Resign because of",code,xhr);
                         WTU.resign(updateSummary);
@@ -146,7 +146,7 @@ function Group() {
                             var newValue = items[1].value;
                             if(tableSummary.timeToLiveNode.lastChild.innerHTML != newValue) {
                                 tableSummary.timeToLiveNode.lastChild.innerHTML += " ...wait";
-                                u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.OPTION_TIME_TO_LIVE_IF_EMPTY, value:newValue}))
+                                u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.TIME_TO_LIVE_IF_EMPTY, value:newValue}))
                                     .catch(function(code,xhr){
                                         console.warn("Resign because of",code,xhr);
                                         WTU.resign(updateSummary);
@@ -168,7 +168,7 @@ function Group() {
         tableSummary.dismissInactiveNode = tableSummary.add({
             onclick: function() {
                 this.lastChild.innerHTML += " ...wait";
-                u.post("/admin/rest/v1/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.OPTION_DISMISS_INACTIVE}))
+                u.post("/admin/rest/v1/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.DISMISS_INACTIVE}))
                     .catch(function(code,xhr){
                         console.warn("Resign because of",code,xhr);
                         WTU.resign(updateSummary);
@@ -196,7 +196,7 @@ function Group() {
                             var newValue = items[1].value;
                             if(tableSummary.delayToDismissNode.lastChild.innerHTML != newValue) {
                                 tableSummary.delayToDismissNode.lastChild.innerHTML += " ...wait";
-                                u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.OPTION_DELAY_TO_DISMISS, value:newValue}))
+                                u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.DELAY_TO_DISMISS, value:newValue}))
                                     .catch(function(code,xhr){
                                         console.warn("Resign because of",code,xhr);
                                         WTU.resign(updateSummary);
@@ -293,27 +293,27 @@ function Group() {
 
         var ref = database.ref();
 
-        ref.child(groupId).child(DATABASE.SECTION_OPTIONS).once("value").then(function(snapshot) {
+        ref.child(groupId).child(DATABASE.OPTIONS).once("value").then(function(snapshot) {
             if(!snapshot || !snapshot.val()) return;
 
-            ref.child(groupId).child(DATABASE.SECTION_OPTIONS).off();
-            ref.child(groupId).child(DATABASE.SECTION_OPTIONS).on("value", function(snapshot){
+            ref.child(groupId).child(DATABASE.OPTIONS).off();
+            ref.child(groupId).child(DATABASE.OPTIONS).on("value", function(snapshot){
                 if(!snapshot.val()) return;
 
-//                tableSummary.requiresPasswordNode.lastChild.innerHTML = snapshot.val()[DATABASE.OPTION_REQUIRES_PASSWORD] ? "Yes" : "No";
-//                tableSummary.passwordNode[snapshot.val()[DATABASE.OPTION_REQUIRES_PASSWORD] ? "show":"hide"]();
+//                tableSummary.requiresPasswordNode.lastChild.innerHTML = snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No";
+//                tableSummary.passwordNode[snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "show":"hide"]();
 
-                tableSummary.welcomeMessageNode.lastChild.innerHTML = snapshot.val()[DATABASE.OPTION_WELCOME_MESSAGE] || "";
+                tableSummary.welcomeMessageNode.lastChild.innerHTML = snapshot.val()[DATABASE.WELCOME_MESSAGE] || "";
 
-                tableSummary.persistentNode.lastChild.innerHTML = snapshot.val()[DATABASE.OPTION_PERSISTENT] ? "Yes" : "No";
-                tableSummary.timeToLiveNode[snapshot.val()[DATABASE.OPTION_PERSISTENT] ? "hide":"show"]();
+                tableSummary.persistentNode.lastChild.innerHTML = snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No";
+                tableSummary.timeToLiveNode[snapshot.val()[DATABASE.PERSISTENT] ? "hide":"show"]();
 
-                tableSummary.timeToLiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.OPTION_TIME_TO_LIVE_IF_EMPTY] || 15;
+                tableSummary.timeToLiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY] || 15;
 
-                tableSummary.dismissInactiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.OPTION_DISMISS_INACTIVE] ? "Yes" : "No";
-                tableSummary.delayToDismissNode[snapshot.val()[DATABASE.OPTION_DISMISS_INACTIVE] ? "show":"hide"]();
+                tableSummary.dismissInactiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.DISMISS_INACTIVE] ? "Yes" : "No";
+                tableSummary.delayToDismissNode[snapshot.val()[DATABASE.DISMISS_INACTIVE] ? "show":"hide"]();
 
-                tableSummary.delayToDismissNode.lastChild.innerHTML = snapshot.val()[DATABASE.OPTION_DELAY_TO_DISMISS] || 300;
+                tableSummary.delayToDismissNode.lastChild.innerHTML = snapshot.val()[DATABASE.DELAY_TO_DISMISS] || 300;
 
                 tableSummary.createdNode.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString();
 //                tableSummary.changedNode.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CHANGED]).toLocaleString();
@@ -343,10 +343,10 @@ function Group() {
         tableSummary.usersNode.lastChild.innerHTML = 0;
         tableSummary.activeUsersNode.lastChild.innerHTML = 0;
 
-        ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).off();
-        ref.child(groupId).child(DATABASE.SECTION_USERS_DATA_PRIVATE).off();
+        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).off();
+        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).off();
 
-        ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).on("child_added", function(snapshot) {
+        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("child_added", function(snapshot) {
             if(!snapshot || !snapshot.val()){
                 tableUsers.placeholder.show("No users");
                 return;
@@ -355,15 +355,15 @@ function Group() {
             var userNumber = snapshot.key;
 
             var row = tableUsers.add({
-                className: "italic highlight" + (snapshot.val()[DATABASE.USER_ACTIVE] ? "" : " inactive"),
+                className: "italic highlight" + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive"),
                 onclick: function(){
                     WTU.switchTo("/admin/user/"+groupId+"/"+userNumber);
                     return false;
                 },
                 cells: [
                     { innerHTML: userNumber, sort: parseInt(userNumber) },
-                    { innerHTML: snapshot.val()[DATABASE.USER_NAME] },
-                    { style: { backgroundColor: utils.getHexColor(snapshot.val()[DATABASE.USER_COLOR]), opacity: 0.5 } },
+                    { innerHTML: snapshot.val()[DATABASE.NAME] },
+                    { style: { backgroundColor: utils.getHexColor(snapshot.val()[DATABASE.COLOR]), opacity: 0.5 } },
                     { className: "media-hidden", sort: snapshot.val()[DATABASE.CREATED], innerHTML: snapshot.val()[DATABASE.USER_CREATED] ? new Date(snapshot.val()[DATABASE.USER_CREATED]).toLocaleString() : "&#150;" },
                     { sort: 0, innerHTML: "..." },
                     { className: "media-hidden", innerHTML: "..." },
@@ -378,11 +378,11 @@ function Group() {
             var userSignProviderNode = row.cells[7];
 
             tableSummary.usersNode.lastChild.innerHTML = +tableSummary.usersNode.lastChild.innerHTML + 1;
-            if(snapshot.val()[DATABASE.USER_ACTIVE]) {
+            if(snapshot.val()[DATABASE.ACTIVE]) {
                 tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
             }
 
-            ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).child(userNumber).child(DATABASE.CHANGED).on("value", function(snapshot){
+            ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.CHANGED).on("value", function(snapshot){
                 if(!snapshot.val()) return;
                 userChangedNode.sort = snapshot.val();
                 userChangedNode.innerHTML = new Date(snapshot.val()).toLocaleString();
@@ -391,7 +391,7 @@ function Group() {
                 tableSummary.changedNode.lastChild.innerHTML = new Date(snapshot.val()).toLocaleString();
                 tableUsers.update();
             });
-            ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).child(userNumber).child(DATABASE.USER_ACTIVE).on("value", function(snapshot){
+            ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.ACTIVE).on("value", function(snapshot){
                 var active = !!snapshot.val();
                 var wasInactive = row.classList.contains("inactive");
                 row.classList[active ? "remove" : "add"]("inactive");
@@ -403,11 +403,11 @@ function Group() {
                 }
                 tableUsers.update();
             });
-            ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).child(userNumber).child(DATABASE.USER_NAME).on("value", function(snapshot){
+            ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.NAME).on("value", function(snapshot){
                 userNameNode.innerHTML = snapshot.val() || "&lt;Friend "+userNumber+"&gt;";
                 tableUsers.update();
             });
-            ref.child(groupId).child(DATABASE.SECTION_PUBLIC).child("tracking").child(userNumber).limitToLast(1).on("child_added", function(snapshot){
+            ref.child(groupId).child(DATABASE.PUBLIC).child("tracking").child(userNumber).limitToLast(1).on("child_added", function(snapshot){
                 var position = snapshot.val();
                 if(position) {
                     row.classList.remove("italic");
@@ -446,7 +446,7 @@ function Group() {
                     }
                 }
             });
-            ref.child(groupId).child(DATABASE.SECTION_USERS_DATA_PRIVATE).child(userNumber).once("value").then(function(snapshot){
+            ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).once("value").then(function(snapshot){
                 if(!snapshot.val()) return;
                 userOsNode.innerHTML = snapshot.val()[REQUEST.OS];
                 userDeviceNode.innerHTML = snapshot.val()[REQUEST.MODEL];
