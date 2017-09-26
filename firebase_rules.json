@@ -9,6 +9,16 @@
     "_stat": {
       ".write": false
     },
+    "_users": {
+      "$user_id": {
+        ".read": "$user_id === auth.uid",
+        ".write": "$user_id === auth.uid",
+        "p": { // user persistent private data
+          ".read": false,
+          ".write": false
+        }
+      }
+    },
     "$group_id": {
       ".write": false,
       ".validate": "root.child('_groups').child($group_id).exists()",
@@ -17,7 +27,7 @@
         ".read": "root.child($group_id+'/u/k/'+auth.uid).exists()",
         ".write": false,
         "welcome-message": {
-          ".write": "root.child($group_id+'/u/p/0/key').val() === auth.uid",
+          ".write": "root.child($group_id+'/u/p/0/uid').val() === auth.uid",
           ".validate": "newData.isString() && newData.val().length < 10240"
         },
         "date-created": {
@@ -54,15 +64,15 @@
           ".read": "root.child($group_id+'/u/k/'+auth.uid).exists()",
           "$user_number":{
             "active": {
-              ".write": "root.child($group_id+'/u/p/'+$user_number+'/key').val() === auth.uid",
+              ".write": "root.child($group_id+'/u/p/'+$user_number+'/uid').val() === auth.uid",
               ".validate": "newData.isBoolean()"
             },
             "name": {
-              ".write": "root.child($group_id+'/u/p/'+$user_number+'/key').val() === auth.uid",
+              ".write": "root.child($group_id+'/u/p/'+$user_number+'/uid').val() === auth.uid",
               ".validate": "newData.isString() && newData.val().length < 256"
             },
-            "changed": {
-              ".write": "root.child($group_id+'/u/p/'+$user_number+'/key').val() === auth.uid",
+            "ch": {
+              ".write": "root.child($group_id+'/u/p/'+$user_number+'/uid').val() === auth.uid",
               ".validate": "newData.val() <= now"
             }
           }
@@ -77,7 +87,7 @@
         ".write": false,
         "$event": {
           "$user_number": {
-            ".write": "root.child($group_id+'/u/p/'+$user_number+'/key').val() === auth.uid",
+            ".write": "root.child($group_id+'/u/p/'+$user_number+'/uid').val() === auth.uid",
             "$item_id": {
               ".validate": "(newData.isString() && newData.val().length < 10240) || !newData.isString()",
               "$key_id": {
@@ -92,7 +102,7 @@
         ".write": false,
         "$event": {
           "$user_number": {
-            ".read": "root.child($group_id+'/u/p/'+$user_number+'/key').val() === auth.uid",
+            ".read": "root.child($group_id+'/u/p/'+$user_number+'/uid').val() === auth.uid",
             "$item_id": {
               ".write": "root.child($group_id+'/u/k/'+auth.uid).exists()",
               ".validate": "(newData.isString() && newData.val().length < 10240) || !newData.isString()",
@@ -105,6 +115,7 @@
       }
       //    ".read": "root.child($group_id+'/u/'+auth.uid).exists()",
       //    ".write": "root.child($group_id+'/u/'+auth.uid).exists() && newData.child('author_id').val() === auth.uid && !data.exists() && newData.exists()",
+
     }
   }
 }

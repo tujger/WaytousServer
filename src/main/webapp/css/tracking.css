@@ -96,7 +96,6 @@
     transition-delay: 1s;
 }
 
-
 #map {
   height: 100%;
   position: relative;
@@ -779,6 +778,12 @@ p.bottom-desc {
     border-width: 2px;
     border-style: solid;
     margin-right: 20px;
+    background-image: url(/images/navigation_twinks.svg);
+    background-size: 40px;
+    background-repeat: no-repeat;
+    background-position: 20px 20px;
+    background-blend-mode: difference;
+    background-color: blanchedalmond;
 }
 .user-profile-dialog-resume {
     text-align: right;

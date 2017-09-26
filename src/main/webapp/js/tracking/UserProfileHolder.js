@@ -17,6 +17,8 @@ function UserProfileHolder(main) {
     var nameUpdateDialog;
     var menu;
     var waitingDialog;
+    var shareBlockedDialog;
+    var accountCreatedDialog;
 
     function start() {
 //        placeholder = u.create(HTML.DIV, {className:"dialog-dim hidden"}, document.body);
@@ -103,17 +105,7 @@ function UserProfileHolder(main) {
                 itemsClassName: "user-profile-dialog-message",
                 tabindex: 3,
                 negative: {
-                    label: u.lang.close,
-                    onclick: function(){
-                        console.log("NEGATIVE")
-
-//                        u.saveForContext("message:chat");
-                    }
-                },
-                onopen: function() {
-                    console.log("OPEN")
-//                    lastReadTimestamp = new Date().getTime();
-//                    u.saveForContext("message:lastread", lastReadTimestamp);
+                    label: u.lang.close
                 }
             }, main.right);
             menu = u.menu({
@@ -127,7 +119,6 @@ function UserProfileHolder(main) {
                                     label: u.lang.yes,
                                     onclick: function(items) {
                                         main.me.fire(EVENTS.CHANGE_NAME, u.create.variables.userNameNode.innerHTML);
-
                                     }
                                 },
                                 negative: {
@@ -155,7 +146,6 @@ function UserProfileHolder(main) {
                         type: HTML.DIV,
                         innerHTML: "Sign out",
                         onclick: function(evt) {
-                            u.save("uid");
                             u.save("uuid");
                             u.save(REQUEST.SIGN_PROVIDER);
                             signOtherLogin(function(result) {
@@ -196,20 +186,19 @@ function UserProfileHolder(main) {
         }
         mode = mode || "anonymous";
 
-
         profileDialog.setHeader(null);
         profileDialog.setFooter(null);
         profileDialog.clearItems();
         profileDialog.setPositive(null);
         profileDialog.setNeutral(null);
-        //console.log(mode, firebase.auth().currentUser.toJSON());
+
         switch (mode) {
             case "facebook.com":
                 menu.setHeader({
                     type: HTML.DIV, children: [
                         u.create(HTML.SPAN, {innerHTML: "Signed with Facebook"}),
                         u.create(HTML.IMG, {src: "/images/facebook.svg", className: "icon menu-item-icon"})
-                    ] //innerHTML: "Signed with Twitter"
+                    ]
                 });
                 break;
             case "google.com":
@@ -217,31 +206,8 @@ function UserProfileHolder(main) {
                     type: HTML.DIV, children: [
                         u.create(HTML.SPAN, {innerHTML: "Signed with Google"}),
                         u.create(HTML.IMG, {src: "/images/google.svg", className: "icon menu-item-icon"})
-                    ] //innerHTML: "Signed with Twitter"
+                    ]
                 });
-                //var node = u.create(HTML.DIV, {className:"test1"}, document.body);
-                //node.content(u.create(HTML.DIV, {className:"test2"}));
-
-                //profileDialog.addItem({
-                //    content: u.create()
-                //        .place({innerHTML:"TEST4"})
-                //        .place({innerHTML:"TEST5"})
-                //        .place({innerHTML:"TEST6"})
-                //});
-                //profileDialog.addItem({
-                //    content: u.create()
-                //        .place({innerHTML:"TEST7"})
-                //        .place({innerHTML:"TEST8"})
-                //        .place({innerHTML:"TEST9"})
-                //});
-                //profileDialog.addItem({
-                //    content: u.create()
-                //        .place({innerHTML:"TEST10"})
-                //        .place({innerHTML:"TEST11"})
-                //        .place({innerHTML:"TEST12"})
-                //});
-
-
                 break;
             case "twitter.com":
                 menu.setHeader({
@@ -275,39 +241,32 @@ function UserProfileHolder(main) {
                     dismiss: false,
                     onclick: function() {
                         console.log("SIGN IN", profileDialog.items[0].value, profileDialog.items[1].value);
-                        firebase.auth().signInWithEmailAndPassword(profileDialog.items[0].value, profileDialog.items[1].value)
-                        .then(onAuthStateChanged)
-                        .catch(function(error) {
-                            profileDialog.errorNode.innerHTML = error.message;
-                            profileDialog.errorNode.show();
-
-                            switch(error.code) {
-                             case "auth/invalid-email":
-                                  profileDialog.errorNode.innerHTML = error.message;
-                                  profileDialog.errorNode.show();
-                                  profileDialog.loginNode.focus();
-                                  break;
-                             case "auth/user-not-found":
-                                  profileDialog.errorNode.innerHTML = error.message;
-                                  profileDialog.errorNode.show();
-                                  profileDialog.loginNode.focus();
-                                  break;
-                             case "auth/wrong-password":
-                                  profileDialog.errorNode.innerHTML = error.message;
-                                  profileDialog.errorNode.show();
-                                  profileDialog.passwordNode.focus();
-                                  break;
-                             case "auth/popup-closed-by-user":
-                                 profileDialog.errorNode.innerHTML = error.message;
-                                 profileDialog.errorNode.show();
-                                 profileDialog.loginNode.focus();
-                                 break;
-                             default:
-                                 profileDialog.errorNode.innerHTML = error.message;
-                                 profileDialog.errorNode.show();
-                                 profileDialog.loginNode.focus();
-                                 console.error("ERROR", error);
-                             }
+                        signOtherLogin(function () {
+                            console.log("LOGIN PASSWORD", this);
+                            var provider = new firebase.auth.GoogleAuthProvider();
+                            firebase.auth().signInWithEmailAndPassword(profileDialog.items[0].value, profileDialog.items[1].value)
+                                .then(onAuthStateChanged)
+                                .catch(function(error) {
+                                    switch(error.code) {
+                                        case "auth/invalid-email":
+                                        case "auth/user-not-found":
+                                        case "auth/popup-closed-by-user":
+                                            profileDialog.errorNode.innerHTML = error.message;
+                                            profileDialog.errorNode.show();
+                                            profileDialog.loginNode.focus();
+                                            break;
+                                        case "auth/wrong-password":
+                                            profileDialog.errorNode.innerHTML = error.message;
+                                            profileDialog.errorNode.show();
+                                            profileDialog.passwordNode.focus();
+                                            break;
+                                        default:
+                                            profileDialog.errorNode.innerHTML = error.message;
+                                            profileDialog.errorNode.show();
+                                            profileDialog.loginNode.focus();
+                                            console.error("ERROR", error);
+                                    }
+                                });
                         });
                     }
                 });
@@ -315,7 +274,6 @@ function UserProfileHolder(main) {
                     label: u.lang.sign_up,
                     dismiss: false,
                     onclick: function() {
-                        console.log("SIGN UP");
                         initProfileDialog("email_signup");
                     }
                 });
@@ -334,38 +292,64 @@ function UserProfileHolder(main) {
                     label: u.lang.sign_up,
                     dismiss: false,
                     onclick: function() {
-                        console.log("SIGN UP", profileDialog.items[0].value, profileDialog.items[1].value);
-
                         if(profileDialog.passwordNode.value != profileDialog.confirmPasswordNode.value) {
                             profileDialog.errorNode.innerHTML = "Confirm password not equals to password";
-                             profileDialog.errorNode.show();
-                             profileDialog.passwordNode.focus();
-                             return;
-                        }
-
-                        firebase.auth().createUserWithEmailAndPassword(profileDialog.loginNode.value, profileDialog.passwordNode.value)
-                        .then(onAuthStateChanged)
-                        .catch(function(error) {
-                            profileDialog.errorNode.innerHTML = error.message;
                             profileDialog.errorNode.show();
+                            profileDialog.passwordNode.focus();
+                            return;
+                        }
+                        signOtherLogin(function () {
+                            console.log("LOGIN GOOGLE", this);
+                            var provider = new firebase.auth.GoogleAuthProvider();
+                            firebase.auth().createUserWithEmailAndPassword(profileDialog.loginNode.value, profileDialog.passwordNode.value)
+                                .then(function(result) {
+                                    result.sendEmailVerification().then(function() {
+                                        profileDialog.setFooter(null);
+                                        profileDialog.clearItems();
+                                        profileDialog.setPositive(null);
+                                        profileDialog.setNeutral(null);
 
-                            switch(error.code) {
-                            case "auth/email-already-in-use":
-                                 profileDialog.errorNode.innerHTML = error.message;
-                                 profileDialog.errorNode.show();
-                                 profileDialog.loginNode.focus();
-                                break;
-                            case "auth/weak-password":
-                                 profileDialog.errorNode.innerHTML = error.message;
-                                 profileDialog.errorNode.show();
-                                 profileDialog.passwordNode.focus();
-                                break;
-                             default:
-                                 profileDialog.errorNode.innerHTML = error.message;
-                                 profileDialog.errorNode.show();
-                                 profileDialog.loginNode.focus();
-                                 console.error("ERROR", error);
-                             }
+                                        accountCreatedDialog = accountCreatedDialog || u.dialog({
+                                            title: "Account created",
+                                            items: [
+                                                {type:HTML.DIV, innerHTML: "Your account is created. Remember your login and password to sign next time. Also, you will get a confirmation email. Please follow the link in this email, otherwise this account will be deleted in 30 days." }
+                                            ],
+                                            positive: {
+                                                label: u.lang.ok
+                                            }
+                                        }, main.right);
+                                        accountCreatedDialog.open();
+                                        onAuthStateChanged(result);
+                                    }).catch(function(error) {
+                                        switch(error.code) {
+                                            default:
+                                                profileDialog.errorNode.innerHTML = error.message;
+                                                profileDialog.errorNode.show();
+                                                profileDialog.loginNode.focus();
+                                                console.error("ERROR", error);
+                                        }
+                                    });
+                                })
+                                .catch(function(error) {
+                                    switch(error.code) {
+                                        case "auth/invalid-email":
+                                        case "auth/email-already-in-use":
+                                            profileDialog.errorNode.innerHTML = error.message;
+                                            profileDialog.errorNode.show();
+                                            profileDialog.loginNode.focus();
+                                            break;
+                                        case "auth/weak-password":
+                                            profileDialog.errorNode.innerHTML = error.message;
+                                            profileDialog.errorNode.show();
+                                            profileDialog.passwordNode.focus();
+                                            break;
+                                        default:
+                                            profileDialog.errorNode.innerHTML = error.message;
+                                            profileDialog.errorNode.show();
+                                            profileDialog.loginNode.focus();
+                                            console.error("ERROR", error);
+                                    }
+                                });
                         });
                     }
                 });
@@ -391,13 +375,16 @@ function UserProfileHolder(main) {
                     dismiss: false,
                     onclick: function() {
                         firebase.auth().sendPasswordResetEmail(profileDialog.items[0].value)
-                        .then(function() {
-                            initProfileDialog("email_sent");
-                        }).catch(function(error) {
-                            console.log("ERROR",error);
-                            profileDialog.errorNode.innerHTML = error.message;
-                            profileDialog.errorNode.show();
-                            profileDialog.loginNode.focus();
+                            .then(function() {
+                                initProfileDialog("email_sent");
+                            }).catch(function(error) {
+                            switch(error.code) {
+                                default:
+                                    profileDialog.errorNode.innerHTML = error.message;
+                                    profileDialog.errorNode.show();
+                                    profileDialog.loginNode.focus();
+                                    console.error("ERROR", error);
+                            }
                         });
                     }
                 });
@@ -418,31 +405,10 @@ function UserProfileHolder(main) {
                 });
                 break;
             case "anonymous":
-                //if(main.tracking && main.tracking.getStatus() != EVENTS.TRACKING_DISABLED) {
-                //    profileDialog.setHeader({
-                //        type: HTML.DIV,
-                //        innerHTML: "You must exit group to be able sign in with other login."
-                //    });
-                //    profileDialog.addItem({
-                //        content: u.create(HTML.BUTTON, {
-                //            className:"dialog-button dialog-item-button",
-                //            onclick: function() {
-                //                main.fire(EVENTS.TRACKING_STOP);
-                //            }
-                //        }).place(HTML.DIV, {
-                //            className: "dialog-item-icon",
-                //            innerHTML: "exit_to_app"
-                //        }).place(HTML.DIV, {
-                //            innerHTML: u.lang.exit_group
-                //        })
-                //    });
-                //    break;
-                //}
                 profileDialog.addItem({
                     content: u.create(HTML.BUTTON, {
                         className: "dialog-button dialog-item-button",
                         onclick: function () {
-
                             signOtherLogin(function () {
                                 console.log("LOGIN FACEBOOK", this);
                                 var provider = new firebase.auth.FacebookAuthProvider();
@@ -451,7 +417,6 @@ function UserProfileHolder(main) {
                                 });
                                 firebase.auth().signInWithPopup(provider).then(onAuthStateChanged).catch(onAuthStateError);
                             });
-
                             //initProfileDialog("facebook");
                         }
                     }).place(HTML.DIV, {
@@ -465,31 +430,11 @@ function UserProfileHolder(main) {
                     content: u.create(HTML.BUTTON, {
                         className: "dialog-button dialog-item-button",
                         onclick: function () {
-
                             signOtherLogin(function () {
                                 console.log("LOGIN GOOGLE", this);
-
                                 var provider = new firebase.auth.GoogleAuthProvider();
                                 firebase.auth().signInWithPopup(provider).then(onAuthStateChanged).catch(onAuthStateError);
                             });
-                            /*.then(function(result) {
-                                // This gives you a Google Access Token. You can use it to access the Google API.
-                                var token = result.credential.accessToken;
-                                // The signed-in user info.
-                                var user = result.user;
-                                // ...
-                            }).catch(function(error) {
-                                // Handle Errors here.
-                                var errorCode = error.code;
-                                var errorMessage = error.message;
-                                // The email of the user's account used.
-                                var email = error.email;
-                                // The firebase.auth.AuthCredential type that was used.
-                                var credential = error.credential;
-                                // ...
-                            })*/
-                            ;
-
                         }
                     }).place(HTML.DIV, {
                         className: "dialog-item-icon",
@@ -616,8 +561,6 @@ function UserProfileHolder(main) {
                 //var providerData = user.providerData;
                 //console.log("AUTH:", user);
 
-                //u.save("uid", user.uid);
-
                 u.save("uuid", result.uid);
                 result.providerData.forEach(function (profile) {
                     u.save(REQUEST.SIGN_PROVIDER, profile.providerId);
@@ -635,6 +578,7 @@ function UserProfileHolder(main) {
             // User is signed out.
         }
         if(resign) {
+            main.tracking.setLink(window.location.href);
             main.tracking.start(function(e){console.log(e)});
             //window.location = window.location.href;
             resign = false;
@@ -651,22 +595,38 @@ function UserProfileHolder(main) {
         // The email of the user's account used.
 
         switch(error.code) {
-        case "auth/unauthorized-domain":
-            profileDialog.errorNode.innerHTML = error.message;
-            profileDialog.errorNode.show();
-            break;
-        case "auth/popup-closed-by-user":
-            profileDialog.errorNode.innerHTML = error.message;
-            profileDialog.errorNode.show();
-            break;
-        default:
-            console.error("ERROR", error);
+            case "auth/unauthorized-domain":
+                profileDialog.errorNode.innerHTML = error.message;
+                profileDialog.errorNode.show();
+                break;
+            case "auth/popup-closed-by-user":
+                profileDialog.errorNode.innerHTML = error.message;
+                profileDialog.errorNode.show();
+                break;
+            case "auth/popup-blocked":
+                profileDialog.errorNode.innerHTML = error.message;
+                profileDialog.errorNode.show();
+
+                shareBlockedDialog = shareBlockedDialog || u.dialog({
+                    items: [
+                        {type:HTML.DIV, innerHTML: u.lang.popup_blocked_dialog_1 },
+                        {type:HTML.DIV, enclosed:true, innerHTML: u.lang.popup_blocked_dialog_2 },
+                    ],
+                    positive: {
+                        label: u.lang.close
+                    }
+                }, main.right);
+                shareBlockedDialog.open();
+                break;
+            default:
+                console.error("ERROR", error);
         }
 
         var email = error.email;
         // The firebase.auth.AuthCredential type that was used.
         var credential = error.credential;
         if(resign) {
+            main.tracking.setLink(window.location.href);
             main.tracking.start(function(e){console.log(e)});
             resign = false;
         }
@@ -675,7 +635,6 @@ function UserProfileHolder(main) {
     function saveUid() {
         userBackup = {
             uuid: u.load("uuid"),
-            uid: u.load("uid")
         };
         console.log(userBackup);
     }

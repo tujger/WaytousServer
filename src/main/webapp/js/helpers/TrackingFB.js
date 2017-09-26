@@ -114,8 +114,6 @@ function TrackingFB(main) {
             if(newTracking) { // create group
                 put(REQUEST.REQUEST, REQUEST.NEW_GROUP);
                 put(REQUEST.UID, utils.getUuid());
-                //var userId = u.load("uid");
-                //if(userId) put(REQUEST.USER_ID, userId);
             } else if(reconnect) { // reconnect to group
                 parts = link.split("/");
                 var groupId = parts[parts.length-1];
@@ -131,8 +129,6 @@ function TrackingFB(main) {
                 put(REQUEST.REQUEST, REQUEST.JOIN_GROUP);
                 put(REQUEST.TOKEN, groupId);
                 put(REQUEST.UID, utils.getUuid());
-                //userId = u.load("uid");
-                //if(userId) put(REQUEST.USER_ID, userId);
             }
             put(REQUEST.MODEL, navigator.appCodeName );
             put(REQUEST.MANUFACTURER, navigator.appCodeName);
@@ -486,6 +482,7 @@ function TrackingFB(main) {
     }
 
     function groupErrorListener(error) {
+        console.error("groupErrorListener", error);
         switch (error.code) {
             case "PERMISSION_DENIED":
                 setStatus(EVENTS.TRACKING_DISABLED);

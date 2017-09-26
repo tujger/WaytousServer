@@ -141,8 +141,8 @@ function Constants() {
         DISMISS_INACTIVE : "dismiss-inactive",
         REQUIRES_PASSWORD : "requires-password",
         WELCOME_MESSAGE : "welcome-message",
-        CREATED : "created",
-        CHANGED : "changed",
+        CREATED : "cr",
+        CHANGED : "ch",
 
         SECTION_STAT: "_stat",
         STAT_TOTAL: "total",

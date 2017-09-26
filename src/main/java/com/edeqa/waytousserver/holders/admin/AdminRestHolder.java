@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.net.URI;
 
+import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.REQUEST_NEW_GROUP;
 
 
@@ -179,8 +180,11 @@ public class AdminRestHolder implements PageHolder {
                         new Runnable1<JSONObject>() {
                             @Override
                             public void call(JSONObject json) {
-
-                                MyUser user = new MyUser(null, "server:" + Misc.getUnique());
+                                MyUser user = new MyUser(null, "Administrator:" + OPTIONS.getLogin());
+                                user.setSignProvider("admin");
+                                user.setName(OPTIONS.getLogin());
+                                user.setOs(System.getProperty("os.name"));
+                                user.setModel(OPTIONS.getAppName() + " 1." + Common.SERVER_BUILD);
 
                                 Common.getInstance().getDataProcessor("v1").registerUser(group.getId(), user, REQUEST_NEW_GROUP, new Runnable1<JSONObject>() {
                                     @Override

@@ -446,7 +446,7 @@ function Group() {
                     }
                 }
             });
-            ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).once("value").then(function(snapshot){
+            ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).child(userNumber).once("value").then(function(snapshot){
                 if(!snapshot.val()) return;
                 userOsNode.innerHTML = snapshot.val()[REQUEST.OS];
                 userDeviceNode.innerHTML = snapshot.val()[REQUEST.MODEL];

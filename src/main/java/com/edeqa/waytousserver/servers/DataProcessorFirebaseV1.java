@@ -229,6 +229,20 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 return;
             }
             if (!request.has(REQUEST) || !request.has(REQUEST_TIMESTAMP)) return;
+            final String uid;
+            if(request.has(REQUEST_UID)) {
+                uid = request.getString(REQUEST_UID);
+                if(uid.startsWith("Administrator") || uid.startsWith("Viewer")) {
+                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
+                    response.put(RESPONSE_MESSAGE, "Wrong UID");
+                    conn.send(response.toString());
+                    conn.close();
+                    putStaticticsUser(null, uid, UserAction.USER_REJECTED, message);
+                    return;
+                }
+            } else {
+                uid = null;
+            }
 
             String req = request.getString(REQUEST);
             /*if (REQUEST_TRACKING.equals(req)) {
@@ -238,10 +252,10 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 Common.log(LOG,"onMessage:updateCoords:fake",response);
             } else*/
             if (REQUEST_NEW_GROUP.equals(req)) {
-                if (request.has(REQUEST_UID)) {
+                if (uid != null) {
                     final MyGroup group = new MyGroup();
                     final MyUser user = new MyUser(conn, request);
-                    Common.log(LOG, "onMessage:requestNew:" + conn.getRemoteSocketAddress(), "{ uid:" + request.getString(REQUEST_UID) + " }");
+                    Common.log(LOG, "onMessage:requestNew:" + conn.getRemoteSocketAddress(), "{ uid:" + uid + " }");
                     //noinspection unchecked
                     final Runnable1<JSONObject>[] onresult = new Runnable1[2];
                     onresult[0] = new Runnable1<JSONObject>() {
@@ -359,7 +373,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                 @Override
                                 public void call(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.getValue() != null) {
-                                        String uid = request.getString(REQUEST_UID);
                                         numberForKeyTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.KEYS).child(uid)).start();
                                     } else {
                                         rejectUser(response, conn, groupId, null, "This group is expired. (001)");
@@ -367,8 +380,8 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                 }
                             });
 
-                    if (request.has(REQUEST_UID)) {
-                        Common.log(LOG, "onMessage:requestJoin:" + conn.getRemoteSocketAddress(), "{ groupId:" + groupId, "uid:" + request.getString(REQUEST_UID) + " }");
+                    if (uid != null) {
+                        Common.log(LOG, "onMessage:requestJoin:" + conn.getRemoteSocketAddress(), "{ groupId:" + groupId, "uid:" + uid + " }");
                         groupOptionsTask.setRef(refGroup.child(Firebase.OPTIONS)).start();
                     } else {
                         CheckReq check = new CheckReq();
@@ -432,7 +445,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                         accountUpdates.put(Firebase.NAME, check.getName());
                                                     }
                                                     accountUpdates.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
-                                                    ref.child(Firebase.SECTION_USERS).child(check.getUid()).updateChildren(accountUpdates);
+                                                    ref.child(Firebase.SECTION_USERS).child(check.getUid()).child(Firebase.PRIVATE).updateChildren(accountUpdates);
 
                                                     Common.log(LOG, "onMessage:joined:" + conn.getRemoteSocketAddress(), "signToken: [provided]"/*+customToken*/);
                                                     conn.close();
@@ -717,7 +730,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         Map<String, Object> o = new HashMap<>();
         o.put(Firebase.COLOR, user.getColor());
         o.put(Firebase.NAME, user.getName());
-        if(!user.getUid().startsWith("server:")) {
+        if(!user.getUid().startsWith("Administrator:")) {
             o.put(Firebase.ACTIVE, true);
         }
         o.put(Firebase.CREATED, user.getCreated());
@@ -726,7 +739,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
         o = new HashMap<>();
 
-//                    o.put(RESPONSE_CONTROL,user.getControl());
         o.put(REQUEST_MODEL, user.getModel());
         o.put(REQUEST_UID, user.getUid());
         o.put(REQUEST_OS, user.getOs());
@@ -791,7 +803,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         accountUpdates.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
         accountUpdates.put(Firebase.CREATED, ServerValue.TIMESTAMP);
 
-        final Task<Void> createAccountTask = ref.child(Firebase.SECTION_USERS).child(user.getUid()).updateChildren(accountUpdates);
+        final Task<Void> createAccountTask = ref.child(Firebase.SECTION_USERS).child(user.getUid()).child(Firebase.PRIVATE).updateChildren(accountUpdates);
         try {
             Tasks.await(createAccountTask);
             Common.log(LOG, "createUserAccount:" + user.getNumber(), "uid:" + user.getUid());
