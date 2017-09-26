@@ -71,6 +71,7 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ACCEPTED;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_CHECK;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ERROR;
+import static com.edeqa.waytous.Constants.RESPONSE_STATUS_UPDATED;
 import static com.edeqa.waytous.Constants.RESPONSE_TOKEN;
 import static com.edeqa.waytous.Constants.USER_NAME;
 
@@ -228,7 +229,13 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 Common.err(LOG, "onMessage:request" + e.getMessage());
                 return;
             }
-            if (!request.has(REQUEST) || !request.has(REQUEST_TIMESTAMP)) return;
+            if (!request.has(REQUEST) || !request.has(REQUEST_TIMESTAMP)) {
+                response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
+                response.put(RESPONSE_MESSAGE, "Wrong request");
+                conn.send(response.toString());
+                conn.close();
+                return;
+            }
             final String uid;
             if(request.has(REQUEST_UID)) {
                 uid = request.getString(REQUEST_UID);
@@ -251,44 +258,58 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 conn.close();
                 Common.log(LOG,"onMessage:updateCoords:fake",response);
             } else*/
-            if (REQUEST_NEW_GROUP.equals(req)) {
+            if ("test".equals(req)) {
+                Common.log(LOG, "onMessage:testMessage:" + conn.getRemoteSocketAddress(), message);
+                response.put(RESPONSE_STATUS, RESPONSE_STATUS_UPDATED);
+                response.put(RESPONSE_MESSAGE, "OK");
+                conn.send(response.toString());
+                conn.close();
+                return;
+            } else if (REQUEST_NEW_GROUP.equals(req)) {
                 if (uid != null) {
                     final MyGroup group = new MyGroup();
                     final MyUser user = new MyUser(conn, request);
                     Common.log(LOG, "onMessage:requestNew:" + conn.getRemoteSocketAddress(), "{ uid:" + uid + " }");
-                    //noinspection unchecked
-                    final Runnable1<JSONObject>[] onresult = new Runnable1[2];
-                    onresult[0] = new Runnable1<JSONObject>() {
+
+                    createOrUpdateUserAccount(user, new Runnable() {
                         @Override
-                        public void call(JSONObject json) {
-
-//                            ref.child(Constants.DATABASE.SECTION_GROUPS).child(groupId).setValue(user.getUid());
-//                            DatabaseReference nodeNumber = ref.child(groupId).child(Constants.DATABASE.USERS_ORDER).push();
-//                            nodeNumber.setValue(user.getUid());
-
-                            registerUser(group.getId(), user, REQUEST_NEW_GROUP, new Runnable1<JSONObject>() {
+                        public void run() {
+                            //noinspection unchecked
+                            final Runnable1<JSONObject>[] onresult = new Runnable1[2];
+                            onresult[0] = new Runnable1<JSONObject>() {
                                 @Override
                                 public void call(JSONObject json) {
-                                    user.connection.send(json.toString());
-                                    user.connection.close();
+                                    registerUser(group.getId(), user, REQUEST_NEW_GROUP, new Runnable1<JSONObject>() {
+                                        @Override
+                                        public void call(JSONObject json) {
+                                            user.connection.send(json.toString());
+                                            user.connection.close();
+                                        }
+                                    }, new Runnable1<JSONObject>() {
+                                        @Override
+                                        public void call(JSONObject json) {
+                                            user.connection.send(json.toString());
+                                            user.connection.close();
+                                        }
+                                    });
                                 }
-                            }, new Runnable1<JSONObject>() {
+                            };
+                            onresult[1] = new Runnable1<JSONObject>() {
                                 @Override
                                 public void call(JSONObject json) {
-                                    user.connection.send(json.toString());
-                                    user.connection.close();
+                                    group.fetchNewId();
+                                    createGroup(group, onresult[0], onresult[1]);
                                 }
-                            });
-                        }
-                    };
-                    onresult[1] = new Runnable1<JSONObject>() {
-                        @Override
-                        public void call(JSONObject json) {
-                            group.fetchNewId();
+                            };
                             createGroup(group, onresult[0], onresult[1]);
                         }
-                    };
-                    createGroup(group, onresult[0], onresult[1]);
+                    }, new Runnable1<Throwable>() {
+                        @Override
+                        public void call(Throwable error) {
+                            Common.err(LOG, "onMessage:newGroup:",user, error);
+                            rejectUser(response, user.connection, null, null, "Cannot create group (code 16).");
+                        }
+                    });
                 } else {
                     rejectUser(response, conn, null, null, "Cannot create group (code 15).");
                     Common.err(LOG, "onMessage:newGroup:", response);
@@ -329,7 +350,19 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             if (found) {
 //                                Common.log(LOG, "onMessage:newGroup:", "user found:", user.getUid());
                                 user.number = count;
-                                registerUser(groupId, user, REQUEST_JOIN_GROUP, null, null);
+                                createOrUpdateUserAccount(user, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        registerUser(groupId, user, REQUEST_JOIN_GROUP, null, null);
+                                    }
+                                }, new Runnable1<Throwable>() {
+                                    @Override
+                                    public void call(Throwable error) {
+                                        Common.err(LOG, "onMessage:newGroup:",user, error);
+                                        rejectUser(response, user.connection, groupId, user.getName(), "Cannot create group (code 17).");
+                                    }
+                                });
+
                             } else {
 //                                Common.log(LOG, "onMessage:newGroup:", "user not found adding:", user.getUid());
                                 ref.child(Firebase.SECTION_GROUPS).child(groupId).setValue(user.getUid());
@@ -394,7 +427,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                         Common.log(LOG, "onMessage:requestReconnect:" + conn.getRemoteSocketAddress(), "{ groupId:" + groupId, "} control:", check.getControl());
                         conn.send(response.toString());
                     }
-                    return;
                 } else {
                     rejectUser(response, conn, null, null, "Wrong request (group not defined).");
                     System.out.println("JOIN:response:" + response);
@@ -422,38 +454,44 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                             Common.log(LOG, "onMessage:joinAsExisting:" + conn.getRemoteSocketAddress(), "group:" + check.getGroupId(), "user:{ number:" + dataSnapshot.getKey(), "properties:" + dataSnapshot.getValue(), " }");
 
                                             try {
-                                                String customToken = createCustomToken(check.getUid());
+                                                final String customToken = createCustomToken(check.getUid());
 
-                                                Map<String, Object> update = new HashMap<>();
+                                                final Map<String, Object> update = new HashMap<>();
                                                 update.put(Firebase.ACTIVE, true);
                                                 update.put(Firebase.COLOR, Utils.selectColor((int) check.getNumber()));
                                                 update.put(Firebase.CHANGED, new Date().getTime());
                                                 if (check.getName() != null && check.getName().length() > 0) {
                                                     update.put(USER_NAME, check.getName());
+                                                    check.getUser().setName(check.getName());
                                                 }
 
-                                                Task<Void> updateUserTask = refGroup.child(Firebase.USERS).child(Firebase.PUBLIC).child("" + check.getNumber()).updateChildren(update);
-                                                try {
-                                                    Tasks.await(updateUserTask);
-                                                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
-                                                    response.put(RESPONSE_NUMBER, check.getNumber());
-                                                    response.put(RESPONSE_SIGN, customToken);
-                                                    conn.send(response.toString());
+                                                createOrUpdateUserAccount(check.getUser(), new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Task<Void> updateUserTask = refGroup.child(Firebase.USERS).child(Firebase.PUBLIC).child("" + check.getNumber()).updateChildren(update);
+                                                        try {
+                                                            Tasks.await(updateUserTask);
+                                                            response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
+                                                            response.put(RESPONSE_NUMBER, check.getNumber());
+                                                            response.put(RESPONSE_SIGN, customToken);
+                                                            conn.send(response.toString());
 
-                                                    Map<String, Object> accountUpdates = new HashMap<>();
-                                                    if (check.getName() != null && check.getName().length() > 0) {
-                                                        accountUpdates.put(Firebase.NAME, check.getName());
+                                                            Common.log(LOG, "onMessage:joined:" + conn.getRemoteSocketAddress(), "signToken: [provided]"/*+customToken*/);
+                                                            conn.close();
+
+                                                            putStaticticsUser(check.getGroupId(), check.getName(), UserAction.USER_RECONNECTED, null);
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
                                                     }
-                                                    accountUpdates.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
-                                                    ref.child(Firebase.SECTION_USERS).child(check.getUid()).child(Firebase.PRIVATE).updateChildren(accountUpdates);
+                                                }, new Runnable1<Throwable>() {
+                                                    @Override
+                                                    public void call(Throwable error) {
+                                                        Common.err(LOG, "onMessage:joinNotAuthenticated:" + conn.getRemoteSocketAddress(), "group:" + check.getGroupId(), check.getUser(), error);
+                                                        rejectUser(response, conn, check.getGroupId(), check.getName(), "Cannot join to group (code 19).");
+                                                    }
+                                                });
 
-                                                    Common.log(LOG, "onMessage:joined:" + conn.getRemoteSocketAddress(), "signToken: [provided]"/*+customToken*/);
-                                                    conn.close();
-
-                                                    putStaticticsUser(check.getGroupId(), check.getName(), UserAction.USER_RECONNECTED, null);
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
@@ -471,8 +509,19 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                 } else { // join as new member
 
                                     check.getUser().setNumber((int) check.getNumber());
-                                    registerUser(check.getGroupId(), check.getUser(), REQUEST_CHECK_USER, null, null);
-                                    Common.log(LOG, "onMessage:joinAsNew:" + check.getUser().connection.getRemoteSocketAddress());
+                                    createOrUpdateUserAccount(check.getUser(), new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            registerUser(check.getGroupId(), check.getUser(), REQUEST_CHECK_USER, null, null);
+                                            Common.log(LOG, "onMessage:joinAsNew:" + check.getUser().connection.getRemoteSocketAddress());
+                                        }
+                                    }, new Runnable1<Throwable>() {
+                                        @Override
+                                        public void call(Throwable error) {
+                                            Common.err(LOG, "onMessage:joinAsNew:",check.getUser(), error);
+                                            rejectUser(response, check.getUser().connection, check.getGroupId(), check.getUser().getName(),  "Cannot join to group (code 18).");
+                                        }
+                                    });
                                 }
                             }
                         });
@@ -713,9 +762,59 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 }).start();
     }
 
+    private void createOrUpdateUserAccount(final MyUser user, final Runnable onsuccess, final Runnable1<Throwable> onerror) {
+
+        TaskSingleValueEventFor createAccountTask = new TaskSingleValueEventFor<DataSnapshot>()
+                .setRef(ref.child(Firebase.SECTION_USERS).child(user.getUid()))
+                .addOnSuccessListener(new Runnable1<DataSnapshot>() {
+                    @Override
+                    public void call(DataSnapshot dataSnapshot) {
+                        Map<String, Object> accountPrivateData = new HashMap<>();
+
+                        if (user.getName() != null && user.getName().length() > 0) {
+                            accountPrivateData.put(Firebase.NAME, user.getName());
+                        }
+                        if (user.getSignProvider() != null) {
+                            accountPrivateData.put(REQUEST_SIGN_PROVIDER, user.getSignProvider());
+                        }
+                        accountPrivateData.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
+
+                        if (dataSnapshot.getValue() == null) {
+                            accountPrivateData.put(REQUEST_MODEL, user.getModel());
+                            accountPrivateData.put(REQUEST_OS, user.getOs());
+                            accountPrivateData.put(Firebase.CREATED, ServerValue.TIMESTAMP);
+                            Common.log(LOG, "createOrUpdateAccount:createAccount:" + user.getUid(), accountPrivateData);
+                        } else {
+                            Common.log(LOG, "createOrUpdateAccount:updateAccount:" + user.getUid(), accountPrivateData);
+                        }
+                        final Task<Void> updateAccountTask = ref.child(Firebase.SECTION_USERS).child(user.getUid()).child(Firebase.PRIVATE).updateChildren(accountPrivateData);
+
+                        try {
+                            Tasks.await(updateAccountTask);
+                            Common.log(LOG, "createOrUpdateAccount:accountDone:" + user.getUid());
+                            onsuccess.run();
+                        } catch (Exception e) {
+                            Common.err(LOG, "createOrUpdateAccount:accountError:" + user.getUid(), e);
+                            onerror.call(e);
+                        }
+                    }
+                })
+                .addOnFailureListener(new Runnable1<Throwable>() {
+                    @Override
+                    public void call(Throwable error) {
+                        Common.err(LOG, "createOrUpdateAccount:accountCreateError:", user, error);
+                        onerror.call(error);
+                    }
+                });
+        createAccountTask.start();
+    }
+
+
     @Override
-    public void registerUser(final String groupId, final MyUser user, String action, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public void registerUser(final String groupId, final MyUser user, final String action, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
         final JSONObject response = new JSONObject();
+
+        final DatabaseReference refGroup = ref.child(groupId);
 
         if(REQUEST_NEW_GROUP.equals(action)) {
             ref.child(Firebase.SECTION_GROUPS).child(groupId).setValue(user.getUid());
@@ -727,24 +826,17 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
         final Map<String, Object> childUpdates = new HashMap<>();
 
-        Map<String, Object> o = new HashMap<>();
-        o.put(Firebase.COLOR, user.getColor());
-        o.put(Firebase.NAME, user.getName());
-        if(!user.getUid().startsWith("Administrator:")) {
-            o.put(Firebase.ACTIVE, true);
+        // public data inside group
+        Map<String, Object> userPublicData = new HashMap<>();
+        userPublicData.put(Firebase.COLOR, user.getColor());
+        userPublicData.put(Firebase.NAME, user.getName());
+        if(!user.getUid().startsWith("Administrator")) {
+            userPublicData.put(Firebase.ACTIVE, true);
         }
-        o.put(Firebase.CREATED, user.getCreated());
-        o.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
-        childUpdates.put(Firebase.USERS + "/" + Firebase.PUBLIC + "/" + user.getNumber(), o);
+        userPublicData.put(Firebase.CREATED, user.getCreated());
+        userPublicData.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
 
-        o = new HashMap<>();
-
-        o.put(REQUEST_MODEL, user.getModel());
-        o.put(REQUEST_UID, user.getUid());
-        o.put(REQUEST_OS, user.getOs());
-        if(user.getSignProvider() != null) o.put(REQUEST_SIGN_PROVIDER, user.getSignProvider());
-
-        childUpdates.put(Firebase.USERS + "/" + Firebase.PRIVATE + "/" + user.getNumber(), o);
+        childUpdates.put(Firebase.USERS + "/" + Firebase.PUBLIC + "/" + user.getNumber(), userPublicData);
 
         for (Map.Entry<String, RequestHolder> entry : requestHolders.entrySet()) {
             if (entry.getValue().isSaveable()) {
@@ -752,10 +844,16 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             }
         }
 
+        // user 'key - uid' inside group
         childUpdates.put(Firebase.USERS + "/" + Firebase.KEYS + "/" + user.getUid(), user.getNumber());
 
+        // private data inside group
+        Map<String, Object> userPrivateData = new HashMap<>();
+        userPrivateData.put(REQUEST_UID, user.getUid());
 
-        final Task<Void> updateUserTask = ref.child(groupId).updateChildren(childUpdates);
+        childUpdates.put(Firebase.USERS + "/" + Firebase.PRIVATE + "/" + user.getNumber(), userPrivateData);
+
+        final Task<Void> updateUserTask = refGroup.updateChildren(childUpdates);
         try {
             Tasks.await(updateUserTask);
 
@@ -795,22 +893,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             putStaticticsUser(groupId, user.getName(), UserAction.USER_REJECTED, e.getMessage());
         }
 
-        // user account
-        Map<String, Object> accountUpdates = new HashMap<>();
-        if (user.getName() != null && user.getName().length() > 0) {
-            accountUpdates.put(Firebase.NAME, user.getName());
-        }
-        accountUpdates.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
-        accountUpdates.put(Firebase.CREATED, ServerValue.TIMESTAMP);
 
-        final Task<Void> createAccountTask = ref.child(Firebase.SECTION_USERS).child(user.getUid()).child(Firebase.PRIVATE).updateChildren(accountUpdates);
-        try {
-            Tasks.await(createAccountTask);
-            Common.log(LOG, "createUserAccount:" + user.getNumber(), "uid:" + user.getUid());
-        } catch (Exception e) {
-            e.printStackTrace();
-            Common.err(LOG, "createUserAccount:error:",user, e);
-        }
     }
 
 //    @Override

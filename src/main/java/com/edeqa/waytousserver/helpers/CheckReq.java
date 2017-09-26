@@ -6,12 +6,6 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-import static com.edeqa.waytous.Constants.REQUEST_MANUFACTURER;
-import static com.edeqa.waytous.Constants.REQUEST_MODEL;
-import static com.edeqa.waytous.Constants.REQUEST_OS;
-import static com.edeqa.waytous.Constants.REQUEST_UID;
-import static com.edeqa.waytous.Constants.USER_NAME;
-
 /**
  * Created 2/2/17.
  */
@@ -91,13 +85,13 @@ public class CheckReq {
     }
 
     public void setUser(DataProcessorConnection connection, JSONObject request) {
-        user = new MyUser(connection, request.getString(REQUEST_UID));
+        user = new MyUser(connection, request);
 
-        user.setManufacturer(request.getString(REQUEST_MANUFACTURER));
-        user.setModel(request.getString(REQUEST_MODEL));
-        user.setOs(request.getString(REQUEST_OS));
-//        if (request.has(REQUEST_USER_ID)) user.setUserId(request.getString(REQUEST_USER_ID));
-        if (request.has(USER_NAME)) user.setName(request.getString(USER_NAME));
+//        user.setManufacturer(request.getString(REQUEST_MANUFACTURER));
+//        user.setModel(request.getString(REQUEST_MODEL));
+//        user.setOs(request.getString(REQUEST_OS));
+////        if (request.has(REQUEST_USER_ID)) user.setUserId(request.getString(REQUEST_USER_ID));
+//        if (request.has(USER_NAME)) user.setName(request.getString(USER_NAME));
 
     }
 }

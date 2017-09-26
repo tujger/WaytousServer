@@ -34,11 +34,13 @@ public class TaskSingleValueEventFor<T> {
     private boolean firebaseRest = false;
     private String customToken;
 
-    private Runnable1<T> onCompleteListener = new Runnable1<T>() {
+    private Runnable1<T> onCompleteListener;
+    private Runnable1<T> onSuccessListener;
+    private Runnable1<Throwable> onFailureListener = new Runnable1<Throwable>() {
         @Override
-        public void call(T arg) {
+        public void call(Throwable arg) {
             //noinspection HardCodedStringLiteral
-            System.out.println("onCompleteListener:"+arg.toString());
+            arg.printStackTrace();
         }
     };
 
@@ -49,13 +51,23 @@ public class TaskSingleValueEventFor<T> {
         this.ref = ref;
     }
 
-    public TaskSingleValueEventFor setRef(DatabaseReference ref) {
+    public TaskSingleValueEventFor<T> setRef(DatabaseReference ref) {
         this.ref = ref;
         return this;
     }
 
-    public TaskSingleValueEventFor addOnCompleteListener(Runnable1<T> listener) {
+    public TaskSingleValueEventFor<T> addOnCompleteListener(Runnable1<T> listener) {
         onCompleteListener = listener;
+        return this;
+    }
+
+    public TaskSingleValueEventFor<T> addOnSuccessListener(Runnable1<T> listener) {
+        onSuccessListener = listener;
+        return this;
+    }
+
+    public TaskSingleValueEventFor<T> addOnFailureListener(Runnable1<Throwable> listener) {
+        onFailureListener = listener;
         return this;
     }
 
@@ -106,10 +118,12 @@ public class TaskSingleValueEventFor<T> {
             try {
                 Tasks.await(task);
                 DataSnapshot dataSnapshot = task.getResult();
-                onCompleteListener.call((T) dataSnapshot);
+                if(onSuccessListener != null) onSuccessListener.call((T) dataSnapshot);
+                if(onCompleteListener != null) onCompleteListener.call((T) dataSnapshot);
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
-                onCompleteListener.call(null);
+                if(onFailureListener != null) onFailureListener.call(e);
+                if(onCompleteListener != null) onCompleteListener.call(null);
             }
         }
     }
@@ -162,11 +176,13 @@ public class TaskSingleValueEventFor<T> {
             Common.log(LOG, res);
 
             JSONObject json = new JSONObject(res);
-            onCompleteListener.call((T) json);
+            if(onSuccessListener != null) onSuccessListener.call((T) json);
+            if(onCompleteListener != null) onCompleteListener.call((T) json);
 
         } catch(Exception e) {
             Common.err(LOG, "restRequest:error:"+ref.getDatabase().getReference() + ref.getPath(), e.getMessage());
-            e.printStackTrace();
+            if(onFailureListener != null) onFailureListener.call(e);
+            if(onCompleteListener != null) onCompleteListener.call(null);
         }
     }
 

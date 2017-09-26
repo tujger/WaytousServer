@@ -154,8 +154,11 @@ function Constants() {
         STAT_USERS_JOINED: "ju",
         STAT_USERS_RECONNECTED: "uc",
         STAT_USERS_REJECTED: "ur",
-        STAT_MESSAGES: "messages"
-    };
+        STAT_MESSAGES: "messages",
+
+        SECTION_USERS: "_users",
+        HISTORY: "h"
+   };
 
     this.type = "constants";
     this.start = function(){}

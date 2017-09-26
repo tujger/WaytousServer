@@ -152,10 +152,20 @@ function User() {
         ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).off();
         ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).child(userNumber).once("value").then(function(snapshot){
             if(!snapshot || !snapshot.val()) return;
-            tableSummary.userOsNode.lastChild.innerHTML = snapshot.val()[REQUEST.OS];
-            tableSummary.userDeviceNode.lastChild.innerHTML = snapshot.val()[REQUEST.MODEL];
-            tableSummary.userSignProviderNode.lastChild.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER];
-            tableSummary.userUidNode.lastChild.innerHTML = snapshot.val()[REQUEST.UID];
+
+            var uid = snapshot.val()[REQUEST.UID];
+            tableSummary.userUidNode.lastChild.innerHTML = uid || "[invalid]";
+            if(uid) {
+                ref.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
+                .then(function(snapshot){
+                    if(snapshot.val()) {
+                        tableSummary.userOsNode.lastChild.innerHTML = snapshot.val()[REQUEST.OS];
+                        tableSummary.userDeviceNode.lastChild.innerHTML = snapshot.val()[REQUEST.MODEL];
+                        tableSummary.userSignProviderNode.lastChild.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous";
+                        tableUsers.update();
+                    }
+                });
+            }
         }).catch(function(error){
             console.warn("Resign because of",error.message);
             WTU.resign(updateSummary);

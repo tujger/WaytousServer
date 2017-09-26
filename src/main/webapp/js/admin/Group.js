@@ -448,10 +448,19 @@ function Group() {
             });
             ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).child(userNumber).once("value").then(function(snapshot){
                 if(!snapshot.val()) return;
-                userOsNode.innerHTML = snapshot.val()[REQUEST.OS];
-                userDeviceNode.innerHTML = snapshot.val()[REQUEST.MODEL];
-                userSignProviderNode.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous";
-                tableUsers.update();
+
+                var uid = snapshot.val()[REQUEST.UID];
+                if(uid) {
+                    ref.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
+                    .then(function(snapshot){
+                        if(snapshot.val()) {
+                            userOsNode.innerHTML = snapshot.val()[REQUEST.OS];
+                            userDeviceNode.innerHTML = snapshot.val()[REQUEST.MODEL];
+                            userSignProviderNode.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous";
+                            tableUsers.update();
+                        }
+                    });
+                }
             }).catch(function(error){
                 if(!reload) {
                     reload = true;
