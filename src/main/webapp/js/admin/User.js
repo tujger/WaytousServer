@@ -162,7 +162,6 @@ function User() {
                         tableSummary.userOsNode.lastChild.innerHTML = snapshot.val()[REQUEST.OS];
                         tableSummary.userDeviceNode.lastChild.innerHTML = snapshot.val()[REQUEST.MODEL];
                         tableSummary.userSignProviderNode.lastChild.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous";
-                        tableUsers.update();
                     }
                 });
             }

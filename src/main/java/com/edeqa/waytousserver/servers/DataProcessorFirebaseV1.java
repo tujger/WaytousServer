@@ -1013,6 +1013,8 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
     public void validateGroups() {
 
+        ref.child(Firebase.SECTION_STAT).child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_GROUPS_CLEANED).setValue(ServerValue.TIMESTAMP);
+
         Common.log(LOG, "Groups validation is performing, checking online users");
         new TaskSingleValueEventFor<JSONObject>(ref.child("/")).setFirebaseRest(true).addOnCompleteListener(new Runnable1<JSONObject>() {
             @Override

@@ -355,10 +355,10 @@ function Utils(main) {
         if(navigator.language && navigator.language.toLowerCase().slice(0,2) == "en") {
             meters = meters * 3.2808399;
             if(meters < 530) {
-                return u.sprintf.call("%s %s", meters.toFixed(0), "ft");
+                return "%s %s".sprintf(meters.toFixed(0), "ft");
             } else {
                 meters = meters / 5280;
-                return u.sprintf.call("%s %s", meters.toFixed(1), "mi");
+                return "%s %s".sprintf(meters.toFixed(1), "mi");
             }
         } else {
             var unit = "m";
@@ -369,7 +369,7 @@ function Utils(main) {
                 meters /= 1000;
                 unit = "km";
             }
-            return u.sprintf.call("%s %s", meters.toFixed(1), unit);
+            return "%s %s".sprintf(meters.toFixed(1), unit);
         }
     }
 

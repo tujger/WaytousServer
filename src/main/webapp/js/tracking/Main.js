@@ -149,7 +149,7 @@ function Main() {
                  { type: HTML.DIV, enclosed: true, body: "" },
              ],
              positive: {
-                 label: "Reload",
+                 label: u.create(HTML.SPAN, "Reload"),
                  onclick: function(){
                      window.location.reload();
                  }

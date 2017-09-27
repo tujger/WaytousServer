@@ -155,6 +155,8 @@ function Constants() {
         STAT_USERS_RECONNECTED: "uc",
         STAT_USERS_REJECTED: "ur",
         STAT_MESSAGES: "messages",
+        STAT_MISC: "misc",
+        STAT_MISC_GROUPS_CLEANED: "groups-cleaned",
 
         SECTION_USERS: "_users",
         HISTORY: "h"

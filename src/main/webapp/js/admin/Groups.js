@@ -54,7 +54,7 @@ function Groups() {
         tableSummary.groupsPersistentItem = tableSummary.add({
             cells: [
                 { className:"th", innerHTML: "&#150; persistent" },
-                { className:"option", innerHTML: 0 },
+                { className:"option", innerHTML: 0 }
             ],
             onclick: function(e){
                 tableGroups.filter.remove(filterTemporary);
@@ -64,7 +64,7 @@ function Groups() {
         tableSummary.groupsTemporaryItem = tableSummary.add({
             cells: [
                 { className:"th", innerHTML: "&#150; temporary" },
-                { className:"option", innerHTML: 0 },
+                { className:"option", innerHTML: 0 }
             ],
             onclick: function(e){
                 tableGroups.filter.remove(filterPersistent);
@@ -74,13 +74,31 @@ function Groups() {
         tableSummary.usersTotalItem = tableSummary.add({
             cells: [
                 { className:"th", innerHTML: "Users total" },
-                { className:"option", innerHTML: 0 },
+                { className:"option", innerHTML: 0 }
             ]
         });
         tableSummary.usersOnlineItem = tableSummary.add({
             cells: [
                 { className:"th", innerHTML: "&#150; online" },
-                { className:"option", innerHTML: 0 },
+                { className:"option", innerHTML: 0 }
+            ]
+        });
+         tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "Maintenance" },
+                { className:"option", innerHTML: "" }
+            ]
+        });
+        tableSummary.lastGroupsClean = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "&#150; groups cleaned" },
+                { className:"option", innerHTML: "never" }
+            ]
+        });
+        tableSummary.lastUsersClean = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "&#150; users cleaned" },
+                { className:"option", innerHTML: "never" }
             ]
         });
 
@@ -106,7 +124,7 @@ function Groups() {
         }, div);
 
         u.create("br", null, div);
-    }
+    };
 
 
     function updateData(){
@@ -191,7 +209,13 @@ function Groups() {
         }, function(error){
             console.error("REMOVED",error);
 
-        })
+        });
+        ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).off();
+        ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).on("value",function(data) {
+            tableSummary.lastGroupsClean.lastChild.innerHTML = new Date(data.val()).toLocaleString();
+        },function(error){
+            console.error("REMOVED",error);
+        });
     }
 
     function renderButtons(div) {

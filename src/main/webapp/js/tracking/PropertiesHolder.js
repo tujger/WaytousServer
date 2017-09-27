@@ -164,7 +164,9 @@ function PropertiesHolder(main) {
             //console.log(this.properties.name, this.properties.changed);
             if(this.type == "user") {
                 var delta = parseInt((new Date().getTime() - this.properties.changed) / 1000);
-                if (delta > 120) {
+                if (delta > 3600) {
+                    this.fire(EVENTS.MAKE_INACTIVE);
+                } else if (delta > 120) {
                     this.fire(EVENTS.MAKE_DISABLED);
                 }
             }

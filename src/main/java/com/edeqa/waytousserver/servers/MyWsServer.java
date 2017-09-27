@@ -36,7 +36,7 @@ public class MyWsServer extends WebSocketServer {
                 public void run() {
                     Common.getInstance().getDataProcessor("v1").validateGroups();
                 }
-            }, 0, LIFETIME_INACTIVE_USER, TimeUnit.SECONDS);
+            }, 0, 60*60 /*LIFETIME_INACTIVE_USER*/, TimeUnit.SECONDS);
             MyWsServer.setValidationStarted(true);
         }
     }

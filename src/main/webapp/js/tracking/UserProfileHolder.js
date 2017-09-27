@@ -6,6 +6,7 @@
  * Created 9/19/17.
  */
 EVENTS.SHOW_USER_PROFILE = "show_user_profile";
+EVENTS.SYNC_USER_PROFILE = "sync_user_profile";
 
 function UserProfileHolder(main) {
 
@@ -140,6 +141,8 @@ function UserProfileHolder(main) {
                         innerHTML: "Sync",
                         onclick: function() {
                             console.log("SYNC");
+                            synchronize();
+
                         }
                     },
                     {
@@ -478,20 +481,6 @@ function UserProfileHolder(main) {
             default:
                 break;
         }
-        /*profileDialog.addItem({
-            content: u.create(HTML.BUTTON, {
-                className: "dialog-button dialog-item-button",
-                onclick: function () {
-                    console.log("LOGIN PHONE", this)
-                }
-            }).place(HTML.DIV, {
-                className: "dialog-item-icon",
-                innerHTML: "phone"
-            }).place(HTML.DIV, {
-                innerHTML: u.lang.sign_in_with_phone
-            })
-        });*/
-
 
         if(user) {
             profileDialog.setHeader({
@@ -637,6 +626,77 @@ function UserProfileHolder(main) {
             uuid: u.load("uuid"),
         };
         console.log(userBackup);
+    }
+
+    function synchronize() {
+
+        syncValue("account-private", DATABASE.NAME, function(key, value) {
+
+            console.log("VALUEFROMFB", key, value);
+        });
+
+
+            //iterateOver("account-private", function(key, value) {
+            //
+            //});
+
+
+    }
+
+    function syncValue(section, key, callback) {
+        var ref = database.ref();
+
+        var user = getUser();
+
+        switch(section) {
+            case "account-private":
+                ref.child(DATABASE.SECTION_USERS).child(user.uid).child(DATABASE.PRIVATE).child(key).once("value")
+                    .then(function(data){
+                        console.log("DATA", data);
+                    })
+                    .catch(function(error){
+                        console.error(error);
+                    });
+                break;
+            case "group-private":
+                break;
+            case "group-public":
+                break;
+
+
+        }
+    }
+
+
+    function iterateOver(section, callback) {
+        var ref = database.ref();
+        switch(section) {
+            case "account-private":
+
+
+                break;
+            case "group-private":
+                break;
+            case "group-public":
+                break;
+
+
+        }
+
+
+    }
+
+    function getUser() {
+        var user = null;
+        var data = firebase.auth().currentUser;
+        if(data) {
+            data.providerData.forEach(function(item){
+                user = u.cloneAsObject(item);
+                return false;
+            });
+        }
+        user.uid = data.uid;
+        return user;
     }
 
     return {

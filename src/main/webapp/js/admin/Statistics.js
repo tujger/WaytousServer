@@ -175,7 +175,8 @@ function Statistics() {
         // Set chart options
         groupsChartOptions = {
             title: "Groups",
-            legend: { position: 'bottom', alignment: 'start' }
+            legend: { position: 'bottom', alignment: 'start' },
+            hAxis: {slantedText:false, slantedTextAngle:90 }
         };
 
         // Create the data table.
@@ -189,7 +190,8 @@ function Statistics() {
         // Set chart options
         usersChartOptions = {
             title: "Users",
-            legend: { position: 'bottom', alignment: 'start' }
+            legend: { position: 'bottom', alignment: 'start' },
+            hAxis: {slantedText:false, slantedTextAngle:90 }
         };
 
         // Instantiate and draw our chart, passing in some options.
