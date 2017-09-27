@@ -14,8 +14,21 @@
         ".read": "$user_id === auth.uid",
         ".write": "$user_id === auth.uid",
         "p": { // user persistent private data
-          ".read": false,
-          ".write": false
+          "cr": {
+            ".validate": "!data.exists() && newData.exists()"
+          },
+          "sign-provider": {
+            ".validate": "!data.exists() && newData.exists()"
+          },
+          "model": {
+            ".validate": "!data.exists() && newData.exists()"
+          },
+          "manufacturer": {
+            ".validate": "!data.exists() && newData.exists()"
+          },
+          "os": {
+            ".validate": "!data.exists() && newData.exists()"
+          }
         }
       }
     },

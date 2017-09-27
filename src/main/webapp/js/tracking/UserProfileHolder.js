@@ -630,6 +630,11 @@ function UserProfileHolder(main) {
 
     function synchronize() {
 
+        var sync = new Sync({
+            uid: getUser().uid,
+        });
+
+
         syncValue("account-private", DATABASE.NAME, function(key, value) {
 
             console.log("VALUEFROMFB", key, value);
@@ -643,29 +648,7 @@ function UserProfileHolder(main) {
 
     }
 
-    function syncValue(section, key, callback) {
-        var ref = database.ref();
 
-        var user = getUser();
-
-        switch(section) {
-            case "account-private":
-                ref.child(DATABASE.SECTION_USERS).child(user.uid).child(DATABASE.PRIVATE).child(key).once("value")
-                    .then(function(data){
-                        console.log("DATA", data);
-                    })
-                    .catch(function(error){
-                        console.error(error);
-                    });
-                break;
-            case "group-private":
-                break;
-            case "group-public":
-                break;
-
-
-        }
-    }
 
 
     function iterateOver(section, callback) {
@@ -699,6 +682,7 @@ function UserProfileHolder(main) {
         return user;
     }
 
+
     return {
         createView:createView,
         onChangeLocation:onChangeLocation,
@@ -708,3 +692,127 @@ function UserProfileHolder(main) {
         type:type
     }
 }
+
+
+    function Sync(options) {
+        options = options || {};
+
+        options.ongetvalue = options.ongetvalue || function(key, value) {
+            console.log("Got value: " + key, value);
+        }
+        options.onupdatevalue = options.onupdatevalue || function(key, value) {
+            console.log("Updated value: " + key, value);
+        }
+        options.onerror = options.onerror || function(key, error) {
+            console.error("Error: " + key, error);
+        }
+        options.reference = options.reference || database.ref();
+//        options.collisionMode = options.collisionMode || Sync.CollisionMode.UPDATE_LOCAL;
+//        options.newValue = options.newValue;
+
+        this.setReference = function(ref) {
+            options.reference = ref;
+        }
+        this.setKey = function(key) {
+            options.key = key;
+        }
+        this.setUid = function(uid) {
+            options.uid = uid;
+        }
+        this.setType = function(type) {
+            options.type = type;
+        }
+        this.setOnGetValue = function(callback) {
+            options.ongetvalue = callback;
+        }
+        this.setOnUpdateValue = function(callback) {
+            options.onupdatevalue = callback;
+        }
+        this.setOnError = function(callback) {
+            options.onerror = callback;
+        }
+        this.setGroup = function(group) {
+            options.group = group;
+        }
+//        this.setValue = function(newValue, collisionMode) {
+//            options.collisionMode = collisionMode;
+//            options.newValue = newValue;
+//        }
+
+        this._getValue = function(ongetvalue, onerror) {
+            if(!options.key) {
+                console.error("Key not defined.");
+                return;
+            }
+            switch(options.type) {
+                case Sync.Type.ACCOUNT_PRIVATE:
+                    if(!options.uid) {
+                        console.error("UID not defined.");
+                        return;
+                    }
+                    options.reference.child(DATABASE.SECTION_USERS).child(options.uid).child(DATABASE.PRIVATE).child(options.key).once("value")
+                        .then(function(data){
+                            ongetvalue(options.key, data.val());
+                        })
+                        .catch(function(error){
+                            onerror(options.key, error);
+                        });
+                    break;
+                case Sync.Type.GROUP_PUBLIC:
+                    if(!options.group) {
+                        console.error("Group not defined.");
+                        return;
+                    }
+                    if(!options.userNumber) {
+                        console.error("UserNumber not defined.");
+                        return;
+                    }
+                    options.reference.child(group).child(DATABASE.USERS).child(options.userNumber).child(DATABASE.PUBLIC).child(options.key).once("value")
+                        .then(function(data){
+                            ongetvalue(options.key, data.val());
+                        })
+                        .catch(function(error){
+                            onerror(options.key, error);
+                        });
+                    break;
+                case Sync.Type.GROUP_PRIVATE:
+                    break;
+                default:
+                    console.error("Type not defined.")
+            }
+        }
+
+        this.getValue = function() {
+            this._getValue(options.ongetvalue, options.onerror);
+        }
+
+        this.syncValue = function() {
+            this._getValue(function(key, value) {
+                var newValue = options.ongetvalue(key, value);
+                if(newValue === undefined) {
+                    options.onerror("New value for '" + options.key + "' is not defined, 'ongetvalue' should return 'null' for removing value.");
+                    return;
+                }
+                if(value != newValue) {
+                    options.reference.child(DATABASE.SECTION_USERS).child(options.uid).child(DATABASE.PRIVATE).child(options.key).set(newValue)
+                    .then(function(){
+                        options.ongetvalue(options.key, newValue);
+                    })
+                    .catch(function(error){
+                        options.onerror(options.key, error);
+                    });
+                }
+            }, options.onerror);
+        }
+
+    }
+    Sync.Type = {
+        ACCOUNT_PRIVATE: "account-private",
+        GROUP_PRIVATE: "group-private",
+        GROUP_PUBLIC: "group-public"
+    }
+//    Sync.CollisionMode = {
+//        UPDATE_REMOTE: "update-remote",
+//        UPDATE_LOCAL: "update-local",
+//        SKIP: "skip"
+//    }

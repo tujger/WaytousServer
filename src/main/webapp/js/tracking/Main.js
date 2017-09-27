@@ -171,7 +171,7 @@ function Main() {
             "/js/helpers/MyUsers",
             "/js/helpers/NoSleep.js",
             "/js/tracking/PropertiesHolder", // must be first of holders
-            "/js/tracking/AddressHolder",
+//            "/js/tracking/AddressHolder",
             "/js/tracking/GpsHolder",
             "/js/tracking/ButtonHolder",
             "/js/tracking/CameraHolder",
