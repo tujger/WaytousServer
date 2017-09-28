@@ -199,6 +199,7 @@ function PropertiesHolder(main) {
     function setMyName(name){
         if(setNameDialog) setNameDialog.close();
         setNameDialog.items[0].value = main.me.properties.name || "";
+        setNameDialog.options.priority = 9;
         setNameDialog.open();
     }
 

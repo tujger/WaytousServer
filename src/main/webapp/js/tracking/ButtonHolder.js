@@ -309,10 +309,15 @@ function ButtonHolder(main) {
         buttons.titleLayout.innerHTML = "Users (" + main.users.getCountActive() +")";
 
         var added = false;
-        for(var i =0; i < buttons.itemsLayout.children.length; i++) {
-            var number = parseInt(buttons.itemsLayout.children[i].dataset.number);
-            if(number != main.me.number && number >= user.number) {
-                buttons.itemsLayout.insertBefore(b, buttons.itemsLayout.children[i]);
+        for(var i = 0; i < buttons.itemsLayout.children.length; i++) {
+            var node = buttons.itemsLayout.children[i];
+            var number = parseInt(node.dataset.number);
+            /*if(number == main.me.number && node) {
+                buttons.itemsLayout.replaceChild(b, node);
+                added = true;
+                break;
+            } else */if(number != main.me.number && number > user.number) {
+                buttons.itemsLayout.insertBefore(b, node);
                 added = true;
                 break;
             }
@@ -332,7 +337,12 @@ function ButtonHolder(main) {
     }
 
     function removeView(user){
-        user.views.button.button.hide();
+        if(user.views && user.views.button && user.views.button.button) {
+            delete buttons.itemsLayout[user.views.button.button];
+            user.views.button.button.parentNode.removeChild(user.views.button.button);
+            delete user.views.button;
+        }
+        //user.views.button.button.hide();
     }
 
     function openContextMenu(user) {

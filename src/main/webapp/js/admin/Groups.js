@@ -212,7 +212,7 @@ function Groups() {
         });
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).off();
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).on("value",function(data) {
-            tableSummary.lastGroupsClean.lastChild.innerHTML = new Date(data.val()).toLocaleString();
+            tableSummary.lastGroupsClean.lastChild.innerHTML = new Date(data.val()).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(data.val())) + " ago)";
         },function(error){
             console.error("REMOVED",error);
         });

@@ -91,7 +91,7 @@ function TrackingHolder(main) {
                 drawerItemNew.show();
                 var path = window.location.pathname.split("/");
                 var group = path[2];
-//                var groupOld = u.loadForContext("group");
+//                var groupOld = u.load("group");
                 if(group) {
                     if(group.toUpperCase() == "NEW") {
                         window.history.pushState({}, null, path[0] + "/" + path[1]);
@@ -187,7 +187,7 @@ function TrackingHolder(main) {
                         user.removeViews();
                     });
                     main.tracking && main.tracking.stop();
-                    u.saveForContext("group");
+                    u.save("group");
                 }
                 break;
             default:
@@ -261,13 +261,13 @@ function TrackingHolder(main) {
         if(a[2]) {
             a[2] = a[2].toUpperCase();
 
-//            var groupOld = u.loadForContext("group");
+//            var groupOld = u.load("group");
             window.history.pushState({}, null, a.join("/"));
 //            window.history.pushState({}, null, "/track/" + token);
 
             main.fire(EVENTS.TRACKING_RECONNECTING);
             this.tracking.setLink(window.location.href);
-            u.saveForContext("group", a[2]);
+            u.save("group", a[2]);
         } else {
             progressTitle.innerHTML = u.lang.creating_group;
         }
@@ -315,7 +315,7 @@ function TrackingHolder(main) {
                 if (o[RESPONSE.TOKEN]) {
                     var token = o[RESPONSE.TOKEN];
                     main.fire(EVENTS.TOKEN_CREATED, token);
-                    u.saveForContext("group", token);
+                    u.save("group", token);
                     window.history.pushState({}, null, "/group/" + token);
                     main.fire(EVENTS.SHOW_HELP, {module: main.eventBus.holders.tracking, article: 1});
                     main.me.fire(EVENTS.SELECT_USER);
@@ -345,7 +345,7 @@ function TrackingHolder(main) {
             main.fire(EVENTS.TRACKING_ERROR, reason);
 
             progress.close();
-            u.saveForContext("group");
+            u.save("group");
 
             u.dialog({
                 queue: true,

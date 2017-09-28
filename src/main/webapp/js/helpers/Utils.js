@@ -576,6 +576,182 @@ function Utils(main) {
         return (r * 299 + g * 587 + b * 114) / 1000
     }
 
+    function Sync(options) {
+        options = options || {};
+
+        options.ongetvalue = options.ongetvalue || function(key, value) {
+            console.log("Got value: " + key, value);
+        };
+        options.onupdatevalue = options.onupdatevalue || function(key, value) {
+            console.log("Updated value: " + key, value);
+        };
+        options.onerror = options.onerror || function(key, error) {
+            console.error("Error: " + key, error);
+        };
+        options.reference = options.reference || database.ref();
+//        options.collisionMode = options.collisionMode || Sync.CollisionMode.UPDATE_LOCAL;
+//        options.newValue = options.newValue;
+
+        this.setReference = function(ref) {
+            options.reference = ref;
+        };
+        this.setKey = function(key) {
+            options.key = key;
+        };
+        this.setUid = function(uid) {
+            options.uid = uid;
+        };
+        this.setType = function(type) {
+            options.type = type;
+        };
+        this.setOnGetValue = function(callback) {
+            options.ongetvalue = callback;
+        };
+        this.setOnUpdateValue = function(callback) {
+            options.onupdatevalue = callback;
+        };
+        this.setOnError = function(callback) {
+            options.onerror = callback;
+        };
+        this.setGroup = function(group) {
+            options.group = group;
+        };
+//        this.setValue = function(newValue, collisionMode) {
+//            options.collisionMode = collisionMode;
+//            options.newValue = newValue;
+//        }
+
+        this._getValues = function(multiple, ongetvalue, onerror) {
+            if(!options.key) {
+                console.error("Key not defined.");
+                return;
+            }
+            var ref;
+            switch(options.type) {
+                case Sync.Type.ACCOUNT_PRIVATE:
+                    if(!options.uid) {
+                        console.error("UID not defined.");
+                        return;
+                    }
+                    ref = options.reference.child(DATABASE.SECTION_USERS).child(options.uid).child(DATABASE.PRIVATE).child(options.key);
+                    break;
+                case Sync.Type.USER_PUBLIC:
+                    if(!options.group) {
+                        console.error("Group not defined.");
+                        return;
+                    }
+                    if(!options.userNumber) {
+                        console.error("UserNumber not defined.");
+                        return;
+                    }
+                    ref = options.reference.child(options.group).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(options.userNumber).child(options.key);
+                    break;
+                default:
+                    console.error("Type not defined.");
+                    return;
+            }
+
+            if(ref) {
+                var lastKey;
+                var onsuccess = function (data) {
+                    var val = data.val();
+                    if (val && val.constructor === Array) {
+                        for (var i in val) {
+                            ongetvalue(data.key, val[i]);
+                        }
+                    } else if (val && val.constructor === Object) {
+                        for (var i in val) {
+                            ongetvalue(data.key + "/" + i, val[i]);
+                        }
+                    } else {
+                        ongetvalue(data.key, val);
+                    }
+                    if (data.key == lastKey) {
+                        ref.off();
+                    }
+                };
+                var onfail = function (error) {
+                    onerror(options.key, error);
+                };
+                if(multiple) {
+                    ref.limitToLast(1).once("child_added").then(function (data) {
+                        var lastKey = data.key;
+                        if (!lastKey) return;
+
+                        if (multiple) {
+                            ref.on("child_added", onsuccess, function (error) {
+                                onerror(options.key, error);
+                            });
+                        } else {
+                            onsuccess(data);
+                        }
+                    }).catch(onfail);
+                } else {
+                    ref.once("value").then(onsuccess).catch(onfail);
+                }
+            }
+        };
+
+        this.getValue = function() {
+            this._getValues(false, options.ongetvalue, options.onerror);
+        };
+
+        this._syncValue = function(multiple, ongetvalue, onupdatevalue, onerror) {
+            this._getValues(multiple, function(key, value) {
+                var newValue = ongetvalue(key, value);
+                if(newValue === undefined) {
+                    onerror("NewValue for '" + options.key + "' is not defined, 'ongetvalue' should return 'null' for removing value.");
+                    return;
+                }
+                var ref;
+                var updates = {};
+                if(value != newValue) {
+                    switch(options.type) {
+                        case Sync.Type.ACCOUNT_PRIVATE:
+                            ref = options.reference.child(DATABASE.SECTION_USERS).child(options.uid).child(DATABASE.PRIVATE);
+                            break;
+                        case Sync.Type.USER_PUBLIC:
+                            ref = options.reference.child(options.group).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(options.userNumber);
+                            break;
+                        default:
+                            console.error("Type not defined.");
+                            return;
+                    }
+                    updates[key] = newValue;
+                    if(ref) {
+                        ref.update(updates).then(function () {
+                            onupdatevalue(key, newValue);
+                        }).catch(function (error) {
+                            onerror(key, error);
+                        });
+                    }
+                }
+            }, onerror);
+        };
+        this.syncValue = function() {
+            this._syncValue(false, options.ongetvalue, options.onupdatevalue, options.onerror);
+        };
+
+        this.getValues = function() {
+            this._getValues(true, options.ongetvalue, options.onerror);
+        };
+
+        this.syncValues = function() {
+            this._syncValue(true, options.ongetvalue, options.onupdatevalue, options.onerror);
+        };
+
+    }
+    Sync.Type = {
+        ACCOUNT_PRIVATE: "account-private",
+        USER_PUBLIC: "user-public"
+    };
+//    Sync.CollisionMode = {
+//        UPDATE_REMOTE: "update-remote",
+//        UPDATE_LOCAL: "update-local",
+//        SKIP: "skip"
+//    }
+
+
     return {
         showAlert: showAlert,
         brightness: brightness,
@@ -596,5 +772,6 @@ function Utils(main) {
         dialogAbout:dialogAbout,
         labelPosition:labelPosition,
         toDateString:toDateString,
+        sync:Sync,
     }
 }

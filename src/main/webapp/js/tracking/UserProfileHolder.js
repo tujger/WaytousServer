@@ -46,6 +46,13 @@ function UserProfileHolder(main) {
                 initProfileDialog();
                 profileDialog.open();
                 break;
+            case EVENTS.SYNC_USER_PROFILE:
+                break;
+            //case EVENTS.CHANGE_NAME:
+            //    if(main.me == this) {
+            //        synchronizeName(true);
+            //    }
+            //    break;
             default:
                 break;
         }
@@ -141,7 +148,7 @@ function UserProfileHolder(main) {
                         innerHTML: "Sync",
                         onclick: function() {
                             console.log("SYNC");
-                            synchronize();
+                            synchronizeName();
 
                         }
                     },
@@ -249,27 +256,7 @@ function UserProfileHolder(main) {
                             var provider = new firebase.auth.GoogleAuthProvider();
                             firebase.auth().signInWithEmailAndPassword(profileDialog.items[0].value, profileDialog.items[1].value)
                                 .then(onAuthStateChanged)
-                                .catch(function(error) {
-                                    switch(error.code) {
-                                        case "auth/invalid-email":
-                                        case "auth/user-not-found":
-                                        case "auth/popup-closed-by-user":
-                                            profileDialog.errorNode.innerHTML = error.message;
-                                            profileDialog.errorNode.show();
-                                            profileDialog.loginNode.focus();
-                                            break;
-                                        case "auth/wrong-password":
-                                            profileDialog.errorNode.innerHTML = error.message;
-                                            profileDialog.errorNode.show();
-                                            profileDialog.passwordNode.focus();
-                                            break;
-                                        default:
-                                            profileDialog.errorNode.innerHTML = error.message;
-                                            profileDialog.errorNode.show();
-                                            profileDialog.loginNode.focus();
-                                            console.error("ERROR", error);
-                                    }
-                                });
+                                .catch(onAuthStateError);
                         });
                     }
                 });
@@ -323,36 +310,9 @@ function UserProfileHolder(main) {
                                         }, main.right);
                                         accountCreatedDialog.open();
                                         onAuthStateChanged(result);
-                                    }).catch(function(error) {
-                                        switch(error.code) {
-                                            default:
-                                                profileDialog.errorNode.innerHTML = error.message;
-                                                profileDialog.errorNode.show();
-                                                profileDialog.loginNode.focus();
-                                                console.error("ERROR", error);
-                                        }
-                                    });
+                                    }).catch(onAuthStateError);
                                 })
-                                .catch(function(error) {
-                                    switch(error.code) {
-                                        case "auth/invalid-email":
-                                        case "auth/email-already-in-use":
-                                            profileDialog.errorNode.innerHTML = error.message;
-                                            profileDialog.errorNode.show();
-                                            profileDialog.loginNode.focus();
-                                            break;
-                                        case "auth/weak-password":
-                                            profileDialog.errorNode.innerHTML = error.message;
-                                            profileDialog.errorNode.show();
-                                            profileDialog.passwordNode.focus();
-                                            break;
-                                        default:
-                                            profileDialog.errorNode.innerHTML = error.message;
-                                            profileDialog.errorNode.show();
-                                            profileDialog.loginNode.focus();
-                                            console.error("ERROR", error);
-                                    }
-                                });
+                                .catch(onAuthStateError);
                         });
                     }
                 });
@@ -380,15 +340,7 @@ function UserProfileHolder(main) {
                         firebase.auth().sendPasswordResetEmail(profileDialog.items[0].value)
                             .then(function() {
                                 initProfileDialog("email_sent");
-                            }).catch(function(error) {
-                            switch(error.code) {
-                                default:
-                                    profileDialog.errorNode.innerHTML = error.message;
-                                    profileDialog.errorNode.show();
-                                    profileDialog.loginNode.focus();
-                                    console.error("ERROR", error);
-                            }
-                        });
+                            }).catch(onAuthStateError);
                     }
                 });
                 profileDialog.setNeutral({
@@ -539,16 +491,7 @@ function UserProfileHolder(main) {
 //        debugger;
         if (result) {
             try {
-                var result = result.user ? result.user.toJSON() : result.toJSON();
-//                var user = result.user.toJSON();
-                //// User is signed in.
-                //var displayName = user.displayName;
-                //var email = user.email;
-                //var emailVerified = user.emailVerified;
-                //var photoURL = user.photoURL;
-                //var isAnonymous = user.isAnonymous;
-                //var providerData = user.providerData;
-                //console.log("AUTH:", user);
+                result = result.user ? result.user.toJSON() : result.toJSON();
 
                 u.save("uuid", result.uid);
                 result.providerData.forEach(function (profile) {
@@ -558,6 +501,7 @@ function UserProfileHolder(main) {
                 });
                 initProfileDialog();
 
+                synchronizeName();
                 // {uuid: "e30a815be353be517c2f07498c2193aa", uid: null}
             }catch(e) {
                 console.error(e);
@@ -575,22 +519,23 @@ function UserProfileHolder(main) {
     }
 
     function onAuthStateError(error) {
-//        placeholder.hide(HIDING.OPACITY);
         waitingDialog.close();
-        // Handle Errors here.
         console.log("ERROR",error);
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // The email of the user's account used.
 
         switch(error.code) {
             case "auth/unauthorized-domain":
-                profileDialog.errorNode.innerHTML = error.message;
-                profileDialog.errorNode.show();
-                break;
+            case "auth/invalid-email":
+            case "auth/user-not-found":
+            case "auth/email-already-in-use":
             case "auth/popup-closed-by-user":
                 profileDialog.errorNode.innerHTML = error.message;
                 profileDialog.errorNode.show();
+                if(profileDialog.loginNode) profileDialog.loginNode.focus();
+                break;
+            case "auth/weak-password":
+                profileDialog.errorNode.innerHTML = error.message;
+                profileDialog.errorNode.show();
+                if(profileDialog.passwordNode) profileDialog.passwordNode.focus();
                 break;
             case "auth/popup-blocked":
                 profileDialog.errorNode.innerHTML = error.message;
@@ -608,12 +553,12 @@ function UserProfileHolder(main) {
                 shareBlockedDialog.open();
                 break;
             default:
+                profileDialog.errorNode.innerHTML = error.message;
+                profileDialog.errorNode.show();
+                if(profileDialog.loginNode) profileDialog.loginNode.focus();
                 console.error("ERROR", error);
         }
 
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
         if(resign) {
             main.tracking.setLink(window.location.href);
             main.tracking.start(function(e){console.log(e)});
@@ -628,57 +573,38 @@ function UserProfileHolder(main) {
         console.log(userBackup);
     }
 
-    function synchronize() {
-
-        var sync = new Sync({
-            uid: getUser().uid,
-        });
-
-
-        syncValue("account-private", DATABASE.NAME, function(key, value) {
-
-            console.log("VALUEFROMFB", key, value);
-        });
-
-
-            //iterateOver("account-private", function(key, value) {
-            //
-            //});
-
-
-    }
-
-
-
-
-    function iterateOver(section, callback) {
-        var ref = database.ref();
-        switch(section) {
-            case "account-private":
-
-
-                break;
-            case "group-private":
-                break;
-            case "group-public":
-                break;
-
-
+    function synchronizeName(forceToServer) {
+        if(getUser()) {
+            var sync = new utils.sync({
+                type: utils.sync.Type.ACCOUNT_PRIVATE,
+                key: DATABASE.NAME,
+                uid: getUser().uid,
+                ongetvalue: function (key, value) {
+                    if (main.me.properties.name && (forceToServer || !value)) {
+                        sync.setOnGetValue(function (key, value) {
+                            return main.me.properties.name;
+                        });
+                        sync.syncValue();
+                    } else if (!main.me.properties.name && value) {
+                        main.me.fire(EVENTS.CHANGE_NAME, value);
+                    }
+                }
+            });
+            sync.getValue();
         }
-
-
     }
 
     function getUser() {
         var user = null;
         var data = firebase.auth().currentUser;
         if(data) {
+            user = {};
             data.providerData.forEach(function(item){
                 user = u.cloneAsObject(item);
                 return false;
             });
+            user.uid = data.uid;
         }
-        user.uid = data.uid;
         return user;
     }
 
@@ -694,125 +620,3 @@ function UserProfileHolder(main) {
 }
 
 
-    function Sync(options) {
-        options = options || {};
-
-        options.ongetvalue = options.ongetvalue || function(key, value) {
-            console.log("Got value: " + key, value);
-        }
-        options.onupdatevalue = options.onupdatevalue || function(key, value) {
-            console.log("Updated value: " + key, value);
-        }
-        options.onerror = options.onerror || function(key, error) {
-            console.error("Error: " + key, error);
-        }
-        options.reference = options.reference || database.ref();
-//        options.collisionMode = options.collisionMode || Sync.CollisionMode.UPDATE_LOCAL;
-//        options.newValue = options.newValue;
-
-        this.setReference = function(ref) {
-            options.reference = ref;
-        }
-        this.setKey = function(key) {
-            options.key = key;
-        }
-        this.setUid = function(uid) {
-            options.uid = uid;
-        }
-        this.setType = function(type) {
-            options.type = type;
-        }
-        this.setOnGetValue = function(callback) {
-            options.ongetvalue = callback;
-        }
-        this.setOnUpdateValue = function(callback) {
-            options.onupdatevalue = callback;
-        }
-        this.setOnError = function(callback) {
-            options.onerror = callback;
-        }
-        this.setGroup = function(group) {
-            options.group = group;
-        }
-//        this.setValue = function(newValue, collisionMode) {
-//            options.collisionMode = collisionMode;
-//            options.newValue = newValue;
-//        }
-
-        this._getValue = function(ongetvalue, onerror) {
-            if(!options.key) {
-                console.error("Key not defined.");
-                return;
-            }
-            switch(options.type) {
-                case Sync.Type.ACCOUNT_PRIVATE:
-                    if(!options.uid) {
-                        console.error("UID not defined.");
-                        return;
-                    }
-                    options.reference.child(DATABASE.SECTION_USERS).child(options.uid).child(DATABASE.PRIVATE).child(options.key).once("value")
-                        .then(function(data){
-                            ongetvalue(options.key, data.val());
-                        })
-                        .catch(function(error){
-                            onerror(options.key, error);
-                        });
-                    break;
-                case Sync.Type.GROUP_PUBLIC:
-                    if(!options.group) {
-                        console.error("Group not defined.");
-                        return;
-                    }
-                    if(!options.userNumber) {
-                        console.error("UserNumber not defined.");
-                        return;
-                    }
-                    options.reference.child(group).child(DATABASE.USERS).child(options.userNumber).child(DATABASE.PUBLIC).child(options.key).once("value")
-                        .then(function(data){
-                            ongetvalue(options.key, data.val());
-                        })
-                        .catch(function(error){
-                            onerror(options.key, error);
-                        });
-                    break;
-                case Sync.Type.GROUP_PRIVATE:
-                    break;
-                default:
-                    console.error("Type not defined.")
-            }
-        }
-
-        this.getValue = function() {
-            this._getValue(options.ongetvalue, options.onerror);
-        }
-
-        this.syncValue = function() {
-            this._getValue(function(key, value) {
-                var newValue = options.ongetvalue(key, value);
-                if(newValue === undefined) {
-                    options.onerror("New value for '" + options.key + "' is not defined, 'ongetvalue' should return 'null' for removing value.");
-                    return;
-                }
-                if(value != newValue) {
-                    options.reference.child(DATABASE.SECTION_USERS).child(options.uid).child(DATABASE.PRIVATE).child(options.key).set(newValue)
-                    .then(function(){
-                        options.ongetvalue(options.key, newValue);
-                    })
-                    .catch(function(error){
-                        options.onerror(options.key, error);
-                    });
-                }
-            }, options.onerror);
-        }
-
-    }
-    Sync.Type = {
-        ACCOUNT_PRIVATE: "account-private",
-        GROUP_PRIVATE: "group-private",
-        GROUP_PUBLIC: "group-public"
-    }
-//    Sync.CollisionMode = {
-//        UPDATE_REMOTE: "update-remote",
-//        UPDATE_LOCAL: "update-local",
-//        SKIP: "skip"
-//    }
