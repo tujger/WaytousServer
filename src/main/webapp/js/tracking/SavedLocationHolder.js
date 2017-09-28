@@ -424,6 +424,23 @@ function SavedLocationHolder(main) {
                 }
                 locationsDialog.open();
                 break;
+            case EVENTS.SYNC_PROFILE:
+                /*var last = u.load("saved_location:counter") || 0;
+                var locs = {};
+                for(var i = 1; i <= last; i++) {
+                    var loc = u.load("saved_location:"+i);
+                    var key = loc.k || utils.sync.CREATE_KEY + ":" + Math.random();
+                    delete loc.k;
+                    locs[key] = loc;
+                }
+                var sync = new utils.sync({
+                    type: utils.sync.Type.ACCOUNT_PRIVATE,
+                    key: REQUEST.SAVED_LOCATION,
+                    onupdatevalue: function(key, newName, oldName) {
+                        console.log(key, newName, oldName)
+                    }
+                });
+                sync.syncValues(locs);*/
             default:
                 break;
         }

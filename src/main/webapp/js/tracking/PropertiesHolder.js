@@ -28,6 +28,7 @@ function PropertiesHolder(main) {
                         u.save("properties:name", name);
                         u.save("properties:name_asked", true);
                         main.me.fire(EVENTS.CHANGE_NAME, name);
+                        synchronizeName(true);
                     }
                 }
             },
@@ -136,6 +137,8 @@ function PropertiesHolder(main) {
                 main.me.fire(EVENTS.CHANGE_COLOR, "#0000FF");
                 main.me.fire(EVENTS.MAKE_ACTIVE);
                 break;
+            case EVENTS.SYNC_PROFILE:
+                synchronizeName();
             default:
                 break;
         }
@@ -202,6 +205,25 @@ function PropertiesHolder(main) {
         setNameDialog.options.priority = 9;
         setNameDialog.open();
     }
+
+    function synchronizeName(forceToServer) {
+    return;
+        var sync = new utils.sync({
+            type: utils.sync.Type.ACCOUNT_PRIVATE,
+            key: DATABASE.NAME,
+            onupdatevalue: function(key, newName, oldName) {
+                console.log(key, newName, oldName)
+                main.me.fire(EVENTS.CHANGE_NAME, newValue);
+            }
+        });
+        if(forceToServer) {
+            sync.setRemoteValue(main.me.properties.name);
+        } else {
+            sync.syncValue(main.me.properties.name);
+        }
+    }
+
+
 
     this.options = function(){
         return {

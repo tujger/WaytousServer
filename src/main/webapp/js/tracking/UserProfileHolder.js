@@ -6,7 +6,6 @@
  * Created 9/19/17.
  */
 EVENTS.SHOW_USER_PROFILE = "show_user_profile";
-EVENTS.SYNC_USER_PROFILE = "sync_user_profile";
 
 function UserProfileHolder(main) {
 
@@ -46,13 +45,11 @@ function UserProfileHolder(main) {
                 initProfileDialog();
                 profileDialog.open();
                 break;
-            case EVENTS.SYNC_USER_PROFILE:
+            case EVENTS.MAP_READY:
+                if(getUser()) {
+                    main.fire(EVENTS.SYNC_PROFILE);
+                }
                 break;
-            //case EVENTS.CHANGE_NAME:
-            //    if(main.me == this) {
-            //        synchronizeName(true);
-            //    }
-            //    break;
             default:
                 break;
         }
@@ -590,7 +587,11 @@ function UserProfileHolder(main) {
                     }
                 }
             });
-            sync.getValue();
+
+//            if(forceToServer && main.me.properties.name) {
+//                sync.setRemoteValue(main.me.properties.name)
+//            }
+            sync.syncValue();
         }
     }
 
