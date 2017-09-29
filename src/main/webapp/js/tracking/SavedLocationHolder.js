@@ -435,19 +435,31 @@ function SavedLocationHolder(main) {
                             //u.save("saved_location:counter", last);
                             //u.save("saved_location:" + last, newLocation);
                             console.log("LOCAL", key, newLocation);
-                            var last = u.load("saved_location:counter") || 0;
-                            last++;
-                            newLocation.k = key;
-                            u.save("saved_location:counter", last);
-                            u.save("saved_location:" + last, newLocation);
+                            if(newLocation && newLocation.constructor === Object) {
+                                var last = u.load("saved_location:counter") || 0;
+                                last++;
+                                newLocation.k = key;
+                                u.save("saved_location:counter", last);
+                                u.save("saved_location:" + last, newLocation);
+                            }
                         },
                         onupdateremotevalue: function (key, newLocation, oldValue) {
                             var last = u.load("saved_location:counter") || 0;
-                            last++;
-                            newLocation.k = key;
-                            u.save("saved_location:counter", last);
-                            u.save("saved_location:" + last, newLocation);
-                            console.log("REMOTE", key, newLocation, oldValue);
+                            var exists = false;
+                            for(var i = 0; i <= last; i++) {
+                                var loc = u.load("saved_location:"+i);
+                                if(loc && loc.k && loc.k == key) {
+                                    exists = true;
+                                    break;
+                                }
+                            }
+                            if(!exists) {
+                                last++;
+                                newLocation.k = key;
+                                u.save("saved_location:counter", last);
+                                u.save("saved_location:" + last, newLocation);
+                                console.log("REMOTE", key, newLocation, oldValue);
+                            }
                         }
                     });
                     if (sync.ready()) {

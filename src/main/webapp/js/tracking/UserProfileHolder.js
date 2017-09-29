@@ -47,7 +47,20 @@ function UserProfileHolder(main) {
                 break;
             case EVENTS.MAP_READY:
                 if(getUser()) {
-                    main.fire(EVENTS.SYNC_PROFILE);
+
+                    var sync = new utils.sync({type:utils.sync.Type.ACCOUNT_PRIVATE});
+                    console.log(sync.ready());
+                    sync.watch(REQUEST.SIGN_PROVIDER, function(key, newValue) {
+                        console.log("CHANGED", key, newValue);
+//                        main.fire(EVENTS.SYNC_PROFILE);
+                    });
+                    new utils.sync({type:utils.sync.Type.ACCOUNT_PRIVATE}).
+                    watchChanges(function(key, newValue) {
+                        console.log("SYNC_PROFILE", key, newValue);
+                        main.fire(EVENTS.SYNC_PROFILE);
+                    });
+
+
                 }
                 break;
             default:

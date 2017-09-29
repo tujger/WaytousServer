@@ -143,6 +143,7 @@ function Constants() {
         WELCOME_MESSAGE : "welcome-message",
         CREATED : "cr",
         CHANGED : "ch",
+        SYNCED : "sy",
 
         SECTION_STAT: "_stat",
         STAT_TOTAL: "total",

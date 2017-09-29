@@ -653,14 +653,14 @@ function Utils(main) {
         };
 
         this.getValue = function() {
-            this._ref = this._getRef();
+            this._ref = this._getRef(options.child);
             if(!this._ref) return;
             this._getValue(options.key, options.ongetvalue, options.onerror);
         };
 
         this.getValues = function() {
             var self = this;
-            self._ref = self._getRef();
+            self._ref = self._getRef(options.child);
             if(!self._ref) return;
 
             self._ref.child(options.key).limitToLast(1).once("child_added").then(function (data) {
@@ -719,25 +719,31 @@ function Utils(main) {
                         return;
                     case Sync.Mode.UPDATE_REMOTE:
                         if(!value && value !== resolvedValue) {
+                            if(resolvedValue && resolvedValue.constructor === Object && !resolvedValue[DATABASE.CREATED]) resolvedValue[DATABASE.CREATED] = firebase.database.ServerValue.TIMESTAMP;
                             updates[key] = resolvedValue;
                             self._ref.update(updates).then(function () {
                                 onupdateremotevalue(key, resolvedValue, value);
+                                updateTimestamp();
                             }).catch(onfail);
                         }
                         break;
                     case Sync.Mode.OVERRIDE_REMOTE:
                         if(value != resolvedValue) {
+                            if(resolvedValue && resolvedValue.constructor === Object && !resolvedValue[DATABASE.CREATED]) resolvedValue[DATABASE.CREATED] = firebase.database.ServerValue.TIMESTAMP;
                             updates[key] = resolvedValue;
                             self._ref.update(updates).then(function () {
                                 onupdateremotevalue(key, resolvedValue, value);
+                                updateTimestamp();
                             }).catch(onfail);
                         }
                         break;
                     case Sync.Mode.UPDATE_BOTH:
                         if(!value && resolvedValue) {
+                            if(resolvedValue && resolvedValue.constructor === Object && !resolvedValue[DATABASE.CREATED]) resolvedValue[DATABASE.CREATED] = firebase.database.ServerValue.TIMESTAMP;
                             updates[key] = resolvedValue;
                             self._ref.update(updates).then(function () {
                                 onupdateremotevalue(key, resolvedValue, value);
+                                updateTimestamp();
                             }).catch(onfail);
                         } else if(value && !resolvedValue) {
                             onupdatelocalvalue(key, value, resolvedValue);
@@ -747,7 +753,7 @@ function Utils(main) {
                         onerror(key, "Mode not defined");
                         break;
                 }
-            }, onfail);
+           }, onfail);
         };
 
         this.syncValues = function(values) {
@@ -757,7 +763,7 @@ function Utils(main) {
                 return;
             }
 
-            this._ref = this._getRef();
+            this._ref = this._getRef(options.child);
             if(!this._ref) return;
 
             var onfail = function(error){
@@ -786,51 +792,53 @@ function Utils(main) {
                     key = key.join("/");
                     result[key] = values[x];
                 }
-                for(var x in result) {
+                var keys = u.keys(result);
+                for(var i in keys) {
                     new Sync({
                         type: options.type,
                         child: options.key,
-                        key: x,
+                        key: keys[i],
                         ongetvalue: options.ongetvalue,
                         onupdateremotevalue: options.onupdateremotevalue,
                         onupdatelocalvalue: options.onupdatelocalvalue,
-                        onerror: options.onerror
-                    }).syncValue(result[x]);
+                        onerror: options.onerror,
+                        _notlast: i < (keys.length - 1),
+                    }).syncValue(result[keys[i]]);
                 }
             }).catch(onfail);
         };
 
         this.syncValue = function(value) {
-            this._ref = this._getRef();
+            this._ref = this._getRef(options.child);
             if(!this._ref) return;
             this._syncValue(Sync.Mode.UPDATE_BOTH, value, options.ongetvalue, options.onupdateremotevalue, options.onupdatelocalvalue, options.onerror);
         };
 
         this.setRemoteValueIfNull = function(value) {
-            this._ref = this._getRef();
+            this._ref = this._getRef(options.child);
             if(!this._ref) return;
             this._syncValue(Sync.Mode.UPDATE_REMOTE, value, options.ongetvalue, options.onupdateremotevalue, options.onupdatelocalvalue, options.onerror);
         };
 
         this.setRemoteValue = function(value) {
-            this._ref = this._getRef();
+            this._ref = this._getRef(options.child);
             if(!this._ref) return;
             this._syncValue(Sync.Mode.OVERRIDE_REMOTE, value, options.ongetvalue, options.onupdateremotevalue, options.onupdatelocalvalue, options.onerror);
         };
 
         this.setLocalValue = function(value) {
-            this._ref = this._getRef();
+            this._ref = this._getRef(options.child);
             if(!this._ref) return;
             this._syncValue(Sync.Mode.OVERRIDE_LOCAL, value, options.ongetvalue, options.onupdateremotevalue, options.onupdatelocalvalue, options.onerror);
         };
 
         this.setLocalValueIfNull = function(value) {
-            this._ref = this._getRef();
+            this._ref = this._getRef(options.child);
             if(!this._ref) return;
             this._syncValue(Sync.Mode.UPDATE_LOCAL, value, options.ongetvalue, options.onupdateremotevalue, options.onupdatelocalvalue, options.onerror);
         };
 
-        this._getRef = function() {
+        this._getRef = function(child) {
             var ref;
             switch(options.type) {
                 case Sync.Type.ACCOUNT_PRIVATE:
@@ -854,10 +862,10 @@ function Utils(main) {
                     break;
             }
             if(!ref) {
-                onerror(key, "Firebase database reference not defined.");
+                options.onerror(options.key, "Firebase database reference not defined.");
                 return;
             }
-            if(options.child) ref = ref.child(options.child);
+            if(child) ref = ref.child(child);
             return ref;
         };
 
@@ -866,6 +874,108 @@ function Utils(main) {
             if(!this._ref) return false;
             if(!firebase || !firebase.auth() || !firebase.auth().currentUser || !firebase.auth().currentUser.uid) return false;
             return true;
+        }
+
+        function updateTimestamp() {
+            var ref;
+            switch(options.type) {
+                case Sync.Type.ACCOUNT_PRIVATE:
+                    ref = options.reference.child(DATABASE.SECTION_USERS).child(options.uid).child(DATABASE.PRIVATE);
+                    break;
+                case Sync.Type.USER_PUBLIC:
+                    ref = options.reference.child(options.group).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(options.userNumber);
+                    break;
+            }
+            var update = {};
+            update[DATABASE.SYNCED] = firebase.database.ServerValue.TIMESTAMP;
+
+            options._delayedWatch = options._delayedWatch || {};
+            options._delayedWatch[ref.toString()] = options._delayedWatch[ref.toString()] || {};
+            if(Sync._specialWatch) {
+                for(var x in Sync._specialWatch) {
+                    Sync._specialWatch[x].ref.off();
+                    options._delayedWatch[ref.toString()][x] = Sync._specialWatch[x];
+                    console.log("OFF", Sync._specialWatch[x].ref.toString())
+                }
+                Sync._specialWatch = {};
+            }
+
+            ref.update(update).then(function(data){
+                ref.child(DATABASE.SYNCED).once("value").then(function(data) {
+//                    Sync._synced = data.val();
+                    console.log("SYNCED",Sync._synced);
+
+                    if(options._delayedWatch && options._delayedWatch[ref.toString()]) {
+                        for(var x in options._delayedWatch[ref.toString()]) {
+                            Sync._specialWatch[x] = options._delayedWatch[ref.toString()][x];
+                            console.log("ON", Sync._specialWatch[x].ref.toString())
+                            Sync._specialWatch[x].ref.on("value", function(data) {
+//                                if(Sync._synced == data.val()) return;
+                                Sync._specialWatch[x].callback(Sync._specialWatch[x].ref.toString(), data.val());
+                            }, function(error) {
+//                                if(Sync._synced == data.val()) return;
+                                options.error(Sync._specialWatch[x].ref.toString(), error);
+                            })
+                        }
+                        options._delayedWatch[ref.toString()] = {};
+                    }
+                }).catch(function(error){
+                    options.error(ref.toString(), error);
+                })
+            });
+        }
+
+        this.watch = function(key, onchangevalue) {
+            Sync._watch = Sync._watch || {};
+            var ref = this._getRef(key);
+            var watched = ref.toString();
+            if(!key) {
+                options.onerror("Key is not defined.");
+            } else if(key == DATABASE.SYNCED) {
+                options.onerror(DATABASE.SYNCED + " cannot be watched directly, use 'watchChanges' instead.");
+            } else if(onchangevalue && Sync._watch[watched]) {
+                console.warn(key + " already watching.");
+            } else if(!onchangevalue && Sync._watch[watched]) {
+                Sync._watch[watched].off();
+                delete Sync._watch[watched];
+            } else if(onchangevalue && !Sync._watch[watched]) {
+                ref.on("value", function(data) {
+                    onchangevalue(key, data.val());
+                }, function(error) {
+                    options.error(key, error);
+                })
+            } else if(!onchangevalue && !Sync._watch[watched]) {
+                console.warn(key + " is not watching yet.")
+            }
+        }
+
+        this.watchChanges = function(callback) {
+//         return;
+            Sync._watch = Sync._watch || {};
+            var ref = this._getRef(DATABASE.SYNCED);
+            var watched = ref.toString();
+            Sync._specialWatch = Sync._specialWatch || {};
+            if(!callback) {
+                this.watch(DATABASE.SYNCED);
+                delete Sync._specialWatch[watched];
+            } else if(callback) {
+                Sync._specialWatch[watched] = {
+                    ref: ref,
+                    callback: callback
+                };
+//                console.log("SET", ref.toString())
+
+                ref.on("value", function(data) {
+//                    if(Sync._synced == data.val()) return;
+                    callback(watched, data.val());
+                }, function(error) {
+                console.log("CHECK",Sync._synced, data.val());
+//                    if(Sync._synced == data.val()) return;
+                    options.error(watched, error);
+                })
+            } else if(!callback && !Sync._watch[watched]) {
+                console.warn(key + " is not watching yet.")
+            }
         }
 
     }
