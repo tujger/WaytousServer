@@ -87,7 +87,7 @@ function SavedLocationHolder(main) {
                         a:user.address || "",
                         d:user.description || "",
                         k:user.key || ""
-                    }
+                    };
                     var last = u.load("saved_location:counter") || 0;
                     last++;
                     u.save("saved_location:counter", last);
@@ -425,22 +425,49 @@ function SavedLocationHolder(main) {
                 locationsDialog.open();
                 break;
             case EVENTS.SYNC_PROFILE:
-                /*var last = u.load("saved_location:counter") || 0;
-                var locs = {};
-                for(var i = 1; i <= last; i++) {
-                    var loc = u.load("saved_location:"+i);
-                    var key = loc.k || utils.sync.CREATE_KEY + ":" + Math.random();
-                    delete loc.k;
-                    locs[key] = loc;
-                }
-                var sync = new utils.sync({
-                    type: utils.sync.Type.ACCOUNT_PRIVATE,
-                    key: REQUEST.SAVED_LOCATION,
-                    onupdatevalue: function(key, newName, oldName) {
-                        console.log(key, newName, oldName)
+                try {
+                    var sync = new utils.sync({
+                        type: utils.sync.Type.ACCOUNT_PRIVATE,
+                        key: REQUEST.SAVED_LOCATION,
+                        onupdatelocalvalue: function (key, newLocation) {
+                            //var last = u.load("saved_location:counter") || 0;
+                            //last++;
+                            //u.save("saved_location:counter", last);
+                            //u.save("saved_location:" + last, newLocation);
+                            console.log("LOCAL", key, newLocation);
+                            var last = u.load("saved_location:counter") || 0;
+                            last++;
+                            newLocation.k = key;
+                            u.save("saved_location:counter", last);
+                            u.save("saved_location:" + last, newLocation);
+                        },
+                        onupdateremotevalue: function (key, newLocation, oldValue) {
+                            var last = u.load("saved_location:counter") || 0;
+                            last++;
+                            newLocation.k = key;
+                            u.save("saved_location:counter", last);
+                            u.save("saved_location:" + last, newLocation);
+                            console.log("REMOTE", key, newLocation, oldValue);
+                        }
+                    });
+                    if (sync.ready()) {
+                        var last = u.load("saved_location:counter") || 0;
+                        var locs = {};
+                        for (var i = 1; i <= last; i++) {
+                            var loc = u.load("saved_location:" + i);
+                            if (!loc) continue;
+                            var key = loc.k || utils.sync.CREATE_KEY + ":" + Math.random();
+                            if(!loc.k) {
+                                u.save("saved_location:" + i);
+                            }
+                            delete loc.k;
+                            locs[key] = loc;
+                        }
+                        sync.syncValues(locs);
+                    } else {
+                        console.warn("Not ready for sync.")
                     }
-                });
-                sync.syncValues(locs);*/
+                }catch (e) {console.error(e)}
             default:
                 break;
         }

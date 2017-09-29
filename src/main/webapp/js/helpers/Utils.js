@@ -590,8 +590,11 @@ function Utils(main) {
             console.warn("Got value: " + key, value);
             return value;
         };
-        options.onupdatevalue = options.onupdatevalue || function(key, newValue, oldValue) {
-            console.warn("Updated value: " + key, "[new]:", newValue, "[old]:", oldValue);
+        options.onupdateremotevalue = options.onupdateremotevalue || function(key, newValue, oldValue) {
+            console.warn("Updated remote value: " + key, "[new]:", newValue, "[old]:", oldValue);
+        };
+        options.onupdatelocalvalue = options.onupdatelocalvalue || function(key, newValue, oldValue) {
+            console.warn("Updated local value: " + key, "[new]:", newValue, "[old]:", oldValue);
         };
         options.onerror = options.onerror || function(key, error) {
             console.error("Error: " + key, error);
@@ -605,6 +608,9 @@ function Utils(main) {
         this.setKey = function(key) {
             options.key = key;
         };
+        this.setChild = function(key) {
+            options.child = child;
+        };
         this.setUid = function(uid) {
             options.uid = uid;
         };
@@ -614,8 +620,11 @@ function Utils(main) {
         this.setOnGetValue = function(callback) {
             options.ongetvalue = callback;
         };
-        this.setOnUpdateValue = function(callback) {
-            options.onupdatevalue = callback;
+        this.setOnUpdateRemoteValue = function(callback) {
+            options.onupdateremotevalue = callback;
+        };
+        this.setOnUpdateLocalValue = function(callback) {
+            options.onupdatelocalvalue = callback;
         };
         this.setOnError = function(callback) {
             options.onerror = callback;
@@ -632,40 +641,59 @@ function Utils(main) {
                 console.error("Key not defined.");
                 return;
             }
-            var ref = this._getRef();;
 
-            key = key.split("/");
-            if(!key[key.length - 1] || key[key.length - 1] == "null" || key[key.length - 1] == "undefined") {
-                key[key.length - 1] = options.reference.push().key;
-            }
-            key = key.join("/");
-
-            if(ref) {
-                var lastKey;
-                var onsuccess = function (data) {
-                    var val = data.val();
-                    ongetvalue(data.key, val);
-                };
-                var onfail = function (error) {
-                    onerror(key, error);
-                };
-                ref.once("value").then(onsuccess).catch(onfail);
-            }
+            var onsuccess = function (data) {
+                var val = data.val();
+                ongetvalue(data.key, val);
+            };
+            var onfail = function (error) {
+                onerror(key, error);
+            };
+            this._ref.child(key).once("value").then(onsuccess).catch(onfail);
         };
 
         this.getValue = function() {
+            this._ref = this._getRef();
+            if(!this._ref) return;
             this._getValue(options.key, options.ongetvalue, options.onerror);
         };
 
-        this._syncValue = function(mode, newValue, ongetvalue, onupdatevalue, onerror) {
-            var ref = this._getRef();
-            if(!ref) return;
+        this.getValues = function() {
+            var self = this;
+            self._ref = self._getRef();
+            if(!self._ref) return;
+
+            self._ref.child(options.key).limitToLast(1).once("child_added").then(function (data) {
+                var lastKey = data.key;
+                if (!lastKey) return;
+
+                self._ref.child(options.key).on("child_added", function(data) {
+                    options.ongetvalue(data.key, data.val());
+
+                    if (data.key == lastKey) {
+                        self._ref.child(options.key).off();
+                    }
+                }, function (error) {
+                    options.onerror(key, error);
+
+                    if (data.key == lastKey) {
+                        self._ref.child(options.key).off();
+                    }
+                });
+            }).catch(function (error) {
+                options.onerror(key, error);
+            });
+        };
+
+        this._syncValue = function(mode, newValue, ongetvalue, onupdateremotevalue, onupdatelocalvalue, onerror) {
+            var self = this;
+            var onfail = function(key, error) {
+                onerror(key, error);
+            };
             this._getValue(options.key, function(key, value) {
+
                 var updates = {};
                 var resolvedValue = newValue;
-                if(resolvedValue && resolvedValue.constructor === Object) {
-                    resolvedValue = resolvedValue[key];
-                }
                 if(resolvedValue === undefined) {
                     resolvedValue = ongetvalue(key, value);
                 }
@@ -673,127 +701,134 @@ function Utils(main) {
                     onerror(key, "NewValue not defined, define it or use 'ongetvalue'.");
                     return;
                 }
+                if(value && resolvedValue && value.constructor !== resolvedValue.constructor) {
+                    onerror(key, "Value is not equivalent to NewValue, use 'syncValues' for sync objects.");
+                    return;
+                }
+
                 switch(mode) {
                     case Sync.Mode.UPDATE_LOCAL:
                         if(!resolvedValue && value != resolvedValue) {
-                            onupdatevalue(key, value, resolvedValue);
+                            onupdatelocalvalue(key, value, resolvedValue);
                         }
                         return;
                     case Sync.Mode.OVERRIDE_LOCAL:
                         if(value != resolvedValue) {
-                            onupdatevalue(key, value, resolvedValue);
+                            onupdatelocalvalue(key, value, resolvedValue);
                         }
                         return;
                     case Sync.Mode.UPDATE_REMOTE:
                         if(!value && value !== resolvedValue) {
                             updates[key] = resolvedValue;
-                            ref.update(updates).then(function () {
-                                onupdatevalue(key, resolvedValue, value);
-                            }).catch(function (error) {
-                                onerror(key, error);
-                            });
+                            self._ref.update(updates).then(function () {
+                                onupdateremotevalue(key, resolvedValue, value);
+                            }).catch(onfail);
                         }
                         break;
                     case Sync.Mode.OVERRIDE_REMOTE:
                         if(value != resolvedValue) {
                             updates[key] = resolvedValue;
-                            ref.update(updates).then(function () {
-                                onupdatevalue(key, resolvedValue, value);
-                            }).catch(function (error) {
-                                onerror(key, error);
-                            });
+                            self._ref.update(updates).then(function () {
+                                onupdateremotevalue(key, resolvedValue, value);
+                            }).catch(onfail);
                         }
                         break;
                     case Sync.Mode.UPDATE_BOTH:
                         if(!value && resolvedValue) {
                             updates[key] = resolvedValue;
-                            ref.update(updates).then(function () {
-                                onupdatevalue(key, resolvedValue, value);
-                            }).catch(function (error) {
-                                onerror(key, error);
-                            });
+                            self._ref.update(updates).then(function () {
+                                onupdateremotevalue(key, resolvedValue, value);
+                            }).catch(onfail);
                         } else if(value && !resolvedValue) {
-                            onupdatevalue(key, value, resolvedValue);
+                            onupdatelocalvalue(key, value, resolvedValue);
                         }
                         break;
                     default:
                         onerror(key, "Mode not defined");
                         break;
                 }
-            }, onerror);
-        };
-
-        this.syncValue = function(value) {
-            this._syncValue(false, Sync.Mode.UPDATE_BOTH, value, options.ongetvalue, options.onupdatevalue, options.onerror);
-        };
-
-        this.getValues = function() {
-            var ref = this._getRef();
-            if(!ref) return;
-
-            var onsuccess = function (data) {
-                var val = data.val();
-                if (val && val.constructor === Array) {
-                    for (var i in val) {
-                        ongetvalue(data.key, val[i]);
-                    }
-                } else if (val && val.constructor === Object) {
-                    for (var i in val) {
-                        ongetvalue(data.key + "/" + i, val[i]);
-                    }
-                } else {
-                ongetvalue(data.key, val);
-                }
-                if (data.key == lastKey) {
-                    ref.off();
-                }
-            };
-
-            ref.limitToLast(1).once("child_added").then(function (data) {
-                var lastKey = data.key;
-                if (!lastKey) return;
-
-                ref.on("child_added", onsuccess, onfail);
-            }).catch(onfail);
-//            } else {
-//                this._getValue(options.key, options.ongetvalue, options.onerror);
-//            }
+            }, onfail);
         };
 
         this.syncValues = function(values) {
-            if(values && values.constructor === Object) {
-                for(var x in values) {
-                    var sync = new Sync({
-                        type: options.type,
-                        key: options.key + "/" + x,
-//                        onupdatevalue: function(key, newName, oldName) {
-//                            console.log(key, newName, oldName)
-//                        }
-                    });
-                    sync.syncValue(values[x]);
-                }
-            } else if(!values) {
-                this._syncValue(true, Sync.Mode.UPDATE_BOTH, undefined, options.ongetvalue, options.onupdatevalue, options.onerror);
-            } else {
-                options.onerror(options.key, "Incorrect values");
+            var self = this;
+            if(values && values.constructor !== Object) {
+                options.onerror(options.key, "Values incorrect, set object as argument or use 'ongetvalue'.");
+                return;
             }
+
+            this._ref = this._getRef();
+            if(!this._ref) return;
+
+            var onfail = function(error){
+                options.onerror(options.key, error);
+            };
+
+            this._ref.child(options.key).once("value").then(function(data) {
+                var value = data.val() || {};
+                if(value.constructor !== Object) {
+                    options.onerror(options.key, "Synchronized value is not an object.");
+                    return;
+                }
+
+                var result = {};
+                for(var x in value) {
+                    if(values[x]) continue;
+                    result[x] = null;
+                }
+                for(var x in values) {
+                    if(value[x]) continue;
+
+                    var key = x.split("/");
+                    if(!key[key.length - 1] || key[key.length - 1] == "null" || key[key.length - 1] == "undefined" || key[key.length - 1].indexOf(Sync.CREATE_KEY) >= 0) {
+                        key[key.length - 1] = options.reference.push().key;
+                    }
+                    key = key.join("/");
+                    result[key] = values[x];
+                }
+                for(var x in result) {
+                    new Sync({
+                        type: options.type,
+                        child: options.key,
+                        key: x,
+                        ongetvalue: options.ongetvalue,
+                        onupdateremotevalue: options.onupdateremotevalue,
+                        onupdatelocalvalue: options.onupdatelocalvalue,
+                        onerror: options.onerror
+                    }).syncValue(result[x]);
+                }
+            }).catch(onfail);
+        };
+
+        this.syncValue = function(value) {
+            this._ref = this._getRef();
+            if(!this._ref) return;
+            this._syncValue(Sync.Mode.UPDATE_BOTH, value, options.ongetvalue, options.onupdateremotevalue, options.onupdatelocalvalue, options.onerror);
         };
 
         this.setRemoteValueIfNull = function(value) {
-            this._syncValue(false, Sync.Mode.UPDATE_REMOTE, value, options.ongetvalue, options.onupdatevalue, options.onerror);
-        }
+            this._ref = this._getRef();
+            if(!this._ref) return;
+            this._syncValue(Sync.Mode.UPDATE_REMOTE, value, options.ongetvalue, options.onupdateremotevalue, options.onupdatelocalvalue, options.onerror);
+        };
 
         this.setRemoteValue = function(value) {
-            this._syncValue(false, Sync.Mode.OVERRIDE_REMOTE, value, options.ongetvalue, options.onupdatevalue, options.onerror);
-        }
+            this._ref = this._getRef();
+            if(!this._ref) return;
+            this._syncValue(Sync.Mode.OVERRIDE_REMOTE, value, options.ongetvalue, options.onupdateremotevalue, options.onupdatelocalvalue, options.onerror);
+        };
 
         this.setLocalValue = function(value) {
-            this._syncValue(false, Sync.Mode.OVERRIDE_LOCAL, value, options.ongetvalue, options.onupdatevalue, options.onerror);
-        }
+            this._ref = this._getRef();
+            if(!this._ref) return;
+            this._syncValue(Sync.Mode.OVERRIDE_LOCAL, value, options.ongetvalue, options.onupdateremotevalue, options.onupdatelocalvalue, options.onerror);
+        };
 
         this.setLocalValueIfNull = function(value) {
-            this._syncValue(false, Sync.Mode.UPDATE_LOCAL, value, options.ongetvalue, options.onupdatevalue, options.onerror);
-        }
+            this._ref = this._getRef();
+            if(!this._ref) return;
+            this._syncValue(Sync.Mode.UPDATE_LOCAL, value, options.ongetvalue, options.onupdateremotevalue, options.onupdatelocalvalue, options.onerror);
+        };
 
         this._getRef = function() {
             var ref;
@@ -822,6 +857,15 @@ function Utils(main) {
                 onerror(key, "Firebase database reference not defined.");
                 return;
             }
+            if(options.child) ref = ref.child(options.child);
+            return ref;
+        };
+
+        this.ready = function() {
+            this._ref = this._getRef();
+            if(!this._ref) return false;
+            if(!firebase || !firebase.auth() || !firebase.auth().currentUser || !firebase.auth().currentUser.uid) return false;
+            return true;
         }
 
     }
@@ -836,8 +880,8 @@ function Utils(main) {
         OVERRIDE_LOCAL: "override-local",
         UPDATE_BOTH: "update-both",
         SKIP: "skip"
-    }
-    Sync.CREATE_KEY = "$create_key";
+    };
+    Sync.CREATE_KEY = "$create_key$";
 
 
     return {

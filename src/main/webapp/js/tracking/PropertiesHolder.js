@@ -207,7 +207,6 @@ function PropertiesHolder(main) {
     }
 
     function synchronizeName(forceToServer) {
-    return;
         var sync = new utils.sync({
             type: utils.sync.Type.ACCOUNT_PRIVATE,
             key: DATABASE.NAME,
