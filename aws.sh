@@ -1,26 +1,34 @@
 #!/bin/bash
+EMPTY=true
 for i in "$@"
 do
 case $i in
     -r|--restart)
+    EMPTY=false
     RESTART=true
     ;;
     -u|--update)
+    EMPTY=false
     UPDATE=true
     ;;
     -uu|--update-server)
+    EMPTY=false
     UPDATE_SERVER=true
     ;;
     -n=*|--name=*)
+    EMPTY=false
     USERNAME="${i#*=}"
     ;;
     -l=*|--lib=*)
+    EMPTY=false
     DIR="${i#*=}"
     ;;
     -f=*|--folder=*)
+    EMPTY=false
     FOLDER="${i#*=}"
     ;;
     --default)
+    EMPTY=false
     DEFAULT=YES
     ;;
     *)
@@ -28,6 +36,15 @@ case $i in
     ;;
 esac
 done
+
+if [ $EMPTY ]; then
+    echo aws.sh -n=[name] -u -uu -r
+    echo    -n, --name - login name
+    echo    -u, --update - update configs
+    echo    -uu, --update-server - update WaytousServer.war and deploy it on server
+    echo    -r, --restart - start/restart server
+    exit 1
+fi
 if [ $USERNAME ]; then
     echo --- Username: $USERNAME
 else
@@ -73,7 +90,7 @@ if [ $RESTART ]; then
 
     ssh -i conf/aws/aws_credentials.pem $USERNAME@wayto.us << STARTSERVER
         cd $FOLDER/WEB-INF/classes
-        /usr/bin/java -cp .:../lib/firebase-admin-5.2.0.jar:../lib/google-api-client-gson-1.22.0.jar:../lib/google-http-client-gson-1.22.0.jar:../lib/google-oauth-client-1.22.0.jar:../lib/guava-20.0.jar:../lib/jackson-core-2.1.3.jar:../lib/javax.servlet-api-3.1.0.jar:../lib/jsr305-1.3.9.jar:../lib/google-api-client-1.22.0.jar:../lib/google-http-client-1.22.0.jar:../lib/google-http-client-jackson2-1.22.0.jar:../lib/gson-2.1.jar:../lib/guava-jdk5-17.0.jar:../lib/Java-WebSocket-1.3.4.jar:../lib/json-20160810.jar com.edeqa.waytousserver.WaytousServer ../../../conf/options_aws.json > ../../../waytous.log
+        /usr/bin/java -cp .:../lib/firebase-admin-5.2.0.jar:../lib/google-api-client-gson-1.22.0.jar:../lib/google-http-client-gson-1.22.0.jar:../lib/google-oauth-client-1.22.0.jar:../lib/guava-20.0.jar:../lib/jackson-core-2.1.3.jar:../lib/javax.servlet-api-3.1.0.jar:../lib/jsr305-1.3.9.jar:../lib/google-api-client-1.22.0.jar:../lib/google-http-client-1.22.0.jar:../lib/google-http-client-jackson2-1.22.0.jar:../lib/gson-2.1.jar:../lib/guava-jdk5-17.0.jar:../lib/Java-WebSocket-1.3.4.jar:../lib/json-20160810.jar com.edeqa.waytousserver.WaytousServer ../../../conf/options_aws.json &> ../../../waytous.log
 STARTSERVER
 fi
 

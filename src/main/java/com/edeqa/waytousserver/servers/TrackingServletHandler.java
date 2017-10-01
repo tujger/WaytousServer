@@ -110,9 +110,9 @@ public class TrackingServletHandler extends AbstractServletHandler {
         o.put("WS_PORT", OPTIONS.getWsPortDedicated());
         o.put("WSS_PORT", OPTIONS.getWssPortDedicated());
         o.put("firebase_config", OPTIONS.getFirebaseConfig());
-        o.put("isStandAlone", Common.getInstance().getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode());
-        if(OPTIONS.isDebugMode()) o.put("isDebugMode", true);
-
+        o.put("is_stand_alone", Common.getInstance().getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode());
+        if(OPTIONS.isDebugMode()) o.put("is_debug_mode", true);
+        o.put("google_analytics_tracking_id", OPTIONS.getGoogleAnalyticsTrackingId());
 
         html.clear();
         html.getHead().add(TITLE).with("Waytous");

@@ -311,7 +311,7 @@ function TrackingFB(main) {
                 if(webSocket instanceof WebSocket && webSocket.readyState != WebSocket.OPEN) {
                     webSocket.close();
                 }
-            }, data.isStandAlone ? 15000 : 100);
+            }, data.is_stand_alone ? 15000 : 100);
         } catch(e){
             console.warn(link,e);
             xhrModeStart(link);

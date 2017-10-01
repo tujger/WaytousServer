@@ -17,7 +17,7 @@ function Main() {
     var main = window.Waytous = this;
     var alert;
 
-    if (!data.isDebugMode && "serviceWorker" in navigator) {
+    if (!data.is_debug_mode && "serviceWorker" in navigator) {
         window.addEventListener("load", function() {
             navigator.serviceWorker.register("/sw.js")
             .then(function(registration) {
@@ -129,6 +129,18 @@ function Main() {
             .place(HTML.META, {name:"msapplication-TileImage", content:"/icons/mstile-144x144.png"})
             .place(HTML.META, {name:"msapplication-config", content:"/icons/browserconfig.xml"})
             .place(HTML.META, {name:"theme-color", content:"#aaeeee"});
+            //.place(HTML.SCRIPT, {innerHTML: "window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;\n" +
+            //"ga('create', 'UA-104070698-1', 'auto');\n" +
+            //"ga('send', 'pageview');"})
+            //.place(HTML.SCRIPT, {src: "https://www.google-analytics.com/analytics.js", async: true});
+
+        if(data.google_analytics_tracking_id) {
+            document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + data.google_analytics_tracking_id, async:true})
+                .place(HTML.SCRIPT, {innerHTML: "window.dataLayer = window.dataLayer || [];\n" +
+                "        function gtag(){dataLayer.push(arguments)};\n" +
+                "        gtag('js', new Date());\n" +
+                "        gtag('config', '" + data.google_analytics_tracking_id + "');"});
+        }
 
     }
 
@@ -161,7 +173,7 @@ function Main() {
     }
 
     function loadScripts(){
-        var files = data.isDebugMode ? [
+        var files = data.is_debug_mode ? [
             "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js", // https://firebase.google.com/docs/web/setup
             "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
             "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js",
@@ -200,7 +212,7 @@ function Main() {
             "https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js", // https://cdnjs.com/libraries/fingerprintjs2
             "/js/all.js"
         ];
-        var modules = data.isDebugMode ? null : [
+        var modules = data.is_debug_mode ? null : [
             "MyUser",
             "MyUsers",
 //            "NoSleep",
