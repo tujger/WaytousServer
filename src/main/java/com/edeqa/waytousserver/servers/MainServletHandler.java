@@ -42,6 +42,15 @@ public class MainServletHandler extends AbstractServletHandler {
             substitutions.put("\\$\\{WEB_PAGE\\}", OPTIONS.getAppLink());
             substitutions.put("\\$\\{REFERER\\}", "https://" + OPTIONS.getServerHost());
 
+            JSONObject o = new JSONObject();
+            o.put("version", SERVER_BUILD);
+            o.put("is_stand_alone", Common.getInstance().getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode());
+            if(OPTIONS.isDebugMode()) o.put("is_debug_mode", true);
+            o.put("google_analytics_tracking_id", OPTIONS.getGoogleAnalyticsTrackingId());
+            substitutions.put("\\$\\{APP_DATA\\}", "var data = " + o.toString());
+
+
+
             try {
                 //noinspection LoopStatementThatDoesntLoop
                 for (String x : requestWrapper.getRequestHeader(HttpHeaders.REFERER)) {
@@ -77,7 +86,6 @@ public class MainServletHandler extends AbstractServletHandler {
             File file = new File(root + uri.getPath()).getCanonicalFile();
             int resultCode = 200;
 
-            Common.log("Main", uri.getPath(), "[" + (file.exists() ? file.length() + " byte(s)" : "not found") + "]");
 
             String etag = "W/1976-" + ("" + file.lastModified()).hashCode();
 
@@ -85,22 +93,43 @@ public class MainServletHandler extends AbstractServletHandler {
             String path = uri.getPath().toLowerCase();
             if (!file.getCanonicalPath().startsWith(root.getCanonicalPath())) {
                 // Suspected path traversal attack: reject with 403 error.
+                Common.log("Main", uri.getPath(), "[403 - suspected path traversal attack]");
                 resultCode = 403;
                 file = new File(root + "/403.html");
 //                Utils.sendResult.call(exchange, 403, Constants.MIME.TEXT_PLAIN, "403 Forbidden\n".getBytes());
             } else if (file.isDirectory()) {
                 file = new File(file.getCanonicalPath() + "/index.html");
+                Common.log("Main", uri.getPath() + "/index.html", "[" + (file.exists() ? file.length() + " byte(s)" : "not found") + "]");
 //            } else if (etag.equals(ifModifiedSince)) {
 //                resultCode = 304;
 //                file = new File(root + "/304.html");
 //                Utils.sendResult.call(exchange, 304, null, "304 Not Modified\n".getBytes());
             } else if (!uri.getPath().endsWith("/") && !file.exists()) {
+                Common.log("Main", "-> " + uri.getPath() + "/");
+//                Common.log("Main", uri.getPath(), "[302 - redirected]");
                 requestWrapper.sendRedirect(uri.getPath() + "/");
                 return;
-            } else if (!file.isFile() || path.startsWith("/WEB-INF") || path.startsWith("/META-INF") || path.startsWith("/.idea")) {
+            } else if (!file.isFile() || path.startsWith("/WEB-INF") || path.startsWith("/META-INF") || path.startsWith("/.")) {
                 // Object does not exist or is not a file: reject with 404 error.
-                resultCode = 404;
-                file = new File(root + "/404.html");
+
+                boolean found = false;
+                String[] parts = path.split("/");
+                if(parts.length > 1) {
+                    for (int i = 0; i < OPTIONS.getPages().length(); i++) {
+                        if(parts[1].equals(OPTIONS.getPages().get(i))) {
+                            resultCode = 200;
+                            Common.log("Main", uri.getPath(), "[200 - page found]");
+                            file = new File(OPTIONS.getWebRootDirectory() + "/index.html");
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if(!found) {
+                    resultCode = 404;
+                    Common.log("Main", uri.getPath(), "[404 - not found]");
+                    file = new File(root + "/404.html");
+                }
             }
             {
                 // Object exists and it is a file: accept with response code 200.

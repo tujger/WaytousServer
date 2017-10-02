@@ -90,10 +90,12 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     public DataProcessorFirebaseV1() throws ServletException, IOException {
         super();
 
-        try {
-            Common.log(LOG, "Data Processor Firebase " + VERSION + ", config file: " + new File(OPTIONS.getFirebasePrivateKeyFile()).getCanonicalPath());
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(OPTIONS.isDebugMode()) {
+            try {
+                Common.log(LOG, "Data Processor Firebase " + VERSION + ", config file: " + new File(OPTIONS.getFirebasePrivateKeyFile()).getCanonicalPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         FirebaseOptions options = createFirebaseOptions();

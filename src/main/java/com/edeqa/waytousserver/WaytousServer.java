@@ -68,7 +68,9 @@ public class WaytousServer {
         KeyStore keyStore = KeyStore.getInstance("JKS");
         File kf = new File(OPTIONS.getKeystoreFilename());
 
-        Common.log(LOG, "Keystore file: " + kf.getCanonicalPath());
+        if(OPTIONS.isDebugMode()) {
+            Common.log(LOG, "Keystore file: " + kf.getCanonicalPath());
+        }
         keyStore.load(new FileInputStream(kf), storePassword.toCharArray());
 
         Common.log(LOG, "Server \t\t\t\t| Port \t| Path");
