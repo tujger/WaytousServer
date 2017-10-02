@@ -592,10 +592,10 @@ function Utils(main) {
             //return value;
         };
         options.onaddremotevalue = options.onaddremotevalue || function(key, value) {
-            if(options.debug) console.warn("Added remote: " + key, "[value]:", value);
+//            if(options.debug) console.warn("Added remote: " + key, "[value]:", value);
         };
         options.onupdateremotevalue = options.onupdateremotevalue || function(key, newValue, oldValue) {
-            if(options.debug) console.warn("Updated remote: " + key, "[new]:", newValue, "[old]:", oldValue);
+//            if(options.debug) console.warn("Updated remote: " + key, "[new]:", newValue, "[old]:", oldValue);
         };
         options.onremoveremotevalue = options.onremoveremotevalue || function(key, value) {
             if(options.debug) console.warn("Removed remote: " + key, "[value]:", value);
@@ -604,10 +604,10 @@ function Utils(main) {
             //if(options.debug) console.warn("Saved remote: " + key, "[new]:", newValue, "[old]:", oldValue);
         };
         options.onaddlocalvalue = options.onaddlocalvalue || function(key, value) {
-            if(options.debug) console.warn("Added local: " + key, "[value]:", value);
+//            if(options.debug) console.warn("Added local: " + key, "[value]:", value);
         };
         options.onupdatelocalvalue = options.onupdatelocalvalue || function(key, newValue, oldValue) {
-            if(options.debug) console.warn("Updated local: " + key, "[new]:", newValue, "[old]:", oldValue);
+//            if(options.debug) console.warn("Updated local: " + key, "[new]:", newValue, "[old]:", oldValue);
         };
         options.onremovelocalvalue = options.onremovelocalvalue || function(key, value) {
             if(options.debug) console.warn("Removed local: " + key, "[value]:", value);
@@ -684,14 +684,14 @@ function Utils(main) {
         };
 
         this.getValue = function() {
-            this._ref = this._getRef(options.child);
+            this._ref = getRef(options.child);
             if(!this._ref) return;
             this._getValue(options.key, options.ongetvalue, options.onerror);
         };
 
         this.getValues = function() {
             var self = this;
-            self._ref = self._getRef(options.child);
+            self._ref = getRef(options.child);
             if(!self._ref) return;
 
             self._ref.child(options.key).limitToLast(1).once("child_added").then(function (data) {
@@ -716,7 +716,7 @@ function Utils(main) {
             });
         };
 
-        this._syncValue = function(mode, newValue, ongetvalue, onaddremotevalue, onupdateremotevalue, onremoveremotevalue, onsaveremotevalue, onaddlocalvalue, onupdatelocalvalue, onremovelocalvalue, onsavelocalvalue, onerror) {
+        this._syncValue = function(mode, newValue, ongetvalue, onaddremotevalue, onupdateremotevalue, onremoveremotevalue, onsaveremotevalue, onaddlocalvalue, onupdatelocalvalue, onremovelocalvalue, onsavelocalvalue, onfinish, onerror) {
             var self = this;
             var onfail = function(key, error) {
                 onerror(key, error);
@@ -753,9 +753,11 @@ function Utils(main) {
                             if(local) {
                                 onupdatelocalvalue(key, remote, local);
                                 onsavelocalvalue(key, remote, local);
+                                onfinish(Sync.Mode.UPDATE_LOCAL, key, remote, local);
                             } else {
                                 onaddlocalvalue(key, remote);
                                 onsavelocalvalue(key, remote, null);
+                                onfinish("add-local", key, remote);
                             }
                         }
                         return;
@@ -767,9 +769,11 @@ function Utils(main) {
                         if(local) {
                             onupdatelocalvalue(key, remote, local);
                             onsaveremotevalue(key, remote, local);
+                            onfinish(Sync.Mode.OVERRIDE_LOCAL, key, remote, local);
                         } else {
                             onaddlocalvalue(key, remote);
                             onsavelocalvalue(key, remote, null);
+                            onfinish("add-local", key, remote);
                         }
                         return;
                     case Sync.Mode.UPDATE_REMOTE:
@@ -793,9 +797,11 @@ function Utils(main) {
                                     if(remote) {
                                         onupdateremotevalue(key, updated, remote);
                                         onsaveremotevalue(key, updated, remote);
+                                        onfinish(Sync.Mode.UPDATE_REMOTE, key, updated, remote);
                                     } else {
                                         onaddremotevalue(key, updated);
                                         onsaveremotevalue(key, updated, null);
+                                        onfinish("add-remote", key, updated);
                                     }
                                 }, onfail);
                             }).catch(onfail);
@@ -813,9 +819,11 @@ function Utils(main) {
                                 if(remote) {
                                     onupdateremotevalue(key, updated, remote);
                                     onsaveremotevalue(key, updated, remote);
+                                    onfinish(Sync.Mode.OVERRIDE_REMOTE, key, updated, remote);
                                 } else {
                                     onaddremotevalue(key, updated);
                                     onsaveremotevalue(key, updated, null);
+                                    onfinish("add-remote", key, updated);
                                 }
                             }, onfail);
                         }).catch(onfail);
@@ -845,23 +853,28 @@ function Utils(main) {
                             if(local) {
                                 onupdatelocalvalue(key, remote, local);
                                 onsavelocalvalue(key, remote, local);
-                            } else {
+                                onfinish(Sync.Mode.UPDATE_LOCAL, key, remote, local);
+                           } else {
                                 onaddlocalvalue(key, remote);
                                 onsavelocalvalue(key, remote, null);
+                                onfinish("add-local", key, remote);
                             }
                         } else if(processRemote) {
                             if(local.constructor === Object && !local[DATABASE.SYNCED]) {
                                 local[DATABASE.SYNCED] = firebase.database.ServerValue.TIMESTAMP;
                             }
                             updates[key] = local;
+                            delete local[DATABASE.KEYS];
                             self._ref.update(updates).then(function () {
                                 self._getValue(options.key, function(key, updated) {
                                     if(remote) {
                                         onupdateremotevalue(key, updated, remote);
                                         onsaveremotevalue(key, updated, remote);
+                                        onfinish(Sync.Mode.UPDATE_REMOTE, key, updated, remote);
                                     } else {
                                         onaddremotevalue(key, updated);
                                         onsaveremotevalue(key, updated, null);
+                                        onfinish("add-remote", key, updated);
                                     }
                                 }, onfail);
                             }).catch(onfail);
@@ -881,7 +894,7 @@ function Utils(main) {
                 return;
             }
 
-            this._ref = this._getRef(options.child);
+            this._ref = getRef(options.child);
             if(!this._ref) return;
 
             var onfail = function(error){
@@ -899,22 +912,21 @@ function Utils(main) {
                 //if(values[i][DATABASE.SYNCED]) values[i][DATABASE.SYNCED] = firebase.database.ServerValue.TIMESTAMP;
 
                 var key = values[i][DATABASE.KEYS];
-                delete values[i][DATABASE.KEYS];
+//                delete values[i][DATABASE.KEYS];
                 if(!key) key = options.reference.push().key;
                 result[key] = values[i];
             }
 
-            //a = new utils.sync({
-            //    type: utils.sync.Type.ACCOUNT_PRIVATE,
-            //    key: "test-2"
-            //});
-            //b=[];b = [{a:1,b:2},{a:2,b:3},{a:3,b:4,c:5}]
-            //{"-key1":{"a":1,"b":2},"-key2":{"a":2,"b":3},"-key3":{"a":3,"b":4,"c":5}}
+//a = new utils.sync({
+//    type: utils.sync.Type.ACCOUNT_PRIVATE,
+//    key: "test-2"
+//});
+//b=[];b = [{a:1,b:2},{a:2,b:3},{a:3,b:4,c:5}]
+//{"-key1":{"a":1,"b":2},"-key2":{"a":2,"b":3},"-key3":{"a":3,"b":4,"c":5}}
 
-            //b = [{a: 11, b: 12, sy: 1506882099839, k:"-KvOA0Z_e39CoeRT6UnR"},
-            //    {a: 2, b: 3, sy: 1506882099978, k:"-KvOA0Z_e39CoeRT6UnS"},
-            //    {a: 3, b: 4, c: 5, sy: 1506882099979, k:"-KvOA0ZaGd5rZ2-7D-8L"}]
-
+//b = [{a: 11, b: 12, sy: 1506882099839, k:"-KvOA0Z_e39CoeRT6UnR"},
+//    {a: 2, b: 3, sy: 1506882099978, k:"-KvOA0Z_e39CoeRT6UnS"},
+//    {a: 3, b: 4, c: 5, sy: 1506882099979, k:"-KvOA0ZaGd5rZ2-7D-8L"}]
 
             this._ref.child(options.key).once("value").then(function(data) {
                 var value = data.val() || {};
@@ -928,55 +940,108 @@ function Utils(main) {
                 }
 
                 var keys = u.keys(result);
-                for(var i in keys) {
-                    var sync = new Sync({
-                        type: options.type,
-                        child: options.key,
-                        key: keys[i]
-                    });
-                    sync._ref = sync._getRef(options.key);
-                    //sync._syncValue(result[x]);
-                    var onsave = function(key,newValue,oldValue) {
-                        if(result[keys[i]]) result[keys[i]][DATABASE.KEYS] = key;
-                        this(key,newValue,oldValue);
-                    };
-                    sync._syncValue(Sync.Mode.UPDATE_BOTH, result[keys[i]], options.ongetvalue, onsave.bind(options.onaddremotevalue), onsave.bind(options.onupdateremotevalue), options.onremoveremotevalue, onsave.bind(options.onsaveremotevalue), options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, options.onerror);
+                if(keys && keys.length > 0) {
+                    var remoteUpdated = 0;
+                    var localUpdated = 0;
+                    var counter = 0;
+                    var _onfinish = function(mode, key, newValue, oldValue) {
+                        switch(mode) {
+                            case Sync.Mode.UPDATE_REMOTE:
+                            case Sync.Mode.OVERRIDE_REMOTE:
+                            case "add-remote":
+                            case Sync.Mode.REMOVE_REMOTE:
+                                remoteUpdated ++;
+                                break;
+                            case Sync.Mode.UPDATE_LOCAL:
+                            case Sync.Mode.OVERRIDE_LOCAL:
+                            case Sync.Mode.REMOVE_LOCAL:
+                            case "add-local":
+                                localUpdated ++;
+                                break;
+                            default:
+                        }
+                        onfinish(mode, key, newValue, oldValue);
+
+                        counter ++;
+                        if(counter == keys.length) {
+                            updateTimestamp();
+                        }
+                    }
+
+                    for(var i in keys) {
+                        var sync = new Sync({
+                            type: options.type,
+                            child: options.key,
+                            key: keys[i]
+                        });
+                        sync._ref = getRef(options.key);
+                        //sync._syncValue(result[x]);
+                        var onsaveLocal = function(key,newValue,oldValue) {
+                            if(result[key]) {
+                                for(var x in result[key]) {
+                                    delete result[key][x];
+                                }
+                                for(var x in newValue) {
+                                    result[key][x] = newValue[x];
+                                }
+                                result[key][DATABASE.KEYS] = key;
+                            } else {
+                                values.push(newValue);
+                                newValue[DATABASE.KEYS] = key;
+                            }
+                            this(key,newValue,oldValue);
+                        };
+                        var onsaveRemote = function(key,newValue,oldValue) {
+                            if(result[key]) {
+                                result[key][DATABASE.KEYS] = key;
+                            } else {
+                                values.push(newValue);
+                            }
+                            if(result[key]) result[key][DATABASE.SYNCED] = newValue[DATABASE.SYNCED];
+                            this(key,newValue,oldValue);
+                        };
+                        sync._syncValue(Sync.Mode.UPDATE_BOTH, result[keys[i]], options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, onsaveRemote.bind(options.onsaveremotevalue), options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, onsaveLocal.bind(options.onsavelocalvalue), _onfinish, options.onerror);
+                    }
                 }
             }).catch(onfail);
         };
 
+        function onfinish(mode, key, newValue, oldValue) {
+            if(options.debug) console.warn(mode, key, "[new]:", newValue, "[old]:", oldValue);
+        }
+
         this.syncValue = function(value) {
-            this._ref = this._getRef(options.child);
+            this._ref = getRef(options.child);
             if(!this._ref) return;
 
-            this._syncValue(Sync.Mode.UPDATE_BOTH, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, onsaveremotevalueWithTimestamp, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, options.onerror);
+            this._syncValue(Sync.Mode.UPDATE_BOTH, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, onsaveremotevalueWithTimestamp, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, onfinish, options.onerror);
         };
 
         this.updateRemoteValue = function(value) {
-            this._ref = this._getRef(options.child);
+            this._ref = getRef(options.child);
             if(!this._ref) return;
-            this._syncValue(Sync.Mode.UPDATE_REMOTE, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, onsaveremotevalueWithTimestamp, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, options.onerror);
+            this._syncValue(Sync.Mode.UPDATE_REMOTE, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, onsaveremotevalueWithTimestamp, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, onfinish, options.onerror);
         };
 
         this.overrideRemoteValue = function(value) {
-            this._ref = this._getRef(options.child);
+            this._ref = getRef(options.child);
             if(!this._ref) return;
-            this._syncValue(Sync.Mode.OVERRIDE_REMOTE, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, onsaveremotevalueWithTimestamp, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, options.onerror);
+            this._syncValue(Sync.Mode.OVERRIDE_REMOTE, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, onsaveremotevalueWithTimestamp, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, onfinish, options.onerror);
         };
 
         this.overrideLocalValue = function(value) {
-            this._ref = this._getRef(options.child);
+            this._ref = getRef(options.child);
             if(!this._ref) return;
-            this._syncValue(Sync.Mode.OVERRIDE_LOCAL, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onerror);
+            this._syncValue(Sync.Mode.OVERRIDE_LOCAL, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, onfinish, options.onerror);
         };
 
         this.updateLocalValue = function(value) {
-            this._ref = this._getRef(options.child);
+            this._ref = getRef(options.child);
             if(!this._ref) return;
-            this._syncValue(Sync.Mode.UPDATE_LOCAL, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, options.onsaveremotevalue, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, options.onerror);
+            this._syncValue(Sync.Mode.UPDATE_LOCAL, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, options.onsaveremotevalue, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, onfinish, options.onerror);
         };
 
-        this._getRef = function(child) {
+        function getRef(child) {
             var ref;
             switch(options.type) {
                 case Sync.Type.ACCOUNT_PRIVATE:
@@ -1008,7 +1073,7 @@ function Utils(main) {
         };
 
         this.ready = function() {
-            this._ref = this._getRef();
+            this._ref = getRef();
             if(!this._ref) return false;
             if(!firebase || !firebase.auth() || !firebase.auth().currentUser || !firebase.auth().currentUser.uid) return false;
             return true;
@@ -1038,7 +1103,6 @@ function Utils(main) {
                 for(var x in Sync._specialWatch) {
                     Sync._specialWatch[x].ref.off();
                     options._delayedWatch[ref.toString()][x] = Sync._specialWatch[x];
-                    console.log("OFF", Sync._specialWatch[x].ref.toString())
                 }
                 Sync._specialWatch = {};
             }
@@ -1048,12 +1112,13 @@ function Utils(main) {
                     if(options._delayedWatch && options._delayedWatch[ref.toString()]) {
                         for(var x in options._delayedWatch[ref.toString()]) {
                             Sync._specialWatch[x] = options._delayedWatch[ref.toString()][x];
-                            console.log("ON", Sync._specialWatch[x].ref.toString())
+                            u.save(x, data.val());
                             Sync._specialWatch[x].ref.on("value", function(data) {
-//                                if(Sync._synced == data.val()) return;
-                                Sync._specialWatch[x].callback(Sync._specialWatch[x].ref.toString(), data.val());
+                                console.log("WATCH", x, u.load(x), data.val());
+                                if(u.load(x) < data.val()) {
+                                    Sync._specialWatch[x].callback(Sync._specialWatch[x].ref.toString(), data.val());
+                                }
                             }, function(error) {
-//                                if(Sync._synced == data.val()) return;
                                 options.error(Sync._specialWatch[x].ref.toString(), error);
                             })
                         }
@@ -1071,7 +1136,13 @@ function Utils(main) {
                 key = null;
             }
             Sync._watch = Sync._watch || {};
-            this._ref = this._getRef(options.key + (key ? "/" + key : ""));
+
+            var path = [];
+            if(options.key) path.push(options.key);
+            if(key) path.push(key);
+            if(path.length > 0) path.join("/")
+
+            this._ref = getRef(path.length > 0 ? path.join("/") : undefined);
             if(!this._ref) return false;
 
             var watched = this._ref.toString();
@@ -1091,14 +1162,15 @@ function Utils(main) {
                     options.error(data.key, error);
                 })
             } else if(!onchangevalue && !Sync._watch[watched]) {
-                console.warn(options.key + " is not watching yet.")
+                console.warn(watched + " is not watching, define 'onchangevalue'.")
             }
         };
 
         this.watchChanges = function(callback) {
 //         return;
             Sync._watch = Sync._watch || {};
-            var ref = this._getRef(DATABASE.SYNCED);
+//            this.setKey(DATABASE.SYNCED);
+            var ref = getRef(DATABASE.SYNCED);
             var watched = ref.toString();
             Sync._specialWatch = Sync._specialWatch || {};
             if(!callback) {
