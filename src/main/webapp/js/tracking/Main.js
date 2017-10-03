@@ -134,7 +134,7 @@ function Main() {
             //"ga('send', 'pageview');"})
             //.place(HTML.SCRIPT, {src: "https://www.google-analytics.com/analytics.js", async: true});
 
-        if(data.google_analytics_tracking_id) {
+        if(data && data.google_analytics_tracking_id) {
             document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + data.google_analytics_tracking_id, async:true})
                 .place(HTML.SCRIPT, {innerHTML: "window.dataLayer = window.dataLayer || [];\n" +
                 "        function gtag(){dataLayer.push(arguments)};\n" +
@@ -204,7 +204,7 @@ function Main() {
             "/js/tracking/TrackHolder",
             "/js/tracking/UserProfileHolder",
 //            "/js/tracking/WelcomeHolder",
-//            "/js/tracking/SampleHolder",
+            "/js/tracking/SampleHolder",
         ] : [
             "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js", // https://firebase.google.com/docs/web/setup
             "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
@@ -234,7 +234,8 @@ function Main() {
             "ShareHolder",
             "StreetViewHolder",
             "TrackingHolder",
-            "TrackHolder"
+            "TrackHolder",
+            "UserProfileHolder"
         ];
 
         u.eventBus.register(files, {
@@ -299,6 +300,10 @@ function Main() {
         }
         firebase.initializeApp(data.firebase_config);
         database = firebase.database();
+
+        firebase.auth().onAuthStateChanged(function(user) {
+            main.fire(EVENTS.FIREBASE_READY);
+        });
 
         u.loading.hide();
 

@@ -19,6 +19,7 @@ function UserProfileHolder(main) {
     var waitingDialog;
     var shareBlockedDialog;
     var accountCreatedDialog;
+    var globalSync;
 
     function start() {
 //        placeholder = u.create(HTML.DIV, {className:"dialog-dim hidden"}, document.body);
@@ -45,22 +46,8 @@ function UserProfileHolder(main) {
                 initProfileDialog();
                 profileDialog.open();
                 break;
-            case EVENTS.MAP_READY:
-                if(getUser()) {
-                    var sync = new utils.sync({type:utils.sync.Type.ACCOUNT_PRIVATE});
-                    console.log(sync.ready());
-                    /*sync.watch(REQUEST.SIGN_PROVIDER, function(key, newValue) {
-                        console.log("CHANGED", key, newValue);
-//                        main.fire(EVENTS.SYNC_PROFILE);
-                    });
-                    new utils.sync({type:utils.sync.Type.ACCOUNT_PRIVATE}).
-                    watchChanges(function(key, newValue) {
-                        console.log("SYNC_PROFILE", key, newValue);
-                        main.fire(EVENTS.SYNC_PROFILE);
-                    });*/
-
-
-                }
+            case EVENTS.FIREBASE_READY:
+                setGlobalSync();
                 break;
             default:
                 break;
@@ -157,8 +144,8 @@ function UserProfileHolder(main) {
                         innerHTML: "Sync",
                         onclick: function() {
                             console.log("SYNC");
-                            synchronizeName();
-
+                            main.fire(EVENTS.SYNC_PROFILE);
+                            //synchronizeName();
                         }
                     },
                     {
@@ -485,6 +472,7 @@ function UserProfileHolder(main) {
         waitingDialog.open();
         if(main.tracking && main.tracking.getStatus() != EVENTS.TRACKING_DISABLED) {
             resign = true;
+            if(globalSync) globalSync.watchChanges(null);
             main.tracking.stop(function(e){
                 console.log("STOPPED");
                 signProcedureCallback();
@@ -498,6 +486,7 @@ function UserProfileHolder(main) {
 //        placeholder.hide(HIDING.OPACITY);
         waitingDialog.close();
 //        debugger;
+        setGlobalSync();
         if (result) {
             try {
                 result = result.user ? result.user.toJSON() : result.toJSON();
@@ -510,7 +499,7 @@ function UserProfileHolder(main) {
                 });
                 initProfileDialog();
 
-                synchronizeName();
+                //main.fire(EVENTS.SYNC_PROFILE);
                 // {uuid: "e30a815be353be517c2f07498c2193aa", uid: null}
             }catch(e) {
                 console.error(e);
@@ -529,6 +518,7 @@ function UserProfileHolder(main) {
 
     function onAuthStateError(error) {
         waitingDialog.close();
+        setGlobalSync();
         console.log("ERROR",error);
 
         switch(error.code) {
@@ -568,6 +558,7 @@ function UserProfileHolder(main) {
                 console.error("ERROR", error);
         }
 
+        setGlobalSync();
         if(resign) {
             main.tracking.setLink(window.location.href);
             main.tracking.start(function(e){console.log(e)});
@@ -582,33 +573,9 @@ function UserProfileHolder(main) {
         console.log(userBackup);
     }
 
-    function synchronizeName(forceToServer) {
-        if(getUser()) {
-            var sync = new utils.sync({
-                type: utils.sync.Type.ACCOUNT_PRIVATE,
-                key: DATABASE.NAME,
-                uid: getUser().uid,
-                ongetvalue: function (key, value) {
-                    if (main.me.properties.name && (forceToServer || !value)) {
-                        sync.setOnGetValue(function (key, value) {
-                            return main.me.properties.name;
-                        });
-                        sync.syncValue();
-                    } else if (!main.me.properties.name && value) {
-                        main.me.fire(EVENTS.CHANGE_NAME, value);
-                    }
-                }
-            });
-
-//            if(forceToServer && main.me.properties.name) {
-//                sync.setRemoteValue(main.me.properties.name)
-//            }
-            sync.syncValue();
-        }
-    }
-
     function getUser() {
         var user = null;
+
         var data = firebase.auth().currentUser;
         if(data) {
             user = {};
@@ -621,6 +588,23 @@ function UserProfileHolder(main) {
         return user;
     }
 
+    function setGlobalSync() {
+        if(getUser()) {
+            //var sync = new utils.sync({type:utils.sync.Type.ACCOUNT_PRIVATE});
+            //console.log(sync.ready());
+            //sync.watch(REQUEST.SIGN_PROVIDER, function(key, newValue) {
+            //    console.log("CHANGED", key, newValue);
+            //    //                        main.fire(EVENTS.SYNC_PROFILE);
+            //});
+            globalSync = new utils.sync({type: utils.sync.Type.ACCOUNT_PRIVATE});
+            if(globalSync.ready()) {
+                globalSync.watchChanges(function (key, newValue) {
+                    console.log("SYNC_PROFILE", key, newValue);
+                    main.fire(EVENTS.SYNC_PROFILE);
+                });
+            }
+        }
+    }
 
     return {
         createView:createView,

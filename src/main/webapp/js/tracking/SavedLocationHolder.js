@@ -120,6 +120,7 @@ function SavedLocationHolder(main) {
                     }, main.right);
                     locationSavedDialog.items[0].value = last;
                     locationSavedDialog.open();
+                    main.fire(EVENTS.SYNC_PROFILE);
                 }
                 break;
             case EVENTS.SHOW_SAVED_LOCATION:
@@ -200,11 +201,13 @@ function SavedLocationHolder(main) {
                             var loc = u.load("saved_location:"+number);
                             loc.n = name;
                             loc.d = description;
+                            delete loc[DATABASE.SYNCED];
                             u.save("saved_location:"+number, loc);
                             if(locationsDialog && locationsDialog.opened) main.fire(EVENTS.SHOW_SAVED_LOCATIONS);
                             main.users.forUser(10000 + number, function(number, user){
                                 user.fire(EVENTS.CHANGE_NAME, name);
                             });
+                            main.fire(EVENTS.SYNC_PROFILE);
                         }
                     },
                     neutral: {
@@ -338,8 +341,14 @@ function SavedLocationHolder(main) {
                         onclick: function(items) {
                             var number = items[0].value;
                             main.fire(EVENTS.HIDE_SAVED_LOCATION, number);
-                            u.save("saved_location:"+number);
+
+                            var loc = u.load("saved_location:"+number);
+                            var newLoc = {};
+                            newLoc[DATABASE.KEYS] = loc[DATABASE.KEYS];
+
+                            u.save("saved_location:"+number, newLoc);
                             if(locationsDialog && locationsDialog.opened) main.fire(EVENTS.SHOW_SAVED_LOCATIONS);
+                            main.fire(EVENTS.SYNC_PROFILE);
                         }
                     },
                     negative: {
@@ -355,7 +364,7 @@ function SavedLocationHolder(main) {
             case EVENTS.SHOW_SAVED_LOCATIONS:
                 locationsDialog = locationsDialog || u.dialog({
                     title: {
-                        label: u.lang.saved_locations,
+                        label: u.lang.saved_locations_d.format(0),
                         filter: true,
                     },
                     resizeable: true,
@@ -429,51 +438,55 @@ function SavedLocationHolder(main) {
                     var sync = new utils.sync({
                         type: utils.sync.Type.ACCOUNT_PRIVATE,
                         key: REQUEST.SAVED_LOCATION,
-                        onupdatelocalvalue: function (key, newLocation) {
-                            //var last = u.load("saved_location:counter") || 0;
-                            //last++;
-                            //u.save("saved_location:counter", last);
-                            //u.save("saved_location:" + last, newLocation);
-                            console.log("LOCAL", key, newLocation);
-                            if(newLocation && newLocation.constructor === Object) {
-                                var last = u.load("saved_location:counter") || 0;
-                                last++;
-                                newLocation.k = key;
-                                u.save("saved_location:counter", last);
-                                u.save("saved_location:" + last, newLocation);
-                            }
-                        },
-                        onupdateremotevalue: function (key, newLocation, oldValue) {
+                        onsavelocalvalue: function (key, newLocation, oldValue) {
                             var last = u.load("saved_location:counter") || 0;
-                            var exists = false;
+                            var number;
                             for(var i = 0; i <= last; i++) {
                                 var loc = u.load("saved_location:"+i);
                                 if(loc && loc.k && loc.k == key) {
                                     exists = true;
+                                    number = i;
                                     break;
                                 }
                             }
-                            if(!exists) {
+                            if(number) {
+                                u.save("saved_location:" + number, newLocation);
+                                drawerMenuItem && drawerMenuItem.show();
+                                locationsDialog && locationsDialog.opened && main.fire(EVENTS.SHOW_SAVED_LOCATIONS);
+                            } else {
                                 last++;
-                                newLocation.k = key;
                                 u.save("saved_location:counter", last);
                                 u.save("saved_location:" + last, newLocation);
-                                console.log("REMOTE", key, newLocation, oldValue);
+                                drawerMenuItem && drawerMenuItem.show();
+                                locationsDialog && locationsDialog.opened && main.fire(EVENTS.SHOW_SAVED_LOCATIONS);
+                            }
+                        },
+                        onsaveremotevalue: function (key, newLocation, oldValue) {
+                            var last = u.load("saved_location:counter") || 0;
+                            var number;
+                            for(var i = 0; i <= last; i++) {
+                                var loc = u.load("saved_location:"+i);
+                                if(loc && loc.k && loc.k == key) {
+                                    exists = true;
+                                    number = i;
+                                    break;
+                                }
+                            }
+                            if(number) {
+                                u.save("saved_location:" + number, newLocation);
+                                drawerMenuItem && drawerMenuItem.show();
+                                locationsDialog && locationsDialog.opened && main.fire(EVENTS.SHOW_SAVED_LOCATIONS);
                             }
                         }
                     });
+
                     if (sync.ready()) {
                         var last = u.load("saved_location:counter") || 0;
-                        var locs = {};
+                        var locs = [];
                         for (var i = 1; i <= last; i++) {
                             var loc = u.load("saved_location:" + i);
                             if (!loc) continue;
-                            var key = loc.k || utils.sync.CREATE_KEY + ":" + Math.random();
-                            if(!loc.k) {
-                                u.save("saved_location:" + i);
-                            }
-                            delete loc.k;
-                            locs[key] = loc;
+                            locs.push(loc);
                         }
                         sync.syncValues(locs);
                     } else {
@@ -535,7 +548,7 @@ function SavedLocationHolder(main) {
                latitude: json[USER.LATITUDE],
                longitude: json[USER.LONGITUDE]
            }
-        }
+        };
         user.description = json[USER.DESCRIPTION] || "";
         user.address = json[USER.ADDRESS] || "";
         user.timestamp = json[REQUEST.TIMESTAMP];

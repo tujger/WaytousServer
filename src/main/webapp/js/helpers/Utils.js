@@ -854,7 +854,7 @@ function Utils(main) {
                                 onupdatelocalvalue(key, remote, local);
                                 onsavelocalvalue(key, remote, local);
                                 onfinish(Sync.Mode.UPDATE_LOCAL, key, remote, local);
-                           } else {
+                            } else {
                                 onaddlocalvalue(key, remote);
                                 onsavelocalvalue(key, remote, null);
                                 onfinish("add-local", key, remote);
@@ -878,13 +878,15 @@ function Utils(main) {
                                     }
                                 }, onfail);
                             }).catch(onfail);
+                        } else {
+                            onfinish(DATABASE.SKIP, key);
                         }
                         break;
                     default:
                         onerror(key, "Mode not defined");
                         break;
                 }
-           }, onfail);
+            }, onfail);
         };
 
         this.syncValues = function(values) {
@@ -963,10 +965,10 @@ function Utils(main) {
                         onfinish(mode, key, newValue, oldValue);
 
                         counter ++;
-                        if(counter == keys.length) {
+                        if(remoteUpdated > 0 && counter == keys.length) {
                             updateTimestamp();
                         }
-                    }
+                    };
 
                     for(var i in keys) {
                         var sync = new Sync({
@@ -977,6 +979,7 @@ function Utils(main) {
                         sync._ref = getRef(options.key);
                         //sync._syncValue(result[x]);
                         var onsaveLocal = function(key,newValue,oldValue) {
+                            newValue[DATABASE.KEYS] = key;
                             if(result[key]) {
                                 for(var x in result[key]) {
                                     delete result[key][x];
@@ -992,13 +995,14 @@ function Utils(main) {
                             this(key,newValue,oldValue);
                         };
                         var onsaveRemote = function(key,newValue,oldValue) {
+                            newValue[DATABASE.KEYS] = key;
                             if(result[key]) {
                                 result[key][DATABASE.KEYS] = key;
                             } else {
                                 values.push(newValue);
                             }
                             if(result[key]) result[key][DATABASE.SYNCED] = newValue[DATABASE.SYNCED];
-                            this(key,newValue,oldValue);
+                            this(key, newValue, oldValue);
                         };
                         sync._syncValue(Sync.Mode.UPDATE_BOTH, result[keys[i]], options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, onsaveRemote.bind(options.onsaveremotevalue), options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, onsaveLocal.bind(options.onsavelocalvalue), _onfinish, options.onerror);
                     }
@@ -1007,7 +1011,7 @@ function Utils(main) {
         };
 
         function onfinish(mode, key, newValue, oldValue) {
-            if(options.debug) console.warn(mode, key, "[new]:", newValue, "[old]:", oldValue);
+            if(options.debug && mode != DATABASE.SKIP) console.warn(mode, key, "[new]:", newValue, "[old]:", oldValue);
         }
 
         this.syncValue = function(value) {
@@ -1070,7 +1074,7 @@ function Utils(main) {
             }
             if(child) ref = ref.child(child);
             return ref;
-        };
+        }
 
         this.ready = function() {
             this._ref = getRef();
@@ -1146,18 +1150,20 @@ function Utils(main) {
             if(!this._ref) return false;
 
             var watched = this._ref.toString();
-            /*if(!key) {
-                options.onerror("Key is not defined.");
-            } else*/ if(options.key == DATABASE.SYNCED) {
+            if(options.key == DATABASE.SYNCED) {
                 options.onerror(DATABASE.SYNCED + " cannot be watched directly, use 'watchChanges' instead.");
             } else if(onchangevalue && Sync._watch[watched]) {
                 console.warn(options.key + " already watching.");
             } else if(!onchangevalue && Sync._watch[watched]) {
-                Sync._watch[watched].off();
+                Sync._watch[watched].ref.off();
                 delete Sync._watch[watched];
             } else if(onchangevalue && !Sync._watch[watched]) {
                 this._ref.on("value", function(data) {
                     onchangevalue(data.key, data.val());
+                    Sync._watch[watched] = {
+                        ref: data.ref,
+                        callback: onchangevalue
+                    }
                 }, function(error) {
                     options.error(data.key, error);
                 })
@@ -1167,32 +1173,27 @@ function Utils(main) {
         };
 
         this.watchChanges = function(callback) {
-//         return;
             Sync._watch = Sync._watch || {};
-//            this.setKey(DATABASE.SYNCED);
             var ref = getRef(DATABASE.SYNCED);
             var watched = ref.toString();
             Sync._specialWatch = Sync._specialWatch || {};
-            if(!callback) {
-                this.watch(DATABASE.SYNCED);
+            if(!callback && Sync._specialWatch[watched]) {
+                Sync._specialWatch[watched].ref.off();
+                delete Sync._watch[watched];
                 delete Sync._specialWatch[watched];
             } else if(callback) {
-                Sync._specialWatch[watched] = {
-                    ref: ref,
-                    callback: callback
-                };
-//                console.log("SET", ref.toString())
-
                 ref.on("value", function(data) {
-//                    if(Sync._synced == data.val()) return;
                     callback(watched, data.val());
+                    Sync._specialWatch[watched] = Sync._watch[watched] = {
+                        ref: data.ref,
+                        callback: callback
+                    };
                 }, function(error) {
-                console.log("CHECK",Sync._synced, data.val());
-//                    if(Sync._synced == data.val()) return;
+                    console.log("CHECK",Sync._synced, data.val());
                     options.error(watched, error);
                 })
-            } else if(!callback && !Sync._watch[watched]) {
-                console.warn(key + " is not watching yet.")
+            } else if(!callback && !Sync._specialWatch[watched]) {
+                console.warn(options.key + " is not watching yet.")
             }
         }
 

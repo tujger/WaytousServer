@@ -47,6 +47,7 @@ function Constants() {
         TOKEN_CREATED: "token_created",
 
         MAP_READY: "map_ready",
+        FIREBASE_READY: "firebase_ready",
 
         MOVING_CLOSE_TO: "moving_close_to",
         MOVING_AWAY_FROM: "moving_away_from",
