@@ -214,6 +214,7 @@
   "delete_location": "Delete location",
   "delete_this_location": "Delete this location?",
   "saved_locations": "Saved locations",
+  "saved_locations_d": "Saved locations (%d)",
   "show_location": "Show location",
   "show_direction_to_location": "Show direction to location",
   "share_location": "Share location",

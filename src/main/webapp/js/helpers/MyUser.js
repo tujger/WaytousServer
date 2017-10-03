@@ -46,6 +46,7 @@ function MyUser(main) {
                 if(holder.removeView) holder.removeView(user);
             });
         }
+
         clearInterval(this.taskLocationUpdate);
     };
 

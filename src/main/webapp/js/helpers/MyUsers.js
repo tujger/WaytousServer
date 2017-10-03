@@ -29,7 +29,9 @@ function MyUsers(main) {
             user.type = json.type;
             user.changed = json.changed;
             user.origin = json;
-            user.fire(EVENTS.CHANGE_NUMBER, json[RESPONSE.NUMBER]);
+            if(user.number != json[RESPONSE.NUMBER]) {
+                user.fire(EVENTS.CHANGE_NUMBER, json[RESPONSE.NUMBER]);
+            }
             user.createViews();
 
         } else {

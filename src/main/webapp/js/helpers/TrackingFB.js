@@ -203,6 +203,7 @@ function TrackingFB(main) {
                                         registerChildListener(ref.child(DATABASE.PRIVATE).child(holder.type).child(main.me.number), userPrivateDataListener, -1);
                                     }
                                 });
+
                                 try {
                                     trackingListener.onAccept(o);
                                 } catch (e) {
@@ -452,11 +453,13 @@ function TrackingFB(main) {
             ref.on("child_added", listener);
         }
         refs.push(ref);
+        return ref;
     }
 
     function registerValueListener(ref, listener, errorListener) {
         ref.on("value", listener, errorListener);
         refs.push(ref);
+        return ref;
     }
 
     function userActiveListener(data) {
@@ -493,6 +496,31 @@ function TrackingFB(main) {
     }
 
     function usersDataListener(data){
+//        if(main.me.number != parseInt(data.key)) {
+            try{
+                var number = parseInt(data.key);
+                var o = data.val();
+                o[RESPONSE.NUMBER] = parseInt(data.key);
+                o[RESPONSE.INITIAL] = true;
+                delete o.active;
+                var user = main.users.addUser(o);
+                user.type = "user";
+                user.refs = user.refs || [];
+
+                //registers
+                registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(number).child(DATABASE.ACTIVE), usersDataActiveListener);
+
+                //usersDataNameListener(data.child(DATABASE.NAME));
+                //usersDataActiveListener(data.child(DATABASE.ACTIVE));
+                //usersDataChangedListener(data.child(DATABASE.CHANGED));
+
+            } catch(e) {
+                console.error(e.message);
+            }
+//        }
+        // console.log(data);
+    }
+    function usersDataListener_old(data){
 //        if(main.me.number != parseInt(data.key)) {
             try{
                 var o = data.val();
@@ -578,12 +606,41 @@ function TrackingFB(main) {
             var number = parseInt(data.ref.parent.key);
             var active = data.val();
             var user = main.users.users[number];
-            if(user && user.properties && active != user.properties.active) {
-                var o = {};
-                o[RESPONSE.STATUS] = RESPONSE.STATUS_UPDATED;
-                o[RESPONSE.NUMBER] = number;
-                o[active ? USER.JOINED : USER.DISMISSED] = number;
-                trackingListener.onMessage(o);
+
+            var o = {};
+            o[RESPONSE.STATUS] = RESPONSE.STATUS_UPDATED;
+            o[RESPONSE.NUMBER] = number;
+            o[active ? USER.JOINED : USER.DISMISSED] = number;
+
+            //if(!user) {
+            //    o[RESPONSE.INITIAL] = true;
+            //    delete o.active;
+            //    var user = main.users.addUser(o);
+            //
+            //    user.type = "user";
+            //
+            //    user.refs = user.refs || [];
+            //
+            //    trackingListener.onAccept(o);
+            //}
+            if(active) {
+                user.refs.push(registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(number).child(DATABASE.NAME), usersDataNameListener));
+                user.refs.push(registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(number).child(DATABASE.CHANGED), usersDataChangedListener));
+                if (user && user.properties && active != user.properties.active) {
+                    //var delta = parseInt((new Date().getTime() - o[REQUEST.TIMESTAMP]) / 1000);
+                    main.eventBus.chain(function (holder) {
+                        if (holder.saveable) {
+                            var loadSaved = holder.loadsaved || 1;
+                            user.refs.push(registerChildListener(ref.child(DATABASE.PUBLIC).child(holder.type).child(number), userPublicDataListener, loadSaved));
+                        }
+                    });
+                    trackingListener.onMessage(o);
+                }
+            } else {
+                for(var i in user.refs) {
+                    user.refs[i].off();
+                }
+                user.refs = [];
             }
         } catch(e) {
             console.error(e.message);

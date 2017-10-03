@@ -94,7 +94,7 @@ function PropertiesHolder(main) {
                     if(user == myUser) {
                         user.properties.selected = true;
                         myUser.fire(EVENTS.SELECT_USER);
-                    } else {
+                    } else if(user.properties && user.properties.selected) {
                         user.properties.selected = false;
                         user.fire(EVENTS.UNSELECT_USER);
                     }
@@ -126,10 +126,20 @@ function PropertiesHolder(main) {
                 }
                 break;
             case EVENTS.MAKE_INACTIVE:
-                if(this.properties) this.properties.active = false;
+                if(this.properties) {
+                    this.properties.changed = object;
+                    this.properties.active = false;
+                }
                 break;
+                //if(this.properties) this.properties.active = false;
+                //break;
             case EVENTS.MAKE_ENABLED:
-                if(this.properties) this.properties.changed = object;
+            case EVENTS.MAKE_DISABLED:
+                if(this.properties) {
+                    this.properties.changed = object;
+                    var delta = parseInt((new Date().getTime() - object) / 1000);
+                    this.properties.enabled = delta <= 120;
+                }
                 break;
             case EVENTS.MAP_READY:
                 main.me.createViews();
@@ -146,14 +156,16 @@ function PropertiesHolder(main) {
     };
 
     this.createView = function(myUser) {
+        var delta = parseInt((new Date().getTime() - myUser.changed) / 1000);
         var view = {
             user: myUser,
             color: myUser.color,
             name: myUser.name,
             number: myUser.number,
-            active: myUser.active,
+            active: myUser.active && delta <= 3600,
             selected: myUser.selected,
             changed: myUser.changed,
+            enabled: delta <= 120,
             getDisplayName: getDisplayName.bind(myUser),
         };
 
@@ -167,9 +179,9 @@ function PropertiesHolder(main) {
             //console.log(this.properties.name, this.properties.changed);
             if(this.type == "user") {
                 var delta = parseInt((new Date().getTime() - this.properties.changed) / 1000);
-                if (delta > 3600) {
+                if (this.properties && this.properties.active && delta > 3600) {
                     this.fire(EVENTS.MAKE_INACTIVE);
-                } else if (delta > 120) {
+                } else if (this.properties && this.properties.enabled && delta > 120) {
                     this.fire(EVENTS.MAKE_DISABLED);
                 }
             }

@@ -16,7 +16,7 @@ function SampleHolder(main) {
     }
 
     function onEvent(EVENT,object){
-        // console.log("SAMPLEEVENT",EVENT,object)
+        console.warn("EVENT",this && this.number || "Main", EVENT, object)
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
                 var menuItem = object.add(DRAWER.SECTION_PRIMARY, EVENT.SAMPLE_EVENT, u.lang.sample_item, "ac_unit", function(){

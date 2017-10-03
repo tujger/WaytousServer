@@ -182,7 +182,9 @@ function CameraHolder(main) {
         if(!this || !this.views || !this.views.camera) return;
         var camera = this.views.camera;
         this.location = location;
-        update();
+        if(this.properties.selected) {
+            update();
+        }
         switch (camera.orientation){
             /*case CAMERA_ORIENTATION_NORTH:
 //                    if(orientationChanged) {
@@ -308,7 +310,7 @@ function CameraHolder(main) {
                 }
             });
         } else {
-            main.me.fire(EVENTS.SELECT_USER);
+            //main.me.fire(EVENTS.SELECT_USER);
         }
     }
 

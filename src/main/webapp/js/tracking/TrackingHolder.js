@@ -382,8 +382,10 @@ function TrackingHolder(main) {
                             // console.log("DISMISSED",number);
                             var user = main.users.users[number];
                             user.removeViews();
-                            user.fire(EVENTS.MAKE_INACTIVE);
-                            main.fire(USER.DISMISSED, user);
+                            if(user.properties && user.properties.active) {
+                                user.fire(EVENTS.MAKE_INACTIVE);
+                                main.fire(USER.DISMISSED, user);
+                            }
                         } else if (o[USER.JOINED] != undefined) {
                             number = o[USER.JOINED];
                             user = main.users.users[number];
@@ -396,16 +398,27 @@ function TrackingHolder(main) {
                             }
                             user.fire(EVENTS.MAKE_ACTIVE);
                             main.fire(USER.JOINED, user);
+                            if(user.properties && user.properties.active) {
+                                var timestamp = o[REQUEST.TIMESTAMP];
+                                var delta = parseInt((new Date().getTime() - timestamp) / 1000);
+                                if (delta <= 120) {
+                                    user.fire(EVENTS.MAKE_ENABLED, timestamp);
+                                } else if (delta > 120) {
+                                    user.fire(EVENTS.MAKE_DISABLED, timestamp);
+                                }
+                            }
                         } else {
                             number = o[RESPONSE.NUMBER];
                             user = main.users.users[number];
-                            var timestamp = o[REQUEST.TIMESTAMP];
 
-                            var delta = parseInt((new Date().getTime() - timestamp) / 1000);
-                            if (delta < 120) {
-                                user.fire(EVENTS.MAKE_ENABLED, timestamp);
-                            } else {
-                                user.fire(EVENTS.MAKE_DISABLED, timestamp);
+                            if(user.properties && user.properties.active) {
+                                var timestamp = o[REQUEST.TIMESTAMP];
+                                var delta = parseInt((new Date().getTime() - timestamp) / 1000);
+                                if (delta <= 120) {
+                                    user.fire(EVENTS.MAKE_ENABLED, timestamp);
+                                } else if (delta > 120) {
+                                    user.fire(EVENTS.MAKE_DISABLED, timestamp);
+                                }
                             }
                         }
                         break;
