@@ -2582,8 +2582,8 @@ function Edequate(options) {
     *       onsuccess: function(),
     *       onerror: function(code, origin, error)
     *   }
-     * eventBus.fire(event, object) or fire(event, object)
-     * eventBus.chain(callback) - iterate over holders
+     * eventBus.fire(event, object)
+     * eventBus.fire(callback)
      *
      * File can be presented as the path, ".js" will be added if not exists.
      * File will be added as a holder if it is based on eventBus.eventHolder or
@@ -2665,18 +2665,23 @@ function Edequate(options) {
 
         this.fire = function(event, object) {
             if(!event) return;
-            setTimeout(function(){
+            //setTimeout(function(){
                 for(var i in self.eventBus.modules) {
                     var module = self.eventBus.modules[i];
                     if(self.eventBus.holders[module] && self.eventBus.holders[module].onEvent) {
                         try {
-                            if (!self.eventBus.holders[module].onEvent(event, object)) break;
+                            if(event.constructor === Function) {
+                                var res = event.call(this, self.eventBus.holders[self.eventBus.modules[i]]);
+                                if(res !== undefined && !res) break;
+                            } else {
+                                if (!self.eventBus.holders[module].onEvent.call(this, event, object)) break;
+                            }
                         } catch(e) {
                             console.error(module, event, e);
                         }
                     }
                 }
-            }, 0);
+            //}.bind(this), 0);
         };
 
         this.chain = function(callback) {

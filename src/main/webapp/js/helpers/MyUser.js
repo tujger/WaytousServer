@@ -15,7 +15,7 @@ function MyUser(main) {
     this.fire = function(EVENT,object) {
         var user = this;
         setTimeout(function(){
-            main.eventBus.chain(function(holder){
+            main.eventBus.fire(function(holder){
                 if(user.views[holder.type] && holder.onEvent) {
                     return holder.onEvent.call(user, EVENT, object);
                 }
@@ -26,7 +26,7 @@ function MyUser(main) {
     this.createViews = function() {
         var user = this;
         if(user.number != undefined) {
-            main.eventBus.chain(function(holder){
+            main.eventBus.fire(function(holder){
                 if (holder.createView && !user.views[holder.type]) {
                     try {
                         var view = holder.createView(user);
@@ -42,7 +42,7 @@ function MyUser(main) {
     this.removeViews = function() {
         var user = this;
         if(user.number != undefined) {
-            main.eventBus.chain(function(holder){
+            main.eventBus.fire(function(holder){
                 if(holder.removeView) holder.removeView(user);
             });
         }
@@ -60,7 +60,7 @@ function MyUser(main) {
 
     this.onChangeLocation = function() {
         var user = this;
-        main.eventBus.chain(function(holder){
+        main.eventBus.fire(function(holder){
             if(user.views[holder.type] && holder.onChangeLocation) holder.onChangeLocation.call(user, user.location);
         });
     };

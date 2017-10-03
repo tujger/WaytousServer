@@ -198,7 +198,7 @@ function TrackingFB(main) {
                                 registerValueListener(ref.child(DATABASE.OPTIONS).child(DATABASE.CREATED), groupListener, groupErrorListener);
                                 registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.ACTIVE), userActiveListener);
                                 registerChildListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC), usersDataListener, -1);
-                                main.eventBus.chain(function(holder){
+                                main.eventBus.fire(function(holder){
                                     if(holder.saveable) {
                                         registerChildListener(ref.child(DATABASE.PRIVATE).child(holder.type).child(main.me.number), userPrivateDataListener, -1);
                                     }
@@ -540,7 +540,7 @@ function TrackingFB(main) {
                 //usersDataActiveListener(data.child(DATABASE.ACTIVE));
                 //usersDataChangedListener(data.child(DATABASE.CHANGED));
 
-                main.eventBus.chain(function(holder){
+                main.eventBus.fire(function(holder){
                     if(holder.saveable) {
                         var loadSaved = holder.loadsaved || 1;
                         registerChildListener(ref.child(DATABASE.PUBLIC).child(holder.type).child(user.number), userPublicDataListener, loadSaved);
@@ -628,7 +628,7 @@ function TrackingFB(main) {
                 user.refs.push(registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(number).child(DATABASE.CHANGED), usersDataChangedListener));
                 if (user && user.properties && active != user.properties.active) {
                     //var delta = parseInt((new Date().getTime() - o[REQUEST.TIMESTAMP]) / 1000);
-                    main.eventBus.chain(function (holder) {
+                    main.eventBus.fire(function (holder) {
                         if (holder.saveable) {
                             var loadSaved = holder.loadsaved || 1;
                             user.refs.push(registerChildListener(ref.child(DATABASE.PUBLIC).child(holder.type).child(number), userPublicDataListener, loadSaved));
