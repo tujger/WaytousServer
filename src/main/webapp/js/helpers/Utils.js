@@ -756,7 +756,7 @@ function Utils(main) {
                                 onfinish(Sync.Mode.UPDATE_LOCAL, key, remote, local);
                             } else {
                                 onaddlocalvalue(key, remote);
-                                onsavelocalvalue(key, remote, null);
+                                onsavelocalvalue(key, remote);
                                 onfinish("add-local", key, remote);
                             }
                         }
@@ -772,7 +772,7 @@ function Utils(main) {
                             onfinish(Sync.Mode.OVERRIDE_LOCAL, key, remote, local);
                         } else {
                             onaddlocalvalue(key, remote);
-                            onsavelocalvalue(key, remote, null);
+                            onsavelocalvalue(key, remote);
                             onfinish("add-local", key, remote);
                         }
                         return;
@@ -800,7 +800,7 @@ function Utils(main) {
                                         onfinish(Sync.Mode.UPDATE_REMOTE, key, updated, remote);
                                     } else {
                                         onaddremotevalue(key, updated);
-                                        onsaveremotevalue(key, updated, null);
+                                        onsaveremotevalue(key, updated);
                                         onfinish("add-remote", key, updated);
                                     }
                                 }, onfail);
@@ -808,8 +808,9 @@ function Utils(main) {
                         }
                         break;
                     case Sync.Mode.OVERRIDE_REMOTE:
-                        if((local && local.constructor !== String) || (remote && remote.constructor !== String)) {
-                            onerror(key, "Mode OVERRIDE_REMOTE allowed only for strings.");
+                        if((local && !(local.constructor === String || local.constructor === Boolean || local.constructor === Number))
+                            || (remote && !(remote.constructor === String || remote.constructor === Boolean || remote.constructor === Number))) {
+                            onerror(key, "Mode OVERRIDE_REMOTE allowed only for primitives (string, number, boolean).");
                             return;
                         }
                         if(local && local.constructor === Object) local[DATABASE.SYNCED] = firebase.database.ServerValue.TIMESTAMP;
@@ -822,7 +823,7 @@ function Utils(main) {
                                     onfinish(Sync.Mode.OVERRIDE_REMOTE, key, updated, remote);
                                 } else {
                                     onaddremotevalue(key, updated);
-                                    onsaveremotevalue(key, updated, null);
+                                    onsaveremotevalue(key, updated);
                                     onfinish("add-remote", key, updated);
                                 }
                             }, onfail);
@@ -831,15 +832,24 @@ function Utils(main) {
                     case Sync.Mode.UPDATE_BOTH:
                         var processLocal = false;
                         var processRemote = false;
-                        if(!remote && local) {
+                        if((remote === undefined || remote === null) && local !== undefined && local !== null) {
                             processRemote = true;
-                        } else if(remote && !local) {
+                        } else if(remote !== undefined && remote !== null && (local === undefined || local === null)) {
                             processLocal = true;
                         } else {
                             var localTimestamp = 0;
-                            if(local.constructor === Object) localTimestamp = local[DATABASE.SYNCED];
+                            if(local.constructor === Object) {
+                                localTimestamp = local[DATABASE.SYNCED];
+                            } else {
+                                localTimestamp = u.load("synced:" + options.type) || 0;
+                            }
                             var remoteTimestamp = 0;
-                            if(remote.constructor === Object) remoteTimestamp = remote[DATABASE.SYNCED];
+                            if(remote.constructor === Object) {
+                                remoteTimestamp = remote[DATABASE.SYNCED];
+                            } else {
+                                console.log("LAST",Sync._specialWatch[getRef(DATABASE.SYNCED).toString()].timestamp);
+                                try { remoteTimestamp = Sync._specialWatch[getRef(DATABASE.SYNCED).toString()].timestamp || 0; } catch(e) {}
+                            }
 
                             if(!localTimestamp) {
                                 processRemote = true;
@@ -850,13 +860,13 @@ function Utils(main) {
                             }
                         }
                         if(processLocal) {
-                            if(local) {
+                            if(local !== undefined && local !== null) {
                                 onupdatelocalvalue(key, remote, local);
                                 onsavelocalvalue(key, remote, local);
                                 onfinish(Sync.Mode.UPDATE_LOCAL, key, remote, local);
                             } else {
                                 onaddlocalvalue(key, remote);
-                                onsavelocalvalue(key, remote, null);
+                                onsavelocalvalue(key, remote);
                                 onfinish("add-local", key, remote);
                             }
                         } else if(processRemote) {
@@ -867,19 +877,19 @@ function Utils(main) {
                             delete local[DATABASE.KEYS];
                             self._ref.update(updates).then(function () {
                                 self._getValue(options.key, function(key, updated) {
-                                    if(remote) {
+                                    if(remote !== undefined && remote !== null) {
                                         onupdateremotevalue(key, updated, remote);
                                         onsaveremotevalue(key, updated, remote);
                                         onfinish(Sync.Mode.UPDATE_REMOTE, key, updated, remote);
                                     } else {
                                         onaddremotevalue(key, updated);
-                                        onsaveremotevalue(key, updated, null);
+                                        onsaveremotevalue(key, updated);
                                         onfinish("add-remote", key, updated);
                                     }
                                 }, onfail);
                             }).catch(onfail);
                         } else {
-                            onfinish(DATABASE.SKIP, key);
+                            onfinish(Sync.Mode.SKIP, key);
                         }
                         break;
                     default:
@@ -966,6 +976,7 @@ function Utils(main) {
 
                         counter ++;
                         if(remoteUpdated > 0 && counter == keys.length) {
+                            u.save("synced:" + options.type, new Date().getTime());
                             updateTimestamp();
                         }
                     };
@@ -1011,14 +1022,19 @@ function Utils(main) {
         };
 
         function onfinish(mode, key, newValue, oldValue) {
-            if(options.debug && mode != DATABASE.SKIP) console.warn(mode, key, "[new]:", newValue, "[old]:", oldValue);
+            if(options.debug && mode != Sync.Mode.SKIP) console.warn(mode, key, "[new]:", newValue, "[old]:", oldValue);
         }
 
         this.syncValue = function(value) {
             this._ref = getRef(options.child);
             if(!this._ref) return;
 
-            this._syncValue(Sync.Mode.UPDATE_BOTH, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, onsaveremotevalueWithTimestamp, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, onfinish, options.onerror);
+            var _onfinish = function(mode, key, newValue, oldValue) {
+                onfinish(mode, key, newValue, oldValue);
+                u.save("synced:" + options.type, new Date().getTime());
+            };
+
+            this._syncValue(Sync.Mode.UPDATE_BOTH, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, onsaveremotevalueWithTimestamp, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, _onfinish, options.onerror);
         };
 
         this.updateRemoteValue = function(value) {
@@ -1116,10 +1132,11 @@ function Utils(main) {
                     if(options._delayedWatch && options._delayedWatch[ref.toString()]) {
                         for(var x in options._delayedWatch[ref.toString()]) {
                             Sync._specialWatch[x] = options._delayedWatch[ref.toString()][x];
-                            u.save(x, data.val());
+                            u.save("synced:"+options.type, data.val());
                             Sync._specialWatch[x].ref.on("value", function(data) {
-                                console.log("WATCH", x, u.load(x), data.val());
-                                if(u.load(x) < data.val()) {
+                                console.log("WATCH", x, u.load("synced:"+options.type), data.val());
+                                if(u.load("synced:"+options.type) < data.val()) {
+                                    Sync._watch[x] = Sync._specialWatch[x];
                                     Sync._specialWatch[x].callback(Sync._specialWatch[x].ref.toString(), data.val());
                                 }
                             }, function(error) {
@@ -1186,7 +1203,8 @@ function Utils(main) {
                     callback(watched, data.val());
                     Sync._specialWatch[watched] = Sync._watch[watched] = {
                         ref: data.ref,
-                        callback: callback
+                        callback: callback,
+                        timestamp: data.val()
                     };
                 }, function(error) {
                     console.log("CHECK",Sync._synced, data.val());

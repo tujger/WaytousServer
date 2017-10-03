@@ -481,11 +481,18 @@ function SavedLocationHolder(main) {
                     });
 
                     if (sync.ready()) {
+                        var map = {};
                         var last = u.load("saved_location:counter") || 0;
                         var locs = [];
                         for (var i = 1; i <= last; i++) {
                             var loc = u.load("saved_location:" + i);
                             if (!loc) continue;
+                            if(loc.k && map[loc.k]) {
+                                u.load("saved_location:" + i);
+                                continue;
+                            } else {
+                                map[loc.k] = true;
+                            }
                             locs.push(loc);
                         }
                         sync.syncValues(locs);

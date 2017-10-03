@@ -190,6 +190,9 @@ function TrackingHolder(main) {
                     u.save("group");
                 }
                 break;
+            case EVENTS.SYNC_PROFILE:
+                synchronizeTosConfirmation();
+                break;
             default:
                 break;
         }
@@ -449,6 +452,29 @@ function TrackingHolder(main) {
     function beforeunload(evt) {
         return u.lang.beforeunload;
     }
+
+    function synchronizeTosConfirmation() {
+        return;
+        var sync = new utils.sync({
+            type: utils.sync.Type.ACCOUNT_PRIVATE,
+            key: "tos-confirmed",
+            onsavelocalvalue: function(key, newValue, oldValue) {
+                console.log("LOCAL", key, newValue, oldValue)
+                if(newValue !== undefined && newValue !== null && newValue.constructor === Boolean) {
+                    u.save("tracking:terms_of_service_confirmed", newValue);
+                    if(newValue) window.location.reload();
+                }
+            },
+            onsaveremotevalue: function(key, newValue, oldValue) {
+                console.log("REMOTE", key, newValue, oldValue)
+            }
+        });
+        if(sync.ready()) {
+            sync.syncValue(u.load("tracking:terms_of_service_confirmed"))
+        }
+    }
+
+
 
     function help(){
         return {
