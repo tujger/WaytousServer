@@ -589,21 +589,21 @@ function UserProfileHolder(main) {
     }
 
     function setGlobalSync() {
-        if(getUser()) {
-            //var sync = new utils.sync({type:utils.sync.Type.ACCOUNT_PRIVATE});
-            //console.log(sync.ready());
-            //sync.watch(REQUEST.SIGN_PROVIDER, function(key, newValue) {
-            //    console.log("CHANGED", key, newValue);
-            //    //                        main.fire(EVENTS.SYNC_PROFILE);
-            //});
-            globalSync = new utils.sync({type: utils.sync.Type.ACCOUNT_PRIVATE});
-            if(globalSync.ready()) {
-                globalSync.watchChanges(function (key, newValue) {
-                    console.log("SYNC_PROFILE", key, newValue);
+//        if(getUser()) {
+//            //var sync = new utils.sync({type:utils.sync.Type.ACCOUNT_PRIVATE});
+//            //console.log(sync.ready());
+//            //sync.watch(REQUEST.SIGN_PROVIDER, function(key, newValue) {
+//            //    console.log("CHANGED", key, newValue);
+//            //    //                        main.fire(EVENTS.SYNC_PROFILE);
+//            //});
+//            globalSync = new utils.sync({type: utils.sync.Type.ACCOUNT_PRIVATE});
+//            if(globalSync.ready()) {
+//                globalSync.watchChanges(function (key, newValue) {
+//                    console.log("SYNC_PROFILE", key, newValue);
                     main.fire(EVENTS.SYNC_PROFILE);
-                });
-            }
-        }
+//                });
+//            }
+//        }
     }
 
     return {

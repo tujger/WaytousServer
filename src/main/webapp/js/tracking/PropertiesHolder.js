@@ -229,8 +229,8 @@ function PropertiesHolder(main) {
         });
         if(forceToServer) {
             sync.setRemoteValue(main.me.properties.name);
-        } else {
-            sync.syncValue(main.me.properties.name);
+        } else if(main.me && main.me.properties) {
+            sync.syncValue(main.me.properties.name || null);
         }
     }
 
