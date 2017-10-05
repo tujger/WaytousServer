@@ -589,7 +589,7 @@ function UserProfileHolder(main) {
     }
 
     function setGlobalSync() {
-//        if(getUser()) {
+        if(getUser()) {
 //            //var sync = new utils.sync({type:utils.sync.Type.ACCOUNT_PRIVATE});
 //            //console.log(sync.ready());
 //            //sync.watch(REQUEST.SIGN_PROVIDER, function(key, newValue) {
@@ -603,7 +603,7 @@ function UserProfileHolder(main) {
                     main.fire(EVENTS.SYNC_PROFILE);
 //                });
 //            }
-//        }
+        }
     }
 
     return {

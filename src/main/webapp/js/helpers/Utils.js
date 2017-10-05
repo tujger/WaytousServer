@@ -615,11 +615,14 @@ function Utils(main) {
         options.onsavelocalvalue = options.onsavelocalvalue || function(key, newValue, oldValue) {
             //if(options.debug) console.warn("Saved local: " + key, "[new]:", newValue, "[old]:", oldValue);
         };
+        options.onfinish = options.onfinish || function(key, value) {
+        };
         options.onerror = options.onerror || function(key, error) {
             console.error("Error: " + key, error);
         };
         options.reference = options.reference || database.ref();
         options.mode = Sync.Mode.UPDATE_BOTH;
+        options.log = false;
 
         this.setReference = function(ref) {
             options.reference = ref;
@@ -654,17 +657,23 @@ function Utils(main) {
         this.setOnUpdateLocalValue = function(callback) {
             options.onupdatelocalvalue = callback;
         };
-        this.setOnRenoveLocalValue = function(callback) {
+        this.setOnRemoveLocalValue = function(callback) {
             options.onremovelocalvalue = callback;
         };
         this.setOnError = function(callback) {
             options.onerror = callback;
+        };
+        this.setOnFinish = function(callback) {
+            options.onfinish = callback;
         };
         this.setGroup = function(group) {
             options.group = group;
         };
         this.setMode = function(mode) {
             options.mode = mode;
+        };
+        this.setLog = function(log) {
+            options.log = log;
         };
 
         this._getValue = function(key, ongetvalue, onerror) {
@@ -757,7 +766,7 @@ function Utils(main) {
                             } else {
                                 onaddlocalvalue(key, remote);
                                 onsavelocalvalue(key, remote);
-                                onfinish("add-local", key, remote);
+                                onfinish(Sync.Mode.ADD_LOCAL, key, remote);
                             }
                         }
                         return;
@@ -773,7 +782,7 @@ function Utils(main) {
                         } else {
                             onaddlocalvalue(key, remote);
                             onsavelocalvalue(key, remote);
-                            onfinish("add-local", key, remote);
+                            onfinish(Sync.Mode.ADD_LOCAL, key, remote);
                         }
                         return;
                     case Sync.Mode.UPDATE_REMOTE:
@@ -798,10 +807,12 @@ function Utils(main) {
                                         onupdateremotevalue(key, updated, remote);
                                         onsaveremotevalue(key, updated, remote);
                                         onfinish(Sync.Mode.UPDATE_REMOTE, key, updated, remote);
+                                        registerHistory.call(self, Sync.Mode.UPDATE_REMOTE, self._ref.key + "/" + key, updated)
                                     } else {
                                         onaddremotevalue(key, updated);
                                         onsaveremotevalue(key, updated);
-                                        onfinish("add-remote", key, updated);
+                                        onfinish(Sync.Mode.ADD_REMOTE, key, updated);
+                                        registerHistory.call(self, Sync.Mode.ADD_REMOTE, self._ref.key + "/" + key, updated)
                                     }
                                 }, onfail);
                             }).catch(onfail);
@@ -821,10 +832,12 @@ function Utils(main) {
                                     onupdateremotevalue(key, updated, remote);
                                     onsaveremotevalue(key, updated, remote);
                                     onfinish(Sync.Mode.OVERRIDE_REMOTE, key, updated, remote);
+                                    registerHistory.call(self, Sync.Mode.OVERRIDE_REMOTE, self._ref.key + "/" + key, updated)
                                 } else {
                                     onaddremotevalue(key, updated);
                                     onsaveremotevalue(key, updated);
-                                    onfinish("add-remote", key, updated);
+                                    onfinish(Sync.Mode.ADD_REMOTE, key, updated);
+                                    registerHistory.call(self, Sync.Mode.ADD_REMOTE, self._ref.key + "/" + key, updated)
                                 }
                             }, onfail);
                         }).catch(onfail);
@@ -847,8 +860,10 @@ function Utils(main) {
                             if(remote.constructor === Object) {
                                 remoteTimestamp = remote[DATABASE.SYNCED];
                             } else {
-                                console.log("LAST",Sync._specialWatch[getRef(DATABASE.SYNCED).toString()].timestamp);
-                                try { remoteTimestamp = Sync._specialWatch[getRef(DATABASE.SYNCED).toString()].timestamp || 0; } catch(e) {}
+                                var ref = getRef(DATABASE.SYNCED).toString();
+                                if(Sync._specialWatch && Sync._specialWatch[ref]) {
+                                    remoteTimestamp = Sync._specialWatch[ref].timestamp || 0;
+                                }
                             }
 
                             if(!localTimestamp) {
@@ -867,7 +882,7 @@ function Utils(main) {
                             } else {
                                 onaddlocalvalue(key, remote);
                                 onsavelocalvalue(key, remote);
-                                onfinish("add-local", key, remote);
+                                onfinish(Sync.Mode.ADD_LOCAL, key, remote);
                             }
                         } else if(processRemote) {
                             if(local.constructor === Object && !local[DATABASE.SYNCED]) {
@@ -881,10 +896,12 @@ function Utils(main) {
                                         onupdateremotevalue(key, updated, remote);
                                         onsaveremotevalue(key, updated, remote);
                                         onfinish(Sync.Mode.UPDATE_REMOTE, key, updated, remote);
+                                        registerHistory.call(self, Sync.Mode.UPDATE_REMOTE, self._ref.key + "/" + key, updated)
                                     } else {
                                         onaddremotevalue(key, updated);
                                         onsaveremotevalue(key, updated);
-                                        onfinish("add-remote", key, updated);
+                                        onfinish(Sync.Mode.ADD_REMOTE, key, updated);
+                                        registerHistory.call(self, Sync.Mode.ADD_REMOTE, self._ref.key + "/" + key, updated)
                                     }
                                 }, onfail);
                             }).catch(onfail);
@@ -898,6 +915,32 @@ function Utils(main) {
                 }
             }, onfail);
         };
+
+        function registerHistory(mode, key, value) {
+            if(!options.log) return;
+            var item = {};
+            item[DATABASE.KEYS] = key;
+            item[DATABASE.TIMESTAMP] = firebase.database.ServerValue.TIMESTAMP;
+            item[DATABASE.MODE] = mode;
+            if(value !== null && value !== undefined) {
+                if(value.constructor === Boolean) {
+                    item[DATABASE.VALUE] = value;
+                } else if(value.constructor === Number) {
+                    item[DATABASE.VALUE] = value;
+                } else if(value.constructor === String) {
+                    if(value.length < 50) {
+                        item[DATABASE.VALUE] = value;
+                    } else {
+                        item[DATABASE.VALUE] = value.substr(0, 40) + "...";
+                    }
+                } else if(value.constructor === Object) {
+                    item[DATABASE.VALUE] = "[" + value.constructor.name + "]";
+                } else if(value.constructor === Array) {
+                    item[DATABASE.VALUE] = "Array(" + value.length + ")";
+                }
+            }
+            getRef().child(DATABASE.HISTORY).push().set(item);
+        }
 
         this.syncValues = function(values) {
             var self = this;
@@ -960,14 +1003,14 @@ function Utils(main) {
                         switch(mode) {
                             case Sync.Mode.UPDATE_REMOTE:
                             case Sync.Mode.OVERRIDE_REMOTE:
-                            case "add-remote":
+                            case Sync.Mode.ADD_REMOTE:
                             case Sync.Mode.REMOVE_REMOTE:
                                 remoteUpdated ++;
                                 break;
                             case Sync.Mode.UPDATE_LOCAL:
                             case Sync.Mode.OVERRIDE_LOCAL:
                             case Sync.Mode.REMOVE_LOCAL:
-                            case "add-local":
+                            case Sync.Mode.ADD_LOCAL:
                                 localUpdated ++;
                                 break;
                             default:
@@ -1023,6 +1066,11 @@ function Utils(main) {
 
         function onfinish(mode, key, newValue, oldValue) {
             if(options.debug && mode != Sync.Mode.SKIP) console.warn(mode, key, "[new]:", newValue, "[old]:", oldValue);
+            try {
+                options.onfinish(mode, key, newValue);
+            } catch(e) {
+                options.onerror(key, e);
+            }
         }
 
         this.syncValue = function(value) {
@@ -1221,14 +1269,16 @@ function Utils(main) {
         USER_PUBLIC: "user-public"
     };
     Sync.Mode = {
-        UPDATE_REMOTE: "update-remote",
-        OVERRIDE_REMOTE: "override-remote",
-        REMOVE_REMOTE: "remove-remote",
-        UPDATE_LOCAL: "update-local",
-        OVERRIDE_LOCAL: "override-local",
-        REMOVE_LOCAL: "remove-local",
-        UPDATE_BOTH: "update-both",
-        SKIP: "skip"
+        ADD_REMOTE: "ar",
+        UPDATE_REMOTE: "ur",
+        OVERRIDE_REMOTE: "or",
+        REMOVE_REMOTE: "rr",
+        ADD_LOCAL: "al",
+        UPDATE_LOCAL: "ul",
+        OVERRIDE_LOCAL: "ol",
+        REMOVE_LOCAL: "rl",
+        UPDATE_BOTH: "ub",
+        SKIP: "sk"
     };
     Sync.CREATE_KEY = "$create_key$";
 

@@ -1243,6 +1243,10 @@ function Edequate(options) {
                 }
             }, dialog);
             dialog.titleLayout = create(HTML.DIV, {className:"dialog-title-label", innerHTML: options.title.label }, titleLayout);
+            dialog.setTitle = function(title) {
+                lang.updateNode(dialog.titleLayout, title);
+                //dialog.titleLayout
+            };
 
             if(options.title.button && options.title.button.icon) {
                 create(HTML.DIV, {className:"icon dialog-title-button notranslate" + optionalClassName(options.title.button.className), innerHTML:options.title.button.icon, onclick:options.title.button.onclick}, titleLayout);

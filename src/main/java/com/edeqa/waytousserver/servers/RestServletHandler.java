@@ -84,6 +84,9 @@ public class RestServletHandler extends AbstractServletHandler {
                 case "/rest/v1/join":
                     printRes = v1.join(json, requestWrapper);
                     break;
+                case "/rest/v1/tosAgreement":
+                    printRes = v1.tosAgreement(json, requestWrapper);
+                    break;
                 default:
                     printRes = noAction(json);
                     break;
@@ -396,5 +399,23 @@ public class RestServletHandler extends AbstractServletHandler {
         }
 
 
+        public boolean tosAgreement(JSONObject json, RequestWrapper requestWrapper) {
+            try {
+                InputStreamReader isr = new InputStreamReader(requestWrapper.getRequestBody(), "utf-8");
+                BufferedReader br = new BufferedReader(isr);
+                String body = br.readLine();
+                br.close();
+
+                Common.log("Rest", requestWrapper.getRemoteAddress(), "tosAgreement:", body);
+                Common.getInstance().getDataProcessor(requestWrapper.getRequestURI().getPath().split("/")[3]).onMessage(new HttpDPConnection(requestWrapper), body);
+            } catch (Exception e) {
+                e.printStackTrace();
+                json.put(Rest.STATUS, "error");
+                json.put(Rest.REASON, "Action failed");
+                json.put(Rest.MESSAGE, e.getMessage());
+                Utils.sendResultJson.call(requestWrapper, json);
+            }
+            return false;
+        }
     }
 }

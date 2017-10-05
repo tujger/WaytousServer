@@ -120,7 +120,6 @@ function SavedLocationHolder(main) {
                     }, main.right);
                     locationSavedDialog.items[0].value = last;
                     locationSavedDialog.open();
-                    main.fire(EVENTS.SYNC_PROFILE);
                 }
                 break;
             case EVENTS.SHOW_SAVED_LOCATION:
@@ -386,6 +385,7 @@ function SavedLocationHolder(main) {
                             type: HTML.DIV,
                             className: "saved-location-item",
                         });
+                        locationsDialog.setTitle(u.lang.saved_locations_d.format(locationsDialog.items.length || 0));
                         var url = "https://maps.googleapis.com/maps/api/staticmap?center=" +loc.la + "," + loc.lo + "&zoom=15&size=200x200&sensor=false" + "&markers=color:darkgreen|"+loc.la+","+loc.lo + "&key="+data.firebase_config.apiKey;
 
                         u.create(HTML.IMG, {
@@ -476,6 +476,12 @@ function SavedLocationHolder(main) {
                                 u.save("saved_location:" + number, newLocation);
                                 drawerMenuItem && drawerMenuItem.show();
                                 locationsDialog && locationsDialog.opened && main.fire(EVENTS.SHOW_SAVED_LOCATIONS);
+                            } else {
+                                last++;
+                                u.save("saved_location:counter", last);
+                                u.save("saved_location:" + last, newLocation);
+                                drawerMenuItem && drawerMenuItem.show();
+                                locationsDialog && locationsDialog.opened && main.fire(EVENTS.SHOW_SAVED_LOCATIONS);
                             }
                         }
                     });
@@ -488,10 +494,12 @@ function SavedLocationHolder(main) {
                             var loc = u.load("saved_location:" + i);
                             if (!loc) continue;
                             if(loc.k && map[loc.k]) {
-                                u.load("saved_location:" + i);
+                                u.save("saved_location:" + i);
                                 continue;
-                            } else {
+                            } else if(loc.k) {
                                 map[loc.k] = true;
+                            } else if(!loc.k) {
+                                u.save("saved_location:" + i);
                             }
                             locs.push(loc);
                         }
@@ -514,6 +522,11 @@ function SavedLocationHolder(main) {
     }
 
     function fetchAddressFor(number) {
+        var self = this;
+        self._fetching = self._fetching || {};
+        if(self._fetching[number]) return;
+        self._fetching[number] = true;
+
         var loc = u.load("saved_location:"+number);
         if(!loc || loc.a || !loc.la || !loc.lo) return;
 
@@ -522,6 +535,7 @@ function SavedLocationHolder(main) {
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;
+            delete self._fetching[number];
             try {
                 var address = JSON.parse(xhr.response);
                 if(address["display_name"]) {
@@ -529,9 +543,12 @@ function SavedLocationHolder(main) {
                     u.save("saved_location:"+number, loc);
                     console.log("Address was resolved for",loc.n,loc.a);
                     if(locationsDialog && locationsDialog.opened) main.fire(EVENTS.SHOW_SAVED_LOCATIONS);
+
+                    main.fire(EVENTS.SYNC_PROFILE);
                 }
             } catch(e) {
                 console.log("Address was not resolved for",loc.n);
+                main.fire(EVENTS.SYNC_PROFILE);
             }
         };
         try {

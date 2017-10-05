@@ -145,6 +145,7 @@ function Constants() {
         CREATED : "cr",
         CHANGED : "ch",
         SYNCED : "sy",
+        TIMESTAMP: "t",
 
         SECTION_STAT: "_stat",
         STAT_TOTAL: "total",
@@ -161,7 +162,10 @@ function Constants() {
         STAT_MISC_GROUPS_CLEANED: "groups-cleaned",
 
         SECTION_USERS: "_users",
-        HISTORY: "h"
+        HISTORY: "h",
+        MODE: "m",
+        VALUE: "v",
+        TERMS_OF_SERVICE_CONFIRMED: "tos-confirmed"
    };
 
     this.type = "constants";

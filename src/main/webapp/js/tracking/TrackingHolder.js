@@ -114,6 +114,7 @@ function TrackingHolder(main) {
                 }
                 break;
             case EVENTS.TRACKING_NEW:
+                agreementDialog && agreementDialog.close();
                 startTracking();
                 break;
             case EVENTS.TRACKING_JOIN:
@@ -202,37 +203,63 @@ function TrackingHolder(main) {
 
     function startTracking(group) {
         if(u.load("tracking:terms_of_service_confirmed")) {
-            if(group) {
+            //if(group) {
                 //setTimeout(function(){
                 u.require("/js/helpers/TrackingFB.js").then(startTrackingReady.bind(self));
                 //}, 0);
                 //startTrackingReady();
-            } else {
+            //} else {
     //        u.load("tracking:terms_of_service_confirmed")
-                showAgreementDialog();
-            }
+    //            showAgreementDialog();
+    //        }
         } else {
-            showAgreementDialog();
+            showAgreementDialog(group);
         }
     }
 
-    function showAgreementDialog() {
+    function showAgreementDialog(group) {
         agreementDialog = agreementDialog || u.dialog({
             title: u.lang.information,
             className: "wizard-dialog",
             items: [
-                { type: HTML.DIV, className: "wizard-dialog-item", innerHTML: u.lang.you_may_create_the_group/*u.lang.you_are_joining_the_group*/ },
-                { type: HTML.DIV, className:"wizard-dialog-item", enclosed:true, label: u.lang.terms_of_service_click, body: u.lang.terms_of_service_body },
-                { type: HTML.CHECKBOX, itemClassName: "wizard-dialog-item-agree", label: u.lang.i_have_read_and_agree_with_terms_of_service, onclick: function() {
-                    if(this.checked) {
-                        u.lang.updateNode(agreementDialog.positive, !!agreementDialog.groupId ? u.lang.join_group : u.lang.create_group);
-                        agreementDialog.positive.classList.remove("wizard-dialog-button-disabled");
-                        agreementDialog.positive.disabled = false;
-                    } else {
-                        agreementDialog.positive.classList.add("wizard-dialog-button-disabled");
-                        agreementDialog.positive.disabled = true;
+                { type: HTML.DIV, className: "wizard-dialog-item", innerHTML: u.lang.you_may_create_the_group },
+                {
+                    type: HTML.DIV,
+                    enclosed: true,
+                    label: u.lang.terms_of_service_click,
+                    body: u.lang.loading.outerHTML,
+                    className: "wizard-dialog-item",
+                    innerHTML: u.lang.loading,
+                    onopen: function(e) {
+                        if(!e.loaded) {
+                            var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0, 2);
+                            u.post("/rest/v1/getContent", {
+                                resource: "terms-of-service.html",
+                                locale: lang
+                            }).then(function (xhr) {
+                                e.body.innerHTML = xhr.response;
+                                e.loaded = true;
+                            }).catch(function (error, json) {
+                                e.body.innerHTML = u.lang.error;
+                            });
+                        }
                     }
-                } },
+                },
+                {
+                    type: HTML.CHECKBOX,
+                    itemClassName: "wizard-dialog-item-agree",
+                    label: u.lang.i_have_read_and_agree_with_terms_of_service,
+                    onclick: function() {
+                        if(this.checked) {
+                            u.lang.updateNode(agreementDialog.positive, !!agreementDialog.groupId ? u.lang.join_group : u.lang.create_group);
+                            agreementDialog.positive.classList.remove("wizard-dialog-button-disabled");
+                            agreementDialog.positive.disabled = false;
+                        } else {
+                            agreementDialog.positive.classList.add("wizard-dialog-button-disabled");
+                            agreementDialog.positive.disabled = true;
+                        }
+                    }
+                },
             ],
             positive: {
                 label: u.lang.close,
@@ -240,9 +267,25 @@ function TrackingHolder(main) {
                 disabled: true,
                 onclick: function(items) {
                     if(items[2].checked) {
-                        u.save("tracking:terms_of_service_confirmed", true);
-                        u.require("/js/helpers/TrackingFB.js").then(startTrackingReady.bind(self));
-
+                        var sync = new utils.sync({
+                            type: utils.sync.Type.ACCOUNT_PRIVATE,
+                            key: DATABASE.TERMS_OF_SERVICE_CONFIRMED,
+                            log: true,
+                            onfinish: function(mode, key, value) {
+                                if(value) {
+                                    u.save("tracking:terms_of_service_confirmed", true);
+                                    u.require("/js/helpers/TrackingFB.js").then(startTrackingReady.bind(self));
+                                } else {
+                                    console.error("Unable to start tracking");
+                                    main.toast.show("Unable to start tracking");
+                                }
+                            },
+                            onerror: function(key, error) {
+                                console.error(error);
+                                main.toast.show(error);
+                            }
+                        });
+                        sync.overrideRemoteValue(true);
                         //startTracking(agreementDialog.groupId);
                     } else {
                         window.history.pushState({}, null, "/group/");
@@ -250,6 +293,8 @@ function TrackingHolder(main) {
                 }
             }
         }, main.right);
+        agreementDialog.items[2].checked = !u.load("tracking:terms_of_service_confirmed");
+        agreementDialog.items[2].click();
         if(group) {
             u.lang.updateNode(agreementDialog.items[0], u.lang.you_are_joining_the_group);
             u.lang.updateNode(agreementDialog.positive, u.lang.join_group);
