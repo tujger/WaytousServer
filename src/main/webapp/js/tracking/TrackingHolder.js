@@ -293,8 +293,14 @@ function TrackingHolder(main) {
                 }
             }
         }, main.right);
-        agreementDialog.items[2].checked = !u.load("tracking:terms_of_service_confirmed");
-        agreementDialog.items[2].click();
+
+        if(u.load("tracking:terms_of_service_confirmed")) {
+            agreementDialog.items[2].checked = false;
+            agreementDialog.items[2].click();
+            agreementDialog.itemsLayout.childNodes[2].hide();
+        } else {
+            agreementDialog.itemsLayout.childNodes[2].show();
+        }
         if(group) {
             u.lang.updateNode(agreementDialog.items[0], u.lang.you_are_joining_the_group);
             u.lang.updateNode(agreementDialog.positive, u.lang.join_group);

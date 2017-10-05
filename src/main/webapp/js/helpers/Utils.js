@@ -622,7 +622,7 @@ function Utils(main) {
         };
         options.reference = options.reference || database.ref();
         options.mode = Sync.Mode.UPDATE_BOTH;
-        options.log = false;
+        options.log = options.log || false;
 
         this.setReference = function(ref) {
             options.reference = ref;
