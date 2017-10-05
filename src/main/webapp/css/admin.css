@@ -20,7 +20,7 @@ h2 {
     font-style: italic;
     font-size: smaller;
 }
-.italic {
+.disabled {
     color: darkgray;
 }
 .selected {

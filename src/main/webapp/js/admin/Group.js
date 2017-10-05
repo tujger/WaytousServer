@@ -227,9 +227,13 @@ function Group() {
         function filterActive(row){
             return !row.classList.contains("inactive");
         }
+        function filterEnabled(row){
+            return !row.classList.contains("disabled");
+        }
         tableSummary.usersNode = tableSummary.add({
             onclick: function(e){
                 tableUsers.filter.remove(filterActive);
+                tableUsers.filter.remove(filterEnabled);
             },
             cells: [
                 { className: "th", innerHTML: "Users total" },
@@ -241,7 +245,16 @@ function Group() {
                 tableUsers.filter.add(filterActive);
             },
             cells: [
-                { className: "th", innerHTML: "&#150; online" },
+                { className: "th", innerHTML: "&#150; active" },
+                { className: "option highlight", innerHTML: 0 }
+            ]});
+
+        tableSummary.enabledUsersNode = tableSummary.add({
+            onclick: function(e){
+                tableUsers.filter.add(filterEnabled);
+            },
+            cells: [
+                { className: "th", innerHTML: "&#150; enabled" },
                 { className: "option highlight", innerHTML: 0 }
             ]});
 
@@ -342,6 +355,7 @@ function Group() {
 
         tableSummary.usersNode.lastChild.innerHTML = 0;
         tableSummary.activeUsersNode.lastChild.innerHTML = 0;
+        tableSummary.enabledUsersNode.lastChild.innerHTML = 0;
 
         ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).off();
         ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).off();
@@ -355,7 +369,7 @@ function Group() {
             var userNumber = snapshot.key;
 
             var row = tableUsers.add({
-                className: "italic highlight" + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive"),
+                className: "highlight" + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive") + (isEnabledTime(snapshot.val()[DATABASE.CHANGED]) ? "" : " disabled"),
                 onclick: function(){
                     WTU.switchTo("/admin/user/"+groupId+"/"+userNumber);
                     return false;
@@ -369,7 +383,9 @@ function Group() {
                     { className: "media-hidden", innerHTML: "..." },
                     { className: "media-hidden", innerHTML: "..." },
                     { className: "media-hidden", innerHTML: "..." }
-                ]
+                ],
+                initialactive: true,
+                initialdisabled: true
             });
             var userNameNode = row.cells[1];
             var userChangedNode = row.cells[4];
@@ -378,14 +394,32 @@ function Group() {
             var userSignProviderNode = row.cells[7];
 
             tableSummary.usersNode.lastChild.innerHTML = +tableSummary.usersNode.lastChild.innerHTML + 1;
-            if(snapshot.val()[DATABASE.ACTIVE]) {
-                tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
-            }
+            tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
+//            if(snapshot.val()[DATABASE.ACTIVE]) {
+//                tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
+//            }
+//            className: "highlight" + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive") + (isEnabledTime(snapshot.val()[DATABASE.CHANGED]) ? "" : " disabled"),
+//
+//            if(isEnabledTime(snapshot.val()[DATABASE.CHANGED])) {
+//                tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
+//            }
 
             ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.CHANGED).on("value", function(snapshot){
                 if(!snapshot.val()) return;
                 userChangedNode.sort = snapshot.val();
                 userChangedNode.innerHTML = new Date(snapshot.val()).toLocaleString();
+
+                var enabled = isEnabledTime(snapshot.val());
+                if(row.classList.contains("disabled") != enabled) {
+                    row.classList[enabled ? "remove" : "add"]("disabled");
+
+                    if(enabled && !row.initialdisabled) {
+                        tableSummary.enabledUsersNode.lastChild.innerHTML = +tableSummary.enabledUsersNode.lastChild.innerHTML + 1;
+                    } else if(!enabled) {
+                        tableSummary.enabledUsersNode.lastChild.innerHTML = +tableSummary.enabledUsersNode.lastChild.innerHTML - 1;
+                    }
+                    row.initialdisabled = false;
+                }
                 if(!initial) row.classList.add("changed");
                 setTimeout(function(){row.classList.remove("changed")}, 5000);
                 tableSummary.changedNode.lastChild.innerHTML = new Date(snapshot.val()).toLocaleString();
@@ -393,14 +427,15 @@ function Group() {
             });
             ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.ACTIVE).on("value", function(snapshot){
                 var active = !!snapshot.val();
-                var wasInactive = row.classList.contains("inactive");
-                row.classList[active ? "remove" : "add"]("inactive");
-                var usersCount = +tableSummary.activeUsersNode.lastChild.innerHTML;
-                if(active && wasInactive) {
-                    tableSummary.activeUsersNode.lastChild.innerHTML = ++usersCount;
-                } else if(!active && !wasInactive) {
-                    tableSummary.activeUsersNode.lastChild.innerHTML = --usersCount;
+//                var wasInactive = row.classList.contains("inactive");
+//                var usersCount = +tableSummary.activeUsersNode.lastChild.innerHTML;
+                if(active && !row.initialactive) {
+                    tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
+                } else if(!active) {
+                    tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML - 1;
                 }
+                row.initialactive = false;
+                row.classList[active ? "remove" : "add"]("inactive");
                 tableUsers.update();
             });
             ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.NAME).on("value", function(snapshot){
@@ -475,6 +510,10 @@ function Group() {
             WTU.resign(updateAll);
         });
 
+    }
+
+    function isEnabledTime(time) {
+        return (new Date().getTime() - (+time) < 120000);
     }
 
     function renderButtons(div) {
