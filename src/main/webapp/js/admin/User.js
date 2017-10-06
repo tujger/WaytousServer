@@ -215,7 +215,8 @@ function User() {
             var lng = snapshot.val()[USER.LONGITUDE];
 
             var row = tableLocations.add({
-                className: "highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
+                className: "locations-row highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
+                tabindex: -1,
                 cells: [
                     { className: "media-hidden", innerHTML: new Date(snapshot.val()[REQUEST.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[REQUEST.TIMESTAMP] },
                     { innerHTML: snapshot.val()[USER.PROVIDER] },

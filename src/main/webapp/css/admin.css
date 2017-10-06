@@ -293,6 +293,8 @@ h2 {
     }
     .statistics-row {
     }
+
+    /* with focused row */
     .statistics-row:focus {
         background-color: lightcyan;
         display: flex;
@@ -328,6 +330,51 @@ h2 {
         font-weight: initial;
     }
 
+    /* with focused row */
+    .locations-row {
+    }
+    .locations-row:focus {
+        background-color: lightcyan;
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        width: 100%;
+    }
+    .locations-row:focus .td {
+        display: block;
+        width: 100%;
+        border: none;
+        font-weight: bold;
+        padding: 4px;
+    }
+    .locations-row:focus .td:nth-child(1)::before {
+        content: "Timestamp: ";
+        font-weight: initial;
+    }
+    .locations-row:focus .td:nth-child(2)::before {
+        content: "Provider: ";
+        font-weight: initial;
+    }
+    .locations-row:focus .td:nth-child(3)::before {
+        content: "Latitude: ";
+        font-weight: initial;
+    }
+    .locations-row:focus .td:nth-child(4)::before {
+        content: "Longitude: ";
+        font-weight: initial;
+    }
+    .locations-row:focus .td:nth-child(5)::before {
+        content: "Accuracy: ";
+        font-weight: initial;
+    }
+    .locations-row:focus .td:nth-child(6)::before {
+        content: "Bearing: ";
+        font-weight: initial;
+    }
+    .locations-row:focus .td:nth-child(7)::before {
+        content: "Speed: ";
+        font-weight: initial;
+    }
 
     /* media specific classes */
     .hideable {
