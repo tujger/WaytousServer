@@ -1283,6 +1283,15 @@ function Utils(main) {
     Sync.CREATE_KEY = "$create_key$";
 
 
+    function isActiveTime(timestamp) {
+        return (new Date().getTime() - timestamp) / 1000 <= 3600;
+    }
+
+    function isEnabledTime(timestamp) {
+        return (new Date().getTime() - timestamp) / 1000 <= 120;
+    }
+
+
     return {
         showAlert: showAlert,
         brightness: brightness,
@@ -1304,5 +1313,7 @@ function Utils(main) {
         labelPosition:labelPosition,
         toDateString:toDateString,
         sync:Sync,
+        isActiveTime:isActiveTime,
+        isEnabledTime:isEnabledTime
     }
 }

@@ -495,7 +495,7 @@ function TrackingFB(main) {
         }
     }
 
-    function usersDataListener(data){
+    function usersDataListener_new(data){
 //        if(main.me.number != parseInt(data.key)) {
             try{
                 var number = parseInt(data.key);
@@ -514,13 +514,19 @@ function TrackingFB(main) {
                 //usersDataActiveListener(data.child(DATABASE.ACTIVE));
                 //usersDataChangedListener(data.child(DATABASE.CHANGED));
 
+                main.eventBus.fire(function(holder){
+                    if(holder.saveable) {
+                        var loadSaved = holder.loadsaved || 1;
+                        registerChildListener(ref.child(DATABASE.PUBLIC).child(holder.type).child(number), userPublicDataListener, loadSaved);
+                    }
+                });
             } catch(e) {
                 console.error(e.message);
             }
 //        }
         // console.log(data);
     }
-    function usersDataListener_old(data){
+    function usersDataListener(data){
 //        if(main.me.number != parseInt(data.key)) {
             try{
                 var o = data.val();
@@ -535,10 +541,6 @@ function TrackingFB(main) {
                 registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.NAME), usersDataNameListener);
                 registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.ACTIVE), usersDataActiveListener);
                 registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.CHANGED), usersDataChangedListener);
-
-                //usersDataNameListener(data.child(DATABASE.NAME));
-                //usersDataActiveListener(data.child(DATABASE.ACTIVE));
-                //usersDataChangedListener(data.child(DATABASE.CHANGED));
 
                 main.eventBus.fire(function(holder){
                     if(holder.saveable) {
@@ -623,25 +625,17 @@ function TrackingFB(main) {
             //
             //    trackingListener.onAccept(o);
             //}
-            if(active) {
-                user.refs.push(registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(number).child(DATABASE.NAME), usersDataNameListener));
-                user.refs.push(registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(number).child(DATABASE.CHANGED), usersDataChangedListener));
-                if (user && user.properties && active != user.properties.active) {
-                    //var delta = parseInt((new Date().getTime() - o[REQUEST.TIMESTAMP]) / 1000);
-                    main.eventBus.fire(function (holder) {
-                        if (holder.saveable) {
-                            var loadSaved = holder.loadsaved || 1;
-                            user.refs.push(registerChildListener(ref.child(DATABASE.PUBLIC).child(holder.type).child(number), userPublicDataListener, loadSaved));
-                        }
-                    });
-                    trackingListener.onMessage(o);
-                }
-            } else {
-                for(var i in user.refs) {
-                    user.refs[i].off();
-                }
-                user.refs = [];
-            }
+            //if(active && user) {
+            //    user.refs.push(registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(number).child(DATABASE.NAME), usersDataNameListener));
+            //    user.refs.push(registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(number).child(DATABASE.CHANGED), usersDataChangedListener));
+            //    console.log("ACTIVE",active, number, user);
+            //} else if(user) {
+            //    for(var i in user.refs) {
+            //        user.refs[i].off();
+            //    }
+            //    user.refs = [];
+            //}
+            trackingListener.onMessage(o);
         } catch(e) {
             console.error(e.message);
         }

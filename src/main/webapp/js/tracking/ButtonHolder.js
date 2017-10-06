@@ -89,10 +89,9 @@ function ButtonHolder(main) {
                 this.views.button.button.dataset.number = parseInt(object);
                 break;
             case EVENTS.MAKE_ACTIVE:
-                if(this.views && this.views.button && this.views.button.button && this.views.button.button.classList){
+                if(this.views && this.views.button && this.views.button.button){
                     this.views.button.button.show();
                 }
-
                 u.lang.updateNode(buttons.titleLayout, u.lang.users_d.format(main.users.getCountActive()));
 
 //                buttons.titleLayout.innerHTML = "Users (" + main.users.getCountActive() +")";
@@ -141,6 +140,7 @@ function ButtonHolder(main) {
                     this.views.button.button.classList.add("user-button-away");
                     if(this != main.me) {
                         var delta = new Date().getTime() - parseInt(object || this.properties.changed);
+                        console.log("DELTA",delta)
                         if(delta > 60000) {
                             var text = utils.toDateString(new Date().getTime() - parseInt(object || this.properties.changed));
                             this.fire(EVENTS.UPDATE_MENU_SUFFIX, u.lang.s_ago.format(text).innerHTML);
@@ -233,7 +233,7 @@ function ButtonHolder(main) {
         var task;
         var onlyTouch,clicked,firstClick;
         var b = u.create(HTML.DIV, {
-            className:"user-button" + (user.locations && user.locations.length > 0 ? "" : " disabled") +(user.properties.active ? "" : " hidden") + (user.type == "user" ? " user-button-away" : ""),
+            className:"user-button hidden" + (user.locations && user.locations.length > 0 ? "" : " disabled") + (user.type == "user" ? " user-button-away" : ""),
             dataNumber:user.number,
             style:{backgroundColor:color},
             onclick: function() {

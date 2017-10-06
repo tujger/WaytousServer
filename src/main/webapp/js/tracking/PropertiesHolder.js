@@ -152,6 +152,7 @@ function PropertiesHolder(main) {
             default:
                 break;
         }
+        //if(this && this.properties && !this.properties.active) return false;
         return true;
     };
 
@@ -162,7 +163,7 @@ function PropertiesHolder(main) {
             color: myUser.color,
             name: myUser.name,
             number: myUser.number,
-            active: myUser.active && delta <= 3600,
+            active: false,
             selected: myUser.selected,
             changed: myUser.changed,
             enabled: delta <= 120,
@@ -187,8 +188,6 @@ function PropertiesHolder(main) {
             }
         };
 
-        //clearInterval(view.taskChanged);
-//        setTimeout(disableIfOffline, 0);
         disableIfOffline.call(myUser);
         view.taskChanged = setInterval(disableIfOffline.bind(myUser), 10000);
 

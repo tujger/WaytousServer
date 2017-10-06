@@ -225,6 +225,7 @@ function MessageHolder(main) {
         main.users.forUser(number, function(number,user){
             user.fire(EVENTS.USER_MESSAGE, {body: text, timestamp: time, key: key, private: privateMessage});
         });
+        //onEvent(EVENTS.USER_MESSAGE, {body: text, timestamp: time, key: key, private: privateMessage});
     }
 
 

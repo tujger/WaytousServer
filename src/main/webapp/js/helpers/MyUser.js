@@ -43,7 +43,7 @@ function MyUser(main) {
         var user = this;
         if(user.number != undefined) {
             main.eventBus.fire(function(holder){
-                if(holder.removeView) holder.removeView(user);
+                if(holder.removeView && user.views && user.views[holder.type]) holder.removeView(user);
             });
         }
 

@@ -32,7 +32,7 @@ function MyUsers(main) {
             if(user.number != json[RESPONSE.NUMBER]) {
                 user.fire(EVENTS.CHANGE_NUMBER, json[RESPONSE.NUMBER]);
             }
-            user.createViews();
+            //user.createViews();
 
         } else {
             user = users[json[RESPONSE.NUMBER]];
@@ -88,7 +88,7 @@ function MyUsers(main) {
     }
 
     function forUser(number,callback, args){
-        if(users[number]) callback(number, users[number], args);
+        if(users[number] && users[number].properties) callback(number, users[number], args);
     }
 
     function getCountSelected(){
