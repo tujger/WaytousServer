@@ -314,7 +314,7 @@ public class RestServletHandler extends AbstractServletHandler {
                     }
 
                     if (exists) {
-                        String path = file.getAbsolutePath().replace(OPTIONS.getWebRootDirectory(), "");
+                        String path = file.getAbsolutePath().replace(OPTIONS.getWebRootDirectory(), "").replaceAll("\\\\", "/");
                         Common.log(LOG, "->", path);
                         try {
                             requestWrapper.sendRedirect(path);
