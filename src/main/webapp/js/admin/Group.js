@@ -369,7 +369,7 @@ function Group() {
             var userNumber = snapshot.key;
 
             var row = tableUsers.add({
-                className: "highlight" + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive") + (isEnabledTime(snapshot.val()[DATABASE.CHANGED]) ? "" : " disabled"),
+                className: "highlight inactive disabled",
                 onclick: function(){
                     WTU.switchTo("/admin/user/"+groupId+"/"+userNumber);
                     return false;
@@ -384,8 +384,6 @@ function Group() {
                     { className: "media-hidden", innerHTML: "..." },
                     { className: "media-hidden", innerHTML: "..." }
                 ],
-                initialactive: true,
-                initialdisabled: true
             });
             var userNameNode = row.cells[1];
             var userChangedNode = row.cells[4];
@@ -394,7 +392,7 @@ function Group() {
             var userSignProviderNode = row.cells[7];
 
             tableSummary.usersNode.lastChild.innerHTML = +tableSummary.usersNode.lastChild.innerHTML + 1;
-            tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
+//            tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
 //            if(snapshot.val()[DATABASE.ACTIVE]) {
 //                tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
 //            }
@@ -410,16 +408,14 @@ function Group() {
                 userChangedNode.innerHTML = new Date(snapshot.val()).toLocaleString();
 
                 var enabled = isEnabledTime(snapshot.val());
-                if(row.classList.contains("disabled") != enabled) {
-                    row.classList[enabled ? "remove" : "add"]("disabled");
 
-                    if(enabled && !row.initialdisabled) {
-                        tableSummary.enabledUsersNode.lastChild.innerHTML = +tableSummary.enabledUsersNode.lastChild.innerHTML + 1;
-                    } else if(!enabled) {
-                        tableSummary.enabledUsersNode.lastChild.innerHTML = +tableSummary.enabledUsersNode.lastChild.innerHTML - 1;
-                    }
-                    row.initialdisabled = false;
+                if(enabled && row.classList.contains("disabled")) {
+                    tableSummary.enabledUsersNode.lastChild.innerHTML = +tableSummary.enabledUsersNode.lastChild.innerHTML + 1;
+                } else if(!enabled && !row.classList.contains("disabled")) {
+                    tableSummary.enabledUsersNode.lastChild.innerHTML = +tableSummary.enabledUsersNode.lastChild.innerHTML - 1;
                 }
+                row.classList[enabled ? "remove" : "add"]("disabled");
+
                 if(!initial) row.classList.add("changed");
                 setTimeout(function(){row.classList.remove("changed")}, 5000);
                 tableSummary.changedNode.lastChild.innerHTML = new Date(snapshot.val()).toLocaleString();
@@ -427,14 +423,11 @@ function Group() {
             });
             ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.ACTIVE).on("value", function(snapshot){
                 var active = !!snapshot.val();
-//                var wasInactive = row.classList.contains("inactive");
-//                var usersCount = +tableSummary.activeUsersNode.lastChild.innerHTML;
-                if(active && !row.initialactive) {
+                if(active && row.classList.contains("inactive")) {
                     tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
-                } else if(!active) {
+                } else if(!active && !row.classList.contains("inactive")) {
                     tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML - 1;
                 }
-                row.initialactive = false;
                 row.classList[active ? "remove" : "add"]("inactive");
                 tableUsers.update();
             });
