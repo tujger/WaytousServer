@@ -495,37 +495,6 @@ function TrackingFB(main) {
         }
     }
 
-    function usersDataListener_new(data){
-//        if(main.me.number != parseInt(data.key)) {
-            try{
-                var number = parseInt(data.key);
-                var o = data.val();
-                o[RESPONSE.NUMBER] = parseInt(data.key);
-                o[RESPONSE.INITIAL] = true;
-                delete o.active;
-                var user = main.users.addUser(o);
-                user.type = "user";
-                user.refs = user.refs || [];
-
-                //registers
-                registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(number).child(DATABASE.ACTIVE), usersDataActiveListener);
-
-                //usersDataNameListener(data.child(DATABASE.NAME));
-                //usersDataActiveListener(data.child(DATABASE.ACTIVE));
-                //usersDataChangedListener(data.child(DATABASE.CHANGED));
-
-                main.eventBus.fire(function(holder){
-                    if(holder.saveable) {
-                        var loadSaved = holder.loadsaved || 1;
-                        registerChildListener(ref.child(DATABASE.PUBLIC).child(holder.type).child(number), userPublicDataListener, loadSaved);
-                    }
-                });
-            } catch(e) {
-                console.error(e.message);
-            }
-//        }
-        // console.log(data);
-    }
     function usersDataListener(data){
 //        if(main.me.number != parseInt(data.key)) {
             try{

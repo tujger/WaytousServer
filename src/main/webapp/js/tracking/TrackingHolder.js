@@ -444,7 +444,7 @@ function TrackingHolder(main) {
                             var number = o[USER.DISMISSED];
                             // console.log("DISMISSED",number);
                             var user = main.users.users[number];
-                            user.createViews();
+                            //user.createViews();
                             //user.removeViews();
                             if(user.properties && user.properties.active) {
                                 user.fire(EVENTS.MAKE_INACTIVE);
@@ -454,7 +454,7 @@ function TrackingHolder(main) {
                             number = o[USER.JOINED];
                             user = main.users.users[number];
                             progress.close();
-                            user.createViews();
+                            //user.createViews();
 
                             if(user.properties && !user.properties.active) {
                                 if(!user.changed || new Date().getTime() - 15 * 60 * 1000 > user.changed) {
@@ -466,9 +466,9 @@ function TrackingHolder(main) {
                             main.fire(USER.JOINED, user);
                             if(user.properties && user.properties.active) {
                                 var timestamp = o[REQUEST.TIMESTAMP];
-                                if(utils.isEnabledTime(timestamp)) {
+                                if(utils.isEnabledTime(timestamp) && !user.properties.enabled) {
                                     user.fire(EVENTS.MAKE_ENABLED, timestamp);
-                                } else {
+                                } else if (!utils.isEnabledTime(timestamp) && user.properties.enabled) {
                                     user.fire(EVENTS.MAKE_DISABLED, timestamp);
                                 }
                             }
@@ -478,9 +478,9 @@ function TrackingHolder(main) {
 
                             if(user.properties && user.properties.active) {
                                 var timestamp = o[REQUEST.TIMESTAMP];
-                                if(utils.isEnabledTime(timestamp)) {
+                                if(utils.isEnabledTime(timestamp) && !user.properties.enabled) {
                                     user.fire(EVENTS.MAKE_ENABLED, timestamp);
-                                } else {
+                                } else if (!utils.isEnabledTime(timestamp) && user.properties.enabled) {
                                     user.fire(EVENTS.MAKE_DISABLED, timestamp);
                                 }
                             }

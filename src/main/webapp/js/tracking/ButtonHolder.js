@@ -210,7 +210,7 @@ function ButtonHolder(main) {
                 break;
             case EVENTS.UPDATE_MENU_SUBTITLE:
                 if(!this.views.button.subtitle.classList.contains("hidden")) {
-                    this.views.button.subtitle.innerHTML = object;
+                    this.views.button.subtitle.innerHTML = object || "";
                 }
                 break;
             default:

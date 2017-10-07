@@ -127,7 +127,7 @@ function MessageHolder(main) {
                 chat.open();
                 chat.focus();
                 replyInput.focus();
-                main.users.forAllUsers(function(number,user){
+                main.users.forAllActiveUsers(function(number,user){
                     user.fire(EVENTS.HIDE_BADGE);
                     drawerItemChat && drawerItemChat.hideBadge();
                 });

@@ -894,6 +894,10 @@ p.bottom-desc {
         font-size: 10px;
         min-width: 45px;
     }
+    .user-button-icon {
+        text-align: center;
+        display: inline-block;
+    }
     .user-button-prefix {
         display: none;
     }

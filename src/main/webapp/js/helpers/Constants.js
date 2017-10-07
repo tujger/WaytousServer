@@ -127,45 +127,45 @@ function Constants() {
     };
     window.DATABASE = {
         SECTION_GROUPS : "_groups",
-        PUBLIC : "b", // public
-        PRIVATE : "p", // private
-        USERS : "u", // users
-        NAME : "name", // name
         ACTIVE : "active", // active
+        CHANGED : "ch",
         COLOR : "color", // color
-        KEYS: "k",
-        ORDER: "n",
-        OPTIONS : "o", // options
-        PERSISTENT : "persistent",
-        TIME_TO_LIVE_IF_EMPTY : "time-to-live-if-empty",
+        CREATED : "cr",
         DELAY_TO_DISMISS : "delay-to-dismiss",
         DISMISS_INACTIVE : "dismiss-inactive",
+        KEYS: "k",
+        NAME : "name", // name
+        OPTIONS : "o", // options
+        ORDER: "n",
+        PERSISTENT : "persistent",
+        PRIVATE : "p", // private
+        PUBLIC : "b", // public
         REQUIRES_PASSWORD : "requires-password",
-        WELCOME_MESSAGE : "welcome-message",
-        CREATED : "cr",
-        CHANGED : "ch",
         SYNCED : "sy",
+        TIME_TO_LIVE_IF_EMPTY : "time-to-live-if-empty",
         TIMESTAMP: "t",
+        USERS : "u", // users
+        WELCOME_MESSAGE : "welcome-message",
 
         SECTION_STAT: "_stat",
         STAT_TOTAL: "total",
         STAT_BY_DATE: "by-date",
-        STAT_GROUPS_CREATED_TEMPORARY: "gt",
         STAT_GROUPS_CREATED_PERSISTENT: "gp",
+        STAT_GROUPS_CREATED_TEMPORARY: "gt",
         STAT_GROUPS_DELETED: "gd",
         STAT_GROUPS_REJECTED: "gr",
+        STAT_MESSAGES: "messages",
+        STAT_MISC_GROUPS_CLEANED: "groups-cleaned",
+        STAT_MISC: "misc",
         STAT_USERS_JOINED: "ju",
         STAT_USERS_RECONNECTED: "uc",
         STAT_USERS_REJECTED: "ur",
-        STAT_MESSAGES: "messages",
-        STAT_MISC: "misc",
-        STAT_MISC_GROUPS_CLEANED: "groups-cleaned",
 
         SECTION_USERS: "_users",
         HISTORY: "h",
         MODE: "m",
-        VALUE: "v",
-        TERMS_OF_SERVICE_CONFIRMED: "tos-confirmed"
+        TERMS_OF_SERVICE_CONFIRMED: "tos-confirmed",
+        VALUE: "v"
    };
 
     this.type = "constants";
