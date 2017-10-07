@@ -32,7 +32,7 @@ function MyUsers(main) {
             if(user.number != json[RESPONSE.NUMBER]) {
                 user.fire(EVENTS.CHANGE_NUMBER, json[RESPONSE.NUMBER]);
             }
-            //user.createViews();
+            user.createViews();
 
         } else {
             user = users[json[RESPONSE.NUMBER]];
@@ -87,6 +87,17 @@ function MyUsers(main) {
         }
     }
 
+    function forAllActiveUsersExceptMe(callback){
+        for(var i in users){
+            if(users[i] && users[i] != main.me && users[i].properties && users[i].properties.active) forUser(i, callback);
+        }
+    }
+
+    function forAllActiveUsers(callback){
+        forMe(callback);
+        forAllActiveUsersExceptMe(callback);
+    }
+
     function forUser(number,callback, args){
         if(users[number] && users[number].properties) callback(number, users[number], args);
     }
@@ -115,6 +126,8 @@ function MyUsers(main) {
         addUser:addUser,
         setMe:setMe,
         forAllUsers:forAllUsers,
+        forAllActiveUsers:forAllActiveUsers,
+        forAllActiveUsersExceptMe:forAllActiveUsersExceptMe,
         forSelectedUsers:forSelectedUsers,
         forMe:forMe,
         forAllUsersExceptMe:forAllUsersExceptMe,

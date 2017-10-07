@@ -58,14 +58,14 @@ function DistanceHolder(main) {
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
                 drawerItemShow = object.add(DRAWER.SECTION_VIEWS, EVENTS.SHOW_DISTANCE, u.lang.show_distances, "settings_ethernet", function(){
-                    main.users.forAllUsers(function (number, user) {
+                    main.users.forAllActiveUsers(function (number, user) {
                         if(!user.location) return;
                         user.fire(EVENTS.SHOW_DISTANCE);
                         drawerPopulate();
                     });
                 });
                 drawerItemHide = object.add(DRAWER.SECTION_VIEWS, EVENTS.HIDE_DISTANCE, u.lang.hide_distances, "code", function(){
-                    main.users.forAllUsers(function (number, user) {
+                    main.users.forAllActiveUsers(function (number, user) {
                         user.fire(EVENTS.HIDE_DISTANCE);
                         drawerPopulate();
                     });
@@ -108,7 +108,7 @@ function DistanceHolder(main) {
                 }
                 break;
             case EVENTS.MAP_MOVED:
-                main.users.forAllUsers(function (number, user) {
+                main.users.forAllActiveUsers(function (number, user) {
                     if(user.views && user.views.distance && user.views.distance.distance) {
                         show.call(user);
                     }
@@ -183,7 +183,7 @@ function DistanceHolder(main) {
         setTimeout(function(){
             drawerItemHide.hide();
             drawerItemShow.hide();
-            main.users.forAllUsersExceptMe(function (number, user) {
+            main.users.forAllActiveUsersExceptMe(function (number, user) {
                 if(user.properties.active && user.views.distance && user.location) {
                     if (user.views.distance.show) {
                         drawerItemHide.show();
@@ -234,7 +234,7 @@ function DistanceHolder(main) {
 
     function onChangeLocation(location) {
         if(this.number == main.me.number) {
-            main.users.forAllUsersExceptMe(function(number,user){
+            main.users.forAllActiveUsersExceptMe(function(number,user){
                 show.call(user);
                 checkDistance(main.me,user);
             })

@@ -27,13 +27,16 @@ function AddressHolder(main) {
                 updateAddress.call(this);
                 break;
             case EVENTS.EXPAND_MENU:
-                main.users.forAllUsers(function(number,user){
+                main.users.forAllActiveUsers(function(number,user){
                     updateAddress.call(user);
                 });
                 break;
             /*case EVENTS.UPDATE_ACTIONBAR_SUBTITLE:
                 updateAddress.call(this, object);
                 break;*/
+            case EVENTS.MAKE_ACTIVE:
+                onChangeLocation.call(this);
+                break;
             default:
                 break;
         }
@@ -43,7 +46,9 @@ function AddressHolder(main) {
     function onChangeLocation(location) {
         //return;
         //var user = this;
-        updateAddress.call(this);
+        if(this.properties && this.properties.active) {
+            updateAddress.call(this);
+        }
 /*        setTimeout(function(){
             if(location) {
                 if(delayStart) {

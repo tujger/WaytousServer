@@ -25,14 +25,14 @@ function TrackHolder(main) {
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
                 drawerItemShow = object.add(DRAWER.SECTION_VIEWS,EVENTS.SHOW_TRACK, u.lang.show_tracks,"title",function(){
-                    main.users.forAllUsers(function (number, user) {
+                    main.users.forAllActiveUsers(function (number, user) {
                         if(!user.location) return;
                         user.fire(EVENTS.SHOW_TRACK);
                         drawerPopulate();
                     });
                 });
                 drawerItemHide = object.add(DRAWER.SECTION_VIEWS,EVENTS.HIDE_TRACK, u.lang.hide_tracks,"format_strikethrough",function(){
-                    main.users.forAllUsers(function (number, user) {
+                    main.users.forAllActiveUsers(function (number, user) {
                         user.fire(EVENTS.HIDE_TRACK);
                         drawerPopulate();
                     });
