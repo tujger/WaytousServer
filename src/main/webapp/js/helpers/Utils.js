@@ -676,18 +676,20 @@ function Utils(main) {
             options.log = log;
         };
 
-        this._getValue = function(key, ongetvalue, onerror) {
+        this._getValue = function(key, ongetvalue, onfinish, onerror) {
             if(!key) {
-                console.error("Key not defined.");
+                onerror(key, "Key not defined.");
                 return;
             }
 
             var onsuccess = function (data) {
                 var val = data.val();
                 ongetvalue(data.key, val);
+                if(onfinish) onfinish(data.key, val);
             };
             var onfail = function (error) {
                 onerror(key, error);
+                if(onfinish) onfinish(data.key, val);
             };
             this._ref.child(key).once("value").then(onsuccess).catch(onfail);
         };
@@ -695,7 +697,9 @@ function Utils(main) {
         this.getValue = function() {
             this._ref = getRef(options.child);
             if(!this._ref) return;
-            this._getValue(options.key, options.ongetvalue, options.onerror);
+            this._getValue(options.key, options.ongetvalue, options.onfinish, options.onerror);
+
+
         };
 
         this.getValues = function() {
@@ -705,7 +709,10 @@ function Utils(main) {
 
             self._ref.child(options.key).limitToLast(1).once("child_added").then(function (data) {
                 var lastKey = data.key;
-                if (!lastKey) return;
+                if (!lastKey) {
+                    if(options.onfinish) options.onfinish(options.key, "No records");
+                    return;
+                }
 
                 self._ref.child(options.key).on("child_added", function(data) {
                     options.ongetvalue(data.key, data.val());
@@ -727,9 +734,6 @@ function Utils(main) {
 
         this._syncValue = function(mode, newValue, ongetvalue, onaddremotevalue, onupdateremotevalue, onremoveremotevalue, onsaveremotevalue, onaddlocalvalue, onupdatelocalvalue, onremovelocalvalue, onsavelocalvalue, onfinish, onerror) {
             var self = this;
-            var onfail = function(key, error) {
-                onerror(key, error);
-            };
             this._getValue(options.key, function(key, remote) {
 
                 var updates = {};
@@ -777,7 +781,7 @@ function Utils(main) {
                         }
                         if(local) {
                             onupdatelocalvalue(key, remote, local);
-                            onsaveremotevalue(key, remote, local);
+                            onsavelocalvalue(key, remote, local);
                             onfinish(Sync.Mode.OVERRIDE_LOCAL, key, remote, local);
                         } else {
                             onaddlocalvalue(key, remote);
@@ -814,8 +818,8 @@ function Utils(main) {
                                         onfinish(Sync.Mode.ADD_REMOTE, key, updated);
                                         registerHistory.call(self, Sync.Mode.ADD_REMOTE, self._ref.key + "/" + key, updated)
                                     }
-                                }, onfail);
-                            }).catch(onfail);
+                                }, null, onerror);
+                            }).catch(onerror);
                         }
                         break;
                     case Sync.Mode.OVERRIDE_REMOTE:
@@ -839,8 +843,8 @@ function Utils(main) {
                                     onfinish(Sync.Mode.ADD_REMOTE, key, updated);
                                     registerHistory.call(self, Sync.Mode.ADD_REMOTE, self._ref.key + "/" + key, updated)
                                 }
-                            }, onfail);
-                        }).catch(onfail);
+                            }, null, onerror);
+                        }).catch(onerror);
                         break;
                     case Sync.Mode.UPDATE_BOTH:
                         var processLocal = false;
@@ -903,8 +907,8 @@ function Utils(main) {
                                         onfinish(Sync.Mode.ADD_REMOTE, key, updated);
                                         registerHistory.call(self, Sync.Mode.ADD_REMOTE, self._ref.key + "/" + key, updated)
                                     }
-                                }, onfail);
-                            }).catch(onfail);
+                                }, null, onerror);
+                            }).catch(onerror);
                         } else {
                             onfinish(Sync.Mode.SKIP, key);
                         }
@@ -913,7 +917,7 @@ function Utils(main) {
                         onerror(key, "Mode not defined");
                         break;
                 }
-            }, onfail);
+            }, null, onerror);
         };
 
         function registerHistory(mode, key, value) {
@@ -1114,7 +1118,7 @@ function Utils(main) {
             switch(options.type) {
                 case Sync.Type.ACCOUNT_PRIVATE:
                     if(!options.uid) {
-                        console.error("UID not defined.");
+                        options.onerror(options.key, "UID not defined.");
                         return;
                     } else {
                         ref = options.reference.child(DATABASE.SECTION_USERS).child(options.uid).child(DATABASE.PRIVATE);
@@ -1122,11 +1126,11 @@ function Utils(main) {
                     break;
                 case Sync.Type.USER_PUBLIC:
                     if(!options.group) {
-                        console.error("Group not defined.");
+                        options.onerror(options.key, "Group not defined.");
                         return;
                     }
                     if(!options.userNumber) {
-                        console.error("UserNumber not defined.");
+                        options.onerror(options.key, "UserNumber not defined.");
                         return;
                     }
                     ref = options.reference.child(options.group).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(options.userNumber);
@@ -1255,7 +1259,6 @@ function Utils(main) {
                         timestamp: data.val()
                     };
                 }, function(error) {
-                    console.log("CHECK",Sync._synced, data.val());
                     options.error(watched, error);
                 })
             } else if(!callback && !Sync._specialWatch[watched]) {
