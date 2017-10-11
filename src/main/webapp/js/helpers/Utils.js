@@ -719,12 +719,14 @@ function Utils(main) {
 
                     if (data.key == lastKey) {
                         self._ref.child(options.key).off();
+                        options.onfinish(Sync.Mode.GET_REMOTE, options.key);
                     }
                 }, function (error) {
                     options.onerror(key, error);
 
                     if (data.key == lastKey) {
                         self._ref.child(options.key).off();
+                        options.onfinish(Sync.Mode.GET_REMOTE, options.key);
                     }
                 });
             }).catch(function (error) {
@@ -1104,7 +1106,7 @@ function Utils(main) {
         this.overrideLocalValue = function(value) {
             this._ref = getRef(options.child);
             if(!this._ref) return;
-            this._syncValue(Sync.Mode.OVERRIDE_LOCAL, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, onfinish, options.onerror);
+            this._syncValue(Sync.Mode.OVERRIDE_LOCAL, value, options.ongetvalue, options.onaddremotevalue, options.onupdateremotevalue, options.onremoveremotevalue, options.onsaveremotevalue, options.onaddlocalvalue, options.onupdatelocalvalue, options.onremovelocalvalue, options.onsavelocalvalue, onfinish, options.onerror);
         };
 
         this.updateLocalValue = function(value) {
@@ -1281,7 +1283,8 @@ function Utils(main) {
         OVERRIDE_LOCAL: "ol",
         REMOVE_LOCAL: "rl",
         UPDATE_BOTH: "ub",
-        SKIP: "sk"
+        SKIP: "sk",
+        GET_REMOTE: "gr"
     };
     Sync.CREATE_KEY = "$create_key$";
 
