@@ -39,12 +39,18 @@ abstract public class AbstractDataProcessor {
 
     abstract public void validateUsers();
 
+    public abstract void validateAccounts();
+
     public enum GroupAction {
         GROUP_CREATED, GROUP_DELETED, GROUP_REJECTED
     }
 
     public enum UserAction {
         USER_JOINED, USER_RECONNECTED, USER_REJECTED, USER_REMOVED
+    }
+
+    public enum AccountAction {
+        ACCOUNT_CREATED, ACCOUNT_DELETED
     }
 
 
@@ -186,7 +192,9 @@ abstract public class AbstractDataProcessor {
 
     public abstract void putStaticticsUser(String groupId, String userId, UserAction action, String errorMessage);
 
-    abstract public void putStaticticsMessage(String message, Map<String, String> map);
+    public abstract void putStaticticsAccount(String accountId, AccountAction action, String errorMessage);
 
-    abstract public void cleanStatisticsMessages(Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    public abstract void putStaticticsMessage(String message, Map<String, String> map);
+
+    public abstract void cleanStatisticsMessages(Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
 }

@@ -65,6 +65,9 @@ public class AdminRestHolder implements PageHolder {
                     case "/admin/rest/v1/stat/clean":
                         cleanStatMessagesV1(requestWrapper);
                         return true;
+                    case "/admin/rest/v1/accounts/clean":
+                        cleanAccountsV1(requestWrapper);
+                        return true;
                     default:
                         actionNotSupported(requestWrapper);
                         return true;
@@ -105,6 +108,29 @@ public class AdminRestHolder implements PageHolder {
             Common.log(LOG, "cleanGroupsV1");
 
             Common.getInstance().getDataProcessor("v1").validateGroups();
+
+            JSONObject json = new JSONObject();
+            json.put(Rest.STATUS, Rest.SUCCESS);
+            json.put(Rest.MESSAGE, "Clean started.");
+            Utils.sendResultJson.call(requestWrapper, json);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            JSONObject json = new JSONObject();
+            json.put(Rest.STATUS, Rest.ERROR);
+            json.put(Rest.MESSAGE, "Incorrect request.");
+            Utils.sendError.call(requestWrapper, 400, json);
+        }
+
+    }
+
+    @SuppressWarnings("HardCodedStringLiteral")
+    private void cleanAccountsV1(RequestWrapper requestWrapper) {
+        try {
+            //noinspection HardCodedStringLiteral
+            Common.log(LOG, "cleanAccountsV1");
+
+            Common.getInstance().getDataProcessor("v1").validateAccounts();
 
             JSONObject json = new JSONObject();
             json.put(Rest.STATUS, Rest.SUCCESS);

@@ -787,6 +787,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             accountPrivateData.put(REQUEST_OS, user.getOs());
                             accountPrivateData.put(Firebase.CREATED, ServerValue.TIMESTAMP);
                             Common.log(LOG, "createOrUpdateAccount:createAccount:" + user.getUid(), accountPrivateData);
+                            putStaticticsAccount(user.getUid(), AccountAction.ACCOUNT_CREATED, null);
                         } else {
                             Common.log(LOG, "createOrUpdateAccount:updateAccount:" + user.getUid(), accountPrivateData);
                         }
@@ -1291,6 +1292,61 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
     }
 
+    @Override
+    public void validateAccounts() {
+        ref.child(Firebase.SECTION_STAT).child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_ACCOUNTS_CLEANED).setValue(ServerValue.TIMESTAMP);
+
+        Common.log(LOG, "Accounts validation is performing, checking online users");
+
+        new TaskSingleValueEventFor<JSONObject>(ref.child(Firebase.SECTION_USERS)).setFirebaseRest(true).addOnCompleteListener(new Runnable1<JSONObject>() {
+            @Override
+            public void call(JSONObject accounts) {
+                try {
+                    Iterator<String> iter = accounts.keys();
+                    while (iter.hasNext()) {
+                        final String uid = iter.next();
+
+                        new TaskSingleValueEventFor<DataSnapshot>(ref.child(Firebase.SECTION_USERS).child(uid).child(Firebase.PRIVATE))
+                                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
+                                    @Override
+                                    public void call(DataSnapshot dataSnapshot) {
+                                        try {
+                                            Map value = (Map) dataSnapshot.getValue();
+                                            boolean expired = false;
+                                            boolean trusted = false;
+                                            if (value.containsKey(REQUEST_SIGN_PROVIDER) && !"anonymous".equals(value.get(REQUEST_SIGN_PROVIDER))) {
+                                                trusted = true;
+                                            }
+
+                                            if (value.containsKey(Firebase.CHANGED)) {
+                                                if ((new Date().getTime() - (long) value.get(Firebase.CHANGED)) > 30 * 24 * 60 * 60 * 1000L) {
+                                                    expired = true;
+                                                }
+                                            } else {
+                                                expired = true;
+                                            }
+
+                                            if (!trusted && expired) {
+                                                String message = Misc.durationToString(new Date().getTime() - (long) value.get(Firebase.CHANGED));
+                                                Common.log(LOG, "--- removing account: " + uid, "expired for: " +message);
+
+                                                ref.child(Firebase.SECTION_USERS).child(uid).setValue(null);
+                                                putStaticticsAccount(uid, AccountAction.ACCOUNT_DELETED, "Expired for " + message);
+                                            }
+                                        } catch(Exception e) {
+                                            Common.err(LOG, "validateAccounts:failed:", uid, e.getMessage());
+                                        }
+                                    }
+                                }).start();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+    }
+
     /**
      * This method requests and returns customToken from Firebase. Depending on current installation type
      * it defines the properly request and performs it. Installation type can be defined in gradle.build.
@@ -1398,6 +1454,39 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     }
 
     @Override
+    public void putStaticticsAccount(String accountId, AccountAction action, String errorMessage) {
+        DatabaseReference referenceTotal;
+        DatabaseReference referenceToday;
+        Calendar cal = Calendar.getInstance();
+        String today = String.format("%04d-%02d-%02d", cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH));
+
+        System.out.println(accountId+":"+action+":"+errorMessage+":"+today);
+
+        referenceTotal = ref.child(Firebase.SECTION_STAT).child(Firebase.STAT_TOTAL);
+        referenceToday = ref.child(Firebase.SECTION_STAT).child(Firebase.STAT_BY_DATE).child(today);
+        switch(action) {
+            case ACCOUNT_CREATED:
+                referenceTotal = referenceTotal.child(Firebase.STAT_ACCOUNTS_CREATED);
+                referenceToday = referenceToday.child(Firebase.STAT_ACCOUNTS_CREATED);
+                break;
+            case ACCOUNT_DELETED:
+                referenceTotal = referenceTotal.child(Firebase.STAT_ACCOUNTS_DELETED);
+                referenceToday = referenceToday.child(Firebase.STAT_ACCOUNTS_DELETED);
+                break;
+        }
+
+        referenceToday.runTransaction(incrementValue);
+        referenceTotal.runTransaction(incrementValue);
+
+        if(errorMessage != null && errorMessage.length() > 0) {
+            Map<String, String> map = new HashMap<>();
+            map.put("account", accountId);
+            map.put("action", action.toString());
+            putStaticticsMessage(errorMessage, map);
+        }
+    }
+
+    @Override
     public void putStaticticsMessage(String message, Map<String, String> map) {
         Calendar cal = Calendar.getInstance();
         String today = String.format("%04d-%02d-%02d %02d-%02d-%02d-%03d", cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH),cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND), cal.get(Calendar.MILLISECOND));
@@ -1446,7 +1535,9 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         @Override
         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
             // Transaction completed
-            Common.err(LOG, "incrementValue:onComplete:" + databaseError);
+            if(databaseError != null) {
+                Common.err(LOG, "incrementValue:onComplete:" + databaseError);
+            }
         }
     };
 

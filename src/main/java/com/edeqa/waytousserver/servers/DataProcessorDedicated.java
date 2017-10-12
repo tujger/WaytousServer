@@ -113,6 +113,11 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }
 
     @Override
+    public void validateAccounts() {
+
+    }
+
+    @Override
     public LinkedList<String> getRequestHoldersList() {
         LinkedList<String> classes = new LinkedList<>();
         classes.add("TrackingRequestHolder");
@@ -508,6 +513,11 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     @Override
     public void putStaticticsUser(String groupId, String userId, UserAction action, String errorMessage) {
         // TODO
+    }
+
+    @Override
+    public void putStaticticsAccount(String accountId, AccountAction action, String errorMessage) {
+
     }
 
     @Override

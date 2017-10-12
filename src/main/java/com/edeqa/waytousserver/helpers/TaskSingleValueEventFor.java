@@ -173,7 +173,7 @@ public class TaskSingleValueEventFor<T> {
             if(res == null || res.length() == 0 || res.startsWith("null")) {
                 return;
             }
-            Common.log(LOG, res);
+//            Common.log(LOG, res);
 
             JSONObject json = new JSONObject(res);
             if(onSuccessListener != null) onSuccessListener.call((T) json);
