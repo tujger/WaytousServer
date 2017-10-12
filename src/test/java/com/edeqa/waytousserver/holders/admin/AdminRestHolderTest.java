@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Created by eduardm on 021, 9/21/2017.
+ * Created 9/21/2017.
  */
 public class AdminRestHolderTest {
     @Before
