@@ -13,7 +13,11 @@ function Home() {
         div = document.getElementsByClassName("layout")[0];
         u.clear(div);
 
-        u.create("p", "To be implemented soon...", div);
+        u.create(HTML.H2, "Waytous admin", div);
+
+        u.create(HTML.DIV, "Here you may view and change groups and users in Waytous service.", div);
+
+
 
     };
 
