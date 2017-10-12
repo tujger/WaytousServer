@@ -11,6 +11,7 @@ function Statistics() {
 
     var tableSummaryGroups;
     var tableSummaryUsers;
+    var tableSummaryAccounts;
     var tableMessages;
     var div;
     var ref;
@@ -18,9 +19,12 @@ function Statistics() {
     var groupsStat;
     var usersChart;
     var usersStat;
+    var accountsChart;
+    var accountsStat;
     var messagesCounterNode;
     var groupsChartOptions;
     var usersChartOptions;
+    var accountsChartOptions;
 
 
     var initInterface = function() {
@@ -119,8 +123,37 @@ function Statistics() {
             ]
         });
 
+        u.create(HTML.DIV, "&nbsp;&nbsp;&nbsp;", columns);
+        tableSummaryAccounts = u.table({
+            className: "option",
+            sort: false,
+            filter: false,
+            caption: {
+                items: [
+                    { label: "Accounts" },
+                    { label: "Today" },
+                    { label: "Total" }
+                ]
+            }
+        }, u.create(HTML.DIV, null, columns));
+        tableSummaryAccounts.accountsCreatedItem = tableSummaryAccounts.add({
+            cells: [
+                { className:"th", innerHTML: "Created" },
+                { className:"option", innerHTML: "0" },
+                { className:"option", innerHTML: "0" }
+            ]
+        });
+        tableSummaryAccounts.accountsDeletedItem = tableSummaryAccounts.add({
+            cells: [
+                { className:"th", innerHTML: "Deleted" },
+                { className:"option", innerHTML: "0" },
+                { className:"option", innerHTML: "0" }
+            ]
+        });
+
         groupsChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
         usersChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
+        accountsChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
 
         /*
                 // Instantiate and draw our chart, passing in some options.
@@ -194,6 +227,20 @@ function Statistics() {
             hAxis: {slantedText:false, slantedTextAngle:90 }
         };
 
+        // Create the data table.
+        accountsStat = new google.visualization.DataTable();
+        accountsStat.addColumn("string", "Date");
+        accountsStat.addColumn("number", "Created");
+        accountsStat.addColumn("number", "Deleted");
+        accountsStat.addRow(["Loading...",0,0]);
+
+        // Set chart options
+        accountsChartOptions = {
+            title: "Accounts",
+            legend: { position: 'bottom', alignment: 'start' },
+            hAxis: {slantedText:false, slantedTextAngle:90 }
+        };
+
         // Instantiate and draw our chart, passing in some options.
         groupsChart = new google.visualization.LineChart(groupsChartNode);
         //groupsChart = new google.charts.Line(groupsChartNode);
@@ -203,6 +250,12 @@ function Statistics() {
             //usersChart = new google.charts.Line(usersChartNode);
             google.visualization.events.addOneTimeListener(usersChart, "ready", function(){
                 usersStat.removeRow(0);
+                accountsChart = new google.visualization.LineChart(accountsChartNode);
+                google.visualization.events.addOneTimeListener(accountsChart, "ready", function(){
+                    accountsStat.removeRow(0);
+                    updateData();
+                });
+                accountsChart.draw(usersStat, usersChartOptions);
                 updateData();
             });
             usersChart.draw(usersStat, usersChartOptions);
@@ -239,6 +292,8 @@ function Statistics() {
             updateValue(tableSummaryUsers.usersJoinedItem.cells[2], json[DATABASE.STAT_USERS_JOINED]);
             updateValue(tableSummaryUsers.usersReconnectedItem.cells[2], json[DATABASE.STAT_USERS_RECONNECTED]);
             updateValue(tableSummaryUsers.usersRejectedItem.cells[2], json[DATABASE.STAT_USERS_REJECTED]);
+            updateValue(tableSummaryAccounts.accountsCreatedItem.cells[2], json[DATABASE.STAT_ACCOUNTS_CREATED]);
+            updateValue(tableSummaryAccounts.accountsDeletedItem.cells[2], json[DATABASE.STAT_ACCOUNTS_DELETED]);
 
         }, function(err) {
             console.err("ERR", err);
@@ -292,10 +347,33 @@ function Statistics() {
                 usersStat.addRow(usersData);
             }
 
+
+            var accountsData = [data.key,0,0];
+            if(json[DATABASE.STAT_ACCOUNTS_CREATED]) {
+                accountsData[1] = json[DATABASE.STAT_ACCOUNTS_CREATED];
+            }
+            if(json[DATABASE.STAT_ACCOUNTS_DELETED]) {
+                accountsData[2] = json[DATABASE.STAT_ACCOUNTS_DELETED];
+            }
+            index = accountsStat.getFilteredRows([{column:0, value:data.key}])[0]
+            if(index != undefined) {
+                var row = accountsStat.getRowProperties(index);
+                for(var i in accountsData) {
+                    accountsStat.setValue(index, +i, accountsData[i]);
+                }
+            } else {
+                accountsStat.addRow(accountsData);
+            }
+
+
             google.visualization.events.addOneTimeListener(groupsChart, "ready", function(){
+                google.visualization.events.addOneTimeListener(usersChart, "ready", function(){
+                    accountsChart.draw(accountsStat, accountsChartOptions);
+                });
                 usersChart.draw(usersStat, usersChartOptions);
             });
             groupsChart.draw(groupsStat, groupsChartOptions);
+
 
             var date = new Date();
             date = "%04d-%02d-%02d".sprintf(date.getFullYear(), date.getMonth()+1, date.getDate());
@@ -307,6 +385,8 @@ function Statistics() {
                 updateValue(tableSummaryUsers.usersJoinedItem.cells[1], json[DATABASE.STAT_USERS_JOINED]);
                 updateValue(tableSummaryUsers.usersReconnectedItem.cells[1], json[DATABASE.STAT_USERS_RECONNECTED]);
                 updateValue(tableSummaryUsers.usersRejectedItem.cells[1], json[DATABASE.STAT_USERS_REJECTED]);
+                updateValue(tableSummaryAccounts.accountsCreatedItem.cells[1], json[DATABASE.STAT_ACCOUNTS_CREATED]);
+                updateValue(tableSummaryAccounts.accountsDeletedItem.cells[1], json[DATABASE.STAT_ACCOUNTS_DELETED]);
             }
         };
 
