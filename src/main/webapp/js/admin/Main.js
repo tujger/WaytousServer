@@ -23,6 +23,8 @@ function Main() {
         "User",
         "Group",
         "Groups",
+        "Account",
+        "Accounts",
         "Chat",
         "Logs",
         "Statistics"

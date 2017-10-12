@@ -2,7 +2,6 @@
 package com.edeqa.waytousserver.holders.admin;
 
 import com.edeqa.helpers.HtmlGenerator;
-import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
@@ -273,7 +272,7 @@ public class AdminRestHolder implements PageHolder {
                 String groupId = json.getString(Rest.GROUP_ID);
                 Long userNumber = Long.parseLong(json.get(Rest.USER_NUMBER).toString());
 
-                Common.getInstance().getDataProcessor("v1").removeUser(groupId,userNumber,new Runnable1<JSONObject>() {
+                Common.getInstance().getDataProcessor("v1").removeUserFromGroup(groupId,userNumber,new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
                         Utils.sendResultJson.call(requestWrapper, json);

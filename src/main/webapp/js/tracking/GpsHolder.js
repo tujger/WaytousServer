@@ -130,7 +130,7 @@ function GpsHolder(main) {
                 queue: true,
                 className: "alert-dialog",
                 items: [
-                    { type: HTML.DIV, label: u.lang.please_resolve_this_problem_and_try_again.format(message) },
+                    { type: HTML.DIV, label: u.lang.please_resolve_this_problem_and_try_again.format(message.innerHTML) },
                 ],
                 positive: {
                     label: u.lang.ok,

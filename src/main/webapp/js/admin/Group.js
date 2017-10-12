@@ -502,6 +502,21 @@ function Group() {
             console.warn("Resign because of",error);
             WTU.resign(updateAll);
         });
+        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("child_removed", function(snapshot) {
+            reload = true;
+
+            updateAll();
+            //var userNumber = snapshot.key;
+            //
+            //var row = tableUsers.items[userNumber];
+            //row.parentNode.removeChild(row);
+            //delete tableUsers.items[userNumber];
+            //tableUsers.update();
+
+        }, function(error){
+            console.warn("Resign because of",error);
+            WTU.resign(updateAll);
+        });
 
     }
 

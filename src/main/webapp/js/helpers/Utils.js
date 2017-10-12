@@ -1266,7 +1266,7 @@ function Utils(main) {
             } else if(!callback && !Sync._specialWatch[watched]) {
                 console.warn(options.key + " is not watching yet.")
             }
-        }
+        };
 
     }
     Sync.Type = {

@@ -60,10 +60,16 @@ function User() {
             ]
         });
 
-        tableSummary.userUidNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "UID" },
-            { className: "option", innerHTML: "..." }
-        ] });
+        tableSummary.userUidNode = tableSummary.add({
+            onclick: function(){
+                WTU.switchTo("/admin/account/"+tableSummary.userUidNode.cells[1].innerHTML);
+                return false;
+            },
+            cells: [
+                { className: "th", innerHTML: "UID" },
+                { className: "option", innerHTML: "..." }
+            ]
+        });
 
         tableSummary.userColorNode = tableSummary.add({ cells: [
             { className: "th", innerHTML: "Color" },
@@ -303,13 +309,14 @@ function User() {
 
     function removeUser() {
         u.clear(buttons);
-        u.create({className:"question", innerHTML: "Are you sure you want to remove user "+userNumber+" from group "+groupId+"?"}, buttons);
+        u.create({className:"question", innerHTML: "Are you sure you want to remove user "+userNumber+" from group "+groupId+"? Note that all user information will be removed from group."}, buttons);
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
             u.progress.show("Removing...");
             u.post("/admin/rest/v1/user/remove", JSON.stringify({group_id:groupId, user_number:userNumber}))
                 .then(function(){
                     u.progress.hide();
                     u.toast.show("User #"+userNumber+" was removed.");
+                    WTU.switchTo("/admin/group/" + groupId);
                 }).catch(function(code,xhr){
                 u.progress.hide();
                 console.warn("Resign because of",code,xhr);

@@ -470,7 +470,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }*/
 
     /*@Override
-    public void removeUser(String tokenId,String id){
+    public void removeUserFromGroup(String tokenId,String id){
         if(tokenId != null && id != null && groups.containsKey(tokenId)){
             MyGroup t = groups.get(tokenId);
             MyUser user = t.users.get(id);
@@ -480,13 +480,13 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                 response.put(RESPONSE_MESSAGE,"You have been dismissed.");
                 user.send(response);
                 user.disconnect();
-                t.removeUser(id);
+                t.removeUserFromGroup(id);
             }
         }
     }*/
 
     @Override
-    public void removeUser(String groupId, Long userNumber, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+    public void removeUserFromGroup(String groupId, Long userNumber, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
         // TODO
     }
 

@@ -285,8 +285,13 @@ function TrackingHolder(main) {
                                 main.toast.show(error);
                             }
                         });
-                        sync.overrideRemoteValue(true);
-                        //startTracking(agreementDialog.groupId);
+                        if(sync.ready()) {
+                            sync.overrideRemoteValue(true);
+                        } else {
+                            u.save("tracking:terms_of_service_confirmed", true);
+                            u.require("/js/helpers/TrackingFB.js").then(startTrackingReady.bind(self));
+                            //startTracking(agreementDialog.groupId);
+                        }
                     } else {
                         window.history.pushState({}, null, "/group/");
                     }
@@ -515,10 +520,10 @@ function TrackingHolder(main) {
     }
 
     function synchronizeTosConfirmation() {
-        return;
         var sync = new utils.sync({
             type: utils.sync.Type.ACCOUNT_PRIVATE,
             key: "tos-confirmed",
+            log: true,
             onsavelocalvalue: function(key, newValue, oldValue) {
                 console.log("LOCAL", key, newValue, oldValue)
                 if(newValue !== undefined && newValue !== null && newValue.constructor === Boolean) {

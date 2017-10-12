@@ -55,6 +55,7 @@ h2 {
 .question {
     font-weight: bold;
     color: red;
+    padding-right: 5px;
 }
 .create-dialog {
     width: 400px;

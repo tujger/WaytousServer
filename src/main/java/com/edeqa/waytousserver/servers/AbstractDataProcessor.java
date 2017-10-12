@@ -44,7 +44,7 @@ abstract public class AbstractDataProcessor {
     }
 
     public enum UserAction {
-        USER_JOINED, USER_RECONNECTED, USER_REJECTED
+        USER_JOINED, USER_RECONNECTED, USER_REJECTED, USER_REMOVED
     }
 
 
@@ -152,7 +152,7 @@ abstract public class AbstractDataProcessor {
 
     public abstract void registerUser(String groupId, MyUser user, String action, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
 
-    abstract public void removeUser(String groupId, Long userNumber, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    abstract public void removeUserFromGroup(String groupId, Long userNumber, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
 
     abstract public void switchPropertyForUser(String groupId, Long userNumber, String property, Boolean value, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
 

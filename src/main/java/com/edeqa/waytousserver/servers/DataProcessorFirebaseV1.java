@@ -22,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.internal.NonNull;
 import com.google.firebase.tasks.OnFailureListener;
 import com.google.firebase.tasks.OnSuccessListener;
@@ -921,57 +922,74 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
 
     @Override
-    public void removeUser(final String groupId, final Long userNumber, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public void removeUserFromGroup(final String groupId, final Long userNumber, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
 
-        final JSONObject json = new JSONObject();
+        final JSONObject res = new JSONObject();
+
 //        final String user = String.valueOf(userNumber);
 
-        json.put(Rest.GROUP_ID, groupId);
-        json.put(Rest.USER_NUMBER, userNumber);
+        res.put(Rest.GROUP_ID, groupId);
+        res.put(Rest.USER_NUMBER, userNumber);
 
         final OnFailureListener onFailureListener = new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                json.put(Rest.STATUS, Rest.ERROR);
-                json.put(Rest.MESSAGE, e.getMessage());
-                Common.err(LOG, "removeUser:" + userNumber, "group:" + groupId, "error:" + e.getMessage());
-                onerror.call(json);
+                res.put(Rest.STATUS, Rest.ERROR);
+                res.put(Rest.MESSAGE, e.getMessage());
+                Common.log(LOG, "removeUserFromGroup:error:", e.getMessage(), "userNumber:" + userNumber, "groupId:" + groupId);
+                onerror.call(res);
             }
         };
-        onFailureListener.onFailure(new Exception("Not implemented yet."));
+//        onFailureListener.onFailure(new Exception("Not implemented yet."));
 
-        /*ref.child(groupId).child(DATABASE.USERS_DATA_PRIVATE).child(user).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                ref.child(groupId).child(DATABASE.SECTION_USERS_DATA).child(user).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+        new TaskSingleValueEventFor<DataSnapshot>(ref.child(groupId).child(Firebase.USERS).child(Firebase.PRIVATE).child(String.valueOf(userNumber)).child(REQUEST_UID))
+                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        new TaskSingleValueEventFor(ref.child(groupId).child(DATABASE.USERS_KEYS))
-                                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                                    @Override
-                                    public void call(DataSnapshot dataSnapshot) {
-                                        HashMap<String,Serializable> val = (HashMap<String, Serializable>) dataSnapshot.getValue();
-                                        for(Map.Entry<String,Serializable> x:val.entrySet()) {
-                                            System.out.println(userNumber +":"+x.getKey() + ":" + x.getValue() + ":"+x.getValue().getClass()+":"+(x.getValue() == userNumber));
-                                            if(x.getValue() == userNumber) {
-                                                ref.child(groupId).child(DATABASE.USERS_KEYS).child(x.getKey()).removeValue().addOnCompleteListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        json.put(Constants.REST.STATUS, Constants.REST.SUCCESS);
-                                                        Common.log(LOG, "removeUser:" + userNumber, "group:"+groupId);
-                                                        onsuccess.call(json);
+                    public void call(DataSnapshot data) {
+
+                        final Object value = data.getValue();
+                        System.out.println(data.getValue());
+
+                        if (value != null && value instanceof String) {
+                            System.out.println("SEARCH");
+                            new TaskSingleValueEventFor<DataSnapshot>(ref.child(groupId).child(Firebase.USERS).child(Firebase.ORDER))
+                                    .addOnCompleteListener(new Runnable1<DataSnapshot>() {
+                                        @Override
+                                        public void call(DataSnapshot data) {
+                                            for(DataSnapshot x: data.getChildren()) {
+                                                System.out.println("ID:"+x.getValue());
+                                                if(x.getValue().equals(value)) {
+                                                    Map updates = new HashMap();
+                                                    updates.put(Firebase.USERS + "/" + Firebase.PUBLIC + "/" + userNumber, null);
+                                                    updates.put(Firebase.USERS + "/" + Firebase.ORDER + "/" + x.getKey(), "removed:" + x.getValue());
+                                                    updates.put(Firebase.USERS + "/" + Firebase.PRIVATE + "/" + userNumber, null);
+                                                    updates.put(Firebase.USERS + "/" + Firebase.KEYS + "/" + value.toString(), null);
+
+                                                    for (Map.Entry<String, RequestHolder> entry : requestHolders.entrySet()) {
+                                                        if (entry.getValue().isSaveable()) {
+                                                            updates.put(Firebase.PUBLIC + "/" + entry.getKey() + "/" + userNumber, null);
+                                                        }
                                                     }
-                                                });
-                                                return;
+
+                                                    ref.child(groupId).updateChildren(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void result) {
+                                                            res.put(Rest.STATUS, Rest.SUCCESS);
+                                                            Common.log(LOG, "removeUserFromGroup:removed:userNumber:" + userNumber, "groupId:" + groupId);
+                                                            onsuccess.call(res);
+                                                            putStaticticsUser(groupId, value.toString(), UserAction.USER_REMOVED, null);
+                                                        }
+                                                    }).addOnFailureListener(onFailureListener);
+                                                }
                                             }
                                         }
-                                        onFailureListener.onFailure(new Exception("User not found."));
-                                    }
-                                }).start();
+                                    }).start();
+                        } else {
+                            onFailureListener.onFailure(new Exception("User not found."));
+                        }
                     }
-                }).addOnFailureListener(onFailureListener);
-            }
-        }).addOnFailureListener(onFailureListener);*/
+                }).start();
+
     }
 
     @Override
@@ -1361,6 +1379,10 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 referenceTotal = referenceTotal.child(Firebase.STAT_USERS_REJECTED);
                 referenceToday = referenceToday.child(Firebase.STAT_USERS_REJECTED);
                 break;
+            case USER_REMOVED:
+                referenceTotal = referenceTotal.child(Firebase.STAT_USERS_REMOVED);
+                referenceToday = referenceToday.child(Firebase.STAT_USERS_REMOVED);
+                break;
         }
 
         referenceToday.runTransaction(incrementValue);
@@ -1424,7 +1446,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         @Override
         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
             // Transaction completed
-            Common.log(LOG, "incrementValue:onComplete:" + databaseError);
+            Common.err(LOG, "incrementValue:onComplete:" + databaseError);
         }
     };
 
