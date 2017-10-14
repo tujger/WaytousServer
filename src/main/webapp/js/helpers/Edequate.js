@@ -1859,7 +1859,7 @@ function Edequate(options) {
                 layout.style.transition = "";
 
                 if(e.changedTouches) touch = e.changedTouches[0];
-                var x = parseInt(layout.style.left || 0)
+                var x = parseInt(layout.style.left || 0);
                 if(lastDelta < -20 || (lastDelta <=0 && x < -layout.offsetWidth/2)) {
                     layout.style.left = (-layout.offsetWidth*1.5)+"px";
                     setTimeout(function(){layout.close()},500);
@@ -1885,7 +1885,6 @@ function Edequate(options) {
 
             layout.style.transition = "none";
         };
-
 
         var layout = create(HTML.DIV, {
             className:"drawer changeable" + (collapsed ? " drawer-collapsed" : "") + optionalClassName(options.className),
@@ -1940,8 +1939,55 @@ function Edequate(options) {
             }, 500);
         });
 
+        var swipeRightHolder = function(e){
+
+            var touch;
+            if(e.changedTouches) touch = e.changedTouches[0];
+
+            var startX = e.pageX || touch.pageX;
+            var lastX = startX;
+            var lastDelta = 0;
+
+            layout.style.transition = "none";
+            layout.style.left = "-10000px";
+            layout.classList.add("drawer-open");
+            layout.style.left = (-layout.offsetWidth + startX)+"px";
+
+            var endHolder = function(e){
+                window.removeEventListener("touchend", endHolder);
+                window.removeEventListener("touchmove", moveHolder);
+                layout.style.transition = "";
+
+                if(e.changedTouches) touch = e.changedTouches[0];
+                var x = parseInt(layout.style.left || 0);
+                if(lastDelta < -20 || (lastDelta <=0 && x < -layout.offsetWidth/2)) {
+                    layout.style.left = (-layout.offsetWidth*1.5)+"px";
+                    setTimeout(function(){layout.close()},500);
+                } else {
+                    layout.style.left = "";
+                }
+            };
+            var moveHolder = function(e) {
+                var delta;
+                if(e.changedTouches) touch = e.changedTouches[0];
+                delta = (e.pageX || touch.pageX) - layout.offsetWidth;
+                if(delta > 0) delta =0;
+                    layout.style.left = delta + "px";
+                    e.stopPropagation();
+            };
+            window.addEventListener("touchend", endHolder);
+            window.addEventListener("touchmove", moveHolder);
+
+        };
+        var layoutSwipeCatcher = create(HTML.DIV, {
+            className: "drawer-catcher",
+            ontouchstart: swipeRightHolder
+        });
+        layout.parentNode.insertBefore(layoutSwipeCatcher, layout);
+
         var layoutHeaderHolder = create(HTML.DIV, {className: "drawer-header-holder changeable"});
         layout.parentNode.insertBefore(layoutHeaderHolder, layout);
+
         layout.header = create(HTML.DIV, { className:"drawer-header changeable" }, layout);
 
         if(options.logo) {

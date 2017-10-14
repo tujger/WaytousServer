@@ -482,6 +482,9 @@ button:active {
     overflow: hidden;
     z-index: 10000;
 }
+.drawer-catcher {
+    display: none;
+}
 .drawer-collapsed {
     max-width: 40px;
     min-width: 40px;
@@ -1059,6 +1062,16 @@ button:active {
         background-color: white;
         display: none;
         z-index: 10000;
+    }
+    .drawer-catcher {
+        position: fixed;
+        left: 0;
+        top: 0;
+        background: transparent;
+        width: 10px;
+        height: 100%;
+        z-index: 10000;
+        display: block;
     }
     .drawer-open {
         display: block;
