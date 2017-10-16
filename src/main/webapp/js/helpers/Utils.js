@@ -960,6 +960,7 @@ function Utils(main) {
 
             var onfail = function(error){
                 options.onerror(options.key, error);
+                options.onfinish(options.mode, options.key);
             };
 
             var result = {};
@@ -968,6 +969,7 @@ function Utils(main) {
                     continue;
                 } else if(values[i] && values[i].constructor !== Object) {
                     options.onerror(options.key, "Some of local values is not an object, use 'syncValue' for each one.");
+                    options.onfinish(options.mode, options.key);
                     return;
                 }
                 //if(values[i][DATABASE.SYNCED]) values[i][DATABASE.SYNCED] = firebase.database.ServerValue.TIMESTAMP;
@@ -993,6 +995,7 @@ function Utils(main) {
                 var value = data.val() || {};
                 if(value.constructor !== Object) {
                     options.onerror(options.key, "Remote value is not an object, use 'syncValue'.");
+                    options.onfinish(options.mode, options.key);
                     return;
                 }
 
@@ -1050,7 +1053,6 @@ function Utils(main) {
                                 result[key][DATABASE.KEYS] = key;
                             } else {
                                 values.push(newValue);
-                                newValue[DATABASE.KEYS] = key;
                             }
                             this(key,newValue,oldValue);
                         };
