@@ -28,12 +28,10 @@ function Accounts() {
 
         u.create(HTML.H2, "Summary", div);
 
-        var divSummaryMap = u.create(HTML.DIV, {className: "two-divs"}, div);
-        var divSummary = u.create(HTML.DIV, {className: "summary-place"}, divSummaryMap);
 
         tableSummary = u.table({
             className: "option",
-        }, divSummary);
+        }, div);
 
         function filterActive(row){
             return !row.classList.contains("inactive");

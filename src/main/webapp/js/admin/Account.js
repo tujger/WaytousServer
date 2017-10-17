@@ -12,10 +12,10 @@ function Account() {
     var positions;
     var div;
     var groupId;
-    var userId;
+    var accountId;
     var userNumber;
     var tableSummary;
-    var tableLocations;
+    var tableHistory;
     var divMap;
     var map;
     var bounds;
@@ -29,105 +29,83 @@ function Account() {
 
         u.create(HTML.H2, "Summary", div);
 
-        var divSummaryMap = u.create(HTML.DIV, {className: "two-divs"}, div);
-        var divSummary = u.create(HTML.DIV, {className: "summary-place"}, divSummaryMap);
-
         tableSummary = u.table({
             className: "option",
-            placeholder: "Loading..."
-        }, divSummary);
+        }, div);
 
-        tableSummary.userNumberNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Number" },
-            { className: "option", innerHTML: userNumber }
-        ] });
-
-        tableSummary.userNameNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Name" },
-            { className: "option", innerHTML: "..." }
-        ] });
-
-        tableSummary.userActiveNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Active" },
-            { className: "option highlight", innerHTML: "..." }
-        ] });
-
-        tableSummary.add({
-            onclick: function(){
-                WTU.switchTo("/admin/group/"+groupId);
-                return false;
-            },
+        tableSummary.accountUidItem = tableSummary.add({
             cells: [
-                { className: "th", innerHTML: "Group" },
-                { className: "option", innerHTML: groupId }
+                { className:"th", innerHTML: "UID" },
+                { className:"option", innerHTML: "..." }
+            ]
+        });
+        tableSummary.accountCreatedItem = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "Created" },
+                { className:"option", innerHTML: "..." }
+            ]
+        });
+        tableSummary.accountUpdatedItem = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "Updated" },
+                { className:"option", innerHTML: "..." }
+            ]
+        });
+        tableSummary.accountTrustedItem = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "Trusted" },
+                { className:"option", innerHTML: "..." }
+            ]
+        });
+        tableSummary.accountNameItem = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "Name" },
+                { className:"option", innerHTML: "..." }
+            ]
+        });
+        tableSummary.accountModelItem = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "Model" },
+                { className:"option", innerHTML: "..." }
+            ]
+        });
+        tableSummary.accountSignProviderItem = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "Sign provider" },
+                { className:"option", innerHTML: "..." }
+            ]
+        });
+        tableSummary.accountOsItem = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "OS" },
+                { className:"option", innerHTML: "..." }
+            ]
+        });
+        tableSummary.accountSyncedItem = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "Last sync" },
+                { className:"option", innerHTML: "..." }
+            ]
+        });
+        tableSummary.accountHistoryCountItem = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "History items" },
+                { className:"option", innerHTML: "0" }
             ]
         });
 
-        tableSummary.userUidNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "UID" },
-            { className: "option", innerHTML: "..." }
-        ] });
+        var accountsTitleNode = u.create(HTML.H2, "History", div);
+//        buttons = u.create("div", {className:"buttons"}, accountsTitleNode);
+//        renderButtons(buttons);
 
-        tableSummary.userColorNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Color" },
-            { style: { /*backgroundColor: utils.getHexColor(snapshot.val().color), */opacity: 0.5 } }
-        ]});
-
-        tableSummary.userCreatedNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Created" },
-            { className: "option", innerHTML: "..." }
-        ]});
-
-        tableSummary.userUpdatedNode = tableSummary.add({
-//            style: { display: (snapshot.val().persistent ? "none" : "")},
-            cells: [
-                { className: "th", innerHTML: "Updated" },
-                { className: "highlight option", innerHTML: "..." }
-            ]
-        });
-
-        tableSummary.userOsNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Platform" },
-            { className: "option", innerHTML: "..." }
-        ]});
-
-        tableSummary.userDeviceNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Device" },
-            { className: "option", innerHTML: "..." }
-        ]});
-
-        tableSummary.userSignProviderNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Sign provider" },
-            { className: "option", innerHTML: "..." }
-        ]});
-
-        tableSummary.userLocations = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Locations" },
-            { className: "option", innerHTML: 0 }
-        ]});
-
-        divMap = u.create(HTML.DIV, {className: "map"}, u.create(HTML.DIV, {
-            className: "map-place"
-        }, divSummaryMap));
-
-        u.create(HTML.BR, null, div);
-        buttons = u.create({className:"buttons"}, div);
-        renderButtons(buttons);
-
-
-        u.create(HTML.H2, "Positions", div);
-
-        tableLocations = u.table({
-            id: "admin:locations",
+        tableHistory = u.table({
+            id: "admin:account:history",
             caption: {
                 items: [
-                    { label: "Timestamp", className: "media-hidden" },
-                    { label: "Provider" },
-                    { label: "Latitude" },
-                    { label: "Longitude" },
-                    { label: "Accuracy", className: "media-hidden" },
-                    { label: "Bearing", className: "media-hidden" },
-                    { label: "Speed", className: "media-hidden" }
+                    { label: "Timestamp" },
+                    { label: "Action" },
+                    { label: "Key" },
+                    { label: "Value" },
                 ]
             },
             placeholder: "Loading..."
@@ -139,9 +117,32 @@ function Account() {
     };
 
     function updateSummary() {
-        var ref = database.ref();
-        tableSummary.placeholder.show();
+        if(!accountId) {
+            WTU.switchTo("/admin/accounts/");
+            return;
+        }
 
+        var ref = database.ref();
+
+        ref.child(DATABASE.SECTION_USERS).child(accountId).child(DATABASE.PRIVATE).once("value").then(function(snapshot) {
+            if(!snapshot || !snapshot.val()) return;
+
+
+            tableSummary.accountNameItem.lastChild.innerHTML = snapshot.val()[DATABASE.NAME] || "";
+            tableSummary.accountUidItem.lastChild.innerHTML = accountId;
+    //        tableSummary.accountTrustedItem.lastChild.innerHTML = snapshot.val()[DATABASE.WELCOME_MESSAGE] || "";
+            tableSummary.accountModelItem.lastChild.innerHTML = snapshot.val()[REQUEST.MODEL] || "";
+            tableSummary.accountSignProviderItem.lastChild.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER] || "";
+            tableSummary.accountOsItem.lastChild.innerHTML = snapshot.val()[REQUEST.OS] || "";
+            tableSummary.accountCreatedItem.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString();
+            tableSummary.accountUpdatedItem.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CHANGED]).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(snapshot.val()[DATABASE.CHANGED])) + " ago)";
+            tableSummary.accountSyncedItem.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.SYNCED]).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(snapshot.val()[DATABASE.SYNCED])) + " ago)";
+
+
+        }).catch(function(error){
+            console.warn("Resign because of",error);
+            WTU.resign(updateAll);
+        });
     }
 
     function updateAll() {
@@ -152,17 +153,26 @@ function Account() {
     function updateData(){
 
         var ref = database.ref();
-        tableLocations.placeholder.show();
-        u.clear(tableLocations.body);
+        tableHistory.placeholder.show();
+        u.clear(tableHistory.body);
         var reload = false;
         var initial = true;
         setTimeout(function(){initial = false;}, 3000);
 
-        ref.child(DATABASE.SECTION_USERS).off();
-        ref.child(DATABASE.SECTION_USERS).on("child_added", function(snapshot) {
+        var modes = {
+            or: "Override remote",
+            ol: "Override local",
+        };
+        var keys = {
+            "p/ch": "Updated",
+        };
+
+
+        ref.child(DATABASE.SECTION_USERS).child(accountId).child(DATABASE.PRIVATE).child(DATABASE.HISTORY).off();
+        ref.child(DATABASE.SECTION_USERS).child(accountId).child(DATABASE.PRIVATE).child(DATABASE.HISTORY).on("child_added", function(snapshot) {
 
             if(!snapshot || !snapshot.val()){
-                tableLocations.placeholder.show("No locations");
+                tableHistory.placeholder.show("No locations");
                 return;
             }
             reload = false;
@@ -170,40 +180,18 @@ function Account() {
             var lat = snapshot.val()[USER.LATITUDE];
             var lng = snapshot.val()[USER.LONGITUDE];
 
-            var row = tableLocations.add({
+            var row = tableHistory.add({
                 className: "locations-row highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
                 tabindex: -1,
                 cells: [
-                    { className: "media-hidden", innerHTML: new Date(snapshot.val()[REQUEST.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[REQUEST.TIMESTAMP] },
-                    { innerHTML: snapshot.val()[USER.PROVIDER] },
-                    { innerHTML: lat },
-                    { innerHTML: lng },
-                    { className: "media-hidden", innerHTML: snapshot.val()[USER.ACCURACY] },
-                    { className: "media-hidden", innerHTML: snapshot.val()[USER.BEARING] },
-                    { className: "media-hidden", innerHTML: snapshot.val()[USER.SPEED] }
+                    { innerHTML: new Date(snapshot.val()[DATABASE.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[DATABASE.TIMESTAMP] },
+                    { innerHTML: modes[snapshot.val()[DATABASE.MODE]] },
+                    { innerHTML: keys[snapshot.val()[DATABASE.KEYS]] },
+                    { innerHTML: snapshot.val()[DATABASE.VALUE] },
                 ]
             });
 
-            tableSummary.userLocations.lastChild.innerHTML = +tableSummary.userLocations.lastChild.innerHTML + 1;
-            if((+tableSummary.userLocations.lastChild.innerHTML) == limit) { tableSummary.userLocations.lastChild.innerHTML += " (restricted to " + limit + ")" }
-
-            if(map) {
-                var position = utils.latLng({coords:{latitude:lat, longitude:lng}});
-                positions.push(position);
-                bounds.extend(position);
-                clearTimeout(drawTrackTask);
-                drawTrackTask = setTimeout(function(){
-                    map.fitBounds(bounds);
-                    map.fitBounds(bounds);
-                    track = track || new google.maps.Polyline({
-                        geodesic: true,
-                        strokeColor: "blue",
-                        strokeWeight: 2,
-                        map: map
-                    });
-                    track.setPath(positions);
-                }, 100);
-            }
+            tableSummary.accountHistoryCountItem.lastChild.innerHTML = +tableSummary.accountHistoryCountItem.lastChild.innerHTML + 1;
 
         }, function(error){
             console.warn("Resign because of",error);
@@ -249,7 +237,7 @@ function Account() {
             }).catch(function(code,xhr){
             u.progress.hide();
             console.warn("Resign because of",code,xhr);
-            WTU.resign(updateSummary);
+            WTU.resign(updateAll);
             var res = JSON.parse(xhr.responseText) || {};
             u.toast.show(res.message || xhr.statusText);
             renderButtons(buttons);
@@ -270,7 +258,7 @@ function Account() {
                 }).catch(function(code,xhr){
                 u.progress.hide();
                 console.warn("Resign because of",code,xhr);
-                WTU.resign(updateSummary);
+                WTU.resign(updateAll);
                 var res = JSON.parse(xhr.responseText) || {};
                 u.toast.show(res.message || xhr.statusText);
                 renderButtons(buttons);
@@ -286,11 +274,11 @@ function Account() {
         start: function(request) {
             if(request) {
                 this.page = request[2] + "/" + request[3];
-                userId = request[3];
+                accountId = request[3];
             } else {
                 var parts = window.location.pathname.split("/");
                 this.page = parts[2] + "/" + parts[3];
-                userId = parts[3];
+                accountId = parts[3];
             }
             div = document.getElementsByClassName("layout")[0];
             u.clear(div);
