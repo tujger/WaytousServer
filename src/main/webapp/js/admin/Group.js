@@ -573,6 +573,19 @@ function Group() {
         positions = {};
         markers = {};
 
+        u.create(HTML.BUTTON, {
+            className: "map-place-switch icon notranslate",
+            innerHTML: "flip_to_front",
+            onclick: function() {
+                if(divMapGroup.parentNode.classList.contains("modal")) {
+                    divMapGroup.parentNode.classList.remove("modal");
+                } else {
+                    divMapGroup.parentNode.classList.add("modal");
+                }
+
+            }
+        }, divMapGroup);
+
         updateAll();
     }
 

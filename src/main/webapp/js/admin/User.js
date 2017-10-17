@@ -19,6 +19,7 @@ function User() {
     var drawTrackTask;
     var track;
     var limit = 1000;
+    var marker;
 
     var renderInterface = function() {
 
@@ -215,45 +216,80 @@ function User() {
                 tableLocations.placeholder.show("No locations");
                 return;
             }
-            reload = false;
+            setTimeout(function(){
+                var snapshot = this;
 
-            var lat = snapshot.val()[USER.LATITUDE];
-            var lng = snapshot.val()[USER.LONGITUDE];
+                reload = false;
 
-            var row = tableLocations.add({
-                className: "locations-row highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
-                tabindex: -1,
-                cells: [
-                    { className: "media-hidden", innerHTML: new Date(snapshot.val()[REQUEST.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[REQUEST.TIMESTAMP] },
-                    { innerHTML: snapshot.val()[USER.PROVIDER] },
-                    { innerHTML: lat },
-                    { innerHTML: lng },
-                    { className: "media-hidden", innerHTML: snapshot.val()[USER.ACCURACY] },
-                    { className: "media-hidden", innerHTML: snapshot.val()[USER.BEARING] },
-                    { className: "media-hidden", innerHTML: snapshot.val()[USER.SPEED] }
-                ]
-            });
+                var lat = snapshot.val()[USER.LATITUDE];
+                var lng = snapshot.val()[USER.LONGITUDE];
 
-            tableSummary.userLocations.lastChild.innerHTML = +tableSummary.userLocations.lastChild.innerHTML + 1;
-            if((+tableSummary.userLocations.lastChild.innerHTML) == limit) { tableSummary.userLocations.lastChild.innerHTML += " (restricted to " + limit + ")" }
+                var row = tableLocations.add({
+                    className: "locations-row highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
+                    tabindex: -1,
+                    cells: [
+                        { className: "media-hidden", innerHTML: new Date(snapshot.val()[REQUEST.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[REQUEST.TIMESTAMP] },
+                        { innerHTML: snapshot.val()[USER.PROVIDER] },
+                        { innerHTML: lat },
+                        { innerHTML: lng },
+                        { className: "media-hidden", innerHTML: snapshot.val()[USER.ACCURACY] },
+                        { className: "media-hidden", innerHTML: snapshot.val()[USER.BEARING] },
+                        { className: "media-hidden", innerHTML: snapshot.val()[USER.SPEED] }
+                    ],
+                    onclick: function() {
+                        if(!map) return;
 
-            if(map) {
-                var position = utils.latLng({coords:{latitude:lat, longitude:lng}});
-                positions.push(position);
-                bounds.extend(position);
-                clearTimeout(drawTrackTask);
-                drawTrackTask = setTimeout(function(){
-                    map.fitBounds(bounds);
-                    map.fitBounds(bounds);
-                    track = track || new google.maps.Polyline({
-                        geodesic: true,
-                        strokeColor: "blue",
-                        strokeWeight: 2,
-                        map: map
-                    });
-                    track.setPath(positions);
-                }, 100);
-            }
+                        var removeMarker = false;
+                        var setMarker = false;
+
+                        if(marker && marker.origin == this) {
+                            removeMarker = true;
+                        } else if(marker) {
+                            removeMarker = true;
+                            setMarker = true;
+                        } else {
+                            setMarker = true;
+                        }
+                        if(removeMarker) {
+                            marker.setMap(null);
+                            marker = null;
+                        }
+                        if(setMarker) {
+                            var position = utils.latLng({coords:{latitude: this.snapshot[USER.LATITUDE], longitude:this.snapshot[USER.LONGITUDE]}});
+                            marker = new google.maps.Marker({
+                                position: position,
+                                map: map
+                            });
+                            marker.origin = this;
+                            map.setCenter(position);
+                            map.setZoom(15);
+                        }
+                    }
+                });
+                row.snapshot = snapshot.val();
+
+                tableSummary.userLocations.lastChild.innerHTML = +tableSummary.userLocations.lastChild.innerHTML + 1;
+                if((+tableSummary.userLocations.lastChild.innerHTML) == limit) { tableSummary.userLocations.lastChild.innerHTML += " (restricted to " + limit + ")" }
+
+                if(map) {
+                    var position = utils.latLng({coords:{latitude:lat, longitude:lng}});
+                    positions.push(position);
+                    bounds.extend(position);
+                    clearTimeout(drawTrackTask);
+                    drawTrackTask = setTimeout(function(){
+                        map.fitBounds(bounds);
+                        map.fitBounds(bounds);
+                        track = track || new google.maps.Polyline({
+                            geodesic: true,
+                            strokeColor: "blue",
+                            strokeWeight: 2,
+                            map: map
+                        });
+                        track.setPath(positions);
+                    }, 100);
+                }
+            }.bind(snapshot), 0);
+
 
         }, function(error){
             console.warn("Resign because of",error);
@@ -351,6 +387,19 @@ function User() {
         positions = [];
         track = null;
         bounds = new google.maps.LatLngBounds();
+
+        u.create(HTML.BUTTON, {
+            className: "map-place-switch icon notranslate",
+            innerHTML: "flip_to_front",
+            onclick: function() {
+                if(divMap.parentNode.classList.contains("modal")) {
+                    divMap.parentNode.classList.remove("modal");
+                } else {
+                    divMap.parentNode.classList.add("modal");
+                }
+
+            }
+        }, divMap);
 
         updateAll();
     }
