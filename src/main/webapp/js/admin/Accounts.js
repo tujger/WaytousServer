@@ -181,54 +181,60 @@ function Accounts() {
         ref.child(DATABASE.SECTION_USERS).off();
         ref.child(DATABASE.SECTION_USERS).on("child_added", function(snapshot) {
 
-            if(!snapshot || !snapshot.val()){
-                tableAccounts.placeholder.show("No accounts");
-                return;
-            }
-            reload = false;
-            var privateData = snapshot.val()[DATABASE.PRIVATE];
-            tableSummary.accountsTotalItem.lastChild.innerHTML = +tableSummary.accountsTotalItem.lastChild.innerHTML + 1;
+            setTimeout(function(){
+                var snapshot = this;
 
-            var expired = false;
-            var trusted = false;
-            var activeToday = true;
-            if(privateData[REQUEST.SIGN_PROVIDER] == "anonymous") {
-                if(new Date().getTime() - privateData[DATABASE.CHANGED] > 30*24*60*60*1000) expired = true;
-            } else {
-                trusted = true;
-            }
-            if(new Date().getTime() - privateData[DATABASE.CHANGED] > 24*60*60*1000) activeToday = false;
+                if(!snapshot || !snapshot.val()){
+                    tableAccounts.placeholder.show("No accounts");
+                    return;
+                }
+                reload = false;
+                var privateData = snapshot.val()[DATABASE.PRIVATE];
+                tableSummary.accountsTotalItem.lastChild.innerHTML = +tableSummary.accountsTotalItem.lastChild.innerHTML + 1;
 
-            if(lastRegistered[DATABASE.CREATED] < privateData[DATABASE.CREATED]) {
-                lastRegistered = privateData;
-                lastRegistered[REQUEST.UID] = snapshot.key;
-                tableSummary.lastRegisteredItem.lastChild.innerHTML = new Date(lastRegistered[DATABASE.CREATED]).toLocaleString();
-                tableSummary.lastRegisteredItem.uid = lastRegistered[REQUEST.UID];
-            }
+                var expired = false;
+                var trusted = false;
+                var activeToday = true;
+                if(privateData[REQUEST.SIGN_PROVIDER] == "anonymous") {
+                    if(new Date().getTime() - privateData[DATABASE.CHANGED] > 30*24*60*60*1000) expired = true;
+                } else {
+                    trusted = true;
+                }
+                if(new Date().getTime() - privateData[DATABASE.CHANGED] > 24*60*60*1000) activeToday = false;
 
-            if(activeToday) tableSummary.accountsRecentItem.lastChild.innerHTML = +tableSummary.accountsRecentItem.lastChild.innerHTML + 1;
-            if(expired) tableSummary.accountsExpiredItem.lastChild.innerHTML = +tableSummary.accountsExpiredItem.lastChild.innerHTML + 1;
-            if(!expired) tableSummary.accountsActiveItem.lastChild.innerHTML = +tableSummary.accountsActiveItem.lastChild.innerHTML + 1;
-            if(trusted) tableSummary.accountsTrustedItem.lastChild.innerHTML = +tableSummary.accountsTrustedItem.lastChild.innerHTML + 1;
+                if(lastRegistered[DATABASE.CREATED] < privateData[DATABASE.CREATED]) {
+                    lastRegistered = privateData;
+                    lastRegistered[REQUEST.UID] = snapshot.key;
+                    tableSummary.lastRegisteredItem.lastChild.innerHTML = new Date(lastRegistered[DATABASE.CREATED]).toLocaleString();
+                    tableSummary.lastRegisteredItem.uid = lastRegistered[REQUEST.UID];
+                }
 
-            var row = tableAccounts.add({
-                className: "accounts-row highlight inactive",
-                onclick: function(){
-                    WTU.switchTo("/admin/account/"+snapshot.key);
-                    return false;
-                },
-                cells: [
-                    { innerHTML: privateData[DATABASE.NAME] },
-                    { className: "media-hidden", innerHTML: new Date(privateData[DATABASE.CREATED]).toLocaleString(), sort: privateData[DATABASE.CREATED] },
-                    { innerHTML: new Date(privateData[DATABASE.CHANGED]).toLocaleString(), sort: privateData[DATABASE.CHANGED] },
-                    { innerHTML: privateData[REQUEST.SIGN_PROVIDER] },
-                    { className: "media-hidden", innerHTML: privateData[REQUEST.OS] },
-                    { className: "media-hidden", innerHTML: privateData[REQUEST.MODEL] },
-                ]
-            });
-            if(!expired) row.classList.remove("inactive");
-            if(expired) row.classList.add("disabled");
-            if(trusted) row.trusted = true;
+                if(activeToday) tableSummary.accountsRecentItem.lastChild.innerHTML = +tableSummary.accountsRecentItem.lastChild.innerHTML + 1;
+                if(expired) tableSummary.accountsExpiredItem.lastChild.innerHTML = +tableSummary.accountsExpiredItem.lastChild.innerHTML + 1;
+                if(!expired) tableSummary.accountsActiveItem.lastChild.innerHTML = +tableSummary.accountsActiveItem.lastChild.innerHTML + 1;
+                if(trusted) tableSummary.accountsTrustedItem.lastChild.innerHTML = +tableSummary.accountsTrustedItem.lastChild.innerHTML + 1;
+
+                var row = tableAccounts.add({
+                    className: "accounts-row highlight inactive",
+                    onclick: function(){
+                        WTU.switchTo("/admin/account/"+snapshot.key);
+                        return false;
+                    },
+                    cells: [
+                        { innerHTML: privateData[DATABASE.NAME] },
+                        { className: "media-hidden", innerHTML: new Date(privateData[DATABASE.CREATED]).toLocaleString(), sort: privateData[DATABASE.CREATED] },
+                        { innerHTML: new Date(privateData[DATABASE.CHANGED]).toLocaleString(), sort: privateData[DATABASE.CHANGED] },
+                        { innerHTML: privateData[REQUEST.SIGN_PROVIDER] },
+                        { className: "media-hidden", innerHTML: privateData[REQUEST.OS] },
+                        { className: "media-hidden", innerHTML: privateData[REQUEST.MODEL] },
+                    ]
+                });
+                if(!expired) row.classList.remove("inactive");
+                if(expired) row.classList.add("disabled");
+                if(trusted) row.trusted = true;
+
+            }.bind(snapshot), 0)
+
         }, function(error){
             console.warn("Resign because of",error);
             WTU.resign(updateAll);

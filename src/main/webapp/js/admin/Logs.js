@@ -82,12 +82,14 @@ function Logs() {
             table.head.cells[0].lastChild.innerHTML = "Logs (updated "+(new Date().toLocaleString())+")";
             var rows = xhr.response.split("\n");
             for(var i in rows) {
-                table.add({
-                    className: "table-logs-row",
-                    cells: [
-                        { className: "table-logs-row-cell", innerHTML: rows[i] },
-                    ]
-                });
+                setTimeout(function(){
+                    table.add({
+                        className: "table-logs-row",
+                        cells: [
+                            { className: "table-logs-row-cell", innerHTML: this },
+                        ]
+                    });
+                }.bind(rows[i]), 0);
             }
             table.body.scrollTop = scroll
         }).catch(function(code,xhr){

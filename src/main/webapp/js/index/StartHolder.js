@@ -15,18 +15,10 @@ function StartHolder(main) {
     this.title = u.lang.start;
     this.menu = u.lang.start;
 
-    var drawerItemNewIconSvg = {
-        xmlns:"http://www.w3.org/2000/svg",
-        viewbox:"0 0 24 24",
-        version:"1.1",
-        className: "menu-item"
-    };
-    var drawerItemNewIconPath = {
-        xmlns:"http://www.w3.org/2000/svg",
-        fill:"darkslategray",
-        d: "M10,2l-6.5,15 0.5,0.5L9,15L12.29,7.45z M14,5.5l-6.5,15 0.5,0.5 6,-3l6,3 0.5,-0.5z"
-    };
-    this.icon =  u.create(HTML.PATH, drawerItemNewIconPath, u.create(HTML.SVG, drawerItemNewIconSvg)).parentNode;
+    this.icon = u.create(HTML.IMG, {
+        src: "/images/navigation_twinks.svg",
+        className: "icon drawer-menu-item-icon"
+    });
 
     this.start = function() {
         console.log("INDEX START");

@@ -365,33 +365,36 @@ function Group() {
                 tableUsers.placeholder.show("No users");
                 return;
             }
-            reload = false;
-            var userNumber = snapshot.key;
+            setTimeout(function() {
+                var snapshot = this;
 
-            var row = tableUsers.add({
-                className: "highlight inactive disabled",
-                onclick: function(){
-                    WTU.switchTo("/admin/user/"+groupId+"/"+userNumber);
-                    return false;
-                },
-                cells: [
-                    { innerHTML: userNumber, sort: parseInt(userNumber) },
-                    { innerHTML: snapshot.val()[DATABASE.NAME] },
-                    { style: { backgroundColor: utils.getHexColor(snapshot.val()[DATABASE.COLOR]), opacity: 0.5 } },
-                    { className: "media-hidden", sort: snapshot.val()[DATABASE.CREATED], innerHTML: snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
-                    { sort: 0, innerHTML: "..." },
-                    { className: "media-hidden", innerHTML: "..." },
-                    { className: "media-hidden", innerHTML: "..." },
-                    { className: "media-hidden", innerHTML: "..." }
-                ],
-            });
-            var userNameNode = row.cells[1];
-            var userChangedNode = row.cells[4];
-            var userOsNode = row.cells[5];
-            var userDeviceNode = row.cells[6];
-            var userSignProviderNode = row.cells[7];
+                reload = false;
+                var userNumber = snapshot.key;
 
-            tableSummary.usersNode.lastChild.innerHTML = +tableSummary.usersNode.lastChild.innerHTML + 1;
+                var row = tableUsers.add({
+                    className: "highlight inactive disabled",
+                    onclick: function(){
+                        WTU.switchTo("/admin/user/"+groupId+"/"+userNumber);
+                        return false;
+                    },
+                    cells: [
+                        { innerHTML: userNumber, sort: parseInt(userNumber) },
+                        { innerHTML: snapshot.val()[DATABASE.NAME] },
+                        { style: { backgroundColor: utils.getHexColor(snapshot.val()[DATABASE.COLOR]), opacity: 0.5 } },
+                        { className: "media-hidden", sort: snapshot.val()[DATABASE.CREATED], innerHTML: snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
+                        { sort: 0, innerHTML: "..." },
+                        { className: "media-hidden", innerHTML: "..." },
+                        { className: "media-hidden", innerHTML: "..." },
+                        { className: "media-hidden", innerHTML: "..." }
+                    ],
+                });
+                var userNameNode = row.cells[1];
+                var userChangedNode = row.cells[4];
+                var userOsNode = row.cells[5];
+                var userDeviceNode = row.cells[6];
+                var userSignProviderNode = row.cells[7];
+
+                tableSummary.usersNode.lastChild.innerHTML = +tableSummary.usersNode.lastChild.innerHTML + 1;
 //            tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
 //            if(snapshot.val()[DATABASE.ACTIVE]) {
 //                tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
@@ -402,102 +405,103 @@ function Group() {
 //                tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
 //            }
 
-            ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.CHANGED).on("value", function(snapshot){
-                if(!snapshot.val()) return;
-                userChangedNode.sort = snapshot.val();
-                userChangedNode.innerHTML = new Date(snapshot.val()).toLocaleString();
+                ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.CHANGED).on("value", function(snapshot){
+                    if(!snapshot.val()) return;
+                    userChangedNode.sort = snapshot.val();
+                    userChangedNode.innerHTML = new Date(snapshot.val()).toLocaleString();
 
-                var enabled = isEnabledTime(snapshot.val());
+                    var enabled = isEnabledTime(snapshot.val());
 
-                if(enabled && row.classList.contains("disabled")) {
-                    tableSummary.enabledUsersNode.lastChild.innerHTML = +tableSummary.enabledUsersNode.lastChild.innerHTML + 1;
-                } else if(!enabled && !row.classList.contains("disabled")) {
-                    tableSummary.enabledUsersNode.lastChild.innerHTML = +tableSummary.enabledUsersNode.lastChild.innerHTML - 1;
-                }
-                row.classList[enabled ? "remove" : "add"]("disabled");
+                    if(enabled && row.classList.contains("disabled")) {
+                        tableSummary.enabledUsersNode.lastChild.innerHTML = +tableSummary.enabledUsersNode.lastChild.innerHTML + 1;
+                    } else if(!enabled && !row.classList.contains("disabled")) {
+                        tableSummary.enabledUsersNode.lastChild.innerHTML = +tableSummary.enabledUsersNode.lastChild.innerHTML - 1;
+                    }
+                    row.classList[enabled ? "remove" : "add"]("disabled");
 
-                if(!initial) row.classList.add("changed");
-                setTimeout(function(){row.classList.remove("changed")}, 5000);
-                tableSummary.changedNode.lastChild.innerHTML = new Date(snapshot.val()).toLocaleString();
-                tableUsers.update();
-            });
-            ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.ACTIVE).on("value", function(snapshot){
-                var active = !!snapshot.val();
-                if(active && row.classList.contains("inactive")) {
-                    tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
-                } else if(!active && !row.classList.contains("inactive")) {
-                    tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML - 1;
-                }
-                row.classList[active ? "remove" : "add"]("inactive");
-                tableUsers.update();
-            });
-            ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.NAME).on("value", function(snapshot){
-                userNameNode.innerHTML = snapshot.val() || "&lt;Friend "+userNumber+"&gt;";
-                tableUsers.update();
-            });
-            ref.child(groupId).child(DATABASE.PUBLIC).child("tracking").child(userNumber).limitToLast(1).on("child_added", function(snapshot){
-                var position = snapshot.val();
-                if(position) {
-                    row.classList.remove("italic");
+                    if(!initial) row.classList.add("changed");
+                    setTimeout(function(){row.classList.remove("changed")}, 5000);
+                    tableSummary.changedNode.lastChild.innerHTML = new Date(snapshot.val()).toLocaleString();
+                    tableUsers.update();
+                });
+                ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.ACTIVE).on("value", function(snapshot){
+                    var active = !!snapshot.val();
+                    if(active && row.classList.contains("inactive")) {
+                        tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
+                    } else if(!active && !row.classList.contains("inactive")) {
+                        tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML - 1;
+                    }
+                    row.classList[active ? "remove" : "add"]("inactive");
+                    tableUsers.update();
+                });
+                ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.NAME).on("value", function(snapshot){
+                    userNameNode.innerHTML = snapshot.val() || "&lt;Friend "+userNumber+"&gt;";
+                    tableUsers.update();
+                });
+                ref.child(groupId).child(DATABASE.PUBLIC).child("tracking").child(userNumber).limitToLast(1).on("child_added", function(snapshot){
+                    var position = snapshot.val();
+                    if(position) {
+                        row.classList.remove("italic");
 
-                    if(map) {
-                        positions[userNumber] = utils.latLng({coords:{latitude:position[USER.LATITUDE], longitude:position[USER.LONGITUDE]}});
-                        var bounds = new google.maps.LatLngBounds();
+                        if(map) {
+                            positions[userNumber] = utils.latLng({coords:{latitude:position[USER.LATITUDE], longitude:position[USER.LONGITUDE]}});
+                            var bounds = new google.maps.LatLngBounds();
 
-                        if(u.keys(positions).length > 1) {
-                            for(var x in positions) {
-                                bounds.extend(positions[x]);
+                            if(u.keys(positions).length > 1) {
+                                for(var x in positions) {
+                                    bounds.extend(positions[x]);
+                                }
+                                map.fitBounds(bounds);
+                            } else {
+                                for(var x in positions) {
+                                    map.setCenter(positions[x]);
+                                    map.setZoom(15);
+                                }
                             }
-                            map.fitBounds(bounds);
-                        } else {
-                            for(var x in positions) {
-                                map.setCenter(positions[x]);
-                                map.setZoom(15);
-                            }
-                        }
 
-                        if(!markers[userNumber]) {
-                            markers[userNumber] = new google.maps.Marker({
-                                position: positions[userNumber],
-                                map: map,
-                                label: userNumber
+                            if(!markers[userNumber]) {
+                                markers[userNumber] = new google.maps.Marker({
+                                    position: positions[userNumber],
+                                    map: map,
+                                    label: userNumber
+                                });
+                            }
+                            markers[userNumber].setPosition(positions[userNumber]);
+                            markers[userNumber].row = row;
+                            markers[userNumber].addListener("mouseover", function(e){
+                                this.row.classList.add("selected");
+                            });
+                            markers[userNumber].addListener("mouseout", function(e){
+                                this.row.classList.remove("selected");
                             });
                         }
-                        markers[userNumber].setPosition(positions[userNumber]);
-                        markers[userNumber].row = row;
-                        markers[userNumber].addListener("mouseover", function(e){
-                            this.row.classList.add("selected");
-                        });
-                        markers[userNumber].addListener("mouseout", function(e){
-                            this.row.classList.remove("selected");
-                        });
                     }
-                }
-            });
-            ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).child(userNumber).once("value").then(function(snapshot){
-                if(!snapshot.val()) return;
+                });
+                ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).child(userNumber).once("value").then(function(snapshot){
+                    if(!snapshot.val()) return;
 
-                var uid = snapshot.val()[REQUEST.UID];
-                if(uid) {
-                    ref.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
-                    .then(function(snapshot){
-                        if(snapshot.val()) {
-                            userOsNode.innerHTML = snapshot.val()[REQUEST.OS];
-                            userDeviceNode.innerHTML = snapshot.val()[REQUEST.MODEL];
-                            userSignProviderNode.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous";
-                            tableUsers.update();
-                        }
-                    });
-                }
-            }).catch(function(error){
-                if(!reload) {
-                    reload = true;
-                    console.warn("Resign because of",error);
-                    WTU.resign(updateData);
-                } else {
+                    var uid = snapshot.val()[REQUEST.UID];
+                    if(uid) {
+                        ref.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
+                            .then(function(snapshot){
+                                if(snapshot.val()) {
+                                    userOsNode.innerHTML = snapshot.val()[REQUEST.OS];
+                                    userDeviceNode.innerHTML = snapshot.val()[REQUEST.MODEL];
+                                    userSignProviderNode.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous";
+                                    tableUsers.update();
+                                }
+                            });
+                    }
+                }).catch(function(error){
+                    if(!reload) {
+                        reload = true;
+                        console.warn("Resign because of",error);
+                        WTU.resign(updateData);
+                    } else {
 //                    console.error("ERROR, ALREADY RESIGNING");
-                }
-            });
+                    }
+                });
+            }.bind(snapshot), 0);
         }, function(error){
             console.warn("Resign because of",error);
             WTU.resign(updateAll);

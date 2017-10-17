@@ -142,52 +142,57 @@ function Groups() {
             ref.child(data.key).child(DATABASE.OPTIONS).once("value").then(function(snapshot) {
                 if(!snapshot || !snapshot.val()) return;
 
-                var row = tableGroups.add({
-                    id: data.key,
-                    className: "highlight",
-                    onclick: function(){
-                        WTU.switchTo("/admin/group/"+data.key);
-                        return false;
-                    },
-                    cells: [
-                        { innerHTML: data.key },
-                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No" },
-                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No" },
-                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "&#150;" : snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY] },
-                        { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.DISMISS_INACTIVE] ? snapshot.val()[DATABASE.DELAY_TO_DISMISS] : "&#150;" },
-                        { innerHTML: "..." },
-                        { className: "media-hidden", sort: snapshot.val()[DATABASE.CREATED], innerHTML:snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
-                        { sort: 0, innerHTML:"..." }
-                    ]
-                });
-                var usersNode = row.cells[5]
-                var changedNode = row.cells[7]
-                updateTableSummary();
+                setTimeout(function(){
+                    var snapshot = this;
 
-                ref.child(data.key).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("value", function(snapshot){
-                    if(!snapshot.val()) return;
+                    var row = tableGroups.add({
+                        id: data.key,
+                        className: "highlight",
+                        onclick: function(){
+                            WTU.switchTo("/admin/group/"+data.key);
+                            return false;
+                        },
+                        cells: [
+                            { innerHTML: data.key },
+                            { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No" },
+                            { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No" },
+                            { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "&#150;" : snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY] },
+                            { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.DISMISS_INACTIVE] ? snapshot.val()[DATABASE.DELAY_TO_DISMISS] : "&#150;" },
+                            { innerHTML: "..." },
+                            { className: "media-hidden", sort: snapshot.val()[DATABASE.CREATED], innerHTML:snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
+                            { sort: 0, innerHTML:"..." }
+                        ]
+                    });
+                    var usersNode = row.cells[5]
+                    var changedNode = row.cells[7]
+                    updateTableSummary();
 
-                    var changed = 0, active = 0, total = 0;
-                    for(var i in snapshot.val()) {
-                        total++;
-                        var c = parseInt(snapshot.val()[i][DATABASE.CREATED]);
-                        if(c > changed) changed = c;
-                        if(snapshot.val()[i][DATABASE.ACTIVE]) active ++;
-                    }
-                    usersNode.innerHTML = active + " / " + total;
+                    ref.child(data.key).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("value", function(snapshot){
+                        if(!snapshot.val()) return;
 
-                    var changed = 0;
-                    for(var i in snapshot.val()) {
-                        var c = parseInt(snapshot.val()[i][DATABASE.CHANGED]);
-                        if(c > changed) changed = c;
-                    }
-                    changedNode.sort = changed;
-                    changedNode.innerHTML = new Date(changed).toLocaleString();
-                    if(!initial) row.classList.add("changed");
-                    setTimeout(function(){row.classList.remove("changed")}, 5000);
-                    tableGroups.update();
-                    updateTableSummary()
-                });
+                        var changed = 0, active = 0, total = 0;
+                        for(var i in snapshot.val()) {
+                            total++;
+                            var c = parseInt(snapshot.val()[i][DATABASE.CREATED]);
+                            if(c > changed) changed = c;
+                            if(snapshot.val()[i][DATABASE.ACTIVE]) active ++;
+                        }
+                        usersNode.innerHTML = active + " / " + total;
+
+                        var changed = 0;
+                        for(var i in snapshot.val()) {
+                            var c = parseInt(snapshot.val()[i][DATABASE.CHANGED]);
+                            if(c > changed) changed = c;
+                        }
+                        changedNode.sort = changed;
+                        changedNode.innerHTML = new Date(changed).toLocaleString();
+                        if(!initial) row.classList.add("changed");
+                        setTimeout(function(){row.classList.remove("changed")}, 5000);
+                        tableGroups.update();
+                        updateTableSummary()
+                    });
+                }.bind(snapshot), 0);
+
             }).catch(function(error){
                 console.error(error);
                 tableGroups.placeholder.show();
