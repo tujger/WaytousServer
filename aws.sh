@@ -27,18 +27,14 @@ case $i in
     EMPTY=false
     FOLDER="${i#*=}"
     ;;
-    --default)
-    EMPTY=false
-    DEFAULT=YES
-    ;;
     *)
             # unknown option
     ;;
 esac
 done
 
-if [ $EMPTY ]; then
-    echo aws.sh -n=[name] -u -uu -r
+if [ $EMPTY == true ]; then
+    echo aws.sh -n=[name] -u -uu -r $EMPTY
     echo    -n, --name - login name
     echo    -u, --update - update configs
     echo    -uu, --update-server - update WaytousServer.war and deploy it on server
@@ -83,10 +79,12 @@ if [ $RESTART ]; then
     echo --- Restarting server...
     ssh -i conf/aws/aws_credentials.pem $USERNAME@wayto.us "pkill -f java"
 
-#scp -i conf/aws/aws_credentials.pem ~/Documents/Devel/Android/Waytous/conf/4AEUFu_OWe84WGfbnGhxK4_WZIMZemNUkRi5EGUzoE8 $USERNAME@wayto.us:prod/.well-known/acme-challenge/4AEUFu_OWe84WGfbnGhxK4_WZIMZemNUkRi5EGUzoE8
-#scp -i conf/aws/aws_credentials.pem ~/Documents/Devel/Android/Waytous/conf/p1hZDcHlEen9Krerq_owcGjYtk31zDVn1NpujM2IiQ0 $USERNAME@wayto.us:prod/.well-known/acme-challenge/p1hZDcHlEen9Krerq_owcGjYtk31zDVn1NpujM2IiQ0
-#scp -i conf/aws/aws_credentials.pem ~/Documents/Devel/Android/Waytous/conf/QwwRg2fh0rnaMkDKUaoQ7-1dPQJnLKZheRMXACxuiNE $USERNAME@wayto.us:prod/.well-known/acme-challenge/QwwRg2fh0rnaMkDKUaoQ7-1dPQJnLKZheRMXACxuiNE
-#scp -i conf/aws/aws_credentials.pem ~/Documents/Devel/Android/Waytous/conf/taI0Ho_zob-nGe-Ha-jRfnAvlM66wK0kkiB3hCrqdAU $USERNAME@wayto.us:prod/.well-known/acme-challenge/taI0Ho_zob-nGe-Ha-jRfnAvlM66wK0kkiB3hCrqdAU
+
+#scp -i ./conf/aws/aws_credentials.pem ./JkUBvVjs_Z4f15vkDJZMNX8FXf0HccqMErqaGzcFN48 ec2-user@wayto.us:prod/.well-known/acme-challenge/JkUBvVjs_Z4f15vkDJZMNX8FXf0HccqMErqaGzcFN48
+#scp -i ./conf/aws/aws_credentials.pem ./pX7ESUiT0ExIjKz60V2tIRNyvTdoJWYzkpDCj7K6_Eo ec2-user@wayto.us:prod/.well-known/acme-challenge/pX7ESUiT0ExIjKz60V2tIRNyvTdoJWYzkpDCj7K6_Eo
+#scp -i ./conf/aws/aws_credentials.pem ./uqPn2lT3ltmBG-IP4JmunOtBdJdsH4oC8P0Eqw904Rw ec2-user@wayto.us:prod/.well-known/acme-challenge/uqPn2lT3ltmBG-IP4JmunOtBdJdsH4oC8P0Eqw904Rw
+#scp -i ./conf/aws/aws_credentials.pem ./wWvXstYe4Od3UlYZPw-BMEXZnH45KUEwhy5zhOsm6BQ ec2-user@wayto.us:prod/.well-known/acme-challenge/wWvXstYe4Od3UlYZPw-BMEXZnH45KUEwhy5zhOsm6BQ
+
 
     ssh -i conf/aws/aws_credentials.pem $USERNAME@wayto.us << STARTSERVER
         cd $FOLDER/WEB-INF/classes
