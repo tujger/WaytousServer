@@ -1979,13 +1979,16 @@ function Edequate(options) {
             window.addEventListener("touchmove", moveHolder);
 
         };
-        var layoutSwipeCatcher = create(HTML.DIV, {
-            className: "drawer-catcher",
+        //var layoutSwipeCatcher = create(HTML.DIV, {
+        //    className: "drawer-catcher",
+        //    ontouchstart: swipeRightHolder
+        //});
+        //layout.parentNode.insertBefore(layoutSwipeCatcher, layout);
+
+        var layoutHeaderHolder = create(HTML.DIV, {
+            className: "drawer-header-holder changeable",
             ontouchstart: swipeRightHolder
         });
-        layout.parentNode.insertBefore(layoutSwipeCatcher, layout);
-
-        var layoutHeaderHolder = create(HTML.DIV, {className: "drawer-header-holder changeable"});
         layout.parentNode.insertBefore(layoutHeaderHolder, layout);
 
         layout.header = create(HTML.DIV, { className:"drawer-header changeable" }, layout);

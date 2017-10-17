@@ -1063,7 +1063,7 @@ button:active {
         display: none;
         z-index: 10000;
     }
-    .drawer-catcher {
+    .drawer-catcher, .drawer-header-holder {
         position: fixed;
         left: 0;
         top: 0;
@@ -1072,6 +1072,7 @@ button:active {
         height: 100%;
         z-index: 10000;
         display: block;
+        visibility: visible;
     }
     .drawer-open {
         display: block;
