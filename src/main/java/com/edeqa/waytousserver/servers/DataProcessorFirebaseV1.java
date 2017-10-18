@@ -74,6 +74,7 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ERROR;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_UPDATED;
 import static com.edeqa.waytous.Constants.RESPONSE_TOKEN;
 import static com.edeqa.waytous.Constants.USER_NAME;
+import static com.edeqa.waytousserver.servers.AbstractDataProcessor.AccountAction.ACCOUNT_CREATED;
 
 
 /**
@@ -301,9 +302,12 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                 public void call(JSONObject json) {
                                     group.fetchNewId();
                                     createGroup(group, onresult[0], onresult[1]);
+                                    putStaticticsAccount(user.getUid(), GroupAction.GROUP_CREATED_TEMPORARY.toString(), "group", group.getId(), null);
+
                                 }
                             };
                             createGroup(group, onresult[0], onresult[1]);
+                            putStaticticsAccount(user.getUid(), GroupAction.GROUP_CREATED_TEMPORARY.toString(), "group", group.getId(), null);
                         }
                     }, new Runnable1<Throwable>() {
                         @Override
@@ -481,7 +485,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                             Common.log(LOG, "onMessage:joined:" + conn.getRemoteSocketAddress(), "signToken: [provided]"/*+customToken*/);
                                                             conn.close();
 
-                                                            putStaticticsUser(check.getGroupId(), check.getName(), UserAction.USER_RECONNECTED, null);
+                                                            putStaticticsUser(check.getGroupId(), check.getUid(), UserAction.USER_RECONNECTED, null);
                                                         } catch (Exception e) {
                                                             e.printStackTrace();
                                                         }
@@ -609,7 +613,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         response.put(RESPONSE_MESSAGE, message);
         conn.send(response.toString());
         conn.close();
-        putStaticticsUser(groupId, null, UserAction.USER_REJECTED, message);
+        putStaticticsUser(groupId, userId, UserAction.USER_REJECTED, message);
     }
 
     @Override
@@ -651,7 +655,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
                             onsuccess.call(json);
 
-                            putStaticticsGroup(group.getId(), group.isPersistent(), GroupAction.GROUP_CREATED, null);
+                            putStaticticsGroup(group.getId(), group.isPersistent(), group.isPersistent() ? GroupAction.GROUP_CREATED_PERSISTENT : GroupAction.GROUP_CREATED_TEMPORARY, null);
                         } else {
                             json.put(Rest.STATUS, Rest.ERROR);
                             json.put(Rest.GROUP_ID, group.getId());
@@ -786,7 +790,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             accountPrivateData.put(REQUEST_OS, user.getOs());
                             accountPrivateData.put(Firebase.CREATED, ServerValue.TIMESTAMP);
                             Common.log(LOG, "createOrUpdateAccount:createAccount:" + user.getUid(), accountPrivateData);
-                            putStaticticsAccount(user.getUid(), AccountAction.ACCOUNT_CREATED, null);
+                            putStaticticsAccount(user.getUid(), ACCOUNT_CREATED.toString(), null, null, null);
                         } else {
                             Common.log(LOG, "createOrUpdateAccount:updateAccount:" + user.getUid(), accountPrivateData);
                         }
@@ -879,7 +883,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 user.connection.send(response.toString());
                 user.connection.close();
             }
-            putStaticticsUser(groupId, user.getName(), UserAction.USER_JOINED, null);
+            putStaticticsUser(groupId, user.getUid(), UserAction.USER_JOINED, null);
         } catch (Exception e) {
             e.printStackTrace();
             if(onerror != null) onerror.call(response);
@@ -893,7 +897,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 user.connection.send(response.toString());
                 user.connection.close();
             }
-            putStaticticsUser(groupId, user.getName(), UserAction.USER_REJECTED, e.getMessage());
+            putStaticticsUser(groupId, user.getUid(), UserAction.USER_REJECTED, e.getMessage());
         }
 
 
@@ -1330,7 +1334,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                 Common.log(LOG, "--- removing account: " + uid, "expired for: " +message);
 
                                                 ref.child(Firebase.SECTION_USERS).child(uid).setValue(null);
-                                                putStaticticsAccount(uid, AccountAction.ACCOUNT_DELETED, "Expired for " + message);
+                                                putStaticticsAccount(uid, AccountAction.ACCOUNT_DELETED.toString(), null, null, "Expired for " + message);
                                             }
                                         } catch(Exception e) {
                                             Common.err(LOG, "validateAccounts:failed:", uid, e.getMessage());
@@ -1382,14 +1386,13 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         referenceToday = ref.child(Firebase.SECTION_STAT).child(Firebase.STAT_BY_DATE).child(today);
 
         switch(action) {
-            case GROUP_CREATED:
-                if(isPersistent) {
-                    referenceTotal = referenceTotal.child(Firebase.STAT_GROUPS_CREATED_PERSISTENT);
-                    referenceToday = referenceToday.child(Firebase.STAT_GROUPS_CREATED_PERSISTENT);
-                } else {
-                    referenceTotal = referenceTotal.child(Firebase.STAT_GROUPS_CREATED_TEMPORARY);
-                    referenceToday = referenceToday.child(Firebase.STAT_GROUPS_CREATED_TEMPORARY);
-                }
+            case GROUP_CREATED_PERSISTENT:
+                referenceTotal = referenceTotal.child(Firebase.STAT_GROUPS_CREATED_PERSISTENT);
+                referenceToday = referenceToday.child(Firebase.STAT_GROUPS_CREATED_PERSISTENT);
+                break;
+            case GROUP_CREATED_TEMPORARY:
+                referenceTotal = referenceTotal.child(Firebase.STAT_GROUPS_CREATED_TEMPORARY);
+                referenceToday = referenceToday.child(Firebase.STAT_GROUPS_CREATED_TEMPORARY);
                 break;
             case GROUP_DELETED:
                 referenceTotal = referenceTotal.child(Firebase.STAT_GROUPS_DELETED);
@@ -1410,10 +1413,14 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             map.put("action", action.toString());
             putStaticticsMessage(errorMessage, map);
         }
+
     }
 
     @Override
     public void putStaticticsUser(String groupId, String userId, UserAction action, String errorMessage) {
+
+        putStaticticsAccount(userId, action.toString(), "group", groupId, errorMessage);
+
         DatabaseReference referenceTotal;
         DatabaseReference referenceToday;
         Calendar cal = Calendar.getInstance();
@@ -1450,38 +1457,64 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             map.put("action", action.toString());
             putStaticticsMessage(errorMessage, map);
         }
+
     }
 
     @Override
-    public void putStaticticsAccount(String accountId, AccountAction action, String errorMessage) {
+    public void putStaticticsAccount(String accountId, String action, String key, Object value, String errorMessage) {
         DatabaseReference referenceTotal;
         DatabaseReference referenceToday;
         Calendar cal = Calendar.getInstance();
         String today = String.format("%04d-%02d-%02d", cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH));
 
-        System.out.println(accountId+":"+action+":"+errorMessage+":"+today);
-
         referenceTotal = ref.child(Firebase.SECTION_STAT).child(Firebase.STAT_TOTAL);
         referenceToday = ref.child(Firebase.SECTION_STAT).child(Firebase.STAT_BY_DATE).child(today);
+
         switch(action) {
-            case ACCOUNT_CREATED:
+            case Firebase.STAT_ACCOUNTS_CREATED:
                 referenceTotal = referenceTotal.child(Firebase.STAT_ACCOUNTS_CREATED);
                 referenceToday = referenceToday.child(Firebase.STAT_ACCOUNTS_CREATED);
+                referenceToday.runTransaction(incrementValue);
+                referenceTotal.runTransaction(incrementValue);
                 break;
-            case ACCOUNT_DELETED:
+            case Firebase.STAT_ACCOUNTS_DELETED:
                 referenceTotal = referenceTotal.child(Firebase.STAT_ACCOUNTS_DELETED);
                 referenceToday = referenceToday.child(Firebase.STAT_ACCOUNTS_DELETED);
+                referenceToday.runTransaction(incrementValue);
+                referenceTotal.runTransaction(incrementValue);
                 break;
         }
-
-        referenceToday.runTransaction(incrementValue);
-        referenceTotal.runTransaction(incrementValue);
 
         if(errorMessage != null && errorMessage.length() > 0) {
             Map<String, String> map = new HashMap<>();
             map.put("account", accountId);
             map.put("action", action.toString());
             putStaticticsMessage(errorMessage, map);
+        }
+
+        if(key != null) {
+            Map<String, Object> map = new HashMap<>();
+            map.put(Firebase.TIMESTAMP, new Date().getTime());
+            map.put(Firebase.KEYS, key);
+            if(action != null) map.put(Firebase.MODE, action);
+
+            if (value instanceof Boolean) {
+                map.put(Firebase.VALUE, value);
+            } else if (value instanceof Number) {
+                map.put(Firebase.VALUE, value);
+            } else if (value instanceof String) {
+                if (((String) value).length() < 50) {
+                    map.put(Firebase.VALUE, value);
+                } else {
+                    map.put(Firebase.VALUE, ((String) value).substring(0, 40) + "...");
+                }
+            } else if (value instanceof ArrayList) {
+                map.put(Firebase.VALUE, "Array(" + ((ArrayList) value).size() + ")");
+            } else if (value != null) {
+                map.put(Firebase.VALUE, "[" + value.getClass().getSimpleName() + "]");
+            }
+
+            ref.child(Firebase.SECTION_USERS).child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValue(map);
         }
     }
 

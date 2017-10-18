@@ -516,7 +516,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }
 
     @Override
-    public void putStaticticsAccount(String accountId, AccountAction action, String errorMessage) {
+    public void putStaticticsAccount(String accountId, String action, String key, Object value, String errorMessage) {
 
     }
 

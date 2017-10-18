@@ -1152,12 +1152,20 @@ button:active {
     /* Table */
     .table {
         font-size: inherit;
+        border: none;
     }
     .table-filter {
         display: none;
     }
     .table-reset-button {
-        display: none;
+        font-size: larger;
+        top: -40px;
+        right: 0;
+        padding: 10px;
+    }
+    .th {
+        padding-left: 20px;
+        padding-right: 20px;
     }
     .td {
         padding-top: 10px;

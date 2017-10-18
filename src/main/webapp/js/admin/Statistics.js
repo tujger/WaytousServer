@@ -26,6 +26,16 @@ function Statistics() {
     var usersChartOptions;
     var accountsChartOptions;
 
+    var actions = {};
+    actions[DATABASE.STAT_GROUPS_CREATED_PERSISTENT] = "Group created (persistent)";
+    actions[DATABASE.STAT_GROUPS_CREATED_TEMPORARY] = "Group created (temporary)";
+    actions[DATABASE.STAT_GROUPS_DELETED] = "Group deleted";
+    actions[DATABASE.STAT_GROUPS_REJECTED] = "Group rejected";
+    actions[DATABASE.STAT_USERS_JOINED] = "User joined";
+    actions[DATABASE.STAT_USERS_RECONNECTED] = "User reconnected";
+    actions[DATABASE.STAT_USERS_REJECTED] = "User rejected";
+    actions[DATABASE.STAT_ACCOUNTS_CREATED] = "Account created";
+    actions[DATABASE.STAT_ACCOUNTS_DELETED] = "Account deleted";
 
     var initInterface = function() {
         u.require("https://www.google.com/jsapi")
@@ -451,7 +461,7 @@ function Statistics() {
 //                  },
                     cells: [
                         { innerHTML: data.key },
-                        { className: "media-hidden", innerHTML: json["action"]},
+                        { className: "media-hidden", innerHTML: actions[json["action"]] || json["action"]},
                         { className: "media-hidden", innerHTML: json["group"] },
                         { className: "media-hidden", innerHTML: json["user"] },
                         { innerHTML: json["message"] }

@@ -100,7 +100,7 @@ h2 {
     margin-bottom: 5px;
 }
 .table-placeholder {
-    border: none;
+    /*border: none;*/
 }
 .table-logs-caption {
     display: block;
@@ -390,6 +390,95 @@ h2 {
         content: "Speed: ";
         font-weight: initial;
     }
+
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .history-row {
+        display: flex;
+        flex-flow: row;
+        flex-wrap: wrap;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        font-size: 12px;
+        padding: 5px;
+    }
+    .history-row .td {
+        display: block;
+        border: none;
+        padding: 0;
+        margin: 0;
+    }
+    .history-row .td:nth-child(1) {
+        font-weight: initial;
+        flex: 0 0 50%;
+        order: 1;
+    }
+    .history-row .td:nth-child(1)::before {
+        content: "Timestamp: ";
+    }
+    .history-row .td:nth-child(2) {
+        font-weight: initial;
+        flex: 0 0 100%;
+        order: 3;
+    }
+    .history-row .td:nth-child(2)::before {
+        content: "Action: ";
+    }
+    .history-row .td:nth-child(3) {
+        font-weight: initial;
+        flex: 0 0 50%;
+        order: 2;
+        text-align: end;
+    }
+    .history-row .td:nth-child(3)::before {
+        content: "Key: ";
+    }
+    .history-row .td:nth-child(4) {
+        font-weight: initial;
+        flex: 0 0 100%;
+        order: 4;
+    }
+    .history-row .td:nth-child(4)::before {
+        content: "Value: ";
+    }
+    /*
+    .account-row {
+    }
+    .account-row:focus {
+        background-color: lightcyan;
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        width: 100%;
+    }
+    .account-row:focus .td {
+        display: block;
+        width: 100%;
+        border: none;
+        font-weight: bold;
+        padding: 4px;
+    }
+    .account-row:focus .td:nth-child(1)::before {
+        content: "Timestamp: ";
+        font-weight: initial;
+    }
+    .account-row:focus .td:nth-child(2)::before {
+        content: "Action: ";
+        font-weight: initial;
+    }
+    .account-row:focus .td:nth-child(3)::before {
+        content: "Key: ";
+        font-weight: initial;
+    }
+    .account-row:focus .td:nth-child(4)::before {
+        content: "Value: ";
+        font-weight: initial;
+    }
+    */
 
     /* media specific classes */
     .hideable {

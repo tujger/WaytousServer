@@ -1,6 +1,7 @@
 package com.edeqa.waytousserver.servers;
 
 import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.CheckReq;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
@@ -42,17 +43,37 @@ abstract public class AbstractDataProcessor {
     public abstract void validateAccounts();
 
     public enum GroupAction {
-        GROUP_CREATED, GROUP_DELETED, GROUP_REJECTED
+        GROUP_CREATED_PERSISTENT(Firebase.STAT_GROUPS_CREATED_PERSISTENT), GROUP_CREATED_TEMPORARY(Firebase.STAT_GROUPS_CREATED_TEMPORARY), GROUP_DELETED(Firebase.STAT_GROUPS_DELETED), GROUP_REJECTED(Firebase.STAT_GROUPS_REJECTED);
+        private String id;
+        GroupAction(String id) {
+            this.id = id;
+        }
+        public String toString() {
+            return this.id;
+        }
     }
 
     public enum UserAction {
-        USER_JOINED, USER_RECONNECTED, USER_REJECTED, USER_REMOVED
+        USER_JOINED(Firebase.STAT_USERS_JOINED), USER_RECONNECTED(Firebase.STAT_USERS_RECONNECTED), USER_REJECTED(Firebase.STAT_USERS_REJECTED), USER_REMOVED(Firebase.STAT_USERS_REMOVED);
+        private String id;
+        UserAction(String id) {
+            this.id = id;
+        }
+        public String toString() {
+            return this.id;
+        }
     }
 
     public enum AccountAction {
-        ACCOUNT_CREATED, ACCOUNT_DELETED
+        ACCOUNT_CREATED(Firebase.STAT_ACCOUNTS_CREATED), ACCOUNT_DELETED(Firebase.STAT_ACCOUNTS_DELETED);
+        private String id;
+        AccountAction(String id) {
+            this.id = id;
+        }
+        public String toString() {
+            return this.id;
+        }
     }
-
 
     public AbstractDataProcessor() {
         groups = new ConcurrentHashMap<>();
@@ -192,7 +213,7 @@ abstract public class AbstractDataProcessor {
 
     public abstract void putStaticticsUser(String groupId, String userId, UserAction action, String errorMessage);
 
-    public abstract void putStaticticsAccount(String accountId, AccountAction action, String errorMessage);
+    public abstract void putStaticticsAccount(String accountId, String action, String key, Object value, String errorMessage);
 
     public abstract void putStaticticsMessage(String message, Map<String, String> map);
 

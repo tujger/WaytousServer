@@ -63,7 +63,9 @@ function User() {
 
         tableSummary.userUidNode = tableSummary.add({
             onclick: function(){
-                WTU.switchTo("/admin/account/"+tableSummary.userUidNode.cells[1].innerHTML);
+                if(tableSummary.userUidNode.cells[1].innerHTML && tableSummary.userUidNode.cells[1].innerHTML != "[invalid]") {
+                    WTU.switchTo("/admin/account/"+tableSummary.userUidNode.cells[1].innerHTML);
+                }
                 return false;
             },
             cells: [

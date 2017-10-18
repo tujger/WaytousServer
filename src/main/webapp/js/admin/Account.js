@@ -9,30 +9,61 @@ function Account() {
 
     var title = "Account";
 
-    var positions;
     var div;
     var groupId;
     var accountId;
     var userNumber;
     var tableSummary;
     var tableHistory;
-    var divMap;
-    var map;
-    var bounds;
-    var drawTrackTask;
-    var track;
-    var limit = 1000;
+
+    var modes = {
+        ra: "Add remote value",
+        ru: "Update remote value",
+        rr: "Remove remote value",
+        ro: "Override remote value",
+        la: "Add local value",
+        lo: "Override local value",
+        lu: "Update local value",
+        lr: "Remove local value"
+    };
+    modes[DATABASE.STAT_GROUPS_CREATED_PERSISTENT] = "Group created (persistent)";
+    modes[DATABASE.STAT_GROUPS_CREATED_TEMPORARY] = "Group created (temporary)";
+    modes[DATABASE.STAT_GROUPS_DELETED] = "Group deleted";
+    modes[DATABASE.STAT_GROUPS_REJECTED] = "Group rejected";
+    modes[DATABASE.STAT_USERS_JOINED] = "User joined";
+    modes[DATABASE.STAT_USERS_RECONNECTED] = "User reconnected";
+    modes[DATABASE.STAT_USERS_REJECTED] = "User rejected";
+
+    var keys = {
+        "p/ch": "Updated",
+        "p/tos-confirmed": "Terms of service confirmed",
+        "p/name": "Name",
+        "group": "Group",
+    };
 
     var renderInterface = function() {
 
         var ref = database.ref();
 
         u.create(HTML.H2, "Summary", div);
+        u.create(HTML.H4, "No real-time updating", div);
 
         tableSummary = u.table({
-            className: "option",
+            className: "option"
         }, div);
 
+        tableSummary.accountNameItem = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "Name" },
+                { className:"option", innerHTML: "..." }
+            ]
+        });
+        tableSummary.accountStatusItem = tableSummary.add({
+            cells: [
+                { className:"th", innerHTML: "Status" },
+                { className:"option", innerHTML: "..." }
+            ]
+        });
         tableSummary.accountUidItem = tableSummary.add({
             cells: [
                 { className:"th", innerHTML: "UID" },
@@ -51,27 +82,15 @@ function Account() {
                 { className:"option", innerHTML: "..." }
             ]
         });
-        tableSummary.accountTrustedItem = tableSummary.add({
+        tableSummary.accountSyncedItem = tableSummary.add({
             cells: [
-                { className:"th", innerHTML: "Trusted" },
-                { className:"option", innerHTML: "..." }
-            ]
-        });
-        tableSummary.accountNameItem = tableSummary.add({
-            cells: [
-                { className:"th", innerHTML: "Name" },
+                { className:"th", innerHTML: "Last sync" },
                 { className:"option", innerHTML: "..." }
             ]
         });
         tableSummary.accountModelItem = tableSummary.add({
             cells: [
-                { className:"th", innerHTML: "Model" },
-                { className:"option", innerHTML: "..." }
-            ]
-        });
-        tableSummary.accountSignProviderItem = tableSummary.add({
-            cells: [
-                { className:"th", innerHTML: "Sign provider" },
+                { className:"th", innerHTML: "Device model" },
                 { className:"option", innerHTML: "..." }
             ]
         });
@@ -81,9 +100,9 @@ function Account() {
                 { className:"option", innerHTML: "..." }
             ]
         });
-        tableSummary.accountSyncedItem = tableSummary.add({
+        tableSummary.accountSignProviderItem = tableSummary.add({
             cells: [
-                { className:"th", innerHTML: "Last sync" },
+                { className:"th", innerHTML: "Sign provider" },
                 { className:"option", innerHTML: "..." }
             ]
         });
@@ -101,6 +120,7 @@ function Account() {
         tableHistory = u.table({
             id: "admin:account:history",
             caption: {
+                className: "history-header",
                 items: [
                     { label: "Timestamp" },
                     { label: "Action" },
@@ -127,16 +147,26 @@ function Account() {
         ref.child(DATABASE.SECTION_USERS).child(accountId).child(DATABASE.PRIVATE).once("value").then(function(snapshot) {
             if(!snapshot || !snapshot.val()) return;
 
+            var privateData = snapshot.val();
 
-            tableSummary.accountNameItem.lastChild.innerHTML = snapshot.val()[DATABASE.NAME] || "";
+            tableSummary.accountNameItem.lastChild.innerHTML = privateData[DATABASE.NAME] || "";
             tableSummary.accountUidItem.lastChild.innerHTML = accountId;
-    //        tableSummary.accountTrustedItem.lastChild.innerHTML = snapshot.val()[DATABASE.WELCOME_MESSAGE] || "";
-            tableSummary.accountModelItem.lastChild.innerHTML = snapshot.val()[REQUEST.MODEL] || "";
-            tableSummary.accountSignProviderItem.lastChild.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER] || "";
-            tableSummary.accountOsItem.lastChild.innerHTML = snapshot.val()[REQUEST.OS] || "";
-            tableSummary.accountCreatedItem.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString();
-            tableSummary.accountUpdatedItem.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CHANGED]).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(snapshot.val()[DATABASE.CHANGED])) + " ago)";
-            tableSummary.accountSyncedItem.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.SYNCED]).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(snapshot.val()[DATABASE.SYNCED])) + " ago)";
+
+            var expired = false;
+            var trusted = false;
+            if(privateData[REQUEST.SIGN_PROVIDER] == "anonymous") {
+                if(new Date().getTime() - privateData[DATABASE.CHANGED] > 30*24*60*60*1000) expired = true;
+            } else {
+                trusted = true;
+            }
+            tableSummary.accountStatusItem.lastChild.innerHTML = expired ? "Expired" : (trusted ? "Trusted" : "Waiting");
+
+            tableSummary.accountModelItem.lastChild.innerHTML = privateData[REQUEST.MODEL] || "";
+            tableSummary.accountSignProviderItem.lastChild.innerHTML = privateData[REQUEST.SIGN_PROVIDER] || "";
+            tableSummary.accountOsItem.lastChild.innerHTML = privateData[REQUEST.OS] || "";
+            tableSummary.accountCreatedItem.lastChild.innerHTML = new Date(privateData[DATABASE.CREATED]).toLocaleString();
+            tableSummary.accountUpdatedItem.lastChild.innerHTML = privateData[DATABASE.CHANGED] ? new Date(privateData[DATABASE.CHANGED]).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(privateData[DATABASE.CHANGED])) + " ago)" : "never";
+            tableSummary.accountSyncedItem.lastChild.innerHTML = privateData[DATABASE.SYNCED] ? new Date(privateData[DATABASE.SYNCED]).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(privateData[DATABASE.SYNCED])) + " ago)" : "never";
 
 
         }).catch(function(error){
@@ -159,39 +189,36 @@ function Account() {
         var initial = true;
         setTimeout(function(){initial = false;}, 3000);
 
-        var modes = {
-            or: "Override remote",
-            ol: "Override local",
-        };
-        var keys = {
-            "p/ch": "Updated",
-        };
-
+        setTimeout(function() {
+            if(tableHistory.rows.length == 0){
+                tableHistory.placeholder.show("No history");
+            }
+        }, 1000);
 
         ref.child(DATABASE.SECTION_USERS).child(accountId).child(DATABASE.PRIVATE).child(DATABASE.HISTORY).off();
         ref.child(DATABASE.SECTION_USERS).child(accountId).child(DATABASE.PRIVATE).child(DATABASE.HISTORY).on("child_added", function(snapshot) {
 
-            if(!snapshot || !snapshot.val()){
-                tableHistory.placeholder.show("No locations");
-                return;
-            }
-            reload = false;
+            setTimeout(function(){
+                var snapshot = this;
 
-            var lat = snapshot.val()[USER.LATITUDE];
-            var lng = snapshot.val()[USER.LONGITUDE];
+                reload = false;
 
-            var row = tableHistory.add({
-                className: "locations-row highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
-                tabindex: -1,
-                cells: [
-                    { innerHTML: new Date(snapshot.val()[DATABASE.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[DATABASE.TIMESTAMP] },
-                    { innerHTML: modes[snapshot.val()[DATABASE.MODE]] },
-                    { innerHTML: keys[snapshot.val()[DATABASE.KEYS]] },
-                    { innerHTML: snapshot.val()[DATABASE.VALUE] },
-                ]
-            });
+                var lat = snapshot.val()[USER.LATITUDE];
+                var lng = snapshot.val()[USER.LONGITUDE];
 
-            tableSummary.accountHistoryCountItem.lastChild.innerHTML = +tableSummary.accountHistoryCountItem.lastChild.innerHTML + 1;
+                var row = tableHistory.add({
+                    className: "history-row highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
+                    tabindex: -1,
+                    cells: [
+                        { innerHTML: new Date(snapshot.val()[DATABASE.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[DATABASE.TIMESTAMP] },
+                        { innerHTML: modes[snapshot.val()[DATABASE.MODE]] || snapshot.val()[DATABASE.MODE] },
+                        { innerHTML: keys[snapshot.val()[DATABASE.KEYS]] || snapshot.val()[DATABASE.KEYS] },
+                        { innerHTML: snapshot.val()[DATABASE.VALUE] },
+                    ]
+                });
+
+                tableSummary.accountHistoryCountItem.lastChild.innerHTML = +tableSummary.accountHistoryCountItem.lastChild.innerHTML + 1;
+            }.bind(snapshot), 0);
 
         }, function(error){
             console.warn("Resign because of",error);

@@ -1276,17 +1276,17 @@ function Utils(main) {
         USER_PUBLIC: "user-public"
     };
     Sync.Mode = {
-        ADD_REMOTE: "ar",
-        UPDATE_REMOTE: "ur",
-        OVERRIDE_REMOTE: "or",
+        ADD_REMOTE: "ra",
+        UPDATE_REMOTE: "ru",
+        OVERRIDE_REMOTE: "ro",
         REMOVE_REMOTE: "rr",
-        ADD_LOCAL: "al",
-        UPDATE_LOCAL: "ul",
-        OVERRIDE_LOCAL: "ol",
-        REMOVE_LOCAL: "rl",
-        UPDATE_BOTH: "ub",
+        ADD_LOCAL: "la",
+        UPDATE_LOCAL: "lu",
+        OVERRIDE_LOCAL: "lo",
+        REMOVE_LOCAL: "lr",
+        UPDATE_BOTH: "bu",
         SKIP: "sk",
-        GET_REMOTE: "gr"
+        GET_REMOTE: "rg"
     };
     Sync.CREATE_KEY = "$create_key$";
 

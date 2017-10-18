@@ -220,6 +220,7 @@ function PropertiesHolder(main) {
     function synchronizeName(forceToServer) {
         var sync = new utils.sync({
             type: utils.sync.Type.ACCOUNT_PRIVATE,
+            log: true,
             key: DATABASE.NAME,
             onupdatevalue: function(key, newName, oldName) {
                 console.log(key, newName, oldName)

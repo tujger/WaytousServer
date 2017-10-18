@@ -146,7 +146,11 @@ public class MainServletHandler extends AbstractServletHandler {
                 boolean text = false;
                 String type = Mime.APPLICATION_OCTET_STREAM;
                 JSONArray types = OPTIONS.getTypes();
-                types.put(new JSONObject("{\"type\":\"\",\"mime\":\"application/unknown\"}"));
+                try {
+                    types.put(new JSONObject("{\"type\":\"\",\"mime\":\"application/unknown\"}"));
+                } catch(Exception e) {
+                    Common.err(e);
+                }
                 JSONObject json = null;
                 for (int i = 0; i < types.length(); i++) {
                     if(types.isNull(i)) continue;

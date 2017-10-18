@@ -158,7 +158,7 @@ function Constants() {
         STAT_MISC_GROUPS_CLEANED: "groups-cleaned",
         STAT_MISC_ACCOUNTS_CLEANED: "accounts-cleaned",
         STAT_MISC: "misc",
-        STAT_USERS_JOINED: "ju",
+        STAT_USERS_JOINED: "uj",
         STAT_USERS_RECONNECTED: "uc",
         STAT_USERS_REJECTED: "ur",
         STAT_ACCOUNTS_CREATED: "cc",
