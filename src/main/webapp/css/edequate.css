@@ -801,6 +801,10 @@ button:active {
     top: 4px;
     right: 4px;
 }
+.table-select-active {
+    background-color: darkslategray;
+    color: white;
+}
 .thead {
     display: table-header-group;
     background: #ffffdd;

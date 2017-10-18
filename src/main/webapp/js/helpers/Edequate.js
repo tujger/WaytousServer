@@ -2416,6 +2416,8 @@ function Edequate(options) {
                         className:"icon table-select notranslate",
                         innerHTML:"expand_more",
                         onclick: function(e){
+                            var cell = this.parentNode;
+
                             e.stopPropagation();
                             e.preventDefault();
 
@@ -2437,6 +2439,9 @@ function Edequate(options) {
                                     onclick: function(e) {
                                         delete table.selectable;
                                         table.filter.remove(this.parentNode.filter);
+                                        cell.selectButton.classList.remove("table-select-active");
+                                        delete cell.filter;
+
                                     }
                                 }];
                                 for(var x in selected) {
@@ -2444,9 +2449,13 @@ function Edequate(options) {
                                         type: HTML.DIV,
                                         innerHTML: x,
                                         onclick: function(e) {
+
+                                            if(table.selectable) {
+                                                table.head.cells[table.selectable.index].selectButton.classList.remove("table-select-active");
+                                            }
                                             table.selectable = { index: index, string: this.innerHTML};
 
-                                            if(this.parentNode.filter) table.filter.remove(this.parentNode.filter);
+                                            if(cell.filter) table.filter.remove(this.parentNode.filter);
                                             var filterSelected = function(row) {
                                                 if(row.table && row.table.selectable) {
                                                     return row.cells[row.table.selectable.index].innerHTML == row.table.selectable.string;
@@ -2454,7 +2463,8 @@ function Edequate(options) {
                                                     return true;
                                                 }
                                             };
-                                            this.parentNode.filter = table.filter.add(filterSelected)
+                                            cell.selectButton.classList.add("table-select-active");
+                                            cell.filter = table.filter.add(filterSelected)
                                         }
                                     })
                                 }
@@ -2484,6 +2494,9 @@ function Edequate(options) {
                         for(var i in table.head.cells) {
                             table.head.cells[i].sort = 0;
                             table.head.cells[i].firstChild.hide();
+                            if(table.head.cells[i].selectButton) {
+                                table.head.cells[i].selectButton.classList.remove("table-select-active");
+                            }
                         }
                         if(table.filterInput) {
                             table.filter.clear();
