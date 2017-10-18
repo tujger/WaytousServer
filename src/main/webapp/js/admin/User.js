@@ -125,15 +125,16 @@ function User() {
 
         tableLocations = u.table({
             id: "admin:locations",
+            className: "user-locations",
             caption: {
                 items: [
-                    { label: "Timestamp", className: "media-hidden" },
+                    { label: "Timestamp" },
                     { label: "Provider" },
                     { label: "Latitude" },
                     { label: "Longitude" },
-                    { label: "Accuracy", className: "media-hidden" },
-                    { label: "Bearing", className: "media-hidden" },
-                    { label: "Speed", className: "media-hidden" }
+                    { label: "Accuracy" },
+                    { label: "Bearing" },
+                    { label: "Speed" }
                 ]
             },
             placeholder: "Loading..."
@@ -227,16 +228,16 @@ function User() {
                 var lng = snapshot.val()[USER.LONGITUDE];
 
                 var row = tableLocations.add({
-                    className: "locations-row highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
+                    className: "highlight",
                     tabindex: -1,
                     cells: [
-                        { className: "media-hidden", innerHTML: new Date(snapshot.val()[REQUEST.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[REQUEST.TIMESTAMP] },
+                        { innerHTML: new Date(snapshot.val()[REQUEST.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[REQUEST.TIMESTAMP] },
                         { innerHTML: snapshot.val()[USER.PROVIDER] },
                         { innerHTML: lat },
                         { innerHTML: lng },
-                        { className: "media-hidden", innerHTML: snapshot.val()[USER.ACCURACY] },
-                        { className: "media-hidden", innerHTML: snapshot.val()[USER.BEARING] },
-                        { className: "media-hidden", innerHTML: snapshot.val()[USER.SPEED] }
+                        { innerHTML: snapshot.val()[USER.ACCURACY] || "&#150;" },
+                        { innerHTML: snapshot.val()[USER.BEARING] || "&#150;" },
+                        { innerHTML: snapshot.val()[USER.SPEED] || "&#150;" }
                     ],
                     onclick: function() {
                         if(!map) return;

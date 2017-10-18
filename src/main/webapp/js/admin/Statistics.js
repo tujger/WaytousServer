@@ -192,12 +192,13 @@ function Statistics() {
 
         tableMessages = u.table({
             id: "messages",
+            className: "statistics",
             caption: {
                 items: [
                     { label: "Timestamp" },
-                    { label: "Action", className: "media-hidden" },
-                    { label: "Group ID", className: "media-hidden" },
-                    { label: "User ID", className: "media-hidden" },
+                    { label: "Action" },
+                    { label: "Group ID" },
+                    { label: "User ID" },
                     { label: "Message" }
                 ]
             },
@@ -461,9 +462,9 @@ function Statistics() {
 //                  },
                     cells: [
                         { innerHTML: data.key },
-                        { className: "media-hidden", innerHTML: actions[json["action"]] || json["action"]},
-                        { className: "media-hidden", innerHTML: json["group"] },
-                        { className: "media-hidden", innerHTML: json["user"] },
+                        { innerHTML: actions[json["action"]] || json["action"]},
+                        { innerHTML: json["group"] },
+                        { innerHTML: json["user"] },
                         { innerHTML: json["message"] }
                     ]
                 });

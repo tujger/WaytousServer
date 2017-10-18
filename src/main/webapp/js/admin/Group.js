@@ -270,16 +270,17 @@ function Group() {
 
         tableUsers = u.table({
             id: "admin:users",
+            className: "group-users",
             caption: {
                 items: [
                     { label: "#", width: "5%" },
                     { label: "Name" },
                     { label: "Color", width: "5%" },
-                    { label: "Created", className: "media-hidden" },
+                    { label: "Created" },
                     { label: "Updated" },
-                    { label: "Platform", className: "media-hidden" },
-                    { label: "Device", className: "media-hidden" },
-                    { label: "Sign provider", className: "media-hidden" }
+                    { label: "Platform" },
+                    { label: "Device" },
+                    { label: "Sign provider" }
                 ]
             },
             placeholder: "Loading..."
@@ -381,11 +382,11 @@ function Group() {
                         { innerHTML: userNumber, sort: parseInt(userNumber) },
                         { innerHTML: snapshot.val()[DATABASE.NAME] },
                         { style: { backgroundColor: utils.getHexColor(snapshot.val()[DATABASE.COLOR]), opacity: 0.5 } },
-                        { className: "media-hidden", sort: snapshot.val()[DATABASE.CREATED], innerHTML: snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
+                        { sort: snapshot.val()[DATABASE.CREATED], innerHTML: snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
                         { sort: 0, innerHTML: "..." },
-                        { className: "media-hidden", innerHTML: "..." },
-                        { className: "media-hidden", innerHTML: "..." },
-                        { className: "media-hidden", innerHTML: "..." }
+                        { innerHTML: "..." },
+                        { innerHTML: "..." },
+                        { innerHTML: "..." }
                     ],
                 });
                 var userNameNode = row.cells[1];
@@ -542,12 +543,12 @@ function Group() {
                     WTU.switchTo("/admin/groups");
                     u.toast.show("Group "+groupId+" was deleted.");
                 }).catch(function(code,xhr){
-                console.warn("Resign because of",code,xhr);
-                WTU.resign(updateSummary);
-                var res = JSON.parse(xhr.responseText) || {};
-                u.toast.show(res.message || xhr.statusText);
-                renderButtons(buttons);
-            });
+                    console.warn("Resign because of",code,xhr);
+                    WTU.resign(updateSummary);
+                    var res = JSON.parse(xhr.responseText) || {};
+                    u.toast.show(res.message || xhr.statusText);
+                    renderButtons(buttons);
+                });
         }}, buttons);
         u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){
             renderButtons(buttons);

@@ -251,6 +251,18 @@ h2 {
 
 
 @media screen and (max-width: 1000px) {
+    .buttons {
+        flex-wrap: wrap;
+        margin-bottom: 5px;
+        font-size: initial;
+        align-items: center;
+        margin: 0;
+        width: 100%;
+    }
+    h2 .buttons {
+        width: auto;
+    }
+
     button {
         font-size: 16px;
         min-width: 100px;
@@ -258,6 +270,8 @@ h2 {
         border-radius: 10px;
         margin: 1px;
         padding: 10px;
+        flex: 1 0 50px;
+        white-space: nowrap;
     }
 
     /* CLASSES */
@@ -306,98 +320,14 @@ h2 {
     .map-place {
         display: none;
     }
-    .statistics-row {
-    }
 
-    /* with focused row */
-    .statistics-row:focus {
-        background-color: lightcyan;
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        width: 100%;
-    }
-    .statistics-row:focus .td {
-        display: block;
-        width: 100%;
-        border: none;
-        font-weight: bold;
-        padding: 4px;
-    }
-    .statistics-row:focus .td:nth-child(1)::before {
-        content: "Timestamp: ";
-        font-weight: initial;
-    }
-    .statistics-row:focus .td:nth-child(2)::before {
-        content: "Action: ";
-        font-weight: initial;
-    }
-    .statistics-row:focus .td:nth-child(3)::before {
-        content: "Group ID: ";
-        font-weight: initial;
-    }
-    .statistics-row:focus .td:nth-child(4)::before {
-        content: "User ID: ";
-        font-weight: initial;
-    }
-    .statistics-row:focus .td:nth-child(5)::before {
-        content: "Message: ";
-        font-weight: initial;
-    }
-
-    /* with focused row */
-    .locations-row {
-    }
-    .locations-row:focus {
-        background-color: lightcyan;
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        width: 100%;
-    }
-    .locations-row:focus .td {
-        display: block;
-        width: 100%;
-        border: none;
-        font-weight: bold;
-        padding: 4px;
-    }
-    .locations-row:focus .td:nth-child(1)::before {
-        content: "Timestamp: ";
-        font-weight: initial;
-    }
-    .locations-row:focus .td:nth-child(2)::before {
-        content: "Provider: ";
-        font-weight: initial;
-    }
-    .locations-row:focus .td:nth-child(3)::before {
-        content: "Latitude: ";
-        font-weight: initial;
-    }
-    .locations-row:focus .td:nth-child(4)::before {
-        content: "Longitude: ";
-        font-weight: initial;
-    }
-    .locations-row:focus .td:nth-child(5)::before {
-        content: "Accuracy: ";
-        font-weight: initial;
-    }
-    .locations-row:focus .td:nth-child(6)::before {
-        content: "Bearing: ";
-        font-weight: initial;
-    }
-    .locations-row:focus .td:nth-child(7)::before {
-        content: "Speed: ";
-        font-weight: initial;
-    }
-
-
-    .history-header {
+    .account-history .thead, .accounts .thead, .statistics .thead, .groups .thead, .group-users .thead, .user-locations .thead {
         display: flex;
         justify-content: space-between;
+        font-size: 12px;
+        flex-wrap: wrap;
     }
-
-    .history-row {
+    .account-history .tbody .tr, .accounts .tbody .tr, .statistics .tbody .tr, .groups .tbody .tr, .group-users .tbody .tr, .user-locations .tbody .tr {
         display: flex;
         flex-flow: row;
         flex-wrap: wrap;
@@ -406,79 +336,349 @@ h2 {
         font-size: 12px;
         padding: 5px;
     }
-    .history-row .td {
+    .account-history .tbody .td, .accounts .tbody .td, .statistics .tbody .td, .groups .tbody .td, .group-users .tbody .td, .user-locations .tbody .td {
         display: block;
         border: none;
         padding: 0;
         margin: 0;
     }
-    .history-row .td:nth-child(1) {
-        font-weight: initial;
-        flex: 0 0 50%;
-        order: 1;
-    }
-    .history-row .td:nth-child(1)::before {
-        content: "Timestamp: ";
-    }
-    .history-row .td:nth-child(2) {
-        font-weight: initial;
-        flex: 0 0 100%;
-        order: 3;
-    }
-    .history-row .td:nth-child(2)::before {
-        content: "Action: ";
-    }
-    .history-row .td:nth-child(3) {
+
+    .account-history .tbody .td:nth-child(1) {
         font-weight: initial;
         flex: 0 0 50%;
         order: 2;
         text-align: end;
     }
-    .history-row .td:nth-child(3)::before {
+    .account-history .tbody .td:nth-child(2) {
+        font-weight: initial;
+        flex: 0 0 100%;
+        order: 3;
+    }
+    .account-history .tbody .td:nth-child(2)::before {
+        content: "Action: ";
+    }
+    .account-history .tbody .td:nth-child(3) {
+        font-weight: initial;
+        flex: 0 0 50%;
+        order: 1;
+    }
+    .account-history .tbody .td:nth-child(3)::before {
         content: "Key: ";
     }
-    .history-row .td:nth-child(4) {
+    .account-history .tbody .td:nth-child(4) {
         font-weight: initial;
         flex: 0 0 100%;
         order: 4;
     }
-    .history-row .td:nth-child(4)::before {
+    .account-history .tbody .td:nth-child(4)::before {
         content: "Value: ";
     }
-    /*
-    .account-row {
-    }
-    .account-row:focus {
-        background-color: lightcyan;
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        width: 100%;
-    }
-    .account-row:focus .td {
-        display: block;
-        width: 100%;
-        border: none;
+
+    .accounts .tbody .td:nth-child(1) {
+        font-weight: initial;
+        flex: 0 0 100%;
+        order: 3;
+        min-height: 10px;
+        font-size: 14px;
         font-weight: bold;
-        padding: 4px;
+        padding-top: 5px;
+        padding-bottom: 5px;
     }
-    .account-row:focus .td:nth-child(1)::before {
-        content: "Timestamp: ";
+    .accounts .tbody .td:nth-child(2) {
         font-weight: initial;
+        flex: 0 0 50%;
+        order: 1;
     }
-    .account-row:focus .td:nth-child(2)::before {
+    .accounts .tbody .td:nth-child(3) {
+        font-weight: initial;
+        flex: 0 0 50%;
+        order: 2;
+        text-align: end;
+    }
+    .accounts .tbody .td:nth-child(4) {
+        font-weight: initial;
+        flex: 0 0 33%;
+        order: 6;
+    }
+    .accounts .tbody .td:nth-child(4)::before {
+        content: "perm_identity";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+        padding-right: 2px;
+    }
+    .accounts .tbody .td:nth-child(5) {
+        font-weight: initial;
+        flex: 0 0 33%;
+        order: 4;
+    }
+    .accounts .tbody .td:nth-child(5)::before {
+        content: "memory";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+        padding-right: 2px;
+    }
+    .accounts .tbody .td:nth-child(6) {
+        font-weight: initial;
+        flex: 0 0 33%;
+        order: 5;
+    }
+    .accounts .tbody .td:nth-child(6)::before {
+        content: "devices";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+        padding-right: 2px;
+    }
+
+    .statistics .tbody .td:nth-child(1) {
+        font-weight: initial;
+        flex: 0 0 50%;
+        order: 2;
+        text-align: end;
+    }
+    .statistics .tbody .td:nth-child(2) {
+        font-weight: initial;
+        flex: 0 0 50%;
+        order: 1;
+    }
+    .statistics .tbody .td:nth-child(2)::before {
         content: "Action: ";
-        font-weight: initial;
     }
-    .account-row:focus .td:nth-child(3)::before {
-        content: "Key: ";
+    .statistics .tbody .td:nth-child(3) {
         font-weight: initial;
+        flex: 0 0 50%;
+        order: 3;
     }
-    .account-row:focus .td:nth-child(4)::before {
-        content: "Value: ";
+    .statistics .tbody .td:nth-child(3)::before {
+        content: "Group ID: ";
+    }
+    .statistics .tbody .td:nth-child(4) {
         font-weight: initial;
+        flex: 0 0 33%;
+        order: 4;
+        text-align: end;
     }
-    */
+    .statistics .tbody .td:nth-child(4)::before {
+        content: "User ID: ";
+    }
+    .statistics .tbody .td:nth-child(5) {
+        font-weight: initial;
+        flex: 0 0 100%;
+        order: 5;
+    }
+
+    .groups .tbody .td:nth-child(1) {
+        flex: 0 0 50%;
+        order: 3;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    .groups .tbody .td:nth-child(2) {
+        flex: 0 0 25%;
+        order: 5;
+    }
+    .groups .tbody .td:nth-child(2)::before {
+        content: "lock_outline";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+    }
+    .groups .tbody .td:nth-child(3) {
+        flex: 0 0 25%;
+        order: 6;
+    }
+    .groups .tbody .td:nth-child(3)::before {
+        content: "timer_off";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+    }
+    .groups .tbody .td:nth-child(4) {
+        flex: 0 0 25%;
+        order: 7;
+    }
+    .groups .tbody .td:nth-child(4)::before {
+        content: "timer";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+    }
+    .groups .tbody .td:nth-child(5) {
+        flex: 0 0 25%;
+        order: 8;
+    }
+    .groups .tbody .td:nth-child(5)::before {
+        content: "directions_run";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+    }
+    .groups .tbody .td:nth-child(6) {
+        flex: 0 0 50%;
+        order: 4;
+        text-align: end;
+    }
+    .groups .tbody .td:nth-child(6)::before {
+        content: "Users: ";
+    }
+    .groups .tbody .td:nth-child(7) {
+        flex: 0 0 50%;
+        order: 1;
+    }
+    .groups .tbody .td:nth-child(8) {
+        flex: 0 0 50%;
+        order: 2;
+        text-align: end;
+    }
+
+    .group-users .tbody .td:nth-child(1) {
+        flex: 0 0 20%;
+        order: 3;
+        font-weight: bold;
+        font-size: 14px;
+        white-space: nowrap;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    .group-users .tbody .td:nth-child(1)::before {
+        content: "# ";
+    }
+    .group-users .tbody .td:nth-child(2) {
+        flex: 0 0 60%;
+        order: 4;
+        font-size: 14px;
+        font-weight: bold;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    .group-users .tbody .td:nth-child(3) {
+        flex: 0 0 20%;
+        order: 5;
+    }
+    .group-users .tbody .td:nth-child(4) {
+        flex: 0 0 50%;
+        order: 1;
+    }
+    .group-users .tbody .td:nth-child(5) {
+        flex: 0 0 50%;
+        order: 2;
+        text-align: end;
+    }
+    .group-users .tbody .td:nth-child(6) {
+        flex: 0 0 33%;
+        order: 6;
+    }
+    .group-users .tbody .td:nth-child(6)::before {
+        content: "memory";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+        padding-right: 2px;
+    }
+    .group-users .tbody .td:nth-child(7) {
+        flex: 0 0 33%;
+        order: 7;
+    }
+    .group-users .tbody .td:nth-child(7)::before {
+        content: "devices";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+        padding-right: 2px;
+    }
+    .group-users .tbody .td:nth-child(8) {
+        flex: 0 0 33%;
+        order: 8;
+    }
+    .group-users .tbody .td:nth-child(8)::before {
+        content: "perm_identity";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+        padding-right: 2px;
+    }
+
+    .user-locations .tbody .td:nth-child(1) {
+        flex: 0 0 50%;
+        order: 2;
+        text-align: end;
+    }
+    .user-locations .tbody .td:nth-child(2) {
+        flex: 0 0 50%;
+        order: 1;
+    }
+    .user-locations .tbody .td:nth-child(3) {
+        flex: 0 0 50%;
+        order: 3;
+    }
+    .user-locations .tbody .td:nth-child(3)::before {
+        content: "vertical_align_bottom";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+        padding-right: 2px;
+    }
+    .user-locations .tbody .td:nth-child(4) {
+        flex: 0 0 50%;
+        order: 4;
+    }
+    .user-locations .tbody .td:nth-child(4)::before {
+        content: "keyboard_tab";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+        padding-right: 2px;
+    }
+    .user-locations .tbody .td:nth-child(5) {
+        flex: 0 0 33%;
+        order: 5;
+    }
+    .user-locations .tbody .td:nth-child(5)::before {
+        content: "search";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+        padding-right: 2px;
+    }
+    .user-locations .tbody .td:nth-child(6) {
+        flex: 0 0 33%;
+        order: 6;
+    }
+    .user-locations .tbody .td:nth-child(6)::before {
+        content: "near_me";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+        padding-right: 2px;
+    }
+    .user-locations .tbody .td:nth-child(7) {
+        flex: 0 0 33%;
+        order: 7;
+    }
+    .user-locations .tbody .td:nth-child(7)::before {
+        content: "directions_run";
+        font-family: "Material Icons";
+        font-feature-settings: "liga" 1;
+        font-style: normal;
+        stroke: darkslategray;
+        padding-right: 2px;
+    }
 
     /* media specific classes */
     .hideable {

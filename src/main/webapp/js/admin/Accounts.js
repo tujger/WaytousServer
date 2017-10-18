@@ -137,14 +137,15 @@ function Accounts() {
 
         tableAccounts = u.table({
             id: "admin:accounts",
+            className: "accounts",
             caption: {
-                items: [
+               items: [
                     { label: "Name" },
-                    { label: "Created", className: "media-hidden" },
+                    { label: "Created" },
                     { label: "Updated" },
                     { label: "Sign Provider" },
-                    { label: "OS", className: "media-hidden" },
-                    { label: "Model", className: "media-hidden" },
+                    { label: "OS" },
+                    { label: "Model" },
                 ]
             },
             placeholder: "Loading..."
@@ -220,11 +221,11 @@ function Accounts() {
                     },
                     cells: [
                         { innerHTML: privateData[DATABASE.NAME] },
-                        { className: "media-hidden", innerHTML: new Date(privateData[DATABASE.CREATED]).toLocaleString(), sort: privateData[DATABASE.CREATED] },
+                        { innerHTML: new Date(privateData[DATABASE.CREATED]).toLocaleString(), sort: privateData[DATABASE.CREATED] },
                         { innerHTML: new Date(privateData[DATABASE.CHANGED]).toLocaleString(), sort: privateData[DATABASE.CHANGED] },
                         { innerHTML: privateData[REQUEST.SIGN_PROVIDER] },
-                        { className: "media-hidden", innerHTML: privateData[REQUEST.OS] },
-                        { className: "media-hidden", innerHTML: privateData[REQUEST.MODEL] },
+                        { innerHTML: privateData[REQUEST.OS] },
+                        { innerHTML: privateData[REQUEST.MODEL] },
                     ]
                 });
                 if(!expired) row.classList.remove("inactive");

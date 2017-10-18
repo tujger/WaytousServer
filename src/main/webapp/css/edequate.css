@@ -1163,7 +1163,7 @@ button:active {
         right: 0;
         padding: 10px;
     }
-    .th {
+    .thead .th {
         padding-left: 20px;
         padding-right: 20px;
     }

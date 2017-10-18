@@ -108,15 +108,16 @@ function Groups() {
 
         tableGroups = u.table({
             id: "groups",
+            className: "groups",
             caption: {
                 items: [
                     { label: "ID" },
-                    { label: "Requires password", className: "media-hidden" },
-                    { label: "Persistent", className: "media-hidden" },
-                    { label: "Time to live, min", className: "media-hidden" },
-                    { label: "Dismiss inactive, sec", className: "media-hidden" },
+                    { label: "Requires password" },
+                    { label: "Persistent" },
+                    { label: "Time to live, min" },
+                    { label: "Dismiss inactive, sec" },
                     { label: "Users" },
-                    { label: "Created", className: "media-hidden" },
+                    { label: "Created" },
                     { label: "Updated" }
                 ]
             },
@@ -154,12 +155,12 @@ function Groups() {
                         },
                         cells: [
                             { innerHTML: data.key },
-                            { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No" },
-                            { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No" },
-                            { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "&#150;" : snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY] },
-                            { className: "media-hidden", innerHTML:snapshot.val()[DATABASE.DISMISS_INACTIVE] ? snapshot.val()[DATABASE.DELAY_TO_DISMISS] : "&#150;" },
+                            { innerHTML:snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No" },
+                            { innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No" },
+                            { innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "&#150;" : snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY] },
+                            { innerHTML:snapshot.val()[DATABASE.DISMISS_INACTIVE] ? snapshot.val()[DATABASE.DELAY_TO_DISMISS] : "&#150;" },
                             { innerHTML: "..." },
-                            { className: "media-hidden", sort: snapshot.val()[DATABASE.CREATED], innerHTML:snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
+                            { sort: snapshot.val()[DATABASE.CREATED], innerHTML:snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
                             { sort: 0, innerHTML:"..." }
                         ]
                     });

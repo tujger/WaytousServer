@@ -20,6 +20,7 @@ function Account() {
         ra: "Add remote value",
         ru: "Update remote value",
         rr: "Remove remote value",
+        or: "Override remote value",
         ro: "Override remote value",
         la: "Add local value",
         lo: "Override local value",
@@ -113,14 +114,16 @@ function Account() {
             ]
         });
 
+        u.create("br", null, div);
+        buttons = u.create("div", {className:"buttons"}, div);
+        renderButtons(buttons);
+
         var accountsTitleNode = u.create(HTML.H2, "History", div);
-//        buttons = u.create("div", {className:"buttons"}, accountsTitleNode);
-//        renderButtons(buttons);
 
         tableHistory = u.table({
             id: "admin:account:history",
+            className: "account-history",
             caption: {
-                className: "history-header",
                 items: [
                     { label: "Timestamp" },
                     { label: "Action" },
@@ -168,7 +171,6 @@ function Account() {
             tableSummary.accountUpdatedItem.lastChild.innerHTML = privateData[DATABASE.CHANGED] ? new Date(privateData[DATABASE.CHANGED]).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(privateData[DATABASE.CHANGED])) + " ago)" : "never";
             tableSummary.accountSyncedItem.lastChild.innerHTML = privateData[DATABASE.SYNCED] ? new Date(privateData[DATABASE.SYNCED]).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(privateData[DATABASE.SYNCED])) + " ago)" : "never";
 
-
         }).catch(function(error){
             console.warn("Resign because of",error);
             WTU.resign(updateAll);
@@ -207,7 +209,7 @@ function Account() {
                 var lng = snapshot.val()[USER.LONGITUDE];
 
                 var row = tableHistory.add({
-                    className: "history-row highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
+                    className: "highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
                     tabindex: -1,
                     cells: [
                         { innerHTML: new Date(snapshot.val()[DATABASE.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[DATABASE.TIMESTAMP] },
@@ -229,72 +231,28 @@ function Account() {
 
     function renderButtons(div) {
         u.clear(div);
-        u.create(HTML.BUTTON, { innerHTML:"Switch activity", onclick: switchActivity}, div);
-        u.create(HTML.BUTTON, { innerHTML:"Remove", onclick: removeUser}, div);
+        u.create(HTML.BUTTON, { innerHTML:"Delete account", onclick: deleteAccount}, div);
     }
 
-    function switchActivity(e){
-        var ref = database.ref();
+    function deleteAccount(e){
         u.clear(buttons);
-
-        u.create(HTML.BUTTON,{innerHTML:"Active", onclick: function(){
-            switchActive(userNumber, true);
-            renderButtons(buttons);
-        }}, buttons);
-        u.create(HTML.BUTTON,{innerHTML:"Inactive", onclick: function(){
-            switchActive(userNumber, false);
-        }}, buttons);
-        u.create(HTML.BUTTON,{innerHTML:"Cancel", onclick: function(){
-            renderButtons(buttons);
-        }}, buttons);
-    }
-
-    function switchActive(number, active) {
-        u.progress.show("Switching...");
-        var ref = database.ref();
-        u.post("/admin/rest/v1/user/switch", JSON.stringify({group_id:groupId, user_number:userNumber,property:DATABASE.ACTIVE,value:active}))
-            .then(function(){
-                u.progress.hide();
-                if(!active) {
-                    u.toast.show("User #"+userNumber+" is offline.");
-                    WTU.switchTo("/admin/group/" + groupId);
-                } else {
-                    u.toast.show("User #"+userNumber+" is online.");
-                }
-            }).catch(function(code,xhr){
-            u.progress.hide();
-            console.warn("Resign because of",code,xhr);
-            WTU.resign(updateAll);
-            var res = JSON.parse(xhr.responseText) || {};
-            u.toast.show(res.message || xhr.statusText);
-            renderButtons(buttons);
-        });
-
-    }
-
-    function removeUser() {
-        u.clear(buttons);
-        u.create({className:"question", innerHTML: "Are you sure you want to remove user "+userNumber+" from group "+groupId+"? Note that all user information will be removed from group."}, buttons);
+        u.create({className:"question", innerHTML: "Are you sure you want to delete account "+accountId+"?"}, buttons);
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
-            u.progress.show("Removing...");
-            u.post("/admin/rest/v1/user/remove", JSON.stringify({group_id:groupId, user_number:userNumber}))
+            u.post("/admin/rest/v1/account/delete", JSON.stringify({account_id:accountId}))
                 .then(function(){
-                    u.progress.hide();
-                    u.toast.show("User #"+userNumber+" was removed.");
-                    WTU.switchTo("/admin/group/" + groupId);
+                    WTU.switchTo("/admin/accounts");
+                    u.toast.show("Account " + accountId + " was deleted.");
                 }).catch(function(code,xhr){
-                u.progress.hide();
-                console.warn("Resign because of",code,xhr);
-                WTU.resign(updateAll);
-                var res = JSON.parse(xhr.responseText) || {};
-                u.toast.show(res.message || xhr.statusText);
-                renderButtons(buttons);
-            });
+                    console.warn("Resign because of",code,xhr);
+                    WTU.resign(updateSummary);
+                    var res = JSON.parse(xhr.responseText) || {};
+                    u.toast.show(res.message || xhr.statusText);
+                    renderButtons(buttons);
+                });
         }}, buttons);
         u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){
             renderButtons(buttons);
         }}, buttons);
-
     }
 
     return {
