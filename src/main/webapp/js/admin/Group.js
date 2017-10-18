@@ -278,9 +278,9 @@ function Group() {
                     { label: "Color", width: "5%" },
                     { label: "Created" },
                     { label: "Updated" },
-                    { label: "Platform" },
-                    { label: "Device" },
-                    { label: "Sign provider" }
+                    { label: "Platform", selectable: true },
+                    { label: "Device", selectable: true },
+                    { label: "Sign provider", selectable: true }
                 ]
             },
             placeholder: "Loading..."

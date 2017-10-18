@@ -3,6 +3,7 @@
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
  * History:
+ * 1.4 - table#options#caption.selectable=true/false
  * 1.3 - sprintf redesigned; table#options.sort=true/false; table#options.filter=true/false;
  *       dialog#options.autoclose=true/false; dialog#setHeader; dialog#getHeader;
  *       dialog#setFooter; dialog#getFooter; dialog#setPositive; dialog#getPositive;
@@ -2282,6 +2283,7 @@ function Edequate(options) {
 
                 var res = create(HTML.DIV, row, table.body);
                 res.cells = [];
+                res.table = table;
 
 //                 var res = create(HTML.DIV, {className:"tr"+(row.onclick ? " clickable":"")+(row.className ? " "+row.className : ""), onclick: row.onclick, cells: [] }, table.body);
                 for(var i in row.cells) {
@@ -2363,7 +2365,7 @@ function Edequate(options) {
 //            var div = create(HTML.DIV, {className:"tr"}, table.head);
             for(var i in options.caption.items) {
                 var item = options.caption.items[i];
-                item.className = "th"+optionalClassName(item.className);
+                item.className = "th" + optionalClassName(item.className);
                 var innerHTML = item.innerHTML;
                 delete item.innerHTML;
                 if(options.sort == undefined || options.sort) {
@@ -2385,8 +2387,74 @@ function Edequate(options) {
                         table.update();
                     };
                 }
+                if(item.selectable) {
+                    item.onlongclick = function(e) {
+                        this.selectButton.click();
+                    }
+                }
                 var cell = create(HTML.DIV, item, table.head);
-                cell.place(HTML.DIV,{className:"table-sort hidden", innerHTML:"sort"}).place(HTML.SPAN, {innerHTML: item.innerHTML || item.label});
+                cell.sortIcon = create(HTML.DIV,{className:"icon table-sort notranslate hidden", innerHTML:"sort"}, cell);
+                cell.label = create(HTML.SPAN, {innerHTML: item.innerHTML || item.label}, cell);
+
+                if(item.selectable) {
+                    cell.selectButton = create(HTML.DIV, {
+                        className:"icon table-select notranslate",
+                        innerHTML:"expand_more",
+                        onclick: function(e){
+                            e.stopPropagation();
+                            e.preventDefault();
+
+                            progressHolder.show();
+
+                            setTimeout(function() {
+                                var selected = {};
+                                var index = this.parentNode.index;
+                                for(var j in table.rows) {
+                                    if(selected[table.rows[j].cells[index].innerHTML]) {
+                                        selected[table.rows[j].cells[index].innerHTML] ++;
+                                    } else {
+                                        selected[table.rows[j].cells[index].innerHTML] = 1;
+                                    }
+                                }
+                                var menuItems = [{
+                                    type: HTML.DIV,
+                                    innerHTML: "&#150;",
+                                    onclick: function(e) {
+                                        delete table.selectable;
+                                        table.filter.remove(this.parentNode.filter);
+                                    }
+                                }];
+                                for(var x in selected) {
+                                    menuItems.push({
+                                        type: HTML.DIV,
+                                        innerHTML: x,
+                                        onclick: function(e) {
+                                            table.selectable = { index: index, string: this.innerHTML};
+
+                                            if(this.parentNode.filter) table.filter.remove(this.parentNode.filter);
+                                            var filterSelected = function(row) {
+                                                if(row.table && row.table.selectable) {
+                                                    return row.cells[row.table.selectable.index].innerHTML == row.table.selectable.string;
+                                                } else {
+                                                    return true;
+                                                }
+                                            };
+                                            this.parentNode.filter = table.filter.add(filterSelected)
+                                        }
+                                    })
+                                }
+
+                                var menu = new Menu({
+                                    items: menuItems,
+                                    title: this.parentNode.label.cloneNode(true)
+                                });
+                                progressHolder.hide();
+                                menu.open(this.parentNode);
+                            }.bind(this), 0)
+                        }
+                    }, cell);
+                }
+
                 table.head.cells.push(cell);
             }
 
@@ -2519,6 +2587,7 @@ function Edequate(options) {
                 }
                 table.saveOption("filter",table.filter.options);
                 table.filter();
+                return newFilterOption;
             };
             table.filter.remove = function(filterOption) {
                 table.filter.options = table.filter.options || [];
@@ -2753,13 +2822,13 @@ function Edequate(options) {
 
 
     /**
-     * menu
+     * Menu
      */
-    function menu(options) {
+    function Menu(options) {
         options = options || {};
         options.className = "menu" + optionalClassName(options.className);
         options.tabindex = -1;
-        //options.autoclose = true;
+//        options.autoclose = true;
 
         //options._onopen = options.onopen;
         //options.onopen = function(evt) {
@@ -2797,7 +2866,7 @@ function Edequate(options) {
 
         return menu;
     }
-    this.menu = menu;
+    this.menu = Menu;
 
 
     function optionalClassName(className) {

@@ -196,7 +196,7 @@ function Statistics() {
             caption: {
                 items: [
                     { label: "Timestamp" },
-                    { label: "Action" },
+                    { label: "Action", selectable: true },
                     { label: "Group ID" },
                     { label: "User ID" },
                     { label: "Message" }
@@ -272,9 +272,7 @@ function Statistics() {
             usersChart.draw(usersStat, usersChartOptions);
         });
         groupsChart.draw(groupsStat, groupsChartOptions);
-
     }
-
 
     function updateData(){
 

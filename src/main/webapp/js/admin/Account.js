@@ -126,8 +126,8 @@ function Account() {
             caption: {
                 items: [
                     { label: "Timestamp" },
-                    { label: "Action" },
-                    { label: "Key" },
+                    { label: "Action", selectable: true },
+                    { label: "Key", selectable: true },
                     { label: "Value" },
                 ]
             },

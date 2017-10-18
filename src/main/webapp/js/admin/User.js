@@ -129,7 +129,7 @@ function User() {
             caption: {
                 items: [
                     { label: "Timestamp" },
-                    { label: "Provider" },
+                    { label: "Provider", selectable: true },
                     { label: "Latitude" },
                     { label: "Longitude" },
                     { label: "Accuracy" },

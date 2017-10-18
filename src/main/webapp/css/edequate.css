@@ -706,6 +706,7 @@ button:active {
     border-radius: 0;
     border-width: 0;
     background-color: white;
+    opacity: 1;
 }
 .menu .dialog-items {
     padding: 0;
@@ -788,14 +789,17 @@ button:active {
     cursor: default;
 }
 .table-sort {
-    font-family: "Material Icons";
-    font-feature-settings: "liga" 1;
-    font-style: normal;
     position: absolute;
+    top: 4px;
     left: 4px;
 }
 .table-sort-descend {
     transform: scale(1,-1);
+}
+.table-select {
+    position: absolute;
+    top: 4px;
+    right: 4px;
 }
 .thead {
     display: table-header-group;
@@ -938,6 +942,9 @@ button:active {
         top: 50% !important;
         transform: translate(-50%,-50%) !important;
         max-width: 90%;
+    }
+    .menu .dialog-item {
+        height: 40px;
     }
     /* Actionbar */
     .actionbar {

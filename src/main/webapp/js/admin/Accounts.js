@@ -143,9 +143,9 @@ function Accounts() {
                     { label: "Name" },
                     { label: "Created" },
                     { label: "Updated" },
-                    { label: "Sign Provider" },
-                    { label: "OS" },
-                    { label: "Model" },
+                    { label: "Sign Provider", selectable: true },
+                    { label: "OS", selectable: true },
+                    { label: "Model", selectable: true },
                 ]
             },
             placeholder: "Loading..."
