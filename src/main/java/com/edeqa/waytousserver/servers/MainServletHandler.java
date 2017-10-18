@@ -130,7 +130,10 @@ public class MainServletHandler extends AbstractServletHandler {
                     Common.log("Main", uri.getPath(), "[404 - not found]");
                     file = new File(root + "/404.html");
                 }
+            } else {
+                Common.log("Main", uri.getPath(), "[" + file.length() + " byte(s)]");
             }
+
             {
                 // Object exists and it is a file: accept with response code 200.
 
