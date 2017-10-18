@@ -317,17 +317,17 @@ function Group() {
 //                tableSummary.requiresPasswordNode.lastChild.innerHTML = snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No";
 //                tableSummary.passwordNode[snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "show":"hide"]();
 
-                tableSummary.welcomeMessageNode.lastChild.innerHTML = snapshot.val()[DATABASE.WELCOME_MESSAGE] || "";
+                tableSummary.welcomeMessageNode.lastChild.innerHTML = u.clear(snapshot.val()[DATABASE.WELCOME_MESSAGE] || "");
 
                 tableSummary.persistentNode.lastChild.innerHTML = snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No";
                 tableSummary.timeToLiveNode[snapshot.val()[DATABASE.PERSISTENT] ? "hide":"show"]();
 
-                tableSummary.timeToLiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY] || 15;
+                tableSummary.timeToLiveNode.lastChild.innerHTML = u.clear(snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY] || 15);
 
                 tableSummary.dismissInactiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.DISMISS_INACTIVE] ? "Yes" : "No";
                 tableSummary.delayToDismissNode[snapshot.val()[DATABASE.DISMISS_INACTIVE] ? "show":"hide"]();
 
-                tableSummary.delayToDismissNode.lastChild.innerHTML = snapshot.val()[DATABASE.DELAY_TO_DISMISS] || 300;
+                tableSummary.delayToDismissNode.lastChild.innerHTML = u.clear(snapshot.val()[DATABASE.DELAY_TO_DISMISS] || 300);
 
                 tableSummary.createdNode.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString();
 //                tableSummary.changedNode.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CHANGED]).toLocaleString();
@@ -379,9 +379,9 @@ function Group() {
                         return false;
                     },
                     cells: [
-                        { innerHTML: userNumber, sort: parseInt(userNumber) },
-                        { innerHTML: snapshot.val()[DATABASE.NAME] },
-                        { style: { backgroundColor: utils.getHexColor(snapshot.val()[DATABASE.COLOR]), opacity: 0.5 } },
+                        { innerHTML: u.clear(userNumber), sort: parseInt(userNumber) },
+                        { innerHTML: u.clear(snapshot.val()[DATABASE.NAME]) },
+                        { style: { backgroundColor: utils.getHexColor(u.clear(snapshot.val()[DATABASE.COLOR])), opacity: 0.5 } },
                         { sort: snapshot.val()[DATABASE.CREATED], innerHTML: snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
                         { sort: 0, innerHTML: "..." },
                         { innerHTML: "..." },
@@ -436,7 +436,7 @@ function Group() {
                     tableUsers.update();
                 });
                 ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.NAME).on("value", function(snapshot){
-                    userNameNode.innerHTML = snapshot.val() || "&lt;Friend "+userNumber+"&gt;";
+                    userNameNode.innerHTML = u.clear(snapshot.val() || "&lt;Friend "+userNumber+"&gt;");
                     tableUsers.update();
                 });
                 ref.child(groupId).child(DATABASE.PUBLIC).child("tracking").child(userNumber).limitToLast(1).on("child_added", function(snapshot){
@@ -486,9 +486,9 @@ function Group() {
                         ref.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
                             .then(function(snapshot){
                                 if(snapshot.val()) {
-                                    userOsNode.innerHTML = snapshot.val()[REQUEST.OS];
-                                    userDeviceNode.innerHTML = snapshot.val()[REQUEST.MODEL];
-                                    userSignProviderNode.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous";
+                                    userOsNode.innerHTML = u.clear(snapshot.val()[REQUEST.OS]);
+                                    userDeviceNode.innerHTML = u.clear(snapshot.val()[REQUEST.MODEL]);
+                                    userSignProviderNode.innerHTML = u.clear(snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous");
                                     tableUsers.update();
                                 }
                             });

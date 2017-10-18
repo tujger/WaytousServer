@@ -49,7 +49,7 @@ function MyUsers(main) {
         var name = u.load("properties:name");
         if(name) {
             main.me.name = name;
-            main.me.fire(EVENTS.CHANGE_NAME, name);
+            main.me.fire(EVENTS.CHANGE_NAME, u.clear(name));
         }
         users[myNumber] = main.me;
         return main.me;

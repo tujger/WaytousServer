@@ -205,7 +205,7 @@ function Accounts() {
                     lastRegistered = privateData;
                     lastRegistered[REQUEST.UID] = snapshot.key;
                     tableSummary.lastRegisteredItem.lastChild.innerHTML = new Date(lastRegistered[DATABASE.CREATED]).toLocaleString();
-                    tableSummary.lastRegisteredItem.uid = lastRegistered[REQUEST.UID];
+                    tableSummary.lastRegisteredItem.uid = u.clear(lastRegistered[REQUEST.UID]);
                 }
 
                 if(activeToday) tableSummary.accountsRecentItem.lastChild.innerHTML = +tableSummary.accountsRecentItem.lastChild.innerHTML + 1;
@@ -220,12 +220,12 @@ function Accounts() {
                         return false;
                     },
                     cells: [
-                        { innerHTML: privateData[DATABASE.NAME] },
+                        { innerHTML: u.clear(privateData[DATABASE.NAME]) },
                         { innerHTML: new Date(privateData[DATABASE.CREATED]).toLocaleString(), sort: privateData[DATABASE.CREATED] },
                         { innerHTML: new Date(privateData[DATABASE.CHANGED]).toLocaleString(), sort: privateData[DATABASE.CHANGED] },
-                        { innerHTML: privateData[REQUEST.SIGN_PROVIDER] },
-                        { innerHTML: privateData[REQUEST.OS] },
-                        { innerHTML: privateData[REQUEST.MODEL] },
+                        { innerHTML: u.clear(privateData[REQUEST.SIGN_PROVIDER]) },
+                        { innerHTML: u.clear(privateData[REQUEST.OS]) },
+                        { innerHTML: u.clear(privateData[REQUEST.MODEL]) },
                     ]
                 });
                 if(!expired) row.classList.remove("inactive");

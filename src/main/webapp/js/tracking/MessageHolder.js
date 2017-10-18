@@ -216,11 +216,11 @@ function MessageHolder(main) {
     }
 
     function perform(json) {
-        var number = json[USER.NUMBER];
-        var text = json[USER.MESSAGE];
-        var time = json[REQUEST.TIMESTAMP];
-        var key = json["key"];
-        var privateMessage = json[EVENTS.PRIVATE_MESSAGE] || false;
+        var number = u.clear(json[USER.NUMBER]);
+        var text = u.clear(json[USER.MESSAGE]);
+        var time = u.clear(json[REQUEST.TIMESTAMP]);
+        var key = u.clear(json["key"]);
+        var privateMessage = u.clear(json[EVENTS.PRIVATE_MESSAGE] || false);
 
         main.users.forUser(number, function(number,user){
             user.fire(EVENTS.USER_MESSAGE, {body: text, timestamp: time, key: key, private: privateMessage});

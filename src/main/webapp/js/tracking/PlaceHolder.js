@@ -182,7 +182,7 @@ function PlaceHolder(main) {
                             label: "OK",
                             onclick: function(items) {
                                 var number = parseInt(items[0].value);
-                                var name = items[1].value || "";
+                                var name = u.clear(items[1].value || "");
                                 var description = items[2].value || "";
                                 place.origin.name = name;
                                 place.origin.description = description;

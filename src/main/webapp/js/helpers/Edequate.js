@@ -611,11 +611,26 @@ function Edequate(options) {
     create.variables = {};
     this.create = create;
 
-    function clear(node) {
-        if(!node) return;
-        for(var i = node.children.length-1; i>=0; i--) {
-            node.removeChild(node.children[i]);
+    function clear(element) {
+        if(!element) return;
+        if(element instanceof HTMLElement) {
+            for(var i = element.childNodes.length-1; i>=0; i--) {
+                element.removeChild(element.children[i]);
+            }
+        } else if(typeof element == "boolean") {
+            return element;
+        } else if(typeof element == "number") {
+            return element;
+        } else if(typeof element == "string") {
+            element = element.replace(/<.*?>/g, "");
+            return element;
+        } else if(element instanceof Array || element instanceof Object) {
+            for(var i in element) {
+                element[i] = clear(element[i])
+            }
+            return element;
         }
+        return element;
     }
     this.clear = clear;
 

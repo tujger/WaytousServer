@@ -195,8 +195,8 @@ function SavedLocationHolder(main) {
                         label: u.lang.ok,
                         onclick: function(items) {
                             var number = parseInt(items[0].value);
-                            var name = items[1].value || "";
-                            var description = items[2].value || "";
+                            var name = u.clear(items[1].value || "");
+                            var description = u.clear(items[2].value || "");
                             var loc = u.load("saved_location:"+number);
                             loc.n = name;
                             loc.d = description;
@@ -559,10 +559,10 @@ function SavedLocationHolder(main) {
     }
 
     function perform(json) {
-        var number = json[USER.NUMBER];
+        var number = u.clear(json[USER.NUMBER]);
         if(main.me.number == number) return;
         var from = main.users.users[number];
-        var name = json[USER.NAME] || (from ? from.properties.getDisplayName() : "Point");
+        var name = u.clear(json[USER.NAME] || (from ? from.properties.getDisplayName() : "Point"));
         var user = new MyUser(main);
         user.properties = {
            getDisplayName: function(){ return name }
@@ -573,10 +573,10 @@ function SavedLocationHolder(main) {
                longitude: json[USER.LONGITUDE]
            }
         };
-        user.description = json[USER.DESCRIPTION] || "";
-        user.address = json[USER.ADDRESS] || "";
-        user.timestamp = json[REQUEST.TIMESTAMP];
-        user.key = json["key"] || "";
+        user.description = u.clear(json[USER.DESCRIPTION] || "");
+        user.address = u.clear(json[USER.ADDRESS] || "");
+        user.timestamp = u.clear(json[REQUEST.TIMESTAMP]);
+        user.key = u.clear(json["key"] || "");
 
         var last = u.load("saved_location:counter") || 0;
         for(var i = 1; i <= last; i++) {

@@ -24,7 +24,7 @@ function PropertiesHolder(main) {
                 label: u.lang.ok,
                 onclick: function(args) {
                     if(args[0].value) {
-                        var name = args[0].value;
+                        var name = u.clear(args[0].value);
                         u.save("properties:name", name);
                         u.save("properties:name_asked", true);
                         main.me.fire(EVENTS.CHANGE_NAME, name);
@@ -68,7 +68,7 @@ function PropertiesHolder(main) {
                     }, main.right);
                     setTimeout(function(){askIfNameNotDefinedDialog.open();}, 0);
                 }
-                var name = main.me.name;
+                var name = u.clear(main.me.name);
                 if(!name && main.me.properties) name = main.me.properties.name;
                 if(name) {
                     main.me.fire(EVENTS.CHANGE_NAME, name);
@@ -224,7 +224,7 @@ function PropertiesHolder(main) {
             key: DATABASE.NAME,
             onupdatevalue: function(key, newName, oldName) {
                 console.log(key, newName, oldName)
-                main.me.fire(EVENTS.CHANGE_NAME, newValue);
+                main.me.fire(EVENTS.CHANGE_NAME, u.clear(newName));
             }
         });
         if(forceToServer) {
@@ -253,7 +253,7 @@ function PropertiesHolder(main) {
                             onaccept: function(e, event) {
                                 u.save("properties:name", this.value);
                                 u.save("properties:name_asked", true);
-                                main.me.fire(EVENTS.CHANGE_NAME, this.value);
+                                main.me.fire(EVENTS.CHANGE_NAME, u.clear(this.value));
                             },
                         }
                     ]

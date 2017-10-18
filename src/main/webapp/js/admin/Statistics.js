@@ -459,11 +459,11 @@ function Statistics() {
 //                      return false;
 //                  },
                     cells: [
-                        { innerHTML: data.key },
-                        { innerHTML: actions[json["action"]] || json["action"]},
-                        { innerHTML: json["group"] },
-                        { innerHTML: json["user"] },
-                        { innerHTML: json["message"] }
+                        { innerHTML: u.clear(data.key) },
+                        { innerHTML: u.clear(actions[json["action"]] || json["action"])},
+                        { innerHTML: u.clear(json["group"]) },
+                        { innerHTML: u.clear(json["user"]) },
+                        { innerHTML: u.clear(json["message"]) }
                     ]
                 });
                 messagesCounterNode.innerHTML = +messagesCounterNode.innerHTML + 1;

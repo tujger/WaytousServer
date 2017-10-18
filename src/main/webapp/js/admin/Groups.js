@@ -154,11 +154,11 @@ function Groups() {
                             return false;
                         },
                         cells: [
-                            { innerHTML: data.key },
-                            { innerHTML:snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No" },
-                            { innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No" },
-                            { innerHTML:snapshot.val()[DATABASE.PERSISTENT] ? "&#150;" : snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY] },
-                            { innerHTML:snapshot.val()[DATABASE.DISMISS_INACTIVE] ? snapshot.val()[DATABASE.DELAY_TO_DISMISS] : "&#150;" },
+                            { innerHTML: u.clear(data.key) },
+                            { innerHTML: snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No" },
+                            { innerHTML: snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No" },
+                            { innerHTML: snapshot.val()[DATABASE.PERSISTENT] ? "&#150;" : u.clear(snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY]) },
+                            { innerHTML: snapshot.val()[DATABASE.DISMISS_INACTIVE] ? u.clear(snapshot.val()[DATABASE.DELAY_TO_DISMISS]) : "&#150;" },
                             { innerHTML: "..." },
                             { sort: snapshot.val()[DATABASE.CREATED], innerHTML:snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
                             { sort: 0, innerHTML:"..." }

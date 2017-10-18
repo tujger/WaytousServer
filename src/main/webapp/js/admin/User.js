@@ -169,9 +169,9 @@ function User() {
                 ref.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
                 .then(function(snapshot){
                     if(snapshot.val()) {
-                        tableSummary.userOsNode.lastChild.innerHTML = snapshot.val()[REQUEST.OS];
-                        tableSummary.userDeviceNode.lastChild.innerHTML = snapshot.val()[REQUEST.MODEL];
-                        tableSummary.userSignProviderNode.lastChild.innerHTML = snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous";
+                        tableSummary.userOsNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.OS]);
+                        tableSummary.userDeviceNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.MODEL]);
+                        tableSummary.userSignProviderNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous");
                     }
                 });
             }
@@ -186,7 +186,7 @@ function User() {
 
             tableSummary.placeholder.hide();
 
-            tableSummary.userNameNode.lastChild.innerHTML = snapshot.val()[DATABASE.NAME] || "&lt;Friend "+userNumber+"&gt;";
+            tableSummary.userNameNode.lastChild.innerHTML = u.clear(snapshot.val()[DATABASE.NAME] || "&lt;Friend "+userNumber+"&gt;");
             tableSummary.userActiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.ACTIVE] ? "Yes" : "No";
             tableSummary.userColorNode.lastChild.style.backgroundColor = utils.getHexColor(snapshot.val()[DATABASE.COLOR]);
             tableSummary.userCreatedNode.lastChild.innerHTML = snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;";
@@ -232,12 +232,12 @@ function User() {
                     tabindex: -1,
                     cells: [
                         { innerHTML: new Date(snapshot.val()[REQUEST.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[REQUEST.TIMESTAMP] },
-                        { innerHTML: snapshot.val()[USER.PROVIDER] },
+                        { innerHTML: u.clear(snapshot.val()[USER.PROVIDER]) },
                         { innerHTML: lat },
                         { innerHTML: lng },
-                        { innerHTML: snapshot.val()[USER.ACCURACY] || "&#150;" },
-                        { innerHTML: snapshot.val()[USER.BEARING] || "&#150;" },
-                        { innerHTML: snapshot.val()[USER.SPEED] || "&#150;" }
+                        { innerHTML: u.clear(snapshot.val()[USER.ACCURACY] || "&#150;") },
+                        { innerHTML: u.clear(snapshot.val()[USER.BEARING] || "&#150;") },
+                        { innerHTML: u.clear(snapshot.val()[USER.SPEED] || "&#150;") }
                     ],
                     onclick: function() {
                         if(!map) return;

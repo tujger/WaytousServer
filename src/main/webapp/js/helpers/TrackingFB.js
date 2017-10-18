@@ -561,7 +561,7 @@ function TrackingFB(main) {
     function usersDataNameListener(data) {
         try {
             var number = parseInt(data.ref.parent.key);
-            var name = data.val();
+            var name = u.clear(data.val());
             main.users.forUser(number, function(number, user, name){
                 if(user.number != main.me.number && user.properties && name != user.properties.name) {
                     user.fire(EVENTS.CHANGE_NAME, name);

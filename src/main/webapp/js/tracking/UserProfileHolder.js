@@ -122,7 +122,7 @@ function UserProfileHolder(main) {
                                 positive: {
                                     label: u.lang.yes,
                                     onclick: function(items) {
-                                        main.me.fire(EVENTS.CHANGE_NAME, u.create.variables.userNameNode.innerHTML);
+                                        main.me.fire(EVENTS.CHANGE_NAME, u.clear(u.create.variables.userNameNode.innerHTML));
                                     }
                                 },
                                 negative: {

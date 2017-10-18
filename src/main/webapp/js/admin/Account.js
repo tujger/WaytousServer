@@ -164,9 +164,9 @@ function Account() {
             }
             tableSummary.accountStatusItem.lastChild.innerHTML = expired ? "Expired" : (trusted ? "Trusted" : "Waiting");
 
-            tableSummary.accountModelItem.lastChild.innerHTML = privateData[REQUEST.MODEL] || "";
-            tableSummary.accountSignProviderItem.lastChild.innerHTML = privateData[REQUEST.SIGN_PROVIDER] || "";
-            tableSummary.accountOsItem.lastChild.innerHTML = privateData[REQUEST.OS] || "";
+            tableSummary.accountModelItem.lastChild.innerHTML = u.clear(privateData[REQUEST.MODEL] || "");
+            tableSummary.accountSignProviderItem.lastChild.innerHTML = u.clear(privateData[REQUEST.SIGN_PROVIDER] || "");
+            tableSummary.accountOsItem.lastChild.innerHTML = u.clear(privateData[REQUEST.OS] || "");
             tableSummary.accountCreatedItem.lastChild.innerHTML = new Date(privateData[DATABASE.CREATED]).toLocaleString();
             tableSummary.accountUpdatedItem.lastChild.innerHTML = privateData[DATABASE.CHANGED] ? new Date(privateData[DATABASE.CHANGED]).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(privateData[DATABASE.CHANGED])) + " ago)" : "never";
             tableSummary.accountSyncedItem.lastChild.innerHTML = privateData[DATABASE.SYNCED] ? new Date(privateData[DATABASE.SYNCED]).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(privateData[DATABASE.SYNCED])) + " ago)" : "never";
@@ -213,9 +213,9 @@ function Account() {
                     tabindex: -1,
                     cells: [
                         { innerHTML: new Date(snapshot.val()[DATABASE.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[DATABASE.TIMESTAMP] },
-                        { innerHTML: modes[snapshot.val()[DATABASE.MODE]] || snapshot.val()[DATABASE.MODE] },
-                        { innerHTML: keys[snapshot.val()[DATABASE.KEYS]] || snapshot.val()[DATABASE.KEYS] },
-                        { innerHTML: snapshot.val()[DATABASE.VALUE] },
+                        { innerHTML: u.clear(modes[snapshot.val()[DATABASE.MODE]] || snapshot.val()[DATABASE.MODE]) },
+                        { innerHTML: u.clear(keys[snapshot.val()[DATABASE.KEYS]] || snapshot.val()[DATABASE.KEYS]) },
+                        { innerHTML: u.clear(snapshot.val()[DATABASE.VALUE]) },
                     ]
                 });
 

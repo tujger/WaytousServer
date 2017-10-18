@@ -54,7 +54,7 @@ function TrackingHolder(main) {
 
     function perform(json){
         var loc = utils.jsonToLocation(json);
-        var number = json[USER.NUMBER];
+        var number = u.clear(json[USER.NUMBER]);
         main.users.forUser(number, function(number,user){
             user.addLocation(loc);
         });
