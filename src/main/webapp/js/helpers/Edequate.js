@@ -89,7 +89,6 @@ function Edequate(options) {
         AUTO:"auto",
         AUDIO:"audio"
     };
-    this.HTML = HTML;
 
     var ERRORS = {
         NOT_EXISTS: 1,
@@ -99,7 +98,6 @@ function Edequate(options) {
         ERROR_SENDING_REQUEST: 16,
         INVALID_MODULE: 32,
     };
-    this.ERRORS = ERRORS;
 
     var DRAWER = {
         SECTION_PRIMARY: 0,
@@ -111,7 +109,6 @@ function Edequate(options) {
         SECTION_MISCELLANEOUS: 8,
         SECTION_LAST: 9
     };
-    this.DRAWER = DRAWER;
 
     var HIDING = {
         OPACITY: "opacity",
@@ -123,7 +120,6 @@ function Edequate(options) {
         SCALE_Y_TOP: "scale-y-top",
         SCALE_Y_BOTTOM: "scale-y-bottom",
     };
-    this.HIDING = HIDING;
 
     URL = function(link) {
         this.href = link;
@@ -416,7 +412,6 @@ function Edequate(options) {
     function byId(id) {
         return document.getElementById(id);
     }
-    this.byId = byId;
 
     function normalizeName(name) {
         if(name === HTML.CLASSNAME){
@@ -434,7 +429,6 @@ function Edequate(options) {
         }
         return name;
     }
-    this.normalizeName = normalizeName;
 
     var attributable = {
         "frameBorder":1,
@@ -484,7 +478,7 @@ function Edequate(options) {
                                 el.appendChild(properties[x]);
                             } else if (typeof properties[x] === "string") {
                                 properties[x] = properties[x].replace(/\$\{(\w+)\}/g, function (x, y) {
-                                    return lang[y] ? lang[y].outerHTML : y
+                                    return Lang[y] ? Lang[y].outerHTML : y
                                 })
                                 el[x] = properties[x];
                             } else {
@@ -609,7 +603,6 @@ function Edequate(options) {
         return el;
     }
     create.variables = {};
-    this.create = create;
 
     function clear(element) {
         if(!element) return;
@@ -632,7 +625,6 @@ function Edequate(options) {
         }
         return element;
     }
-    this.clear = clear;
 
     function destroy(node) {
         try {
@@ -643,7 +635,6 @@ function Edequate(options) {
             console.error(e);
         }
     }
-    this.destroy = destroy;
 
     function keys(o) {
         var keys = [];
@@ -652,9 +643,6 @@ function Edequate(options) {
         }
         return keys;
     }
-    this.keys = keys;
-
-
 
     function require(name, context) {
         var origin = name;
@@ -703,8 +691,6 @@ function Edequate(options) {
 
         return returned;
     }
-    this.require = require;
-
 
     function _stringify(key, value) {
         return typeof value === "function" ? value.toString() : value;
@@ -729,7 +715,6 @@ function Edequate(options) {
             delete localStorage[self.origin + ":" + name];
         }
     }
-    this.save = save;
 
     function load(name) {
         var value = localStorage[self.origin + ":" + name];
@@ -739,7 +724,6 @@ function Edequate(options) {
             return null;
         }
     }
-    this.load = load;
 
     function saveForContext(name, value) {
         if(!self.context) {
@@ -752,7 +736,6 @@ function Edequate(options) {
             delete localStorage[self.origin + "$" + self.context +":" + name];
         }
     }
-    this.saveForContext = saveForContext;
 
     function loadForContext(name) {
         if(!self.context) {
@@ -765,7 +748,6 @@ function Edequate(options) {
             return null;
         }
     }
-    this.loadForContext = loadForContext;
 
     var dialogQueue = [];
     var performingDialogInQueue;
@@ -1262,7 +1244,7 @@ function Edequate(options) {
         }, dialog);
             dialog.titleLayout = create(HTML.DIV, {className:"dialog-title-label", innerHTML: options.title.label }, titleLayout);
             dialog.setTitle = function(title) {
-                lang.updateNode(dialog.titleLayout, title);
+                Lang.updateNode(dialog.titleLayout, title);
                 //dialog.titleLayout
             };
 
@@ -1566,7 +1548,6 @@ function Edequate(options) {
 
         return dialog;
     }
-    this.dialog = Dialog;
 
     /*
         function sprintf() {
@@ -1613,28 +1594,27 @@ function Edequate(options) {
         }
         return o;
     }
-    this.cloneAsObject = cloneAsObject;
 
-    function lang(string, value) {
+    function Lang(string, value) {
         if(value) {
-            var prev = lang.$origin[string];
-            lang.$origin[string] = value;
+            var prev = Lang.$origin[string];
+            Lang.$origin[string] = value;
             if(!prev) {
-                Object.defineProperty(lang, string, {
+                Object.defineProperty(Lang, string, {
                     get: function() {
-                        lang.$nodes[string] = lang.$nodes[string] || create(HTML.SPAN, {
+                        Lang.$nodes[string] = Lang.$nodes[string] || create(HTML.SPAN, {
                             dataLang: string
                         });
-                        var a = lang.$nodes[string].cloneNode();
+                        var a = Lang.$nodes[string].cloneNode();
                         a.format = function() {
-                            lang.$arguments[this.dataset.lang] = arguments;
-                            this.innerHTML = lang.$origin[this.dataset.lang] || (this.dataset.lang ? this.dataset.lang.substr(0,1).toUpperCase() + this.dataset.lang.substr(1) : "");
+                            Lang.$arguments[this.dataset.lang] = arguments;
+                            this.innerHTML = Lang.$origin[this.dataset.lang] || (this.dataset.lang ? this.dataset.lang.substr(0,1).toUpperCase() + this.dataset.lang.substr(1) : "");
                             this.innerHTML = this.innerHTML.sprintf(arguments);
                             return this;
                         };
-                        a.innerHTML = lang.$origin[string] || (string ? string.substr(0,1).toUpperCase() + string.substr(1) : "");
-                        if(lang.$arguments[string]){
-                            a.innerHTML = a.innerHTML.sprintf(lang.$arguments[string]);
+                        a.innerHTML = Lang.$origin[string] || (string ? string.substr(0,1).toUpperCase() + string.substr(1) : "");
+                        if(Lang.$arguments[string]){
+                            a.innerHTML = a.innerHTML.sprintf(Lang.$arguments[string]);
                         }
                         a.dataset.lang = string;
                         return a;
@@ -1642,32 +1622,31 @@ function Edequate(options) {
                 });
             }
         }
-        return (lang.$origin[string] && lang[string]) || (string ? string.substr(0, 1).toUpperCase() + string.substr(1) : "");
+        return (Lang.$origin[string] && Lang[string]) || (string ? string.substr(0, 1).toUpperCase() + string.substr(1) : "");
     }
-    this.lang = lang;
 
-    lang.$nodes = lang.$nodes || {};
-    lang.$origin = lang.$origin || {};
-    lang.$arguments = lang.$arguments || {};
+    Lang.$nodes = Lang.$nodes || {};
+    Lang.$origin = Lang.$origin || {};
+    Lang.$arguments = Lang.$arguments || {};
 
-    lang.overrideResources = function(options) {
+    Lang.overrideResources = function(options) {
         if(options.locale == "en") {
-            lang._overrideResources(options);
+            Lang._overrideResources(options);
         } else {
-            lang._overrideResources({
+            Lang._overrideResources({
                 "default": options.default,
                 resources: options.default,
                 type: options.type,
                 resource: options.resource,
                 locale: "en",
                 callback: function() {
-                    lang._overrideResources(options);
+                    Lang._overrideResources(options);
                 }
             });
         }
     };
 
-    lang._overrideResources = function(options) {
+    Lang._overrideResources = function(options) {
         if(!options || !options.default) {
             console.error("Not defined default resources");
             return;
@@ -1680,15 +1659,15 @@ function Edequate(options) {
                 var nodes = document.getElementsByTagName(HTML.SPAN);
                 console.warn("Switching to resources \""+(options.locale || options.resources)+"\".");
                 for(var x in json) {
-//                            if(lang.$origin[x]) {
+//                            if(Lang.$origin[x]) {
 //                                console.warn("Overrided resources: " + x + ":", json[x] ? (json[x].length > 30 ? json[x].substr(0,30)+"..." : json[x]) : "" );
 //                            }
-                    lang(x, json[x]);
+                    Lang(x, json[x]);
                 }
                 for(var i = 0; i < nodes.length; i++) {
                     if(nodes[i].dataset.lang) {
                         try {
-                            nodes[i].parentNode.replaceChild(lang[nodes[i].dataset.lang],nodes[i]);
+                            nodes[i].parentNode.replaceChild(Lang[nodes[i].dataset.lang],nodes[i]);
                         } catch(e) {
                             console.warn("Resource not found: " + nodes[i].dataset.lang);
                         }
@@ -1701,14 +1680,14 @@ function Edequate(options) {
                         console.warn("Error fetching resources for",options,xhr.status + ': ' + xhr.statusText);
                         if(options.default != options.resources){
                             console.warn("Switching to default resources \""+options.default+"\".");
-                            lang._overrideResources({"default":options.default});
+                            Lang._overrideResources({"default":options.default});
                         }
                         break;
                     case ERRORS.INCORRECT_JSON:
                         console.warn("Incorrect, empty or damaged resources file for",options,error,xhr);
                         if(options.default != options.resources){
                             console.warn("Switching to default resources \""+options.default+"\".");
-                            lang._overrideResources({"default":options.default});
+                            Lang._overrideResources({"default":options.default});
                         }
                         break;
                     default:
@@ -1717,7 +1696,7 @@ function Edequate(options) {
                 }
                 if(options.default != options.resources){
                     console.warn("Switching to default resources \""+options.default+"\".");
-                    lang._overrideResources({"default":options.default});
+                    Lang._overrideResources({"default":options.default});
                 } else {
                     if(options.callback) options.callback();
                 }
@@ -1725,15 +1704,14 @@ function Edequate(options) {
 
         } else if(options.resources.resources) {
             for(var x in options.resources.resources) {
-                if(lang[x]) {
+                if(Lang[x]) {
 //                    console.warn("Overrided resources: " + x + ":", holder.resources[x] ? (holder.resources[x].length > 30 ? holder.resources[x].substr(0,30)+"..." : holder.resources[x]) : "" );
                 }
-                lang(x, options.resources.resources[x]);
+                Lang(x, options.resources.resources[x]);
             }
         }
     };
-
-    lang.updateNode = function(node, lang) {
+    Lang.updateNode = function(node, lang) {
         if(typeof lang === "string") {
             node.innerHTML = lang;
         } else if(node && lang && lang.dataset && lang.dataset.lang) {
@@ -1779,17 +1757,14 @@ function Edequate(options) {
     function get(url) {
         return rest("GET",url);
     }
-    this.get = get;
 
     function post(url, body) {
         return rest("POST", url, body);
     }
-    this.post = post;
 
     function put(url) {
         return rest("PUT",url);
     }
-    this.put = put;
 
     /**
      getJSON(url [, post])
@@ -1823,9 +1798,8 @@ function Edequate(options) {
         },0);
         return { then: thenFunction, "catch": catchFunction };
     }
-    this.getJSON = getJSON;
 
-    function drawer(options, appendTo) {
+    function Drawer(options, appendTo) {
 //        collapsed = options.collapsed;
         var collapsed = load(options.collapsed);
         if(options.collapsed == undefined) {
@@ -2152,15 +2126,14 @@ function Edequate(options) {
 
         return layout;
     }
-    this.drawer = drawer;
 
-    function toast() {
+    function Toast() {
         var toast = create(HTML.DIV, {className:"toast-holder hidden", onclick: function(){ this.hide(HIDING.SCALE_Y_BOTTOM); }});
         toast.content = create(HTML.DIV, {className:"toast shadow"}, toast);
         toast.show = function(text,delay){
             if(!toast.parentNode) document.body.appendChild(toast);
             clearTimeout(toast.hideTask);
-            lang.updateNode(toast.content, text);
+            Lang.updateNode(toast.content, text);
             HTMLDivElement.prototype.show.call(toast, HIDING.SCALE_Y_BOTTOM);
             delay = delay || 5000;
             if(delay > 0) {
@@ -2171,7 +2144,6 @@ function Edequate(options) {
         };
         return toast;
     }
-    this.toast = new toast();
 
     function notification(options) {
         if(!options.persistent && !document.hidden) return;
@@ -2210,9 +2182,8 @@ function Edequate(options) {
             });
         }
     }
-    this.notification = notification;
 
-    function actionBar(options, appendTo) {
+    function ActionBar(options, appendTo) {
 
         var actionbar = create(HTML.DIV, {
             className:"actionbar changeable" + optionalClassName(options.className),
@@ -2249,7 +2220,6 @@ function Edequate(options) {
 
         return actionbar;
     }
-    this.actionBar = actionBar;
 
     function copyToClipboard(input) {
         if(!input) return false;
@@ -2262,7 +2232,6 @@ function Edequate(options) {
             return false;
         }
     }
-    this.copyToClipboard = copyToClipboard;
 
     /**
     * table = new Table(options [, appendTo])
@@ -2270,6 +2239,7 @@ function Edequate(options) {
     * table.head.cells[index]
     * table.rows.clear()
     * table.rows[index].cells[index]
+    * table.filter.set(filter) - removes all filters and set specified
     * table.filter.add(filter)
     * table.filter.remove(filter)
     * table.filter.clear()
@@ -2282,7 +2252,7 @@ function Edequate(options) {
     * options = {
     *   className,
     *   caption: captionOptions
-    *   items: itemsOptions
+    *   items: [rowOptions]
     * }
     * captionOptions = {
     *   innerHTML|label,
@@ -2304,8 +2274,6 @@ function Edequate(options) {
     *   sort: Number/String,
     * }
     */
-
-
     function Table(options, appendTo) {
         options.className = "table" + optionalClassName(options.className);
         var table = create(HTML.DIV, {
@@ -2723,7 +2691,6 @@ function Edequate(options) {
 
         return table;
     }
-    this.table = Table;
 
     var loadingHolder;
     function loading(progress) {
@@ -2736,13 +2703,12 @@ function Edequate(options) {
             .place(HTML.DIV, {className:"loading-progress-title", innerHTML: "Loading, please wait... "})
             .place(HTML.DIV, {className:"loading-progress-subtitle hidden"});
         if(progress) {
-            lang.updateNode(loadingHolder.lastChild, progress);
+            Lang.updateNode(loadingHolder.lastChild, progress);
             loadingHolder.lastChild.show();
         } else {
             loadingHolder.lastChild.hide();
         }
     }
-    this.loading = loading;
     loading.hide = function() {
         loadingHolder.hide();
     };
@@ -2786,7 +2752,6 @@ function Edequate(options) {
     Progress.prototype.hide = function() {
         progressHolder.close();
     };
-    this.progress = new Progress();
 
 
     /**
@@ -2809,7 +2774,7 @@ function Edequate(options) {
      *   onEvent: function(event, object)
      *   start: function()
      */
-    function eventBus() {
+    function EventBus() {
         this.events = window.EVENTS = window.EVENTS || {};
 
         this.eventHolder = function() {
@@ -2912,9 +2877,6 @@ function Edequate(options) {
             }
         }
     }
-    this.eventBus = new eventBus();
-    this.fire = this.eventBus.fire;
-
 
     /**
      * Menu
@@ -2963,7 +2925,6 @@ function Edequate(options) {
 
         return menu;
     }
-    this.menu = Menu;
 
 
     function optionalClassName(className) {
@@ -2980,5 +2941,40 @@ function Edequate(options) {
 
     this.context = options.context || "";
     this.origin = options.origin || "edequate";
+
+    this.HTML = HTML;
+    this.ERRORS = ERRORS;
+    this.DRAWER = DRAWER;
+    this.HIDING = HIDING;
+
+    this.actionBar = ActionBar;
+    this.byId = byId;
+    this.clear = clear;
+    this.cloneAsObject = cloneAsObject;
+    this.copyToClipboard = copyToClipboard;
+    this.create = create;
+    this.destroy = destroy;
+    this.dialog = Dialog;
+    this.drawer = Drawer;
+    this.eventBus = new EventBus();
+    this.fire = this.eventBus.fire;
+    this.get = get;
+    this.getJSON = getJSON;
+    this.keys = keys;
+    this.lang = Lang;
+    this.load = load;
+    this.loading = loading;
+    this.loadForContext = loadForContext;
+    this.menu = Menu;
+    this.normalizeName = normalizeName;
+    this.notification = notification;
+    this.post = post;
+    this.progress = new Progress();
+    this.put = put;
+    this.require = require;
+    this.save = save;
+    this.saveForContext = saveForContext;
+    this.table = Table;
+    this.toast = new Toast();
 
 }
