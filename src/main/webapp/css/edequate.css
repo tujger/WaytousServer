@@ -708,6 +708,12 @@ button:active {
     background-color: white;
     opacity: 1;
 }
+.menu .dialog-title {
+    display: none;
+}
+.menu .dialog-title-button {
+    display: none;
+}
 .menu .dialog-items {
     padding: 0;
     display: flex;
@@ -835,6 +841,10 @@ button:active {
     border: 1px solid black;
     vertical-align:top;
 }
+.table .thead .th {
+    padding-left: 20px;
+    padding-right: 20px;
+}
 .table.option {
     border: none;
 }
@@ -946,6 +956,9 @@ button:active {
         top: 50% !important;
         transform: translate(-50%,-50%) !important;
         max-width: 90%;
+    }
+    .menu .dialog-title {
+        display: flex;
     }
     .menu .dialog-item {
         height: 40px;
@@ -1174,9 +1187,8 @@ button:active {
         right: 0;
         padding: 10px;
     }
-    .thead .th {
-        padding-left: 20px;
-        padding-right: 20px;
+    .table .thead .th {
+        flex: 1 1 auto;
     }
     .td {
         padding-top: 10px;

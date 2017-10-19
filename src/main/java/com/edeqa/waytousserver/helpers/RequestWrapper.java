@@ -9,6 +9,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,6 +38,7 @@ public class RequestWrapper  {
 
     private HttpServletRequest httpServletRequest;
     private HttpServletResponse httpServletResponse;
+    private String charset;
 
     private HttpExchange httpExchange;
 
@@ -116,6 +118,16 @@ public class RequestWrapper  {
                 setHeader(HttpHeaders.CONTENT_ENCODING, "gzip");
             }
 
+            if(charset != null) {
+                List<String> contentTypes = httpExchange.getResponseHeaders().get(HttpHeaders.CONTENT_TYPE);
+                for (String contentType : contentTypes) {
+                    if (!contentType.toLowerCase().contains("; charset=")) {
+                        contentType = contentType + "; charset=" + charset;
+                        httpExchange.getResponseHeaders().set(HttpHeaders.CONTENT_TYPE, contentType);
+                    }
+                }
+            }
+
             try {
                 httpExchange.sendResponseHeaders(code, arg1);
             } catch (IOException e) {
@@ -165,6 +177,23 @@ public class RequestWrapper  {
 
     public InputStream getRequestBody() throws IOException {
         return getInputStream();
+    }
+
+    public void setCharacterEncoding(String charset) {
+        if(mode == MODE_SERVLET) {
+            httpServletResponse.setCharacterEncoding(charset);
+        } else if(mode == MODE_EXCHANGE) {
+            this.charset = charset;
+        }
+    }
+
+    public PrintWriter getPrintWriter() throws IOException {
+        if(mode == MODE_SERVLET) {
+            return httpServletResponse.getWriter();
+        } else if(mode == MODE_EXCHANGE) {
+            return new PrintWriter(httpExchange.getResponseBody());
+        }
+        return null;
     }
 
     public InetSocketAddress getRemoteAddress() {

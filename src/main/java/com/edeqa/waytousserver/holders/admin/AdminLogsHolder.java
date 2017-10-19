@@ -11,8 +11,12 @@ import com.google.api.client.http.HttpMethods;
 import com.google.common.net.HttpHeaders;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -103,9 +107,9 @@ public class AdminLogsHolder implements PageHolder {
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
-    private void printLog(RequestWrapper requestWrapper) {
+    private void printLog(final RequestWrapper requestWrapper) {
         try {
-            File file = new File(OPTIONS.getLogFile());
+            final File file = new File(OPTIONS.getLogFile());
 
             Common.log(LOG,"Update:",file.getCanonicalPath());
 
@@ -126,6 +130,79 @@ public class AdminLogsHolder implements PageHolder {
             }
 
 
+            boolean gzip = true;
+            requestWrapper.setHeader(HttpHeaders.CONTENT_TYPE, Mime.TEXT_EVENT_STREAM);
+            requestWrapper.setHeader(HttpHeaders.SERVER, "Waytous/"+ Common.SERVER_BUILD);
+            requestWrapper.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+            requestWrapper.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache");
+            requestWrapper.setHeader(HttpHeaders.CONNECTION, "keep-alive");
+            requestWrapper.setCharacterEncoding("UTF-8");
+
+//            requestWrapper.setHeader(HttpHeaders.ACCEPT_RANGES, "bytes");
+
+//            if(gzip){
+//                requestWrapper.setHeader(HttpHeaders.CONTENT_ENCODING, "gzip");
+//            } else {
+//                requestWrapper.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+//            }
+
+            requestWrapper.sendResponseHeaders(200, 0);
+
+            final PrintWriter pw = requestWrapper.getPrintWriter();
+
+//
+//            FileInputStream fs = new FileInputStream(file);
+//            final byte[] buffer = new byte[0x10000];
+//
+//            int count = 0;
+//            while ((count = fs.read(buffer)) >= 0) {
+//                os.write(buffer, 0, count);
+//            }
+//            fs.close();
+//            os.close();
+
+            final BufferedReader input = new BufferedReader(new FileReader(file));
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+
+                        String currentLine = null;
+                        long counter = 0;
+
+                        pw.println();
+                        while (!pw.checkError()) {
+                            if ((currentLine = input.readLine()) != null) {
+                                //                    currentLine = "data: " + currentLine + "\r\n";
+                                pw.print("data: ");
+                                pw.println(currentLine);
+                                pw.println();
+                                pw.flush();
+
+                                continue;
+                            }
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                break;
+                            }
+                        }
+                        try {
+                            input.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        pw.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+
+/*
             boolean gzip = true;
             requestWrapper.setHeader(HttpHeaders.CONTENT_TYPE, Mime.TEXT_PLAIN);
             requestWrapper.setHeader(HttpHeaders.SERVER, "Waytous/"+ Common.SERVER_BUILD);
@@ -155,6 +232,7 @@ public class AdminLogsHolder implements PageHolder {
             }
             fs.close();
             os.close();
+*/
         } catch(Exception e) {
             e.printStackTrace();
         }

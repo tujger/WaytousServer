@@ -112,10 +112,10 @@ function Groups() {
             caption: {
                 items: [
                     { label: "ID" },
-                    { label: "Requires password" },
-                    { label: "Persistent" },
-                    { label: "Time to live, min" },
-                    { label: "Dismiss inactive, sec" },
+                    { label: "Requires password", selectable: true },
+                    { label: "Persistent", selectable: true },
+                    { label: "Time to live, min", selectable: true },
+                    { label: "Dismiss inactive, sec", selectable: true },
                     { label: "Users" },
                     { label: "Created" },
                     { label: "Updated" }

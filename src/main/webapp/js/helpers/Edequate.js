@@ -1211,6 +1211,7 @@ function Edequate(options) {
                 if(options.title.button.className) options.title.button.className = " " + options.title.button.className;
                 options.title.button.onclick = options.title.button.onclick || function(){};
             }
+
             var titleLayout = create(HTML.DIV, {
                 className:"dialog-title" + optionalClassName(options.title.className),
                 onmousedown: function(e) {
@@ -1256,8 +1257,9 @@ function Edequate(options) {
                     dialog.style.right = "";
                     dialog.style.bottom = "";
                     dialog.adjustPosition();
-                }
-            }, dialog);
+                },
+                oncontextmenu: function(e){e.stopPropagation(); e.preventDefault(); return false;}
+        }, dialog);
             dialog.titleLayout = create(HTML.DIV, {className:"dialog-title-label", innerHTML: options.title.label }, titleLayout);
             dialog.setTitle = function(title) {
                 lang.updateNode(dialog.titleLayout, title);
@@ -1382,7 +1384,10 @@ function Edequate(options) {
         }
 
         if(options.title && options.title.filter) {
-            dialog.filterPlaceholder = create(HTML.DIV, {className: "dialog-items hidden",innerHTML: "Nothing found"}, dialog);
+            dialog.filterPlaceholder = create(HTML.DIV, {
+                className: "dialog-items hidden",
+                innerHTML: "Nothing found"
+            }, dialog);
         }
 
         dialog.footer = create(HTML.DIV, {className:"hidden"}, dialog);
@@ -2369,14 +2374,61 @@ function Edequate(options) {
                 table.saveOption("sorts",table._sorts);
             }
         });
+        //Object.defineProperty(String.prototype, "sprintf", {
+        //    enumerable: false,
+        //    value: function() {
+        //        var a = this, b;
+        //        if(arguments[0].constructor === Array || arguments[0].constructor === Object) {
+        //            arguments = arguments[0];
+        //        }
+        //        var args = [];
+        //        for(var i = 0; i < arguments.length; i++) {
+        //            args.push(arguments[i]);
+        //        }
+        //        return this.replace(/%[\d\.]*[sdf]/g, function(pattern){
+        //            var value = args.shift();
+        //            var tokens = pattern.match(/^%(0)?([\d\.]*)(.)$/);
+        //            switch(tokens[3]) {
+        //                case "d":
+        //                    var length = +tokens[2];
+        //                    var string = value.toString();
+        //                    if(length > string.length) {
+        //                        tokens[1] = tokens[1] || " ";
+        //                        value = tokens[1].repeat(length - string.length) + string;
+        //                    }
+        //                    break;
+        //                case "f":
+        //                    break;
+        //                case "s":
+        //                    break;
+        //                default:
+        //                    console.error("Unknown pattern: " + tokens[0]);
+        //            }
+        //            return value;
+        //        });
+        //    }
+        //});
+        Object.defineProperty(table.rows, "clear", {
+            enumerable: false,
+            value: function() {
+                var item;
+                while(item = table.rows.pop()) {
+                    item.parentNode.removeChild(item);
+                }
+            }
+        });
 
         if(appendTo) appendTo.appendChild(table);
 
         options.caption = options.caption || {};
         options.caption.className = "thead" + optionalClassName(options.caption.className);
         if(options.caption.items) {
-            table.head = create(HTML.DIV, {className:options.caption.className}, table);
+            table.head = create(HTML.DIV, {
+                className: options.caption.className,
+                oncontextmenu: function(e){e.stopPropagation(); e.preventDefault(); return false;}
+            }, table);
             table.head.cells = [];
+
 //            var div = create(HTML.DIV, {className:"tr"}, table.head);
             for(var i in options.caption.items) {
                 var item = options.caption.items[i];
@@ -2410,6 +2462,7 @@ function Edequate(options) {
                 var cell = create(HTML.DIV, item, table.head);
                 cell.sortIcon = create(HTML.DIV,{className:"icon table-sort notranslate hidden", innerHTML:"sort"}, cell);
                 cell.label = create(HTML.SPAN, {innerHTML: item.innerHTML || item.label}, cell);
+                //cell.oncontextmenu = function(e){e.stopPropagation(); e.preventDefault(); return false;}
 
                 if(item.selectable) {
                     cell.selectButton = create(HTML.DIV, {
@@ -2438,9 +2491,15 @@ function Edequate(options) {
                                     innerHTML: "&#150;",
                                     onclick: function(e) {
                                         delete table.selectable;
-                                        table.filter.remove(this.parentNode.filter);
+                                        for(var i in table.head.cells) {
+                                            if (table.head.cells[i].selectButton) {
+                                                table.head.cells[i].selectButton.classList.remove("table-select-active");
+                                                table.filter.remove(table.head.cells[i].filter);
+                                                delete table.head.cells[i].filter;
+                                            }
+                                        }
+
                                         cell.selectButton.classList.remove("table-select-active");
-                                        delete cell.filter;
 
                                     }
                                 }];
@@ -2856,6 +2915,7 @@ function Edequate(options) {
         options = options || {};
         options.className = "menu" + optionalClassName(options.className);
         options.tabindex = -1;
+
 //        options.autoclose = true;
 
         //options._onopen = options.onopen;
@@ -2881,6 +2941,7 @@ function Edequate(options) {
                 if(this._onclick) this._onclick(evt);
                 menu.close(HIDING.OPACITY)
             };
+            item.oncontextmenu = function(e){e.stopPropagation(); e.preventDefault(); return false;}
             menu._addItem(item);
         };
         menu.addItems(items);

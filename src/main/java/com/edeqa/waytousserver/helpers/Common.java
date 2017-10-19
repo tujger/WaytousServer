@@ -60,6 +60,7 @@ public class Common {
             buf.append(aText + " ");
         }
         System.out.println(Common.dateFormat.format(new Date()) + "/" + buf.toString());
+        System.out.flush();
     }
 
     public static void err(Object... text) {
@@ -74,6 +75,8 @@ public class Common {
             }
         }
         System.err.println(Common.dateFormat.format(new Date()) + "/" + buf.toString());
+        System.err.flush();
+
         /*try {
             if(out == null) {
                 File log = new File("WaytousServer/WTU.log");

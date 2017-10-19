@@ -8,6 +8,7 @@
 function Logs() {
 
     var title = "Logs";
+    var task;
 
     var renderInterface = function() {
 
@@ -39,24 +40,6 @@ function Logs() {
                 this.previousSibling.classList.add("hidden");
                 this.classList.add("hidden");
                 this.previousSibling.show();
-
-            }})
-            .place(HTML.DIV, { className: "logs-header-label", innerHTML: "Autorefresh each, sec"})
-            .place(HTML.INPUT, { className: "logs-header-input", value: 5})
-            .place(HTML.BUTTON, {innerHTML:"Start", onclick: function(){
-                clearInterval(refreshTask);
-                refreshTask = setInterval(updateData, this.previousSibling.value*1000);
-                this.classList.add("hidden");
-                this.nextSibling.classList.remove("hidden");
-                this.previousSibling.classList.add("disabled");
-                this.previousSibling.disabled = true;
-            }})
-            .place(HTML.BUTTON, {className:"hidden", innerHTML:"Stop", onclick: function(){
-                clearInterval(refreshTask);
-                this.classList.add("hidden");
-                this.previousSibling.classList.remove("hidden");
-                this.previousSibling.previousSibling.classList.remove("disabled");
-                this.previousSibling.previousSibling.disabled = false;
             }});
 
         table = u.table({
@@ -71,6 +54,11 @@ function Logs() {
             bodyClassName: "table-logs-body",
             placeholder: "Loading..."
         }, div);
+        table.addEventListener("DOMNodeRemovedFromDocument", function(e) {
+            if(e && e.srcElement === table && task && task.readyState == task.OPEN) {
+                task.close();
+            }
+        });
 
     };
 
@@ -78,24 +66,25 @@ function Logs() {
     function updateData(){
         var scroll = table.body.scrollTop;
         table.placeholder.show("Loading...");
-        u.get("/admin/logs/log").then(function(xhr){
-            table.head.cells[0].lastChild.innerHTML = "Logs (updated "+(new Date().toLocaleString())+")";
-            var rows = xhr.response.split("\n");
-            for(var i in rows) {
-                setTimeout(function(){
-                    table.add({
-                        className: "table-logs-row",
-                        cells: [
-                            { className: "table-logs-row-cell", innerHTML: this },
-                        ]
-                    });
-                }.bind(rows[i]), 0);
-            }
-            table.body.scrollTop = scroll
-        }).catch(function(code,xhr){
-            table.placeholder.show(xhr.response);
-        });
 
+        task = new EventSource("/admin/logs/log");
+        task.onmessage = function(e) {
+            setTimeout(function(){
+                table.head.cells[0].lastChild.innerHTML = "Logs (updated "+(new Date().toLocaleString())+")";
+                table.add({
+                    className: "table-logs-row",
+                    cells: [
+                        { className: "table-logs-row-cell", innerHTML: this },
+                    ]
+                });
+                //table.body.scrollTop = scroll
+            }.bind(e.data), 0);
+        };
+        task.onerror = function(error) {
+            console.error(error);
+            table.rows.clear();
+            table.placeholder.show("Loading...");
+        };
     }
 
 
