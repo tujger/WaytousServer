@@ -97,7 +97,7 @@ function AddressHolder(main) {
             user.views[type].lastRequest = currentTime;
             user.views[type].lastRequestedCoords = user.location.coords;
 
-//console.warn(++counter, user.number);
+//console.warn(++counter, user.number); https://cors-anywhere.herokuapp.com/
             u.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + user.location.coords.latitude + "&lon=" + user.location.coords.longitude + "&zoom=18&addressdetails=1")
                 .then(function(json){
                     user.views.address.lastKnownAddress = json["display_name"];

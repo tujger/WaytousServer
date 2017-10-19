@@ -771,8 +771,8 @@ function Edequate(options) {
     var performingDialogInQueue;
 
     /**
-     * dialog(options [, appendTo])
-     * options = {
+    * dialog = new Dialog(options [, appendTo])
+    * options = {
     *       id,
     *       title: name | {label, className, button},
     *       queue: true|*false*, - if true then post this dialog to the queue and wait
@@ -832,7 +832,7 @@ function Edequate(options) {
      * dialog.getNegative()
      *
      */
-    function dialog(options, appendTo) {
+    function Dialog(options, appendTo) {
         appendTo = appendTo || document.body;
         options = options || {};
 
@@ -1566,7 +1566,7 @@ function Edequate(options) {
 
         return dialog;
     }
-    this.dialog = dialog;
+    this.dialog = Dialog;
 
     /*
         function sprintf() {
@@ -1752,8 +1752,7 @@ function Edequate(options) {
         var xhr = new XMLHttpRequest();
 
         xhr.open(method, url, true);
-//        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-        xhr.onreadystatechange = function() { // (3)
+        xhr.onreadystatechange = function() {
             if (xhr.readyState != 4) return;
             if (xhr.status != 200) {
                 returned.onRejected(xhr.status, xhr);
@@ -2265,7 +2264,49 @@ function Edequate(options) {
     }
     this.copyToClipboard = copyToClipboard;
 
-    function table(options, appendTo) {
+    /**
+    * table = new Table(options [, appendTo])
+    * table.add(rowOptions)
+    * table.head.cells[index]
+    * table.rows.clear()
+    * table.rows[index].cells[index]
+    * table.filter.add(filter)
+    * table.filter.remove(filter)
+    * table.filter.clear()
+    * table.placeholder.show("Sample text")
+    * table.placeholder.hide()
+    * table.sort(index)
+    * table.sorts()
+    * table.update()
+    *
+    * options = {
+    *   className,
+    *   caption: captionOptions
+    *   items: itemsOptions
+    * }
+    * captionOptions = {
+    *   innerHTML|label,
+    *   className,
+    *   items: [
+    *       label,
+    *       selectable: true/*false*
+    *   ]
+    * }
+    * rowOptions = {
+    *   className,
+    *   onclick: function,
+    *   cells: [cellOptions]
+    * }
+    * cellOptions = {
+    *   innerHTML,
+    *   className,
+    *   style,
+    *   sort: Number/String,
+    * }
+    */
+
+
+    function Table(options, appendTo) {
         options.className = "table" + optionalClassName(options.className);
         var table = create(HTML.DIV, {
             className: options.className,
@@ -2290,11 +2331,13 @@ function Edequate(options) {
                 },0);
             },
             rows: [],
-            saveOption: function(name,value) {
+            saveOption: function(name, value) {
                 if(options.id) {
                     delete savedOptions[name];
-                    savedOptions[name] = value;
-                    save("table:" + options.id, savedOptions);
+                    if(value) {
+                        savedOptions[name] = value;
+                        save("table:" + options.id, savedOptions);
+                    }
                 }
             },
             add: function(row) {
@@ -2347,19 +2390,15 @@ function Edequate(options) {
                 for(var i = 0; i < table.body.childNodes.length; i++) {
                     rows.push(table.body.childNodes[i]);
                 }
-
                 rows.sort(function(a, b) {
                     var aCriteria = a.cells[index].sort == undefined ? a.cells[index].innerText.toLowerCase() : a.cells[index].sort;
                     var bCriteria = b.cells[index].sort == undefined ? b.cells[index].innerText.toLowerCase() : b.cells[index].sort;
 
                     return aCriteria == bCriteria ? 0 : (aCriteria > bCriteria ? 1 : -1) * sort;
                 });
-
-
                 for(i in rows) {
                     table.body.appendChild(rows[i]);
                 }
-
             },
             _sorts: [],
             sorts: function(options) {
@@ -2371,43 +2410,10 @@ function Edequate(options) {
                     }
                 }
                 if(options.mode) table._sorts.push(options);
-                table.saveOption("sorts",table._sorts);
+                table.saveOption("sorts", table._sorts);
             }
         });
-        //Object.defineProperty(String.prototype, "sprintf", {
-        //    enumerable: false,
-        //    value: function() {
-        //        var a = this, b;
-        //        if(arguments[0].constructor === Array || arguments[0].constructor === Object) {
-        //            arguments = arguments[0];
-        //        }
-        //        var args = [];
-        //        for(var i = 0; i < arguments.length; i++) {
-        //            args.push(arguments[i]);
-        //        }
-        //        return this.replace(/%[\d\.]*[sdf]/g, function(pattern){
-        //            var value = args.shift();
-        //            var tokens = pattern.match(/^%(0)?([\d\.]*)(.)$/);
-        //            switch(tokens[3]) {
-        //                case "d":
-        //                    var length = +tokens[2];
-        //                    var string = value.toString();
-        //                    if(length > string.length) {
-        //                        tokens[1] = tokens[1] || " ";
-        //                        value = tokens[1].repeat(length - string.length) + string;
-        //                    }
-        //                    break;
-        //                case "f":
-        //                    break;
-        //                case "s":
-        //                    break;
-        //                default:
-        //                    console.error("Unknown pattern: " + tokens[0]);
-        //            }
-        //            return value;
-        //        });
-        //    }
-        //});
+
         Object.defineProperty(table.rows, "clear", {
             enumerable: false,
             value: function() {
@@ -2430,6 +2436,7 @@ function Edequate(options) {
             table.head.cells = [];
 
 //            var div = create(HTML.DIV, {className:"tr"}, table.head);
+            var selectable = false;
             for(var i in options.caption.items) {
                 var item = options.caption.items[i];
                 item.className = "th" + optionalClassName(item.className);
@@ -2460,11 +2467,12 @@ function Edequate(options) {
                     }
                 }
                 var cell = create(HTML.DIV, item, table.head);
-                cell.sortIcon = create(HTML.DIV,{className:"icon table-sort notranslate hidden", innerHTML:"sort"}, cell);
+                cell.sortIcon = create(HTML.DIV,{className:"icon table-sort notranslate hidden", innerHTML: "sort"}, cell);
                 cell.label = create(HTML.SPAN, {innerHTML: item.innerHTML || item.label}, cell);
                 //cell.oncontextmenu = function(e){e.stopPropagation(); e.preventDefault(); return false;}
 
                 if(item.selectable) {
+                    selectable = true;
                     cell.selectButton = create(HTML.DIV, {
                         className:"icon table-select notranslate",
                         innerHTML:"expand_more",
@@ -2490,6 +2498,7 @@ function Edequate(options) {
                                     type: HTML.DIV,
                                     innerHTML: "&#150;",
                                     onclick: function(e) {
+                                        table.saveOption("selectable");
                                         delete table.selectable;
                                         for(var i in table.head.cells) {
                                             if (table.head.cells[i].selectButton) {
@@ -2498,9 +2507,7 @@ function Edequate(options) {
                                                 delete table.head.cells[i].filter;
                                             }
                                         }
-
                                         cell.selectButton.classList.remove("table-select-active");
-
                                     }
                                 }];
                                 for(var x in selected) {
@@ -2513,6 +2520,7 @@ function Edequate(options) {
                                                 table.head.cells[table.selectable.index].selectButton.classList.remove("table-select-active");
                                             }
                                             table.selectable = { index: index, string: this.innerHTML};
+                                            table.saveOption("selectable", table.selectable);
 
                                             if(cell.filter) table.filter.remove(this.parentNode.filter);
                                             var filterSelected = function(row) {
@@ -2538,11 +2546,10 @@ function Edequate(options) {
                         }
                     }, cell);
                 }
-
                 table.head.cells.push(cell);
             }
 
-            if((options.filter == undefined || options.filter) || (options.sort == undefined || options.sort)) {
+            if((options.filter == undefined || options.filter) || (options.sort == undefined || options.sort) || selectable) {
                 table.resetButton = create(HTML.DIV, {
                     className: "table-reset-button notranslate",
                     innerHTML: "clear_all",
@@ -2556,6 +2563,7 @@ function Edequate(options) {
                             if(table.head.cells[i].selectButton) {
                                 table.head.cells[i].selectButton.classList.remove("table-select-active");
                             }
+                            table.saveOption("selectable", table.selectable);
                         }
                         if(table.filterInput) {
                             table.filter.clear();
@@ -2715,7 +2723,7 @@ function Edequate(options) {
 
         return table;
     }
-    this.table = table;
+    this.table = Table;
 
     var loadingHolder;
     function loading(progress) {
@@ -2762,7 +2770,7 @@ function Edequate(options) {
 
         appendTo = appendTo || document.body;
 
-        progressHolder = progressHolder || dialog({
+        progressHolder = progressHolder || new Dialog({
             className: "progress-dialog" + optionalClassName(options.className),
             items: [
                 { type: HTML.DIV, className: "progress-dialog-circle" },
