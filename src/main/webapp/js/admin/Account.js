@@ -238,7 +238,7 @@ function Account() {
         u.clear(buttons);
         u.create({className:"question", innerHTML: "Are you sure you want to delete account "+accountId+"?"}, buttons);
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
-            u.post("/admin/rest/v1/account/delete", JSON.stringify({account_id:accountId}))
+            u.post("/admin/rest/v1/account/delete", JSON.stringify({uid:accountId}))
                 .then(function(){
                     WTU.switchTo("/admin/accounts");
                     u.toast.show("Account " + accountId + " was deleted.");

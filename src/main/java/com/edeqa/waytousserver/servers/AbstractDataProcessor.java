@@ -181,6 +181,8 @@ abstract public class AbstractDataProcessor {
 
     abstract public void removeUserFromGroup(String groupId, Long userNumber, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
 
+    public abstract void deleteAccount(String accountId, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+
     abstract public void switchPropertyForUser(String groupId, Long userNumber, String property, Boolean value, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
 
     public ConcurrentHashMap<String, MyGroup> getGroups() {

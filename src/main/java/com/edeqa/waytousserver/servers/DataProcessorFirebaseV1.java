@@ -997,6 +997,38 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     }
 
     @Override
+    public void deleteAccount(final String accountId, Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+        final JSONObject json = new JSONObject();
+
+        json.put(Rest.UID, accountId);
+
+        final OnFailureListener onFailureListener = new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                json.put(Rest.STATUS, Rest.ERROR);
+                json.put(Rest.MESSAGE, e.getMessage());
+                Common.err(LOG, "deleteAccount:" + accountId, "error:" + e.getMessage());
+                onerror.call(json);
+            }
+        };
+
+        Task<Void> deleteAccountTask = ref.child(Firebase.SECTION_USERS).child(accountId).removeValue();
+        try {
+            Tasks.await(deleteAccountTask);
+
+            json.put(Rest.STATUS, Rest.SUCCESS);
+            Common.log(LOG, "deleteAccount:" + accountId);
+            onsuccess.call(json);
+
+            putStaticticsAccount(accountId, AccountAction.ACCOUNT_DELETED.toString(), null, null, accountId + " deleted.");
+
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            onFailureListener.onFailure(e);
+        }
+    }
+
+    @Override
     public void switchPropertyForUser(final String groupId, final Long userNumber, final String property, final Boolean value, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
 
         final JSONObject res = new JSONObject();

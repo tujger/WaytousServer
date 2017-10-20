@@ -69,7 +69,7 @@ public class AdminRestHolder implements PageHolder {
                         cleanAccountsV1(requestWrapper);
                         return true;
                     default:
-                        actionNotSupported(requestWrapper);
+                        actionNotSupported(requestWrapper, requestWrapper.getRequestMethod());
                         return true;
                 }
             case HttpMethods.POST:
@@ -92,8 +92,11 @@ public class AdminRestHolder implements PageHolder {
                     case "/admin/rest/v1/user/switch":
                         switchPropertyForUserV1(requestWrapper);
                         return true;
+                    case "/admin/rest/v1/account/delete":
+                        deleteAccountV1(requestWrapper);
+                        return true;
                     default:
-                        actionNotSupported(requestWrapper);
+                        actionNotSupported(requestWrapper, requestWrapper.getRequestMethod());
                         return true;
                 }
         }
@@ -324,6 +327,45 @@ public class AdminRestHolder implements PageHolder {
         });
     }
 
+    private void deleteAccountV1(final RequestWrapper requestWrapper) {
+        requestWrapper.processBody(new Runnable1<StringBuilder>() {
+            @SuppressWarnings("HardCodedStringLiteral")
+            @Override
+            public void call(StringBuilder buf) {
+                String options = buf.toString();
+
+                //noinspection HardCodedStringLiteral
+                Common.log(LOG, "deleteAccountV1:", options);
+
+                JSONObject json = new JSONObject(options);
+                String accountId = json.getString(Rest.UID);
+
+                Common.getInstance().getDataProcessor("v1").deleteAccount(accountId,new Runnable1<JSONObject>() {
+                    @Override
+                    public void call(JSONObject json) {
+                        Utils.sendResultJson.call(requestWrapper, json);
+                    }
+                }, new Runnable1<JSONObject>() {
+                    @Override
+                    public void call(JSONObject json) {
+                        Utils.sendError.call(requestWrapper, 500, json);
+                    }
+                });
+            }
+        }, new Runnable1<Exception>() {
+            @SuppressWarnings("HardCodedStringLiteral")
+            @Override
+            public void call(Exception e) {
+                Common.err(LOG, "deleteAccountV1:", e);
+                JSONObject json = new JSONObject();
+                json.put(Rest.STATUS, Rest.ERROR);
+                json.put(Rest.MESSAGE, "Incorrect request.");
+                json.put(Rest.REASON, e.getMessage());
+                Utils.sendError.call(requestWrapper, 400, json);
+            }
+        });
+    }
+
     private void switchPropertyInGroupV1(final RequestWrapper requestWrapper) {
         requestWrapper.processBody(new Runnable1<StringBuilder>() {
             @SuppressWarnings("HardCodedStringLiteral")
@@ -407,14 +449,14 @@ public class AdminRestHolder implements PageHolder {
         });
     }
 
-    private void actionNotSupported(final RequestWrapper requestWrapper) {
+    private void actionNotSupported(final RequestWrapper requestWrapper, final String type) {
         requestWrapper.processBody(new Runnable1<StringBuilder>() {
             @SuppressWarnings("HardCodedStringLiteral")
             @Override
             public void call(StringBuilder buf) {
                 String options = buf.toString();
 
-                Common.log(LOG, "actionNotSupported:", requestWrapper.getRequestURI().getPath());
+                Common.log(LOG, "actionNotSupported:" + type, requestWrapper.getRequestURI().getPath());
 
                 JSONObject json = new JSONObject();
                 json.put(Rest.STATUS, Rest.ERROR);

@@ -496,6 +496,11 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }
 
     @Override
+    public void deleteAccount(String accountId, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+
+    }
+
+    @Override
     public void switchPropertyForUser(String groupId, Long userNumber, String property, Boolean value, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
         // TODO
     }
