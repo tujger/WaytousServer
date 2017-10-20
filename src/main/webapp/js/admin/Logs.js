@@ -17,30 +17,9 @@ function Logs() {
 //        u.create("div", {className:"summary"}, div);
 //        u.create("h2", "Groups", div);
 
-        var refreshTask;
-
-        var divHeader = u.create({className: "logs-header"}, div)
-            .place(HTML.BUTTON, {innerHTML:"Refresh", onclick: function(){
-                updateData();
-            }})
-            .place({ className: "logs-header-label hidden", content: u.create(HTML.DIV)
-                .place(HTML.DIV, { className: "logs-header-label question", innerHTML: "Clear logs?"})
-                .place(HTML.BUTTON, { className: "question", innerHTML:"Yes, clear logs", onclick: function(){
-                    this.parentNode.parentNode.hide();
-                    this.parentNode.parentNode.nextSibling.classList.remove("hidden");
-                    u.get("/admin/logs/clear")
-                        .then(updateData);
-                }})
-                .place(HTML.BUTTON, { innerHTML:"No", onclick: function(){
-                    this.parentNode.parentNode.hide();
-                    this.parentNode.parentNode.nextSibling.classList.remove("hidden");
-                }})
-            })
-            .place(HTML.BUTTON, { innerHTML:"Clear logs", onclick: function(){
-                this.previousSibling.classList.add("hidden");
-                this.classList.add("hidden");
-                this.previousSibling.show();
-            }});
+        var logsTitleNode = u.create(HTML.H2, null, div).place(HTML.SPAN, "Logs");
+        //buttons = u.create("div", {className:"buttons"}, logsTitleNode);
+        renderButtons(logsTitleNode);
 
         table = u.table({
             id: "logs",
@@ -61,7 +40,6 @@ function Logs() {
         });
 
     };
-
 
     function updateData(){
         var scroll = table.body.scrollTop;
@@ -85,6 +63,36 @@ function Logs() {
             table.rows.clear();
             table.placeholder.show("Loading...");
         };
+    }
+
+    function renderButtons(div) {
+        //u.clear(div);
+        //u.create(HTML.BUTTON, { className:"button-clean", innerHTML: "clear_all", title:"Clean groups", onclick: cleanGroupsQuestion}, div);
+        div.place(HTML.BUTTON, {className: "icon button-inline", innerHTML:"refresh", title: "Refresh logs", onclick: function(){
+            updateData();
+        }});
+        var clearAll = u.create(HTML.BUTTON, {className: "icon button-inline", innerHTML:"clear_all", title: "Clear logs",
+            onclick: function(){
+                clearAll.hide();
+                question.show();
+                yes.show();
+                no.show();
+            }}, div);
+        var question = u.create(HTML.DIV, { className: "question hidden", innerHTML: "Clear logs?"}, div);
+        var yes = u.create(HTML.BUTTON, { className: "question hidden", innerHTML:"Yes, clear logs", onclick: function(){
+            clearAll.show();
+            question.hide();
+            yes.hide();
+            no.hide();
+            u.get("/admin/logs/clear")
+                .then(updateData);
+        }}, div);
+        var no = u.create(HTML.BUTTON, { className: "hidden", innerHTML:"No", onclick: function(){
+            clearAll.show();
+            question.hide();
+            yes.hide();
+            no.hide();
+        }}, div);
     }
 
 

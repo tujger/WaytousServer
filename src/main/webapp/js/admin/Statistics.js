@@ -187,8 +187,7 @@ function Statistics() {
         u.create(HTML.SPAN, "Messages (", node);
         messagesCounterNode = u.create(HTML.SPAN, "0", node);
         u.create(HTML.SPAN, ")", node);
-        buttons = u.create("div", {className:"buttons"}, node);
-        renderButtons(buttons);
+        renderButtons(node);
 
         tableMessages = u.table({
             id: "messages",
@@ -488,15 +487,18 @@ function Statistics() {
     }
 
     function renderButtons(div) {
-        u.clear(div);
-        u.create(HTML.BUTTON, { className: "button-clean", innerHTML:"clear_all", title: "Clean messages", onclick: cleanMessagesQuestion}, div);
-    }
-
-    function cleanMessagesQuestion(e){
-        u.clear(buttons);
-        u.create({className:"question", innerHTML: "All messages will be removed. Continue?"}, buttons);
-        u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
-            renderButtons(buttons);
+        var clear = u.create(HTML.BUTTON, {className: "icon button-inline", innerHTML:"clear_all", title: "Clean messages", onclick: function(){
+            clear.hide();
+            question.show();
+            yes.show();
+            no.show();
+        }}, div);
+        var question = u.create({className: "question hidden", innerHTML: "All messages will be removed. Continue?"}, div);
+        var yes = u.create(HTML.BUTTON,{className: "question hidden", innerHTML:"Yes", onclick: function() {
+            clear.show();
+            question.hide();
+            yes.hide();
+            no.hide()
             u.toast.show("Messages removing is performing.");
             u.get("/admin/rest/v1/stat/clean")
                 .then(function(xhr){
@@ -504,10 +506,13 @@ function Statistics() {
                 var res = JSON.parse(xhr.responseText) || {};
                 u.toast.show(res.message || xhr.statusText);
             });
-        }}, buttons);
-        u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){
-            renderButtons(buttons);
-        }}, buttons);
+        }}, div);
+        var no = u.create(HTML.BUTTON,{className: "question hidden", innerHTML:"No", onclick: function(){
+            clear.show();
+            question.hide();
+            yes.hide();
+            no.hide()
+        }}, div);
     }
 
     return {

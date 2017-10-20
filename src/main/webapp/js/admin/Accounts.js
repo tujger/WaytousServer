@@ -128,12 +128,11 @@ function Accounts() {
             cells: [
                 { className:"th", innerHTML: "&#150; accounts cleaned" },
                 { className:"option", innerHTML: "..." }
-            ],
+            ]
         });
 
         var accountsTitleNode = u.create(HTML.H2, "Accounts", div);
-        buttons = u.create("div", {className:"buttons"}, accountsTitleNode);
-        renderButtons(buttons);
+        renderButtons(accountsTitleNode);
 
         tableAccounts = u.table({
             id: "admin:accounts",
@@ -245,19 +244,21 @@ function Accounts() {
         },function(error){
             console.error("REMOVED",error);
         });
-
     }
 
     function renderButtons(div) {
-        u.clear(div);
-        u.create(HTML.BUTTON, { className:"button-clean", innerHTML: "clear_all", title:"Clean groups", onclick: cleanAccountsQuestion}, div);
-    }
-
-    function cleanAccountsQuestion(e){
-        u.clear(buttons);
-        u.create({className:"question", innerHTML: "This will immediately check for expired or invalid accounts and remove them. Continue?"}, buttons);
-        u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
-            renderButtons(buttons);
+        var clear = u.create(HTML.BUTTON, { className:"icon button-inline", innerHTML: "clear_all", title:"Clean groups", onclick: function() {
+            clear.hide();
+            question.show();
+            yes.show();
+            no.show();
+        }}, div);
+        var question = u.create({className:"question hidden", innerHTML: "This will immediately check for expired or invalid accounts and remove them. Continue?"}, div);
+        var yes = u.create(HTML.BUTTON,{ className:"question hidden", innerHTML:"Yes", onclick: function() {
+            clear.show();
+            question.hide();
+            yes.hide();
+            no.hide();
             u.toast.show("Accounts clean is performing.");
             u.get("/admin/rest/v1/accounts/clean")
                 .then(function(xhr){
@@ -265,10 +266,13 @@ function Accounts() {
                 var res = JSON.parse(xhr.responseText) || {};
                 u.toast.show(res.message || xhr.statusText);
             });
-        }}, buttons);
-        u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){
-            renderButtons(buttons);
-        }}, buttons);
+        }}, div);
+        var no = u.create(HTML.BUTTON,{className:"hidden", innerHTML:"No", onclick: function(){
+            clear.show();
+            question.hide();
+            yes.hide();
+            no.hide();
+        }}, div);
     }
 
     return {
