@@ -962,6 +962,33 @@ p.bottom-desc {
         font-size: 6px;
         white-space: nowrap;
     }
+    .user-context-menu-list {
+        width: 90%;
+        flex-direction: column;
+        box-shadow: 3px 3px 7px 2px rgba(0,0,0,.5);
+        background-color: rgba(211, 211, 211, 0.7);
+        height: 70%;
+        overflow-y: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+    }
+    .user-context-menu-list .user-context-menu-section {
+        display: block;
+        background: white;
+    }
+    .user-context-menu-list .user-context-menu-item {
+        flex-direction: row;
+        flex: 0 0 100%;
+        justify-content: flex-start;
+        background: none;
+        width: auto;
+    }
+    .user-context-menu-list .user-context-menu-item-icon {
+        margin-left: 10px;
+    }
+    .user-context-menu-list .user-context-menu-item-title {
+        font-size: initial;
+    }
     .console {
         left: 0;
         font-size: 9px;

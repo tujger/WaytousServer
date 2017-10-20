@@ -53,16 +53,23 @@ function ButtonHolder(main) {
             tabindex: 1,
             resizeable: true,
             items: [],
-            itemsClassName: "user-buttons-items",
+            itemsClassName: "user-buttons-items"
         }, main.right);
 
-        contextMenuLayout = u.create(HTML.DIV, {className:"user-context-menu shadow hidden", tabindex: 2, onblur: function(){
-            contextMenuLayout.hide(HIDING.OPACITY);
-        }, onmouseleave: function(){
-            contextMenuLayout.hide(HIDING.OPACITY);
-        }, onmouseenter: function(){
-            clearTimeout(delayDismiss);
-        }
+        contextMenuLayout = u.create(HTML.DIV, {
+            className: "user-context-menu shadow hidden",
+            tabindex: 2,
+            onblur: function(){
+                contextMenuLayout.scrollTop = 0;
+                contextMenuLayout.hide(HIDING.OPACITY);
+                setTimeout(function() {
+                    contextMenuLayout.classList.remove("user-context-menu-list");
+                }, 150);
+            }, onmouseleave: function(){
+                contextMenuLayout.hide(HIDING.OPACITY);
+            }, onmouseenter: function(){
+                clearTimeout(delayDismiss);
+            }
         }, main.right);
         contextMenu = new ContextMenu();
     }
@@ -219,7 +226,6 @@ function ButtonHolder(main) {
         return true;
     }
 
-    var clicked = false;
     function createView(user){
 
 //    if(buttons.itemsLayout.children.length ==1 && user != main.me){
@@ -230,8 +236,7 @@ function ButtonHolder(main) {
         var color = user.color || user.properties.color || "#0000FF";
         color = utils.getRGBAColor(color, 0.4);
 
-        var task;
-        var onlyTouch,clicked,firstClick;
+        var firstClick;
         var b = u.create(HTML.DIV, {
             className:"user-button hidden" + (user.locations && user.locations.length > 0 ? "" : " disabled") + (user.type == "user" ? " user-button-away" : ""),
             dataNumber:user.number,
@@ -253,37 +258,6 @@ function ButtonHolder(main) {
                 main.toast.show(user.properties.getDisplayName());
                 openContextMenu(user, true);
             },
-            /*
-                        onmousedown: function(){
-                            onlyTouch = true;
-                            startTime = new Date().getTime();
-                            task = setTimeout(function(){
-                                openContextMenu(user);
-                            }, 500);
-                            // console.log(user);
-                        },
-                        onmousemove: function(){
-                            onlyTouch = false;
-                        },
-                        onmouseup: function(){
-                            if(!onlyTouch) return;
-                            var delay = new Date().getTime() - startTime;
-                            if(delay < 500) {
-                                if(clicked) {
-                                    user.fire(EVENTS.CAMERA_ZOOM);
-                                    contextMenuLayout.hide();
-                                    clicked = false;
-                                } else {
-                                    user.fire(EVENTS.SELECT_SINGLE_USER);
-                                    openContextMenu(user);
-                                    clicked = true;
-                                    setTimeout(function(){
-                                        clicked = false;
-                                    }, 500);
-                                }
-                            }
-                            clearTimeout(task);
-                        },*/
             onmouseenter: function(e) {
                 user.fire(EVENTS.MOUSE_OVER,e);
             },
@@ -294,7 +268,6 @@ function ButtonHolder(main) {
         var icon = (user && user.origin && user.origin.buttonIcon) || "person";
         u.create(HTML.DIV, {className:"icon user-button-icon notranslate", innerHTML:icon}, b);
         var badge = u.create(HTML.DIV, {className:"user-button-badge hidden"}, b);
-//        console.log(user)
         var div = u.create(HTML.DIV, {className:"user-button-label"}, b);
         var divText = u.create(HTML.DIV, null, div);
         var prefix = u.create(HTML.DIV, {className:"user-button-prefix hidden", innerHTML:""}, divText);
@@ -312,11 +285,7 @@ function ButtonHolder(main) {
         for(var i = 0; i < buttons.itemsLayout.children.length; i++) {
             var node = buttons.itemsLayout.children[i];
             var number = parseInt(node.dataset.number);
-            /*if(number == main.me.number && node) {
-                buttons.itemsLayout.replaceChild(b, node);
-                added = true;
-                break;
-            } else */if(number != main.me.number && number > user.number) {
+            if(number != main.me.number && number > user.number) {
                 buttons.itemsLayout.insertBefore(b, node);
                 added = true;
                 break;
@@ -332,7 +301,7 @@ function ButtonHolder(main) {
             title: title,
             suffix: suffix,
             subtitle: subtitle,
-            badge:badge,
+            badge:badge
         };
     }
 
@@ -342,7 +311,6 @@ function ButtonHolder(main) {
             user.views.button.button.parentNode.removeChild(user.views.button.button);
             delete user.views.button;
         }
-        //user.views.button.button.hide();
     }
 
     function openContextMenu(user) {
@@ -374,19 +342,18 @@ function ButtonHolder(main) {
     }
 
     function ContextMenu() {
-
         function add(section,id,name,icon,callback) {
             var th = u.create(HTML.DIV, {
                 className:"user-context-menu-item",
                 onclick: function() {
                     setTimeout(function(){
-                        contextMenuLayout.hide(HIDING.OPACITY);
                         contextMenuLayout.blur();
                         callback();
                     }, 0);
                 },
                 onlongclick: function(){
-                    main.toast.show(name);
+                    clearTimeout(delayDismiss);
+                    contextMenuLayout.classList.add("user-context-menu-list");
                 }
             }, sections[section]);
             if(icon) {
@@ -403,10 +370,9 @@ function ButtonHolder(main) {
         function getContextMenu(){
             console.log("GETCONTEXTMENU:",items);
         }
-
         return {
             add:add,
-            getContextMenu:getContextMenu,
+            getContextMenu:getContextMenu
         }
     }
 
@@ -421,6 +387,6 @@ function ButtonHolder(main) {
         onEvent:onEvent,
         createView:createView,
         removeView:removeView,
-        onChangeLocation:onChangeLocation,
+        onChangeLocation:onChangeLocation
     }
 }
