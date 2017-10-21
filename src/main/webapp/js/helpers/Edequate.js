@@ -2902,7 +2902,7 @@ function Edequate(options) {
 
         var items = options.items || [];
         options.items = [];
-        var menu = new dialog(options, document.body);
+        var menu = new Dialog(options, document.body);
 
         menu._addItem = menu.addItem;
         menu.addItem = function(item) {
