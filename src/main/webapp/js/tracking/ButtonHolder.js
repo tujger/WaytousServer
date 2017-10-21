@@ -146,7 +146,7 @@ function ButtonHolder(main) {
                 if(this.views && this.views.button && this.views.button.button && this.views.button.button.classList) {
                     this.views.button.button.classList.add("user-button-away");
                     if(this != main.me) {
-                        var delta = new Date().getTime() - parseInt(object || this.properties.changed);
+                        delta = new Date().getTime() - parseInt(object || this.properties.changed || 0);
                         console.log("DELTA",delta)
                         if(delta > 60000) {
                             var text = utils.toDateString(new Date().getTime() - parseInt(object || this.properties.changed));
