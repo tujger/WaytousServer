@@ -2885,8 +2885,7 @@ function Edequate(options) {
         options = options || {};
         options.className = "menu" + optionalClassName(options.className);
         options.tabindex = -1;
-
-//        options.autoclose = true;
+        options.autoclose = true;
 
         //options._onopen = options.onopen;
         //options.onopen = function(evt) {

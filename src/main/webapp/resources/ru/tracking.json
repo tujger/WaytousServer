@@ -249,5 +249,44 @@
 
   "// SampleHolder": "",
   "sample_title_1": "Статья 1",
-  "sample_body_1": "Пример статьи справки, переведенной на русский язык"
+  "sample_body_1": "Пример статьи справки, переведенной на русский язык",
+
+
+  "// UserProfileHolder": "",
+
+  "account_has_created": "Профиль создан",
+  "back": "Назад",
+  "compose_email": "Написать письмо",
+  "confirm_password": "Подверждение",
+  "confirming_password_is_not_equals_to_password": "Повторный пароль не совпадает с введенным.",
+  "creating_new_account": "Создание профиля",
+  "email": "E-mail",
+  "email_has_sent": "Письмо отправлено",
+  "forgot_password": "Забыли пароль?",
+  "password": "Пароль",
+  "resetting_password": "Сброс пароля",
+  "sign_in": "Войти",
+  "sign_in_with_email": "Войти с почтой и паролем",
+  "sign_in_with_facebook": "Войти через Facebook",
+  "sign_in_with_google": "Войти через Google",
+  "sign_in_with_phone": "Войти с помощью телефона",
+  "sign_in_with_twitter": "Войти через Twitter",
+  "sign_up": "Зарегистрироваться",
+  "signed_as_s_using_s": "Вошли как %s через %s",
+  "signed_with_email": "Вошли с почтой и паролем",
+  "signed_with_facebook": "Вошли через Facebook",
+  "signed_with_google": "Вошли через Google",
+  "signed_with_phone": "Вошли с помощью телефона",
+  "signed_with_twitter": "Вошли через Twitter",
+  "signing_in_to_account": "Входим в учетную запись",
+  "signed_out": "Отключились",
+  "sign_out": "Выйти",
+  "sync": "Синхронизировать",
+  "update_your_name": "Обновить имя",
+  "user_profile": "Профиль",
+  "waiting_for_sign_in": "Ожидаем подключения...",
+  "you_want_to_change_your_name_to_s": "Вы собираетесь изменить ваше имя в Waytous на %s. Продолжить?",
+  "your_account_is_created": "Ваш профиль создан. Запомните имя и пароль, чтобы зайти в следующий раз. Кроме того, вы получите письмо с подтверждением. Нажмите на ссылку в этом письме, чтобы подтвердить создание учетной записи, иначе она будет удалена через 30 дней неактивности."
+
+
 }

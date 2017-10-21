@@ -11,9 +11,7 @@ function UserProfileHolder(main) {
 
     var type = "user";
     var profileDialog;
-    var userBackup;
     var resign;
-    var placeholder;
     var nameUpdateDialog;
     var menu;
     var waitingDialog;
@@ -22,23 +20,21 @@ function UserProfileHolder(main) {
     var globalSync;
 
     function start() {
-//        placeholder = u.create(HTML.DIV, {className:"dialog-dim hidden"}, document.body);
         waitingDialog = u.dialog({
             queue: true,
             className: "progress-dialog",
             modal: true,
             items: [
                 { type: HTML.DIV, className: "progress-dialog-circle" },
-                { type: HTML.DIV, className: "progress-dialog-title", innerHTML: "Waiting for signing in..." }
+                { type: HTML.DIV, className: "progress-dialog-title", innerHTML: u.lang.waiting_for_sign_in }
             ]
         }, document.body);
     }
 
     function onEvent(EVENT,object){
-        // console.log("SAMPLEEVENT",EVENT,object)
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                var menuItem = object.add(DRAWER.SECTION_MISCELLANEOUS, EVENT.SAMPLE_EVENT, u.lang.user_profile, "person", function(){
+                object.add(DRAWER.SECTION_MISCELLANEOUS, EVENT.SAMPLE_EVENT, u.lang.user_profile, "person", function(){
                     main.fire(EVENTS.SHOW_USER_PROFILE);
                 });
                 break;
@@ -56,46 +52,9 @@ function UserProfileHolder(main) {
     }
 
     function createView(user){
-        var view = {
-            user: user,
-//            show: u.load("sample:user:" + user.number)
-        };
-        // console.log("SAMPLECREATEVIEW",user);
-        return view;
-    }
-
-    function onChangeLocation(location) {
-        // console.log("SAMPLEONCHANGELOCATION",this,location);
-    }
-
-    function options(){
         return {
-            id: "general",
-            title: u.lang.general,
-            categories: [
-                {
-                    id: "general:user_profile",
-                    title: "User",
-                    items: [
-                        {
-                            id: "general:user_profile",
-                            type: HTML.CHECKBOX,
-                            label: "Sample option",
-//                            checked: u.load("user:sample"),
-                            onaccept: function(e, event) {
-//                                u.save("general:sample", this.checked);
-                            },
-                            onchange: function(e, event) {
-                                u.toast.show("general:sample " + this.checked);
-                            },
-                            onshow: function(e) {
-                                u.toast.show("general:sample " + this.checked);
-                            },
-                        }
-                    ]
-                }
-            ]
-        }
+            user: user
+        };
     }
 
     function initProfileDialog(mode) {
@@ -116,12 +75,12 @@ function UserProfileHolder(main) {
                 items: [
                     {
                         type: HTML.DIV,
-                        innerHTML: "Update your name",
+                        innerHTML: u.lang.update_your_name,
                         onclick: function() {
                             nameUpdateDialog = nameUpdateDialog || u.dialog({
                                 positive: {
                                     label: u.lang.yes,
-                                    onclick: function(items) {
+                                    onclick: function() {
                                         main.me.fire(EVENTS.CHANGE_NAME, u.clear(u.create.variables.userNameNode.innerHTML));
                                     }
                                 },
@@ -133,7 +92,7 @@ function UserProfileHolder(main) {
                             nameUpdateDialog.setItems([
                                 {
                                     type: HTML.DIV,
-                                    innerHTML: "You want to change your name in Waytous to " + u.create.variables.userNameNode.innerHTML + ". Continue?"
+                                    innerHTML: u.lang.you_want_to_change_your_name_to_s.format(u.create.variables.userNameNode.innerHTML)
                                 }
                             ]);
                             nameUpdateDialog.open();
@@ -141,36 +100,31 @@ function UserProfileHolder(main) {
                     },
                     {
                         type: HTML.DIV,
-                        innerHTML: "Sync",
+                        innerHTML: u.lang.sync,
                         onclick: function() {
-                            console.log("SYNC");
                             main.fire(EVENTS.SYNC_PROFILE);
-                            //synchronizeName();
                         }
                     },
                     {
                         type: HTML.DIV,
-                        innerHTML: "Sign out",
-                        onclick: function(evt) {
+                        innerHTML: u.lang.sign_out,
+                        onclick: function() {
                             u.save("uuid");
                             u.save(REQUEST.SIGN_PROVIDER);
                             signOtherLogin(function(result) {
                                 firebase.auth().signOut().then(function(signout) {
-                                    main.toast.show("Signed out");
+                                    main.toast.show(u.lang.signed_out);
                                     initProfileDialog();
-                                    utils.getUuid(function(uuid){
-                                        //signOtherLogin()
-//                                        placeholder.hide(HIDING.OPACITY);
+                                    utils.getUuid(function(){
                                         waitingDialog.close();
                                         onAuthStateChanged(result);
                                     });
                                 }).catch(function (error) {
                                     console.error(error);
-                                    main.toast.show("Signed out");
+                                    main.toast.show(u.lang.signed_out);
 
                                     initProfileDialog();
                                     waitingDialog.close();
-//                                    placeholder.hide(HIDING.OPACITY);
                                 });
                             });
                         }
@@ -202,7 +156,7 @@ function UserProfileHolder(main) {
             case "facebook.com":
                 menu.setHeader({
                     type: HTML.DIV, children: [
-                        u.create(HTML.SPAN, {innerHTML: "Signed with Facebook"}),
+                        u.create(HTML.SPAN, {innerHTML: u.lang.signed_with_facebook}),
                         u.create(HTML.IMG, {src: "/images/facebook.svg", className: "icon menu-item-icon"})
                     ]
                 });
@@ -210,7 +164,7 @@ function UserProfileHolder(main) {
             case "google.com":
                 menu.setHeader({
                     type: HTML.DIV, children: [
-                        u.create(HTML.SPAN, {innerHTML: "Signed with Google"}),
+                        u.create(HTML.SPAN, {innerHTML: u.lang.signed_with_google}),
                         u.create(HTML.IMG, {src: "/images/google.svg", className: "icon menu-item-icon"})
                     ]
                 });
@@ -218,7 +172,7 @@ function UserProfileHolder(main) {
             case "twitter.com":
                 menu.setHeader({
                     type: HTML.DIV, children: [
-                        u.create(HTML.SPAN, {innerHTML: "Signed with Twitter"}),
+                        u.create(HTML.SPAN, {innerHTML: u.lang.signed_with_twitter}),
                         u.create(HTML.IMG, {src: "/images/twitter.svg", className: "icon menu-item-icon"})
                     ]
                 });
@@ -227,16 +181,16 @@ function UserProfileHolder(main) {
                 profileDialog.setHeader({
                     type: HTML.DIV,
                     className: "user-profile-dialog-summary",
-                    innerHTML: "Signing in to account"
+                    innerHTML: u.lang.signing_in_to_account
                 });
                 var email = profileDialog.loginNode ? profileDialog.loginNode.value : "";
-                profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: "E-mail", value: email });
-                profileDialog.passwordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: "Password" });
+                profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: u.lang.email, value: email });
+                profileDialog.passwordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: u.lanbg.password });
                 profileDialog.addItem({
                     type: HTML.DIV,
                     className: "user-profile-forgot-password",
-                    innerHTML: "Forgot password?",
-                    onclick: function (evt) {
+                    innerHTML: u.lang.forgot_password,
+                    onclick: function () {
                         initProfileDialog("email_restore");
                         profileDialog.open();
                         return false;
@@ -249,7 +203,6 @@ function UserProfileHolder(main) {
                         console.log("SIGN IN", profileDialog.items[0].value, profileDialog.items[1].value);
                         signOtherLogin(function () {
                             console.log("LOGIN PASSWORD", this);
-                            var provider = new firebase.auth.GoogleAuthProvider();
                             firebase.auth().signInWithEmailAndPassword(profileDialog.items[0].value, profileDialog.items[1].value)
                                 .then(onAuthStateChanged)
                                 .catch(onAuthStateError);
@@ -269,24 +222,23 @@ function UserProfileHolder(main) {
                 profileDialog.setHeader({
                     type: HTML.DIV,
                     className: "user-profile-dialog-summary",
-                    innerHTML: "Creating new account"
+                    innerHTML: u.lang.creating_new_account
                 });
-                profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: "E-mail", value: profileDialog.loginNode.value });
-                profileDialog.passwordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: "Password" });
-                profileDialog.confirmPasswordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: "Confirm password" });
+                profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: u.lang.email, value: profileDialog.loginNode.value });
+                profileDialog.passwordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: u.lang.password });
+                profileDialog.confirmPasswordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: u.lang.confirm_password });
                 profileDialog.setPositive({
                     label: u.lang.sign_up,
                     dismiss: false,
                     onclick: function() {
-                        if(profileDialog.passwordNode.value != profileDialog.confirmPasswordNode.value) {
-                            profileDialog.errorNode.innerHTML = "Confirm password not equals to password";
+                        if(profileDialog.passwordNode.value !== profileDialog.confirmPasswordNode.value) {
+                            profileDialog.errorNode.innerHTML = u.lang.confirming_password_is_not_equals_to_password;
                             profileDialog.errorNode.show();
                             profileDialog.passwordNode.focus();
                             return;
                         }
                         signOtherLogin(function () {
                             console.log("LOGIN GOOGLE", this);
-                            var provider = new firebase.auth.GoogleAuthProvider();
                             firebase.auth().createUserWithEmailAndPassword(profileDialog.loginNode.value, profileDialog.passwordNode.value)
                                 .then(function(result) {
                                     result.sendEmailVerification().then(function() {
@@ -296,9 +248,9 @@ function UserProfileHolder(main) {
                                         profileDialog.setNeutral(null);
 
                                         accountCreatedDialog = accountCreatedDialog || u.dialog({
-                                            title: "Account created",
+                                            title: u.lang.account_has_created,
                                             items: [
-                                                {type:HTML.DIV, innerHTML: "Your account is created. Remember your login and password to sign next time. Also, you will get a confirmation email. Please follow the link in this email, otherwise this account will be deleted in 30 days." }
+                                                {type:HTML.DIV, innerHTML: u.lang.your_account_is_created }
                                             ],
                                             positive: {
                                                 label: u.lang.ok
@@ -326,7 +278,7 @@ function UserProfileHolder(main) {
                 profileDialog.setHeader({
                     type: HTML.DIV,
                     className: "user-profile-dialog-summary",
-                    innerHTML: "Resetting password"
+                    innerHTML: u.lang.resetting_password
                 });
                 profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: "E-mail", value: profileDialog.loginNode.value});
                 profileDialog.setPositive({
@@ -352,7 +304,7 @@ function UserProfileHolder(main) {
                 profileDialog.setHeader({
                     type: HTML.DIV,
                     className: "user-profile-dialog-summary",
-                    innerHTML: "Email sent"
+                    innerHTML: u.lang.email_has_sent
                 });
                 break;
             case "anonymous":
@@ -368,7 +320,6 @@ function UserProfileHolder(main) {
                                 });
                                 firebase.auth().signInWithPopup(provider).then(onAuthStateChanged).catch(onAuthStateError);
                             });
-                            //initProfileDialog("facebook");
                         }
                     }).place(HTML.DIV, {
                         className: "dialog-item-icon",
@@ -448,7 +399,7 @@ function UserProfileHolder(main) {
                                 href: "mailto:" + user.email,
                                 innerHTML: user.email ? "&lt;" + user.email + "&gt;" : "",
                                 className: "user-profile-dialog-email",
-                                title: "Compose e-mail",
+                                title: u.lang.compose_email,
                                 target: "_blank"
                             })
                     })
@@ -468,13 +419,11 @@ function UserProfileHolder(main) {
     }
 
     function signOtherLogin(signProcedureCallback) {
-//        placeholder.show(HIDING.OPACITY);
         waitingDialog.open();
-        if(main.tracking && main.tracking.getStatus() != EVENTS.TRACKING_DISABLED) {
+        if(main.tracking && main.tracking.getStatus() !== EVENTS.TRACKING_DISABLED) {
             resign = true;
             if(globalSync) globalSync.watchChanges(null);
-            main.tracking.stop(function(e){
-                console.log("STOPPED");
+            main.tracking.stop(function(){
                 signProcedureCallback();
             });
             return;
@@ -483,24 +432,17 @@ function UserProfileHolder(main) {
     }
 
     function onAuthStateChanged(result) {
-//        placeholder.hide(HIDING.OPACITY);
         waitingDialog.close();
-//        debugger;
         setGlobalSync();
         if (result) {
             try {
                 result = result.user ? result.user.toJSON() : result.toJSON();
-
                 u.save("uuid", result.uid);
                 result.providerData.forEach(function (profile) {
                     u.save(REQUEST.SIGN_PROVIDER, profile.providerId);
-
-                    main.toast.show("Signed as " + (profile.displayName || profile.email) + " using " + profile.providerId);
+                    main.toast.show(u.lang.signed_as_s_using_s.format(profile.displayName || profile.email, profile.providerId));
                 });
                 initProfileDialog();
-
-                //main.fire(EVENTS.SYNC_PROFILE);
-                // {uuid: "e30a815be353be517c2f07498c2193aa", uid: null}
             }catch(e) {
                 console.error(e);
             }
@@ -566,13 +508,13 @@ function UserProfileHolder(main) {
         }
     }
 
-    function saveUid() {
-        userBackup = {
-            uuid: u.load("uuid"),
-        };
-        console.log(userBackup);
-    }
-
+    //function saveUid() {
+    //    userBackup = {
+    //        uuid: u.load("uuid")
+    //    };
+    //    console.log(userBackup);
+    //}
+    //
     function getUser() {
         var user = null;
 
@@ -590,27 +532,13 @@ function UserProfileHolder(main) {
 
     function setGlobalSync() {
         if(getUser()) {
-//            //var sync = new utils.sync({type:utils.sync.Type.ACCOUNT_PRIVATE});
-//            //console.log(sync.ready());
-//            //sync.watch(REQUEST.SIGN_PROVIDER, function(key, newValue) {
-//            //    console.log("CHANGED", key, newValue);
-//            //    //                        main.fire(EVENTS.SYNC_PROFILE);
-//            //});
-//            globalSync = new utils.sync({type: utils.sync.Type.ACCOUNT_PRIVATE});
-//            if(globalSync.ready()) {
-//                globalSync.watchChanges(function (key, newValue) {
-//                    console.log("SYNC_PROFILE", key, newValue);
-                    main.fire(EVENTS.SYNC_PROFILE);
-//                });
-//            }
+            main.fire(EVENTS.SYNC_PROFILE);
         }
     }
 
     return {
         createView:createView,
-        onChangeLocation:onChangeLocation,
         onEvent:onEvent,
-        options:options,
         start:start,
         type:type
     }
