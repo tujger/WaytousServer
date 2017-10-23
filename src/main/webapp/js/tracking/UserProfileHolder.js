@@ -34,7 +34,7 @@ function UserProfileHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                object.add(DRAWER.SECTION_MISCELLANEOUS, EVENT.SAMPLE_EVENT, u.lang.user_profile, "person", function(){
+                object.add(DRAWER.SECTION_MISCELLANEOUS, EVENTS.SHOW_USER_PROFILE, u.lang.user_profile, "person", function(){
                     main.fire(EVENTS.SHOW_USER_PROFILE);
                 });
                 break;
@@ -43,7 +43,7 @@ function UserProfileHolder(main) {
                 profileDialog.open();
                 break;
             case EVENTS.FIREBASE_READY:
-                setGlobalSync();
+                doGlobalSync();
                 break;
             default:
                 break;
@@ -51,11 +51,11 @@ function UserProfileHolder(main) {
         return true;
     }
 
-    function createView(user){
-        return {
-            user: user
-        };
-    }
+    //function createView(user){
+    //    return {
+    //        user: user
+    //    };
+    //}
 
     function initProfileDialog(mode) {
         if(!profileDialog) {
@@ -399,7 +399,7 @@ function UserProfileHolder(main) {
                                 href: "mailto:" + user.email,
                                 innerHTML: user.email ? "&lt;" + user.email + "&gt;" : "",
                                 className: "user-profile-dialog-email",
-                                title: u.lang.compose_email,
+                                title: u.lang.compose_email.innerText,
                                 target: "_blank"
                             })
                     })
@@ -433,7 +433,7 @@ function UserProfileHolder(main) {
 
     function onAuthStateChanged(result) {
         waitingDialog.close();
-        setGlobalSync();
+        doGlobalSync();
         if (result) {
             try {
                 result = result.user ? result.user.toJSON() : result.toJSON();
@@ -460,7 +460,7 @@ function UserProfileHolder(main) {
 
     function onAuthStateError(error) {
         waitingDialog.close();
-        setGlobalSync();
+        doGlobalSync();
         console.log("ERROR",error);
 
         switch(error.code) {
@@ -500,7 +500,7 @@ function UserProfileHolder(main) {
                 console.error("ERROR", error);
         }
 
-        setGlobalSync();
+        doGlobalSync();
         if(resign) {
             main.tracking.setLink(window.location.href);
             main.tracking.start(function(e){console.log(e)});
@@ -514,8 +514,8 @@ function UserProfileHolder(main) {
     //    };
     //    console.log(userBackup);
     //}
-    //
-    function getUser() {
+
+    function fetchAccount() {
         var user = null;
 
         var data = firebase.auth().currentUser;
@@ -530,14 +530,14 @@ function UserProfileHolder(main) {
         return user;
     }
 
-    function setGlobalSync() {
-        if(getUser()) {
+    function doGlobalSync() {
+        if(fetchAccount()) {
             main.fire(EVENTS.SYNC_PROFILE);
         }
     }
 
     return {
-        createView:createView,
+        //createView:createView,
         onEvent:onEvent,
         start:start,
         type:type

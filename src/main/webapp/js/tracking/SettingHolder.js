@@ -5,13 +5,12 @@
  * Version 1.${SERVER_BUILD}
  * Created 3/29/17.
  */
-EVENTS.SHOW_OPTIONS = "show_options";
+EVENTS.SHOW_SETTINGS = "show_settings";
 
-function OptionHolder(main) {
+function SettingHolder(main) {
 
     var type = "options";
     var optionsDialog;
-    var modules;
     var sections;
     var categories;
     var options;
@@ -22,11 +21,11 @@ function OptionHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                object.add(DRAWER.SECTION_MISCELLANEOUS, EVENT.SHOW_OPTIONS, u.lang.options, "settings", function(){
-                    main.fire(EVENTS.SHOW_OPTIONS);
+                object.add(DRAWER.SECTION_MISCELLANEOUS, EVENTS.SHOW_SETTINGS, u.lang.settings, "settings", function(){
+                    main.fire(EVENTS.SHOW_SETTINGS);
                 });
                 break;
-            case EVENTS.SHOW_OPTIONS:
+            case EVENTS.SHOW_SETTINGS:
                 initOptionsDialog();
                 populateOptionsDialog();
                 optionsDialog.open();
@@ -101,13 +100,13 @@ function OptionHolder(main) {
                     sections[option.id] = optionsDialog.addItem({
                         id: option.id || "",
                         type:HTML.DIV,
-                        className:"options-dialog-section",
+                        className:"options-dialog-section"
                     });
                 }
                 for(var j in option.categories) {
-                    if(j == "title" || option.categories[j].ignore) continue;
+                    if(j === "title" || option.categories[j].ignore) continue;
                     var category = option.categories[j];
-                    var title = category.title;
+                    title = category.title;
                     if(title && title instanceof HTMLElement) {
                         title = title.outerHTML;
                     }
@@ -118,7 +117,7 @@ function OptionHolder(main) {
                         type: HTML.DIV,
                         className: "options-dialog-item",
                         enclosed: true,
-                        label: title,
+                        label: title
                     }, sections[option.id]);
                     for(var k in category.items) {
                         var item = category.items[k];
