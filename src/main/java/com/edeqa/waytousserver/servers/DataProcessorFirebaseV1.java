@@ -1524,7 +1524,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             putStaticticsMessage(errorMessage, map);
         }
 
-        if(key != null) {
+        if(key != null && accountId != null && accountId.length() > 0) {
             Map<String, Object> map = new HashMap<>();
             map.put(Firebase.TIMESTAMP, new Date().getTime());
             map.put(Firebase.KEYS, key);
@@ -1545,7 +1545,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             } else if (value != null) {
                 map.put(Firebase.VALUE, "[" + value.getClass().getSimpleName() + "]");
             }
-
             ref.child(Firebase.SECTION_USERS).child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValue(map);
         }
     }
