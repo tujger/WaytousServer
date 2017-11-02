@@ -185,7 +185,7 @@ function UserProfileHolder(main) {
                 });
                 var email = profileDialog.loginNode ? profileDialog.loginNode.value : "";
                 profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: u.lang.email, value: email });
-                profileDialog.passwordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: u.lanbg.password });
+                profileDialog.passwordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: u.lang.password });
                 profileDialog.addItem({
                     type: HTML.DIV,
                     className: "user-profile-forgot-password",
