@@ -461,7 +461,7 @@ function Statistics() {
                         { innerHTML: u.clear(data.key) },
                         { innerHTML: u.clear(actions[json["action"]] || json["action"])},
                         { innerHTML: u.clear(json["group"]) },
-                        { innerHTML: u.clear(json["user"]) },
+                        { innerHTML: u.clear(json["user"] || json["account"]) },
                         { innerHTML: u.clear(json["message"]) }
                     ]
                 });

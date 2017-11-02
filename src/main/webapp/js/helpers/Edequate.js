@@ -1127,7 +1127,6 @@ function Edequate(options) {
             if(options.title && options.title.button == defaultCloseButton) {
                 window.addEventListener("popstate", backButtonAction);
             }
-
             return dialog;
         };
 
@@ -2280,7 +2279,6 @@ function Edequate(options) {
             className: options.className,
             filter: function() {
                 if(!options.caption.items) return;
-                setTimeout(function(){
                     for(var i in table.rows) {
                         var valid = true;
                         for(var j in table.filter.options) {
@@ -2291,12 +2289,15 @@ function Edequate(options) {
                         }
                         var row = table.rows[i];
                         if(valid && row.isHidden) {
-                            row.show();
+                            setTimeout(function() {
+                                this.show();
+                            }.bind(row), 0);
                         } else if (!valid && !row.isHidden) {
-                            row.hide();
+                            setTimeout(function() {
+                                this.hide();
+                            }.bind(row), 0);
                         }
                     }
-                },0);
             },
             rows: [],
             saveOption: function(name, value) {
@@ -2316,7 +2317,6 @@ function Edequate(options) {
                 res.cells = [];
                 res.table = table;
 
-//                 var res = create(HTML.DIV, {className:"tr"+(row.onclick ? " clickable":"")+(row.className ? " "+row.className : ""), onclick: row.onclick, cells: [] }, table.body);
                 for(var i in row.cells) {
                     var item = row.cells[i];
                     item.className = "td" + optionalClassName(item.className);
