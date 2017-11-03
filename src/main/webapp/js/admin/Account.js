@@ -152,7 +152,8 @@ function Account() {
 
             var privateData = snapshot.val();
 
-            tableSummary.accountNameItem.lastChild.innerHTML = privateData[DATABASE.NAME] || "";
+            tableSummary.accountNameItem.lastChild.innerHTML = u.clear(privateData[DATABASE.NAME] || "");
+            tableSummary.accountNameItem.lastChild.innerHTML = u.clear(privateData[DATABASE.NAME] || "");
             tableSummary.accountUidItem.lastChild.innerHTML = accountId;
 
             var expired = false;
