@@ -508,13 +508,6 @@ function UserProfileHolder(main) {
         }
     }
 
-    //function saveUid() {
-    //    userBackup = {
-    //        uuid: u.load("uuid")
-    //    };
-    //    console.log(userBackup);
-    //}
-
     function fetchAccount() {
         var user = null;
 

@@ -159,7 +159,9 @@ function Account() {
             var expired = false;
             var trusted = false;
             if(privateData[REQUEST.SIGN_PROVIDER] == "anonymous") {
-                if(new Date().getTime() - privateData[DATABASE.CHANGED] > 30*24*60*60*1000) expired = true;
+                if (new Date().getTime() - privateData[DATABASE.CHANGED] > 30 * 24 * 60 * 60 * 1000) expired = true;
+            } else if(privateData[REQUEST.SIGN_PROVIDER] == "password") {
+                trusted = true;
             } else {
                 trusted = true;
             }
