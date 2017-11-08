@@ -13,3 +13,4 @@ all.sourcemap.json
 aws*.sh
 generate_letsencrypt_jks.sh
 waytous-beta.log
+/out/
