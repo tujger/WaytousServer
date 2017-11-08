@@ -1,12 +1,6 @@
-// If you would like more information on the gradle-appengine-plugin please refer to the github page
-// https://github.com/GoogleCloudPlatform/gradle-appengine-plugin
-
 buildscript {
-    repositories {
-        jcenter()
-    }
     dependencies {
-        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.51'
+        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.56'
 //        classpath 'com.google.javascript:closure-compiler:v20150609'
 //        classpath 'com.yahoo.platform.yui:yuicompressor:2.4.6'
     }
@@ -17,6 +11,9 @@ plugins {
 //    id "com.eriwen.gradle.css" version "2.14.0"
 }
 
+group 'com.edeqa'
+version '1.41'
+
 /**
  * NOTE!
  * You must use different run configuraitons depending on this installation type.
@@ -26,14 +23,24 @@ plugins {
 //def installationType = 'google-appengine'
 def installationType = 'standalone-server'
 
+
 apply plugin: 'js'
 //apply plugin: 'css'
 apply plugin: 'java'
 apply plugin: 'war'
 
 if (installationType.compareTo('google-appengine') == 0) {
-    apply plugin: 'appengine'
+//    apply plugin: 'appengine'
 }
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url "https://jitpack.io" }
+}
+
 
 //minifyCss {
 //    source = file("${projectDir}/src/main/webapp/css/tracking.js")
@@ -43,43 +50,38 @@ if (installationType.compareTo('google-appengine') == 0) {
 //    }
 //}
 
+
 dependencies {
-    print "Applying dependencies for ${installationType}...\n"
-// common rows
-    compile 'org.java-websocket:Java-WebSocket:1.3.4'
+//    compile 'com.github.edeqa:waytous-framework:master-SNAPSHOT'
+//    compile 'com.github.edeqa:helpers:master-SNAPSHOT'
+
+    compile 'org.java-websocket:Java-WebSocket:1.3.5'
 //    compile 'org.json:json:20160212'
-//    compile 'com.github.edeqa:eventbus:0.3'
+    compile project(':WaytousFramework')
+    compile project(':Helpers')
 
 // gae servlet rows
     if (installationType.compareTo('google-appengine') == 0) {
-        appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.54'
+//        appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.54'
         compile 'com.google.appengine:appengine-api-1.0-sdk:1.9.54'
         compile 'com.google.firebase:firebase-server-sdk:3.0.3'
         compile 'com.google.guava:guava:20.0'
         compile 'javax.servlet:javax.servlet-api:3.1.0'
         compile 'org.apache.httpcomponents:httpcomponents-client:4.5.3'
+
     }
+
 
 // server rows
-    if (installationType.compareTo('standalone-server') == 0) {
-        compile 'com.google.firebase:firebase-admin:5.3.1'
-        compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
-    }
-
-    configurations {
-        compile.exclude group: "org.apache.httpcomponents", module: "httpclient"
-//        compile.exclude group: "org.json", module: "json"
-    }
+    compile 'com.google.firebase:firebase-admin:5.4.0'
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
+//    compile sourceSets.
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    targetCompatibility = '1.7'
-    sourceCompatibility = '1.7'
-    print "Dependencies done.\n"
-    compile project(path: ':WaytousFramework')
-    compile project(path: ':Helpers')
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
-//
+
 import com.eriwen.gradle.js.tasks.MinifyJsTask
 //import com.eriwen.gradle.js.tasks.MinifyJsTask
 
