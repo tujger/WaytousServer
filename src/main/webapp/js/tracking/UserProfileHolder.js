@@ -100,7 +100,7 @@ function UserProfileHolder(main) {
                     },
                     {
                         type: HTML.DIV,
-                        innerHTML: u.lang.sync,
+                        innerHTML: u.lang.synchronize,
                         onclick: function() {
                             main.fire(EVENTS.SYNC_PROFILE);
                         }

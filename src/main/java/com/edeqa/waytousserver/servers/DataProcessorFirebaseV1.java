@@ -4,6 +4,7 @@ import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
+import com.edeqa.waytous.SignProvider;
 import com.edeqa.waytousserver.helpers.CheckReq;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.MyGroup;
@@ -267,7 +268,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 response.put(RESPONSE_MESSAGE, "OK");
                 conn.send(response.toString());
                 conn.close();
-                return;
             } else if (REQUEST_NEW_GROUP.equals(req)) {
                 if (uid != null) {
                     final MyGroup group = new MyGroup();
@@ -769,6 +769,10 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     }
 
     private void createOrUpdateUserAccount(final MyUser user, final Runnable onsuccess, final Runnable1<Throwable> onerror) {
+        if(SignProvider.NONE.equals(user.getSignProvider())) {
+            Common.log(LOG, "createOrUpdateAccount:skipCreating:" + user.getUid(), user.getSignProvider());
+            return;
+        }
 
         TaskSingleValueEventFor createAccountTask = new TaskSingleValueEventFor<DataSnapshot>()
                 .setRef(ref.child(Firebase.SECTION_USERS).child(user.getUid()))
@@ -899,8 +903,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             }
             putStaticticsUser(groupId, user.getUid(), UserAction.USER_REJECTED, e.getMessage());
         }
-
-
     }
 
 //    @Override

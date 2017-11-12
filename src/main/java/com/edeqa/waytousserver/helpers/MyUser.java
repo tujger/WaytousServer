@@ -1,6 +1,7 @@
 package com.edeqa.waytousserver.helpers;
 
 import com.edeqa.helpers.Misc;
+import com.edeqa.waytous.SignProvider;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -43,7 +44,7 @@ public class MyUser {
     private String control;
     private String model;
     private String manufacturer;
-    private String signProvider;
+    private SignProvider signProvider;
     private String os;
 
 
@@ -65,7 +66,7 @@ public class MyUser {
         if (request.has(REQUEST_MANUFACTURER)) setManufacturer(request.getString(REQUEST_MANUFACTURER));
         if (request.has(REQUEST_MODEL)) setModel(request.getString(REQUEST_MODEL));
         if (request.has(REQUEST_OS)) setOs(request.getString(REQUEST_OS));
-        if (request.has(REQUEST_SIGN_PROVIDER)) setSignProvider(request.getString(REQUEST_SIGN_PROVIDER));
+        if (request.has(REQUEST_SIGN_PROVIDER)) setSignProvider(SignProvider.valueOf(request.getString(REQUEST_SIGN_PROVIDER)));
         if (request.has(USER_NAME)) setName(request.getString(USER_NAME));
 
     }
@@ -244,11 +245,11 @@ public class MyUser {
 //        this.userId = userId;
 //    }
 
-    public String getSignProvider() {
+    public SignProvider getSignProvider() {
         return signProvider;
     }
 
-    public void setSignProvider(String signProvider) {
+    public void setSignProvider(SignProvider signProvider) {
         this.signProvider = signProvider;
     }
 

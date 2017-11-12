@@ -5,6 +5,7 @@ import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
+import com.edeqa.waytous.SignProvider;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
@@ -209,7 +210,7 @@ public class AdminRestHolder implements PageHolder {
                             @Override
                             public void call(JSONObject json) {
                                 MyUser user = new MyUser(null, "Administrator:" + OPTIONS.getLogin());
-                                user.setSignProvider("admin");
+                                user.setSignProvider(SignProvider.ADMIN);
                                 user.setName(OPTIONS.getLogin());
                                 user.setOs(System.getProperty("os.name"));
                                 user.setModel(OPTIONS.getAppName() + " 1." + Common.SERVER_BUILD);

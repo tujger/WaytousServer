@@ -191,7 +191,7 @@ public class TaskSingleValueEventFor<T> {
         return firebaseRest;
     }
 
-    public TaskSingleValueEventFor setFirebaseRest(boolean firebaseRest) {
+    public TaskSingleValueEventFor<T> setFirebaseRest(boolean firebaseRest) {
         this.firebaseRest = firebaseRest;
         return this;
     }
