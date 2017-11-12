@@ -66,7 +66,7 @@ public class MyUser {
         if (request.has(REQUEST_MANUFACTURER)) setManufacturer(request.getString(REQUEST_MANUFACTURER));
         if (request.has(REQUEST_MODEL)) setModel(request.getString(REQUEST_MODEL));
         if (request.has(REQUEST_OS)) setOs(request.getString(REQUEST_OS));
-        if (request.has(REQUEST_SIGN_PROVIDER)) setSignProvider(SignProvider.valueOf(request.getString(REQUEST_SIGN_PROVIDER)));
+        if (request.has(REQUEST_SIGN_PROVIDER)) setSignProvider(SignProvider.parse(request.getString(REQUEST_SIGN_PROVIDER)));
         if (request.has(USER_NAME)) setName(request.getString(USER_NAME));
 
     }
