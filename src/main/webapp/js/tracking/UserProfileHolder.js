@@ -395,12 +395,9 @@ function UserProfileHolder(main) {
                                 className: "user-profile-dialog-name",
                                 variable: "userNameNode"
                             })
-                            .place(HTML.A, {
-                                href: "mailto:" + user.email,
-                                innerHTML: user.email ? "&lt;" + user.email + "&gt;" : "",
-                                className: "user-profile-dialog-email",
-                                title: u.lang.compose_email.innerText,
-                                target: "_blank"
+                            .place(HTML.DIV, {
+                                innerHTML: user.email ? user.email : "",
+                                className: "user-profile-dialog-email"
                             })
                     })
                     .place({

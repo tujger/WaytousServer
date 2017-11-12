@@ -204,7 +204,7 @@ function Main() {
             "/js/tracking/UserProfileHolder",
             "/js/tracking/SettingHolder",
 //            "/js/tracking/WelcomeHolder",
-            "/js/tracking/SampleHolder",
+//             "/js/tracking/SampleHolder",
         ] : [
             "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js", // https://firebase.google.com/docs/web/setup
             "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
