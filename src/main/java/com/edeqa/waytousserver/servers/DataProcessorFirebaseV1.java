@@ -771,6 +771,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     private void createOrUpdateUserAccount(final MyUser user, final Runnable onsuccess, final Runnable1<Throwable> onerror) {
         if(SignProvider.NONE.equals(user.getSignProvider())) {
             Common.log(LOG, "createOrUpdateAccount:skipCreating:" + user.getUid(), user.getSignProvider());
+            onsuccess.run();
             return;
         }
 
@@ -785,7 +786,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             accountPrivateData.put(Firebase.NAME, user.getName());
                         }
                         if (user.getSignProvider() != null) {
-                            accountPrivateData.put(REQUEST_SIGN_PROVIDER, user.getSignProvider());
+                            accountPrivateData.put(REQUEST_SIGN_PROVIDER, user.getSignProvider().toString());
                         }
                         accountPrivateData.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
 
