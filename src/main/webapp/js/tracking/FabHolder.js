@@ -9,8 +9,6 @@ function FabHolder(main) {
 
     var type = "fab";
 
-    var fab;
-
     function start() {
         // console.log("FABHOLDER",main);
         FabHolder.fab = u.create(HTML.DIV, {className:"fab", innerHTML:"gps_off", onclick:onFabClick}, main.layout);
@@ -64,6 +62,6 @@ function FabHolder(main) {
     return {
         type:type,
         start:start,
-        onEvent:onEvent,
+        onEvent:onEvent
     }
 }

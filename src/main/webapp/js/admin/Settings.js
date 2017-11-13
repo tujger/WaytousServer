@@ -11,7 +11,7 @@ function Settings() {
     var dialog;
 
     var start = function() {
-        div = document.getElementsByClassName("layout")[0];
+        var div = document.getElementsByClassName("layout")[0];
 
         dialog = dialog || u.dialog({
             title: "Settings",
@@ -24,7 +24,6 @@ function Settings() {
             }
         });
         dialog.open();
-
     };
 
     return {

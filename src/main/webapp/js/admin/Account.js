@@ -10,9 +10,8 @@ function Account() {
     var title = "Account";
 
     var div;
-    var groupId;
+    var buttons;
     var accountId;
-    var userNumber;
     var tableSummary;
     var tableHistory;
 
@@ -39,12 +38,10 @@ function Account() {
         "p/ch": "Updated",
         "p/tos-confirmed": "Terms of service confirmed",
         "p/name": "Name",
-        "group": "Group",
+        "group": "Group"
     };
 
     var renderInterface = function() {
-
-        var ref = database.ref();
 
         u.create(HTML.H2, "Summary", div);
         u.create(HTML.H4, "No real-time updating", div);
@@ -118,7 +115,7 @@ function Account() {
         buttons = u.create("div", {className:"buttons"}, div);
         renderButtons(buttons);
 
-        var accountsTitleNode = u.create(HTML.H2, "History", div);
+        u.create(HTML.H2, "History", div);
 
         tableHistory = u.table({
             id: "admin:account:history",
@@ -128,7 +125,7 @@ function Account() {
                     { label: "Timestamp" },
                     { label: "Action", selectable: true },
                     { label: "Key", selectable: true },
-                    { label: "Value" },
+                    { label: "Value" }
                 ]
             },
             placeholder: "Loading..."
@@ -158,9 +155,9 @@ function Account() {
 
             var expired = false;
             var trusted = false;
-            if(privateData[REQUEST.SIGN_PROVIDER] == "anonymous") {
+            if(privateData[REQUEST.SIGN_PROVIDER] === "anonymous") {
                 if (new Date().getTime() - privateData[DATABASE.CHANGED] > 30 * 24 * 60 * 60 * 1000) expired = true;
-            } else if(privateData[REQUEST.SIGN_PROVIDER] == "password") {
+            } else if(privateData[REQUEST.SIGN_PROVIDER] === "password") {
                 trusted = true;
             } else {
                 trusted = true;
@@ -195,7 +192,7 @@ function Account() {
         setTimeout(function(){initial = false;}, 3000);
 
         setTimeout(function() {
-            if(tableHistory.rows.length == 0){
+            if(tableHistory.rows.length === 0){
                 tableHistory.placeholder.show("No history");
             }
         }, 1000);
@@ -205,23 +202,17 @@ function Account() {
 
             setTimeout(function(){
                 var snapshot = this;
-
                 reload = false;
-
-                var lat = snapshot.val()[USER.LATITUDE];
-                var lng = snapshot.val()[USER.LONGITUDE];
-
-                var row = tableHistory.add({
+                tableHistory.add({
                     className: "highlight"/* + (snapshot.val()[DATABASE.ACTIVE] ? "" : " inactive")*/,
                     tabindex: -1,
                     cells: [
                         { innerHTML: new Date(snapshot.val()[DATABASE.TIMESTAMP]).toLocaleString(), sort: snapshot.val()[DATABASE.TIMESTAMP] },
                         { innerHTML: u.clear(modes[snapshot.val()[DATABASE.MODE]] || snapshot.val()[DATABASE.MODE]) },
                         { innerHTML: u.clear(keys[snapshot.val()[DATABASE.KEYS]] || snapshot.val()[DATABASE.KEYS]) },
-                        { innerHTML: u.clear(snapshot.val()[DATABASE.VALUE]) },
+                        { innerHTML: u.clear(snapshot.val()[DATABASE.VALUE]) }
                     ]
                 });
-
                 tableSummary.accountHistoryCountItem.lastChild.innerHTML = +tableSummary.accountHistoryCountItem.lastChild.innerHTML + 1;
             }.bind(snapshot), 0);
 

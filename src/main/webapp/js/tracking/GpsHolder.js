@@ -8,7 +8,7 @@
 function GpsHolder(main) {
 
     var type = "gps";
-    var geoTrackFilter = new GeoTrackFilter();
+    // var geoTrackFilter = new GeoTrackFilter();
     var locationRequiredDialog;
     var drawerEnableGeoposition;
     var initialized;
@@ -56,7 +56,7 @@ function GpsHolder(main) {
                             items: [
                                 { type: HTML.DIV, className:"gps-required-dialog-allow", innerHTML: u.lang.gps_allow_geolocation },
                                 { type: HTML.DIV, enclosed:true, label: u.lang.gps_learn_more, body: u.lang.gps_learn_more_body },
-                                { type: HTML.DIV, enclosed:true, label: u.lang.gps_if_you_have_already_blocked, body: u.lang.gps_if_you_have_already_blocked_body },
+                                { type: HTML.DIV, enclosed:true, label: u.lang.gps_if_you_have_already_blocked, body: u.lang.gps_if_you_have_already_blocked_body }
                             ],
                             positive: {
                                 label: u.lang.ok,
@@ -130,7 +130,7 @@ function GpsHolder(main) {
                 queue: true,
                 className: "alert-dialog",
                 items: [
-                    { type: HTML.DIV, label: u.lang.please_resolve_this_problem_and_try_again.format(message.innerHTML) },
+                    { type: HTML.DIV, label: u.lang.please_resolve_this_problem_and_try_again.format(message.innerHTML) }
                 ],
                 positive: {
                     label: u.lang.ok,
@@ -184,7 +184,7 @@ function GpsHolder(main) {
         console.log("POSITION",position);
         u.save("gps:last",u.cloneAsObject(position));
         var message = utils.locationToJson(position);
-        if(main.tracking && main.tracking.getStatus() == EVENTS.TRACKING_ACTIVE) main.tracking.sendMessage(REQUEST.TRACKING, message);
+        if(main.tracking && main.tracking.getStatus() === EVENTS.TRACKING_ACTIVE) main.tracking.sendMessage(REQUEST.TRACKING, message);
         main.me.addLocation(position);
     }
 
@@ -251,13 +251,12 @@ function GpsHolder(main) {
                 position.coords.latitude = latLng[0];
                 position.coords.longitude = latLng[1];
                 position.coords.heading = filter.getBearing();
-                position.coords.speed = filter.getSpeed(position.coords.altitude)
+                position.coords.speed = filter.getSpeed(position.coords.altitude);
 
                 return position;
             }
         }
     }
-
 
     function help(){
         return {
@@ -310,7 +309,6 @@ function GpsHolder(main) {
         type:type,
         start:start,
         onEvent:onEvent,
-        help:help,
-        //resources:resources,
+        help:help
     }
 }

@@ -18,13 +18,11 @@ function MessageHolder(main) {
 
     var type = "message";
     var chat;
-    var messages;
     var reply;
     var replyTo;
     var replyInput;
     var replyButton;
     var lastReadTimestamp;
-    var lastGotTimestamp;
     var drawerItemChat;
     var incomingMessageSounds;
     var incomingMessageSound;
@@ -32,8 +30,6 @@ function MessageHolder(main) {
     var sound;
 
     function start() {
-        // console.log("MESSAGEHOLDER",main);
-
         chat = u.dialog({
             title: {
                 label: u.lang.chat,
@@ -60,7 +56,6 @@ function MessageHolder(main) {
             }
         }, main.right);
 
-//        messages = chat.items[0];
         reply = chat.footer;
         replyTo = u.create(HTML.INPUT, {type:HTML.HIDDEN, value:""}, reply);
         replyInput = u.create(HTML.INPUT, {
@@ -68,7 +63,7 @@ function MessageHolder(main) {
             tabindex:5,
             maxlength: MESSAGE_MAX_LENGTH,
             onkeyup:function(e){
-                if(e.keyCode == 13) {
+                if(e.keyCode === 13) {
                     replyButton.click();
                 }
             },
@@ -114,7 +109,7 @@ function MessageHolder(main) {
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
-                if(user.type == "user" && user != main.me) {
+                if(user.type === "user" && user != main.me) {
                     object.add(MENU.SECTION_COMMUNICATION, type + "_1", u.lang.private_message, "chat", function () {
                         chat.open();
                         replyTo.value = user.properties.number;
@@ -184,7 +179,7 @@ function MessageHolder(main) {
     function createView(user){
         return {
             user:user,
-            messages:[],
+            messages:[]
         }
     }
 
@@ -225,7 +220,6 @@ function MessageHolder(main) {
         main.users.forUser(number, function(number,user){
             user.fire(EVENTS.USER_MESSAGE, {body: text, timestamp: time, key: key, private: privateMessage});
         });
-        //onEvent(EVENTS.USER_MESSAGE, {body: text, timestamp: time, key: key, private: privateMessage});
     }
 
 
@@ -266,7 +260,7 @@ function MessageHolder(main) {
                                             var name = (file.replace(/\..*$/,"").replace(/[\-_]/g," ")).toUpperCaseFirst();
                                             incomingMessageSounds[file] = name;
                                             u.create(HTML.OPTION, {value:file, innerHTML:name}, e);
-                                            if((incomingMessageSound || defaultIncomingMessageSound) == file) selected = i;
+                                            if((incomingMessageSound || defaultIncomingMessageSound) === file) selected = i;
                                         }
                                         e.selectedIndex = selected;
                                     });
@@ -288,6 +282,6 @@ function MessageHolder(main) {
         perform:perform,
         saveable:true,
         loadsaved:-1,
-        options:options,
+        options:options
     }
 }

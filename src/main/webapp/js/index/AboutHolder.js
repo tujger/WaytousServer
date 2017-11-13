@@ -23,7 +23,7 @@ function AboutHolder(main) {
 
         switch(event) {
             case EVENTS.RELOAD:
-                if(object != this.type) {
+                if(object !== this.type) {
                     break;
                 }
             case EVENTS.ABOUT:

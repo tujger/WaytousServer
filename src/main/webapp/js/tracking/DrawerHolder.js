@@ -10,20 +10,12 @@ EVENTS.UPDATE_ACTIONBAR_SUBTITLE = "update_actionbar_subtitle";
 function DrawerHolder(main) {
 
     var drawer;
-    var title;
-    var subtitle;
     var backButtonAction;
     var actionbar;
     var drawerItemShare;
-    var itemLink;
-
-
-    var target = window; // this can be any scrollable element
-    var last_y = 0;
 
     var start = function() {
         var dialogAbout = utils.dialogAbout(main.right);
-
 
         dialogAbout.addItem({
             enclosed: true,
@@ -82,7 +74,7 @@ function DrawerHolder(main) {
                 content: u.create(HTML.DIV).place(HTML.SPAN, {className: "drawer-footer-link", innerHTML: "${APP_NAME} &copy;2017 Edeqa", onclick: function(e){
                     dialogAbout.open();
                     e.preventDefault();
-                    e.stopPropagation;
+                    e.stopPropagation();
                     return false;
                 }}).place(HTML.SPAN, "\nBuild " + data.version)
             },
@@ -116,7 +108,7 @@ function DrawerHolder(main) {
     var onEvent = function(EVENT,object){
         switch (EVENT){
             case EVENTS.UPDATE_ACTIONBAR_SUBTITLE:
-                if(object && main.users.getCountSelected() == 1) {
+                if(object && main.users.getCountSelected() === 1) {
                     if(this.properties.selected) {
                         actionbar.subtitle.innerHTML = object;
                         actionbar.subtitle.show();
@@ -161,7 +153,7 @@ function DrawerHolder(main) {
                         }, actionbar.titleNode);
                     }
                 }
-                if(main.tracking && main.tracking.getStatus() == EVENTS.TRACKING_ACTIVE) {
+                if(main.tracking && main.tracking.getStatus() === EVENTS.TRACKING_ACTIVE) {
                     actionbar.style.backgroundColor = utils.getRGBAColor(this.properties.color, 0.8);
                 }
                 break;
@@ -186,13 +178,6 @@ function DrawerHolder(main) {
         return {};
     }
 
-    /*function onChangeLocation(location) {
-        if(this && this.properties && this.properties.selected && main.users.getCountSelected() == 1) {
-            actionbar.subtitle.show();
-            this.fire(EVENTS.UPDATE_ACTIONBAR_SUBTITLE, actionbar.subtitle);
-        }
-    }*/
-
     function options(){
         return {
             id: "general",
@@ -210,7 +195,7 @@ function DrawerHolder(main) {
                             checked: u.load("drawer:collapsed"),
                             onaccept: function(e, event) {
                                 drawer.toggleSize(this.checked);
-                            },
+                            }
                         }
                     ]
                 }
@@ -223,8 +208,7 @@ function DrawerHolder(main) {
         start:start,
         onEvent:onEvent,
         createView:createView,
-        //onChangeLocation:onChangeLocation,
-        options:options,
+        options:options
     }
 }
 

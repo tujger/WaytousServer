@@ -79,7 +79,7 @@ function Utils(main) {
                         result = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                             var r = (d + Math.random()*16)%16 | 0;
                             d = Math.floor(d/16);
-                            return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+                            return (c==='x' ? r : (r&0x3|0x8)).toString(16);
                         });
                     }
                     u.save("uuid", utils.getEncryptedHash(result));
@@ -352,7 +352,7 @@ function Utils(main) {
     }
 
     function formatLengthToLocale(meters) {
-        if(navigator.language && navigator.language.toLowerCase().slice(0,2) == "en") {
+        if(navigator.language && navigator.language.toLowerCase().slice(0,2) === "en") {
             meters = meters * 3.2808399;
             if(meters < 530) {
                 return "%s %s".sprintf(meters.toFixed(0), "ft");
@@ -1223,7 +1223,7 @@ function Utils(main) {
             if(!this._ref) return false;
 
             var watched = this._ref.toString();
-            if(options.key == DATABASE.SYNCED) {
+            if(options.key === DATABASE.SYNCED) {
                 options.onerror(DATABASE.SYNCED + " cannot be watched directly, use 'watchChanges' instead.");
             } else if(onchangevalue && Sync._watch[watched]) {
                 console.warn(options.key + " already watching.");

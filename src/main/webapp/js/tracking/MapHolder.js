@@ -67,7 +67,7 @@ function MapHolder(main) {
                 position: google.maps.ControlPosition.RIGHT_TOP
             },*/
             overviewMapControl: true,
-            rotateControl: true,
+            rotateControl: true
         });
         main.map = map;
         utils.label.prototype = new google.maps.OverlayView;
@@ -199,6 +199,6 @@ function MapHolder(main) {
         start:start,
         onEvent:onEvent,
         createView:createView,
-        map:map,
+        map:map
     }
 }

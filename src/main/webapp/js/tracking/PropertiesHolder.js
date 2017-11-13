@@ -178,7 +178,7 @@ function PropertiesHolder(main) {
 
         var disableIfOffline = function() {
             //console.log(this.properties.name, this.properties.changed);
-            if(this.type == "user") {
+            if(this.type === "user") {
                 var delta = parseInt((new Date().getTime() - this.properties.changed) / 1000);
                 if (this.properties && this.properties.active && delta > 3600) {
                     this.fire(EVENTS.MAKE_INACTIVE);
@@ -223,7 +223,6 @@ function PropertiesHolder(main) {
             log: true,
             key: DATABASE.NAME,
             onupdatevalue: function(key, newName, oldName) {
-                console.log(key, newName, oldName)
                 main.me.fire(EVENTS.CHANGE_NAME, u.clear(newName));
             }
         });
@@ -233,8 +232,6 @@ function PropertiesHolder(main) {
             sync.syncValue(main.me.properties.name || null);
         }
     }
-
-
 
     this.options = function(){
         return {
@@ -254,14 +251,12 @@ function PropertiesHolder(main) {
                                 u.save("properties:name", this.value);
                                 u.save("properties:name_asked", true);
                                 main.me.fire(EVENTS.CHANGE_NAME, u.clear(this.value));
-                            },
+                            }
                         }
                     ]
                 }
             ]
         }
     }
-
-
 
 }

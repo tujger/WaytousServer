@@ -161,9 +161,9 @@ function Statistics() {
             ]
         });
 
-        groupsChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
-        usersChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
-        accountsChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
+        var groupsChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
+        var usersChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
+        var accountsChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
 
         /*
                 // Instantiate and draw our chart, passing in some options.
@@ -284,7 +284,7 @@ function Statistics() {
             if(value == undefined) return;
             value = +value;
             var oldValue = +node.innerHTML;
-            if(value != oldValue) {
+            if(value !== oldValue) {
                 node.updateHTML(""+value, {noflick: !oldValue});
             }
         };
@@ -341,9 +341,8 @@ function Statistics() {
                     if(json[DATABASE.STAT_GROUPS_REJECTED]) {
                         groupsData[4] = json[DATABASE.STAT_GROUPS_REJECTED];
                     }
-                    var index = groupsStat.getFilteredRows([{column:0, value:data.key}])[0]
+                    var index = groupsStat.getFilteredRows([{column:0, value:data.key}])[0];
                     if(index != undefined) {
-                        var row = groupsStat.getRowProperties(index);
                         for(var i in groupsData) {
                             groupsStat.setValue(index, +i, groupsData[i]);
                         }
@@ -374,9 +373,8 @@ function Statistics() {
                     if(json[DATABASE.STAT_USERS_REJECTED]) {
                         usersData[3] = json[DATABASE.STAT_USERS_REJECTED];
                     }
-                    index = usersStat.getFilteredRows([{column:0, value:data.key}])[0]
+                    index = usersStat.getFilteredRows([{column:0, value:data.key}])[0];
                     if(index != undefined) {
-                        var row = usersStat.getRowProperties(index);
                         for(var i in usersData) {
                             usersStat.setValue(index, +i, usersData[i]);
                         }
@@ -404,9 +402,8 @@ function Statistics() {
                     if(json[DATABASE.STAT_ACCOUNTS_DELETED]) {
                         accountsData[2] = json[DATABASE.STAT_ACCOUNTS_DELETED];
                     }
-                    index = accountsStat.getFilteredRows([{column:0, value:data.key}])[0]
+                    index = accountsStat.getFilteredRows([{column:0, value:data.key}])[0];
                     if(index != undefined) {
-                        var row = accountsStat.getRowProperties(index);
                         for(var i in accountsData) {
                             accountsStat.setValue(index, +i, accountsData[i]);
                         }
@@ -418,7 +415,7 @@ function Statistics() {
                 }.bind(data), 0);
 
 
-                var date = new Date();
+                date = new Date();
                 date = "%04d-%02d-%02d".sprintf(date.getFullYear(), date.getMonth()+1, date.getDate());
                 if(data.key == date) {
                     updateValue(tableSummaryGroups.groupsCreatedPersistentItem.cells[1], json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT]);
@@ -498,7 +495,7 @@ function Statistics() {
             clear.show();
             question.hide();
             yes.hide();
-            no.hide()
+            no.hide();
             u.toast.show("Messages removing is performing.");
             u.get("/admin/rest/v1/stat/clean")
                 .then(function(xhr){
@@ -524,7 +521,7 @@ function Statistics() {
         icon: "trending_up",
         title: title,
         menu: title,
-        move: true,
+        move: true
     }
 }
 

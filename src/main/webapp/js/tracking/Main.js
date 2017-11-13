@@ -7,15 +7,10 @@
  */
 
 function Main() {
-    var firebaseVersion = "4.2.0";
-    var holders = {};
+    var firebaseVersion = "4.6.2";
     var users;
     var me;
-    var layout;
-    var right;
-    var origin;
     var main = window.Waytous = this;
-    var alert;
 
     if (!data.is_debug_mode && "serviceWorker" in navigator) {
         window.addEventListener("load", function() {
@@ -50,7 +45,7 @@ function Main() {
         main.right = main.layout = u.create({className:"layout changeable"}, document.body);
 
         u.loading("0%");
-        u.require("/js/helpers/Constants").then(function(e){
+        u.require("/js/helpers/Constants").then(function(){
             loadResources("tracking.json", function() {
                 initializeHeader();
                 initializeProperties();
@@ -64,37 +59,6 @@ function Main() {
         //addConsoleLayer(main.right);
 
     };
-
-    function addConsoleLayer(parent) {
-        var consoleLayer = u.create(HTML.DIV, {className: "console hidden", innerHTML:"Console:\n",
-        onclick:function(){
-            this.hide();
-        }}, parent);
-//        a.setAttribute("onclick","console.log(this);");
-        var systemConsole = window.console.log;
-        var errorConsole = window.console.error;
-        window.console.log = function() {
-            systemConsole(arguments);
-            for(var i in arguments) {
-                consoleLayer.innerHTML += arguments[i] + " ";
-            }
-            consoleLayer.innerHTML += "\n";
-            consoleLayer.scrollTop = consoleLayer.scrollHeight;
-        };
-        window.console.error = function() {
-            consoleLayer.show();
-            errorConsole(arguments);
-            for(var i in args) {
-                consoleLayer.innerHTML += arguments[i] + " ";
-            }
-            consoleLayer.innerHTML += "\n";
-            consoleLayer.scrollTop = consoleLayer.scrollHeight;
-        };
-        window.onerror = function(errorMsg, url, lineNumber){
-            window.console.error(url+": "+lineNumber+", "+errorMsg);
-        };
-        return consoleLayer;
-    }
 
     function initializeHeader() {
 
@@ -137,9 +101,9 @@ function Main() {
         if(data && data.google_analytics_tracking_id) {
             document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + data.google_analytics_tracking_id, async:true})
                 .place(HTML.SCRIPT, {innerHTML: "window.dataLayer = window.dataLayer || [];\n" +
-                "        function gtag(){dataLayer.push(arguments)};\n" +
-                "        gtag('js', new Date());\n" +
-                "        gtag('config', '" + data.google_analytics_tracking_id + "');"});
+                "function gtag(){dataLayer.push(arguments)};\n" +
+                "gtag('js', new Date());\n" +
+                "gtag('config', '" + data.google_analytics_tracking_id + "');"});
         }
 
     }
@@ -202,7 +166,7 @@ function Main() {
             "/js/tracking/TrackingHolder",
             "/js/tracking/TrackHolder",
             "/js/tracking/UserProfileHolder",
-            "/js/tracking/SettingHolder",
+            "/js/tracking/SettingHolder"
 //            "/js/tracking/WelcomeHolder",
 //             "/js/tracking/SampleHolder",
         ] : [
@@ -279,7 +243,7 @@ function Main() {
             var failed = false;
             for(var i in files) {
                 var file = files[i];
-                u.require(file, main).then(function(e) {
+                u.require(file, main).then(function() {
                     if(failed) return;
                     loaded++;
                     u.loading(Math.ceil(loaded / files.length * 100) + "%");
@@ -310,7 +274,7 @@ function Main() {
         setTimeout(function(){
             main.users = users = new MyUsers(main);
 
-            if(me == null){
+            if(!me){
                 main.me = me = new MyUser(main);
                 me.user = true;
                 me.color = "#0000FF";
@@ -379,7 +343,7 @@ function Main() {
                             innerHTML: u.lang.reset,
                             onclick: function(e, event) {
                                 for(var x in localStorage) {
-                                    if(x.indexOf(u.origin + ":dialog:") == 0) {
+                                    if(x.indexOf(u.origin + ":dialog:") === 0) {
                                         delete localStorage[x];
                                     }
                                 }
@@ -448,6 +412,6 @@ function Main() {
 //        fire:fire,
         initialize:initialize,
         help:help,
-        options:options,
+        options:options
     }
 }

@@ -23,8 +23,6 @@ function User() {
 
     var renderInterface = function() {
 
-        var ref = database.ref();
-
         u.create(HTML.H2, "Summary", div);
 
         var divSummaryMap = u.create(HTML.DIV, {className: "two-divs"}, div);
@@ -63,7 +61,7 @@ function User() {
 
         tableSummary.userUidNode = tableSummary.add({
             onclick: function(){
-                if(tableSummary.userUidNode.cells[1].innerHTML && tableSummary.userUidNode.cells[1].innerHTML != "[invalid]") {
+                if(tableSummary.userUidNode.cells[1].innerHTML && tableSummary.userUidNode.cells[1].innerHTML !== "[invalid]") {
                     WTU.switchTo("/admin/account/"+tableSummary.userUidNode.cells[1].innerHTML);
                 }
                 return false;
@@ -307,8 +305,7 @@ function User() {
         u.create(HTML.BUTTON, { innerHTML:"Remove", onclick: removeUser}, div);
     }
 
-    function switchActivity(e){
-        var ref = database.ref();
+    function switchActivity(){
         u.clear(buttons);
 
         u.create(HTML.BUTTON,{innerHTML:"Active", onclick: function(){
@@ -325,7 +322,6 @@ function User() {
 
     function switchActive(number, active) {
         u.progress.show("Switching...");
-        var ref = database.ref();
         u.post("/admin/rest/v1/user/switch", JSON.stringify({group_id:groupId, user_number:userNumber,property:DATABASE.ACTIVE,value:active}))
             .then(function(){
                 u.progress.hide();

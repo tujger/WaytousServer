@@ -23,23 +23,12 @@ function Chat() {
             className: "chat-dialog",
             resizeable: true,
             itemsClassName: "chat-dialog-messages",
-            items: [],
-//            negative: {
-//                label: "Close"
-//            }
+            items: []
         });
 
         ref = database.ref();
         if(dialogChat.opened) {
             dialogChat.close();
-
-//            for(var i in ons) {
-//                ons[i].off();
-//            }
-//            ons = [];
-
-//            u.clear(dialogChat.itemsLayout);
-//            dialogChat.items = [];
         } else {
             dialogChat.open();
 

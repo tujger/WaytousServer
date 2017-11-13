@@ -60,7 +60,7 @@ function MarkerHolder(main) {
         return {
             marker:marker,
             setBearing:setBearing,
-            setPosition:setPosition,
+            setPosition:setPosition
         };
     }
 
@@ -99,7 +99,7 @@ function MarkerHolder(main) {
                 break;
             case EVENTS.MOUSE_OUT:
                 if(this.views.marker.marker) {
-                    var icon = this.views.marker.marker.getIcon();
+                    icon = this.views.marker.marker.getIcon();
                     icon.strokeColor = this == main.me ? "darkorange" : "white";
                     icon.strokeWidth = 2;
                     this.views.marker.marker.setIcon(icon);
@@ -159,6 +159,6 @@ function MarkerHolder(main) {
         onEvent:onEvent,
         createView:createView,
         removeView:removeView,
-        onChangeLocation:onChangeLocation,
+        onChangeLocation:onChangeLocation
     }
 }

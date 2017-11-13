@@ -9,12 +9,8 @@ function Group() {
 
     var title = "Group";
 
-    var alertArea;
-    var user;
-    var firebaseToken;
     var div;
     var groupId;
-    var summary;
     var buttons;
     var tableSummary;
     var tableUsers;
@@ -38,7 +34,7 @@ function Group() {
         }, divSummary);
 
         var url = new URL(window.location.href);
-        url = "https://" + url.hostname + (url.port ? (data.HTTPS_PORT == 443 ? "" : ":"+ data.HTTPS_PORT) : "");
+        url = "https://" + url.hostname + (url.port ? (data.HTTPS_PORT === 443 ? "" : ":"+ data.HTTPS_PORT) : "");
 
         var td = u.create()
             .place(HTML.A, { href: url + "/track/"+groupId, innerHTML:groupId, target:"_blank", rel:"noopener"})
@@ -90,7 +86,7 @@ function Group() {
                             label: u.create(HTML.SPAN, "OK"),
                             onclick: function(items) {
                                 var newValue = items[0].value;
-                                if(tableSummary.welcomeMessageNode.lastChild.innerHTML != newValue) {
+                                if(tableSummary.welcomeMessageNode.lastChild.innerHTML !== newValue) {
                                     tableSummary.welcomeMessageNode.lastChild.innerHTML += " ...wait";
                                     u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.WELCOME_MESSAGE, value:newValue}))
                                         .catch(function(code,xhr){
@@ -144,7 +140,7 @@ function Group() {
                         dismiss: false,
                         onclick: function(items) {
                             var newValue = items[1].value;
-                            if(tableSummary.timeToLiveNode.lastChild.innerHTML != newValue) {
+                            if(tableSummary.timeToLiveNode.lastChild.innerHTML !== newValue) {
                                 tableSummary.timeToLiveNode.lastChild.innerHTML += " ...wait";
                                 u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.TIME_TO_LIVE_IF_EMPTY, value:newValue}))
                                     .catch(function(code,xhr){
@@ -194,7 +190,7 @@ function Group() {
                         label: u.create(HTML.SPAN, "OK"),
                         onclick: function(items) {
                             var newValue = items[1].value;
-                            if(tableSummary.delayToDismissNode.lastChild.innerHTML != newValue) {
+                            if(tableSummary.delayToDismissNode.lastChild.innerHTML !== newValue) {
                                 tableSummary.delayToDismissNode.lastChild.innerHTML += " ...wait";
                                 u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.DELAY_TO_DISMISS, value:newValue}))
                                     .catch(function(code,xhr){
@@ -231,7 +227,7 @@ function Group() {
             return !row.classList.contains("disabled");
         }
         tableSummary.usersNode = tableSummary.add({
-            onclick: function(e){
+            onclick: function(){
                 tableUsers.filter.remove(filterActive);
                 tableUsers.filter.remove(filterEnabled);
             },
@@ -241,7 +237,7 @@ function Group() {
             ]});
 
         tableSummary.activeUsersNode = tableSummary.add({
-            onclick: function(e){
+            onclick: function(){
                 tableUsers.filter.add(filterActive);
             },
             cells: [
@@ -250,7 +246,7 @@ function Group() {
             ]});
 
         tableSummary.enabledUsersNode = tableSummary.add({
-            onclick: function(e){
+            onclick: function(){
                 tableUsers.filter.add(filterEnabled);
             },
             cells: [
@@ -387,7 +383,7 @@ function Group() {
                         { innerHTML: "..." },
                         { innerHTML: "..." },
                         { innerHTML: "..." }
-                    ],
+                    ]
                 });
                 var userNameNode = row.cells[1];
                 var userChangedNode = row.cells[4];
@@ -454,7 +450,7 @@ function Group() {
                                 }
                                 map.fitBounds(bounds);
                             } else {
-                                for(var x in positions) {
+                                for(x in positions) {
                                     map.setCenter(positions[x]);
                                     map.setZoom(15);
                                 }
@@ -469,10 +465,10 @@ function Group() {
                             }
                             markers[userNumber].setPosition(positions[userNumber]);
                             markers[userNumber].row = row;
-                            markers[userNumber].addListener("mouseover", function(e){
+                            markers[userNumber].addListener("mouseover", function(){
                                 this.row.classList.add("selected");
                             });
-                            markers[userNumber].addListener("mouseout", function(e){
+                            markers[userNumber].addListener("mouseout", function(){
                                 this.row.classList.remove("selected");
                             });
                         }
@@ -534,7 +530,7 @@ function Group() {
         u.create(HTML.BUTTON, { innerHTML:"Delete group", onclick: deleteGroupQuestion}, div);
     }
 
-    function deleteGroupQuestion(e){
+    function deleteGroupQuestion(){
         u.clear(buttons);
         u.create({className:"question", innerHTML: "Are you sure you want to delete group "+groupId+"?"}, buttons);
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
@@ -569,7 +565,7 @@ function Group() {
             streetViewControl: false,
             fullscreenControl: true,
             overviewMapControl: true,
-            rotateControl: true,
+            rotateControl: true
         });
         positions = {};
         markers = {};

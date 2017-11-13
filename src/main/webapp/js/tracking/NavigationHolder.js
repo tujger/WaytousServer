@@ -20,10 +20,8 @@ function NavigationHolder(main) {
 
     var type = "navigation";
     var view;
-    var drawerItemShow;
     var drawerItemHide;
     var navigation_outline_drawer, navigation_outline_menu;
-    var panTask;
     var modeButtons;
     var modeDialog;
     var installation;
@@ -170,8 +168,6 @@ function NavigationHolder(main) {
                         if (user.views.navigation.show) {
                             drawerItemHide && drawerItemHide.show();
                             if(!listenerHandler) listenerHandler = main.map.addListener("dragstart", showModeButtons);
-                        } else {
-                            //                    drawerItemShow.show();
                         }
                     }
                 })
@@ -325,7 +321,7 @@ function NavigationHolder(main) {
         this.views.navigation.label = new utils.label({
             map:main.map,
             className:"navigation-label",
-            style: {backgroundColor:this.properties.color},
+            style: {backgroundColor:this.properties.color}
         });
         this.views.navigation.label.bindTo("position", this.views.navigation.marker, "position");
 
@@ -465,7 +461,7 @@ function NavigationHolder(main) {
                         ontouchend: function () {
                             clearTimeout(this.longTapTask);
                         }
-                    },
+                    }
                 ]
             }, main.right);
             modeButtons.addEventListener("mouseover", showModeButtons);
@@ -547,17 +543,17 @@ function NavigationHolder(main) {
         } else if (this.views.navigation.distance > SHOW_TRACK_IF_DISTANCE_BIGGER_THAN
             && this.views.navigation.previousDistance
             && this.views.navigation.previousDistance < SHOW_TRACK_IF_DISTANCE_BIGGER_THAN
-            && this.views.navigation.track == null) {
+            && !this.views.navigation.track) {
             this.views.navigation.previousDistance = this.views.navigation.distance;
         } else if (this.views.navigation.distance > HIDE_TRACK_IF_DISTANCE_LESS_THAN
             && this.views.navigation.distance <= SHOW_TRACK_IF_DISTANCE_BIGGER_THAN
-            && this.views.navigation.track == null) {
+            && !this.views.navigation.track) {
             this.views.navigation.previousDistance = this.views.navigation.distance;
             return;
         }
         this.views.navigation.previousDistance = this.views.navigation.distance;
 
-        if (this.views.navigation.track != null) {
+        if (this.views.navigation.track) {
             this.views.navigation.track.setPath(this.views.navigation.points);
             this.views.navigation.trackCenter.setPath(this.views.navigation.points);
 
@@ -590,8 +586,7 @@ function NavigationHolder(main) {
                             onaccept: function(e, event) {
                                 u.save("navigation:avoid_highways", this.checked);
                                 main.me.onChangeLocation(main.me.location);
-//                                console.log("navigation:avoid_highways:",this.value);
-                            },
+                            }
                         },
                         {
                             id:"navigation:avoid_tolls",
@@ -601,8 +596,7 @@ function NavigationHolder(main) {
                             onaccept: function(e, event) {
                                 u.save("navigation:avoid_tolls", this.checked);
                                 main.me.onChangeLocation(main.me.location);
-//                                console.log("navigation:avoid_tolls:",this.value);
-                            },
+                            }
                         },
                         {
                             id:"navigation:avoid_ferries",
@@ -612,8 +606,7 @@ function NavigationHolder(main) {
                             onaccept: function(e, event) {
                                 u.save("navigation:avoid_ferries", this.checked);
                                 main.me.onChangeLocation(main.me.location);
-//                                console.log("navigation:avoid_ferries:",this.value);
-                            },
+                            }
                         }
                     ]
                 }
@@ -628,6 +621,6 @@ function NavigationHolder(main) {
         createView:createView,
         removeView:removeView,
         onChangeLocation:onChangeLocation,
-        options:options,
+        options:options
     }
 }

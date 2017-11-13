@@ -9,14 +9,9 @@ function Groups() {
 
     var title = "Groups";
 
-    var alertArea;
-    var trhead;
     var tableSummary;
     var tableGroups;
-    var user;
-    var firebaseToken;
     var div;
-    var groupNodes = {};
     var ref;
 
     var renderInterface = function() {
@@ -35,13 +30,13 @@ function Groups() {
         }, div);
 
         function filterPersistent(row){
-            return row.cells[2].innerHTML == "Yes";
+            return row.cells[2].innerHTML === "Yes";
         }
         function filterTemporary(row){
-            return row.cells[2].innerHTML == "No";
+            return row.cells[2].innerHTML === "No";
         }
         tableSummary.groupsItem = tableSummary.add({
-            onclick: function(e){
+            onclick: function(){
                 tableGroups.filter.remove(filterPersistent);
                 tableGroups.filter.remove(filterTemporary);
             },
@@ -56,7 +51,7 @@ function Groups() {
                 { className:"th", innerHTML: "&#150; persistent" },
                 { className:"option", innerHTML: 0 }
             ],
-            onclick: function(e){
+            onclick: function(){
                 tableGroups.filter.remove(filterTemporary);
                 tableGroups.filter.add(filterPersistent);
             }
@@ -66,7 +61,7 @@ function Groups() {
                 { className:"th", innerHTML: "&#150; temporary" },
                 { className:"option", innerHTML: 0 }
             ],
-            onclick: function(e){
+            onclick: function(){
                 tableGroups.filter.remove(filterPersistent);
                 tableGroups.filter.add(filterTemporary);
             }
@@ -163,8 +158,8 @@ function Groups() {
                             { sort: 0, innerHTML:"..." }
                         ]
                     });
-                    var usersNode = row.cells[5]
-                    var changedNode = row.cells[7]
+                    var usersNode = row.cells[5];
+                    var changedNode = row.cells[7];
                     updateTableSummary();
 
                     ref.child(data.key).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("value", function(snapshot){
@@ -179,9 +174,9 @@ function Groups() {
                         }
                         usersNode.innerHTML = active + " / " + total;
 
-                        var changed = 0;
-                        for(var i in snapshot.val()) {
-                            var c = parseInt(snapshot.val()[i][DATABASE.CHANGED]);
+                        changed = 0;
+                        for(i in snapshot.val()) {
+                            c = parseInt(snapshot.val()[i][DATABASE.CHANGED]);
                             if(c > changed) changed = c;
                         }
                         changedNode.sort = changed;
@@ -204,7 +199,7 @@ function Groups() {
         });
         ref.child(DATABASE.SECTION_GROUPS).on("child_removed", function(data) {
             for(var i in tableGroups.rows) {
-                if(tableGroups.rows[i].id == data.key) {
+                if(tableGroups.rows[i].id === data.key) {
                     tableGroups.body.removeChild(tableGroups.rows[i]);
                     tableGroups.rows.splice(i,1);
                 }
@@ -259,7 +254,7 @@ function Groups() {
 
         var usersTotal = 0, usersOnline = 0, groupPersistent = 0, groupTemporary = 0;
         for(var i in tableGroups.rows) {
-            if(tableGroups.rows[i].cells[2].innerHTML == "Yes") groupPersistent ++;
+            if(tableGroups.rows[i].cells[2].innerHTML === "Yes") groupPersistent ++;
             else groupTemporary++;
 
             var users = tableGroups.rows[i].cells[5].innerHTML;
@@ -285,7 +280,7 @@ function Groups() {
         icon: "group",
         title: title,
         menu: title,
-        move:true,
+        move:true
     }
 }
 

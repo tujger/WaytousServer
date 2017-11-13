@@ -54,15 +54,13 @@ function Main() {
         if(data && data.google_analytics_tracking_id) {
             document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + data.google_analytics_tracking_id, async:true})
                 .place(HTML.SCRIPT, {innerHTML: "window.dataLayer = window.dataLayer || [];\n" +
-                "        function gtag(){dataLayer.push(arguments)};\n" +
-                "        gtag('js', new Date());\n" +
-                "        gtag('config', '" + data.google_analytics_tracking_id + "');"});
+                "function gtag(){dataLayer.push(arguments)};\n" +
+                "gtag('js', new Date());\n" +
+                "gtag('config', '" + data.google_analytics_tracking_id + "');"});
         }
 
-        u.require("/js/helpers/Constants").then(function(e){
-
+        u.require("/js/helpers/Constants").then(function(){
             EVENTS.RELOAD = "reload";
-
             loadResources("index.json", function() {
                 u.eventBus.register(files, {
                     context: self,
@@ -135,7 +133,7 @@ function Main() {
                 selectLang.place(HTML.OPTION, { innerHTML: "Default", value: "en" });
                 for(var x in json.locales) {
                     selectLang.place(HTML.OPTION, { innerHTML: json.locales[x], value: x });
-                    if(u.load("lang") == x) selectLang.selectedIndex = count;
+                    if(u.load("lang") === x) selectLang.selectedIndex = count;
                     count++;
                 }
             });

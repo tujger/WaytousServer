@@ -172,6 +172,6 @@ function SettingHolder(main) {
     return {
         type:type,
         start:start,
-        onEvent:onEvent,
+        onEvent:onEvent
     }
 }

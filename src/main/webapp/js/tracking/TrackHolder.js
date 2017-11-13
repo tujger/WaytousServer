@@ -41,7 +41,7 @@ function TrackHolder(main) {
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
-                if(user && user.type == "user" && user.location && !user.views.track.show) {
+                if(user && user.type === "user" && user.location && !user.views.track.show) {
                     object.add(MENU.SECTION_VIEWS,EVENTS.SHOW_TRACK, u.lang.show_track,"title",function(){
                         user.fire(EVENTS.SHOW_TRACK);
                         drawerPopulate();
@@ -98,7 +98,7 @@ function TrackHolder(main) {
         setTimeout(function(){
             drawerItemHide.hide();
             drawerItemShow.hide();
-            if(main.tracking && main.tracking.getStatus() == EVENTS.TRACKING_ACTIVE) {
+            if(main.tracking && main.tracking.getStatus() === EVENTS.TRACKING_ACTIVE) {
                 main.users.forAllUsers(function (number, user) {
                     if(user.properties.active && user.views.track && user.location) {
                         if (user.views.track.show) {
@@ -149,6 +149,6 @@ function TrackHolder(main) {
         onEvent:onEvent,
         createView:createView,
         removeView:removeView,
-        onChangeLocation:onChangeLocation,
+        onChangeLocation:onChangeLocation
     }
 }

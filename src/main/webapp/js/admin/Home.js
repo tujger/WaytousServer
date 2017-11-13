@@ -16,9 +16,6 @@ function Home() {
         u.create(HTML.H2, "Waytous admin", div);
 
         u.create(HTML.DIV, "Here you may view and change groups and users in Waytous service.", div);
-
-
-
     };
 
     return {

@@ -19,14 +19,12 @@ function PlaceHolder(main) {
     var type = "place";
     var drawerItemSearch;
     var searchDialog;
-    var searchField;
     var autocomplete;
     var placeEditDialog;
     var placeShareDialog;
     var placeSendDialog;
 
     function start() {
-        // console.log("PLACEHOLDER",main);
     }
 
     function onEvent(EVENT,object){
@@ -40,7 +38,7 @@ function PlaceHolder(main) {
                             tabindex: -1,
                             items: [
                                 { type: HTML.INPUT, className: "place-search-input", label: "keyboard_backspace", labelClassName: "place-search-label" }
-                            ],
+                            ]
 //                            onblur: function() {
 //                                searchDialog.close();
 //                            }
@@ -257,6 +255,6 @@ function PlaceHolder(main) {
         type:type,
         start:start,
         onEvent:onEvent,
-        createView:createView,
+        createView:createView
     }
 }

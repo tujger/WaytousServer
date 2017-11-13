@@ -244,7 +244,7 @@ function TrackingFB(main) {
 
         var onerror = function(event) {
                 console.error("Websocket processing failed, will try to use XHR instead of " + link + ".");
-            if(status == EVENTS.TRACKING_DISABLED) return;
+            if(status === EVENTS.TRACKING_DISABLED) return;
             xhrModeStart(link);
         };
 
@@ -346,14 +346,14 @@ function TrackingFB(main) {
 
         jsonMessage[REQUEST.TIMESTAMP] = new Date().getTime();
         var type = jsonMessage[REQUEST.REQUEST];
-        if(type == REQUEST.NEW_GROUP || type == REQUEST.JOIN_GROUP || type == REQUEST.CHECK_USER) {
+        if(type === REQUEST.NEW_GROUP || type === REQUEST.JOIN_GROUP || type === REQUEST.CHECK_USER) {
             // console.error("WRONG WAY");
             // switch (webSocketListener.status) {
             webSocketListener.send(JSON.stringify(json));
             //
             // }
         } else if(ref) {
-            if(type == REQUEST.CHANGE_NAME) {
+            if(type === REQUEST.CHANGE_NAME) {
                 updates = {};
                 updates[USER.NAME] = jsonMessage[USER.NAME];
                 updates[DATABASE.CHANGED] = firebase.database.ServerValue.TIMESTAMP;
@@ -363,7 +363,7 @@ function TrackingFB(main) {
                 });
 
                 return;
-            } else if(type == REQUEST.WELCOME_MESSAGE) {
+            } else if(type === REQUEST.WELCOME_MESSAGE) {
                 console.error("WELCOMEMESSAGE");
 
                 return;
@@ -651,6 +651,6 @@ function TrackingFB(main) {
         sendMessage:sendMessage,
         put:put,
         sendUpdate:sendUpdate,
-        send:send,
+        send:send
     }
 }

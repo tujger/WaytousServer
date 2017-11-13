@@ -16,7 +16,6 @@ function CameraHolder(main) {
 
     var type = "camera";
 
-
     var CAMERA_ORIENTATION_NORTH = 0;
     var CAMERA_ORIENTATION_DIRECTION = 1;
     var CAMERA_ORIENTATION_PERSPECTIVE = 2;
@@ -66,7 +65,7 @@ function CameraHolder(main) {
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
-                if(main.users.getCountSelected() == 1 && user.properties.selected) break;
+                if(main.users.getCountSelected() === 1 && user.properties.selected) break;
 
                 var select, unselect;
                 select = object.add(MENU.SECTION_PRIMARY, EVENTS.SELECT_USER, u.lang.select, "select_all", function () {
@@ -140,7 +139,7 @@ function CameraHolder(main) {
 //                menuFitToScreen.classList.remove("disabled");
                 break;
             case EVENTS.CAMERA_ZOOM:
-                if(main.users.getCountSelected()==1) {
+                if(main.users.getCountSelected() === 1) {
                     main.users.forAllUsers(function (number, user) {
                         if(user.properties.selected) {
                             if(!object) {
@@ -237,7 +236,7 @@ function CameraHolder(main) {
     }
 
     function update() {
-        if(orientation == CAMERA_ORIENTATION_USER) return;
+        if(orientation === CAMERA_ORIENTATION_USER) return;
         if(main.users.getCountSelected() > 1) {
             var finalBounds = new google.maps.LatLngBounds();
             for(var i in main.users.users) {
@@ -271,7 +270,7 @@ function CameraHolder(main) {
             }, function(){
                 main.map.fitBounds(finalBounds);
             });*/
-        } else if(main.users.getCountSelected() == 1) {
+        } else if(main.users.getCountSelected() === 1) {
             main.users.forAllUsers(function(number,user){
                 if(user.properties && user.properties.selected && user.properties.active) {
                     var finalCenter = utils.latLng(user.location);
@@ -317,17 +316,16 @@ function CameraHolder(main) {
     function createView(user){
         if(!user) return;
 
-        var b = {
+        return {
             bearing: CAMERA_DEFAULT_BEARING,
             zoom: CAMERA_DEFAULT_ZOOM,
             orientation: CAMERA_ORIENTATION_NORTH,
             previousOrientation: CAMERA_ORIENTATION_NORTH,
             perspectiveNorth: true,
-            location:user.location,
+            location: user.location
             // latitude: user.getLocation().getLatitude();
             // longitude: myUser.getLocation().getLongitude();
         };
-        return b;
     }
 
     return {
@@ -335,7 +333,7 @@ function CameraHolder(main) {
         start:start,
         onEvent:onEvent,
         createView:createView,
-        onChangeLocation:onChangeLocation,
+        onChangeLocation:onChangeLocation
     }
 }
 

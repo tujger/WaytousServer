@@ -9,6 +9,7 @@ function Create() {
 
     var title = "Create group";
     var dialog;
+    var div;
 
     var inputId,inputRequiresPassword,inputPassword,inputWelcomeMessage,inputPersistent,inputTtl,inputDismissInactive,inputDelay;
 
@@ -48,11 +49,12 @@ function Create() {
                 },
                 { type: HTML.NUMBER, label: "&#150; time to live, min", oninput: validate_ttl, value: 24 * 60 },
                 { type: HTML.CHECKBOX, label: "Dismiss inactive users", onchange: function() {
+                    // noinspection PointlessBooleanExpressionJS
                     dialog.items[7].disabled = !!this.checked;
                     dialog.items[7].parentNode.classList[this.checked ? "add" : "remove"]("disabled");
                     dialog.items[7].focus();
                 }, checked: true },
-                { type: HTML.NUMBER, itemClassName: "", label: "&#150; delay to dismiss, sec", title:"Minimal value 300", onchange: validate_delay, oninput: validate_delay, value: 3600 },
+                { type: HTML.NUMBER, itemClassName: "", label: "&#150; delay to dismiss, sec", title:"Minimal value 300", onchange: validate_delay, oninput: validate_delay, value: 3600 }
             ],
             positive: {
                 label: u.create(HTML.SPAN, "OK"),
@@ -77,20 +79,20 @@ function Create() {
 
     };
 
-    var validate_id = function(e) {
+    var validate_id = function() {
         this.value = this.value.toUpperCase().replace(/[^\w]/g, "");
     };
 
-    var validate_ttl = function(e) {
+    var validate_ttl = function() {
         this.value = this.value.replace(/[^\d]/g, "");
     };
 
-    var validate_delay = function(e) {
+    var validate_delay = function() {
         this.value = this.value.replace(/[^\d]/g, "");
         if(this.value < 300) this.value = 300;
     };
 
-    var validate_submit = function(e) {
+    var validate_submit = function() {
 
         validate_id.call(inputId);
         validate_ttl.call(inputTtl);
@@ -109,7 +111,7 @@ function Create() {
             "delay-to-dismiss": inputDelay.value
         };
         u.post("/admin/rest/v1/group/create", JSON.stringify(options))
-            .then(function(xhr){
+            .then(function(){
                 u.toast.show("Group "+inputId.value+" has created.");
                 WTU.switchTo("/admin/groups");
             }).catch(function(code,xhr){
@@ -133,6 +135,6 @@ function Create() {
         page: "create",
         icon: "group_add",
         title: title,
-        menu: title,
+        menu: title
     }
 }

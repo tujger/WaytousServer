@@ -83,7 +83,7 @@ if [ $RESTART ]; then
 #scp -i ./conf/aws/aws_credentials.pem ./JkUBvVjs_Z4f15vkDJZMNX8FXf0HccqMErqaGzcFN48 ec2-user@wayto.us:prod/.well-known/acme-challenge/JkUBvVjs_Z4f15vkDJZMNX8FXf0HccqMErqaGzcFN48
 #scp -i ./conf/aws/aws_credentials.pem ./pX7ESUiT0ExIjKz60V2tIRNyvTdoJWYzkpDCj7K6_Eo ec2-user@wayto.us:prod/.well-known/acme-challenge/pX7ESUiT0ExIjKz60V2tIRNyvTdoJWYzkpDCj7K6_Eo
 #scp -i ./conf/aws/aws_credentials.pem ./uqPn2lT3ltmBG-IP4JmunOtBdJdsH4oC8P0Eqw904Rw ec2-user@wayto.us:prod/.well-known/acme-challenge/uqPn2lT3ltmBG-IP4JmunOtBdJdsH4oC8P0Eqw904Rw
-#scp -i ./conf/aws/aws_credentials.pem ./wWvXstYe4Od3UlYZPw-BMEXZnH45KUEwhy5zhOsm6BQ ec2-user@wayto.us:prod/.well-known/acme-challenge/wWvXstYe4Od3UlYZPw-BMEXZnH45KUEwhy5zhOsm6BQ
+#scp -i ./conf/aws/aws_credentials.pem ./conf/assetlinks.json ec2-user@wayto.us:prod/.well-known/assetlinks.json
 
 
     ssh -i conf/aws/aws_credentials.pem $USERNAME@wayto.us << STARTSERVER

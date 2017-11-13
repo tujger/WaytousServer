@@ -16,7 +16,7 @@ function SampleHolder(main) {
     }
 
     function onEvent(EVENT,object){
-        console.warn("EVENT",this && this.number || "Main", EVENT, object)
+        console.warn("EVENT",this && this.number || "Main", EVENT, object);
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
                 var menuItem = object.add(DRAWER.SECTION_PRIMARY, EVENTS.SAMPLE_EVENT, u.lang.sample_item, "ac_unit", function(){
@@ -106,7 +106,7 @@ function SampleHolder(main) {
                             },
                             onshow: function(e) {
                                 u.toast.show("general:sample " + this.checked);
-                            },
+                            }
                         }
                     ]
                 }
@@ -123,6 +123,6 @@ function SampleHolder(main) {
         options:options,
         resources:resources,
         start:start,
-        type:type,
+        type:type
     }
 }

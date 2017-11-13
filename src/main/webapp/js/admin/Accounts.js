@@ -9,28 +9,18 @@ function Accounts() {
 
     var title = "Accounts";
 
-    var positions;
     var div;
     var groupId;
     var userNumber;
     var tableSummary;
     var tableAccounts;
-    var divMap;
-    var map;
-    var bounds;
-    var drawTrackTask;
-    var track;
-    var limit = 1000;
 
     var renderInterface = function() {
 
-        var ref = database.ref();
-
         u.create(HTML.H2, "Summary", div);
 
-
         tableSummary = u.table({
-            className: "option",
+            className: "option"
         }, div);
 
         function filterActive(row){
@@ -51,7 +41,7 @@ function Accounts() {
                 { className:"th", innerHTML: "Accounts" },
                 { className:"option", innerHTML: "0" }
             ],
-            onclick: function(e){
+            onclick: function(){
                 tableAccounts.filter.remove(filterActive);
                 tableAccounts.filter.remove(filterRecent);
                 tableAccounts.filter.remove(filterExpired);
@@ -63,7 +53,7 @@ function Accounts() {
                 { className:"th", innerHTML: "&#150; active" },
                 { className:"option", innerHTML: "0" }
             ],
-            onclick: function(e){
+            onclick: function(){
                 tableAccounts.filter.remove(filterExpired);
                 tableAccounts.filter.remove(filterRecent);
                 tableAccounts.filter.remove(filterTrusted);
@@ -75,7 +65,7 @@ function Accounts() {
                 { className:"th", innerHTML: "&#150; expired" },
                 { className:"option", innerHTML: "0" }
             ],
-            onclick: function(e){
+            onclick: function(){
                 tableAccounts.filter.remove(filterActive);
                 tableAccounts.filter.remove(filterRecent);
                 tableAccounts.filter.remove(filterTrusted);
@@ -87,7 +77,7 @@ function Accounts() {
                 { className:"th", innerHTML: "&#150; trusted" },
                 { className:"option", innerHTML: "0" }
             ],
-            onclick: function(e){
+            onclick: function(){
                 tableAccounts.filter.remove(filterActive);
                 tableAccounts.filter.remove(filterRecent);
                 tableAccounts.filter.remove(filterExpired);
@@ -99,7 +89,7 @@ function Accounts() {
                 { className:"th", innerHTML: "&#150; active today" },
                 { className:"option", innerHTML: "0" }
             ],
-            onclick: function(e){
+            onclick: function(){
                 tableAccounts.filter.remove(filterExpired);
                 tableAccounts.filter.remove(filterActive);
                 tableAccounts.filter.remove(filterTrusted);
@@ -112,7 +102,7 @@ function Accounts() {
                 { className:"option", innerHTML: "..." }
             ],
             title: "Click to open last registered account",
-            onclick: function(e){
+            onclick: function(){
                 if(tableSummary.lastRegisteredItem.uid) {
                     WTU.switchTo("/admin/account/"+tableSummary.lastRegisteredItem.uid);
                 }
@@ -144,7 +134,7 @@ function Accounts() {
                     { label: "Updated" },
                     { label: "Sign Provider", selectable: true },
                     { label: "OS", selectable: true },
-                    { label: "Model", selectable: true },
+                    { label: "Model", selectable: true }
                 ]
             },
             placeholder: "Loading..."
@@ -156,8 +146,6 @@ function Accounts() {
     };
 
     function updateSummary() {
-        var ref = database.ref();
-
     }
 
     function updateAll() {
@@ -193,7 +181,7 @@ function Accounts() {
                 var expired = false;
                 var trusted = false;
                 var activeToday = true;
-                if(privateData[REQUEST.SIGN_PROVIDER] == "anonymous") {
+                if(privateData[REQUEST.SIGN_PROVIDER] === "anonymous") {
                     if(new Date().getTime() - privateData[DATABASE.CHANGED] > 30*24*60*60*1000) expired = true;
                 } else {
                     trusted = true;
@@ -224,7 +212,7 @@ function Accounts() {
                         { innerHTML: new Date(privateData[DATABASE.CHANGED]).toLocaleString(), sort: privateData[DATABASE.CHANGED] },
                         { innerHTML: u.clear(privateData[REQUEST.SIGN_PROVIDER]) },
                         { innerHTML: u.clear(privateData[REQUEST.OS]) },
-                        { innerHTML: u.clear(privateData[REQUEST.MODEL]) },
+                        { innerHTML: u.clear(privateData[REQUEST.MODEL]) }
                     ]
                 });
                 if(!expired) row.classList.remove("inactive");

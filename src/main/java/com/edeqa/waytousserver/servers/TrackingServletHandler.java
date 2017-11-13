@@ -76,11 +76,13 @@ public class TrackingServletHandler extends AbstractServletHandler {
 
             String mobileRedirect, webRedirect, mainLink;
             if(Common.getInstance().getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode()){
-                mobileRedirect = "waytous://" + host + "/track/" + tokenId;
+//                mobileRedirect = "waytous://" + host + "/track/" + tokenId;
+                mobileRedirect = "https://" + host + "/track/" + tokenId;
                 webRedirect = "https://" + host + Common.getWrappedHttpsPort() + "/group/" + tokenId;
                 mainLink = "https://" + host + Common.getWrappedHttpsPort() + "/group/" + tokenId;
             } else {
-                mobileRedirect = "waytous://" + host + "/track/" + tokenId;
+//                mobileRedirect = "waytous://" + host + "/track/" + tokenId;
+                mobileRedirect = "https://" + host + "/track/" + tokenId;
                 webRedirect = "http://" + requestWrapper.getRequestHeader(HttpHeaders.HOST).get(0) + "/group/" + tokenId;
                 mainLink = "http://" + requestWrapper.getRequestHeader(HttpHeaders.HOST).get(0) + "/group/" + tokenId;
             }

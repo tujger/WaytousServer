@@ -26,7 +26,7 @@ function Logs() {
             caption: {
                 className: "table-logs-caption",
                 items: [
-                    { className: "table-logs-caption-cell", label: "Logs" },
+                    { className: "table-logs-caption-cell", label: "Logs" }
                 ]
             },
             className: "table-logs",
@@ -34,7 +34,7 @@ function Logs() {
             placeholder: "Loading..."
         }, div);
         table.addEventListener("DOMNodeRemovedFromDocument", function(e) {
-            if(e && e.srcElement === table && task && task.readyState == task.OPEN) {
+            if(e && e.srcElement === table && task && task.readyState === task.OPEN) {
                 task.close();
             }
         });
@@ -42,7 +42,7 @@ function Logs() {
     };
 
     function updateData(){
-        var scroll = table.body.scrollTop;
+        // var scroll = table.body.scrollTop;
         table.placeholder.show("Loading...");
 
         task = new EventSource("/admin/logs/log");
@@ -52,7 +52,7 @@ function Logs() {
                 table.add({
                     className: "table-logs-row",
                     cells: [
-                        { className: "table-logs-row-cell", innerHTML: this },
+                        { className: "table-logs-row-cell", innerHTML: this }
                     ]
                 });
                 //table.body.scrollTop = scroll

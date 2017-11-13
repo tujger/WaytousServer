@@ -46,6 +46,6 @@ function WelcomeHolder(main) {
         type:type,
         start:start,
         onEvent:onEvent,
-        help:help,
+        help:help
     }
 }

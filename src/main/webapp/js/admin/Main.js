@@ -7,9 +7,10 @@
  */
 
 function Main() {
-    var firebaseVersion = "4.2.0";
+    var firebaseVersion = "4.6.2";
     var drawer;
     var layout;
+    var actionbar;
 
     var holders = {};
     var holderFiles = [
@@ -43,7 +44,7 @@ function Main() {
 
     preloaded = function() {
         var self = this;
-        if(window.location.pathname == "/admin" || window.location.pathname == "/admin/") {
+        if(window.location.pathname === "/admin" || window.location.pathname === "/admin/") {
             window.location.href = "/admin/home";
             return;
         }
@@ -78,7 +79,7 @@ function Main() {
             .place(HTML.META, {name:"theme-color", content:"#aaeeee"});
 
 
-        u.require("/js/helpers/Constants").then(function(e){
+        u.require("/js/helpers/Constants").then(function(){
             loadResources("admin.json", function(){
                 var loaded = 0;
                 for(var i in holderFiles) {
@@ -89,7 +90,7 @@ function Main() {
                         if(e && e.moduleName) {
                             holders[e.moduleName.toLowerCase()] = e;
                         }
-                        if(loaded == u.keys(holderFiles).length) {
+                        if(loaded === u.keys(holderFiles).length) {
                             console.log("Preload finished: "+loaded+" files done.");
                             window.utils = new Utils(self);
 
@@ -129,11 +130,11 @@ function Main() {
             var failed = false;
             for(var i in files) {
                 var file = files[i];
-                u.require(file).then(function(e) {
+                u.require(file).then(function() {
                     if(failed) return;
                     loaded++;
                     //progress.innerHTML = Math.ceil(loaded / files.length * 100) + "%";
-                    if(loaded == u.keys(files).length) {
+                    if(loaded === u.keys(files).length) {
                         initialize();
                     }
                 }).catch(function(){
@@ -170,11 +171,9 @@ function Main() {
     function resign(callback){
 
         u.loading(u.lang.signing_in);
-        firebase.auth().signInWithCustomToken(data.sign).then(function(e){
+        firebase.auth().signInWithCustomToken(data.sign).then(function(){
             callback();
-        }).catch(function(error) {
-            var errorCode = error.code;
-            var errorMessage = error.message;
+        }).catch(function() {
             window.location = window.location.href;
         });
     }
@@ -189,7 +188,6 @@ function Main() {
             layout = u.create("div", {className:"layout"}, document.body);
 //            content = u.create("div", {className:"content"}, layout);
 
-            var sections = {};
             drawer = new u.drawer({
                 title: "${APP_NAME}",
                 subtitle: u.lang.admin,
@@ -271,10 +269,10 @@ function Main() {
             xhr.open("GET", "/admin", true);
             xhr.setRequestHeader("Authorization", "Digest logout");
             xhr.onreadystatechange = function() {
-                if (xhr.readyState==4) {
+                if (xhr.readyState === 4) {
 
                     var url = new URL(window.location.href);
-                    url = "https://" + url.hostname + (data.HTTPS_PORT == 443 ? "" : ":"+ data.HTTPS_PORT) + "/";
+                    url = "https://" + url.hostname + (data.HTTPS_PORT === 443 ? "" : ":"+ data.HTTPS_PORT) + "/";
                     window.location = url
                 }
             };
@@ -284,7 +282,7 @@ function Main() {
 
     var switchTo = function(to) {
         var parts = to.split("/");
-        if(parts[1] == "admin") {
+        if(parts[1] === "admin") {
             if(holders[parts[2]].move) {
                 u.clear(layout);
                 actionbar.titleNode.innerHTML = holders[parts[2]].title;
@@ -316,4 +314,4 @@ function Main() {
         resign: resign
     }
 }
-document.addEventListener("readystatechange", function(){if(document.readyState == "complete"){(window.WTU = new Main()).start()}});
+document.addEventListener("readystatechange", function(){if(document.readyState === "complete"){(window.WTU = new Main()).start()}});

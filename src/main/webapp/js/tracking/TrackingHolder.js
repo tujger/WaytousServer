@@ -11,16 +11,12 @@ function TrackingHolder(main) {
     var type ="tracking";
 
     var TRACKING_URI = "uri";
-//    var tracking;
     var progress;
     var progressTitle;
     var drawerItemNew;
     var drawerItemExit;
     var noSleep;
-    var noSleepDialog;
     var wakeLockEnabled;
-    var shareDialog;
-    var shareBlockedDialog;
     var sound;
     var sounds;
     var joinSound;
@@ -58,17 +54,6 @@ function TrackingHolder(main) {
         main.users.forUser(number, function(number,user){
             user.addLocation(loc);
         });
-
-        // final Location location = Utils.jsonToLocation(o);
-        // int number = o.getInt(USER_NUMBER);
-        //
-        // State.getInstance().getUsers().forUser(number,new MyUsers.Callback() {
-        // @Override
-        //     public void call(Integer number, MyUser myUser) {
-        //         myUser.addLocation(location);
-        //     }
-        // });
-
     }
 
     function onEvent(EVENT,object){
@@ -93,7 +78,7 @@ function TrackingHolder(main) {
                 var group = path[2];
 //                var groupOld = u.load("group");
                 if(group) {
-                    if(group.toUpperCase() == "NEW") {
+                    if(group.toUpperCase() === "NEW") {
                         window.history.pushState({}, null, path[0] + "/" + path[1]);
                         main.fire(EVENTS.TRACKING_NEW);
                     } else {
@@ -118,7 +103,7 @@ function TrackingHolder(main) {
                 startTracking();
                 break;
             case EVENTS.TRACKING_JOIN:
-                var path = window.location.pathname.split("/");
+                path = window.location.pathname.split("/");
                 var token = object || path[2];
                 path[2] = token;
                 path = path.join("/");
@@ -184,7 +169,7 @@ function TrackingHolder(main) {
                 }
                 break;
             case EVENTS.TRACKING_STOP:
-                if(main.tracking.getStatus() != EVENTS.TRACKING_DISABLED) {
+                if(main.tracking.getStatus() !== EVENTS.TRACKING_DISABLED) {
                     main.users.forAllUsersExceptMe(function (number, user) {
                         user.removeViews();
                     });
@@ -259,7 +244,7 @@ function TrackingHolder(main) {
                             agreementDialog.positive.disabled = true;
                         }
                     }
-                },
+                }
             ],
             positive: {
                 label: u.lang.close,
@@ -318,20 +303,15 @@ function TrackingHolder(main) {
     }
 
     function startTrackingReady(){
-
         progress.open();
 
         this.tracking = main.tracking = new TrackingFB(main);
-        // console.log("LOADED", tracking);
-        // tracking.start();
 
         var a = window.location.pathname.split("/");
         if(a[2]) {
             a[2] = a[2].toUpperCase();
 
-//            var groupOld = u.load("group");
             window.history.pushState({}, null, a.join("/"));
-//            window.history.pushState({}, null, "/track/" + token);
 
             main.fire(EVENTS.TRACKING_RECONNECTING);
             this.tracking.setLink(window.location.href);
@@ -372,11 +352,8 @@ function TrackingHolder(main) {
             console.log("ONCLOSE");
         },
         onAccept: function(o){
-            // console.log("ONACCEPT",o);
-            //FIXME
-//            u.saveForContext(TRACKING_URI, this.tracking.getTrackingUri());
             try {
-                if(main.tracking.getStatus() != EVENTS.TRACKING_ACTIVE) {
+                if(main.tracking.getStatus() !== EVENTS.TRACKING_ACTIVE) {
                     main.tracking.setStatus(EVENTS.TRACKING_ACTIVE);
                     main.fire(EVENTS.TRACKING_ACTIVE);
                 }
@@ -424,7 +401,7 @@ function TrackingHolder(main) {
                     { type: HTML.DIV, enclosed:true, body: u.lang.expired_explanation },
                 ],
                 positive: {
-                    label: u.lang.ok,
+                    label: u.lang.ok
                 },
                 onclose: function() {
                     window.location = "/group/";
@@ -482,7 +459,7 @@ function TrackingHolder(main) {
                             user = main.users.users[number];
 
                             if(user.properties && user.properties.active) {
-                                var timestamp = o[REQUEST.TIMESTAMP];
+                                timestamp = o[REQUEST.TIMESTAMP];
                                 if(utils.isEnabledTime(timestamp) && !user.properties.enabled) {
                                     user.fire(EVENTS.MAKE_ENABLED, timestamp);
                                 } else if (!utils.isEnabledTime(timestamp) && user.properties.enabled) {
@@ -590,7 +567,7 @@ function TrackingHolder(main) {
                                             var name = (file.replace(/\..*$/,"").replace(/[\-_]/g," ")).toUpperCaseFirst();
                                             sounds[file] = name;
                                             u.create(HTML.OPTION, {value:file, innerHTML:name}, e);
-                                            if((joinSound || defaultSound) == file) selected = i;
+                                            if((joinSound || defaultSound) === file) selected = i;
                                         }
                                         e.selectedIndex = selected;
                                     });
@@ -612,6 +589,6 @@ function TrackingHolder(main) {
         perform:perform,
         saveable:true,
         help:help,
-        options:options,
+        options:options
     }
 }

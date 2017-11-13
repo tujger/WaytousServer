@@ -27,12 +27,13 @@ function HelpHolder(main) {
                 break;
             case EVENTS.HIDE_HELP:
                 dialog && dialog.close();
+                break;
             case EVENTS.SHOW_HELP:
 
                 dialog = dialog || u.dialog({
                     title: {
                         label: u.lang.help,
-                        filter: true,
+                        filter: true
                     },
                     buttonsClassName: "help-dialog-buttons",
                     negative: {
@@ -75,8 +76,8 @@ function HelpHolder(main) {
                                 innerHTML: title
                             });
                             for(var j in help) {
-                                if(j == "title" || help[j].ignore) continue;
-                                var title = help[j].title;
+                                if(j === "title" || help[j].ignore) continue;
+                                title = help[j].title;
                                 if(title && title instanceof HTMLElement) {
                                     title = title.outerHTML;
                                 }
@@ -109,6 +110,6 @@ function HelpHolder(main) {
     return {
         type:type,
         start:start,
-        onEvent:onEvent,
+        onEvent:onEvent
     }
 }

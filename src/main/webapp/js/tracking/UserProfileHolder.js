@@ -51,12 +51,6 @@ function UserProfileHolder(main) {
         return true;
     }
 
-    //function createView(user){
-    //    return {
-    //        user: user
-    //    };
-    //}
-
     function initProfileDialog(mode) {
         if(!profileDialog) {
             profileDialog = u.dialog({
@@ -445,7 +439,6 @@ function UserProfileHolder(main) {
             }
         } else {
             console.log("OUT:");
-            // User is signed out.
         }
         if(resign) {
             main.tracking.setLink(window.location.href);
@@ -482,7 +475,7 @@ function UserProfileHolder(main) {
                 shareBlockedDialog = shareBlockedDialog || u.dialog({
                     items: [
                         {type:HTML.DIV, innerHTML: u.lang.popup_blocked_dialog_1 },
-                        {type:HTML.DIV, enclosed:true, innerHTML: u.lang.popup_blocked_dialog_2 },
+                        {type:HTML.DIV, enclosed:true, innerHTML: u.lang.popup_blocked_dialog_2 }
                     ],
                     positive: {
                         label: u.lang.close

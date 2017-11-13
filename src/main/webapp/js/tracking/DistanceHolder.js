@@ -132,7 +132,7 @@ function DistanceHolder(main) {
                 }
                 break;
             case EVENTS.MOVING_AWAY_FROM:
-                var currentTime = new Date().getTime();
+                currentTime = new Date().getTime();
                 if(currentTime - lastAwayNotifyTime > MIN_INTERVAL_BETWEEN_DISTANCE_NOTIFICATIONS * 1000) {
                     u.notification({
                         title: u.lang.away_from_s.format(this.properties.getDisplayName()).innerText,
@@ -322,7 +322,7 @@ function DistanceHolder(main) {
                                             var name = (file.replace(/\..*$/,"").replace(/[\-_]/g," ")).toUpperCaseFirst();
                                             sounds[file] = name;
                                             u.create(HTML.OPTION, {value:file, innerHTML:name}, e);
-                                            if((closeSound || defaultCloseSound) == file) selected = i;
+                                            if((closeSound || defaultCloseSound) === file) selected = i;
                                         }
                                         e.selectedIndex = selected;
                                     });
@@ -358,7 +358,7 @@ function DistanceHolder(main) {
                                             var name = (file.replace(/\..*$/,"").replace(/[\-_]/g," ")).toUpperCaseFirst();
                                             sounds[file] = name;
                                             u.create(HTML.OPTION, {value:file, innerHTML:name}, e);
-                                            if((awaySound || defaultAwaySound) == file) selected = i;
+                                            if((awaySound || defaultAwaySound) === file) selected = i;
                                         }
                                         e.selectedIndex = selected;
                                     });
@@ -380,6 +380,6 @@ function DistanceHolder(main) {
         removeView:removeView,
         onChangeLocation:onChangeLocation,
         help:help,
-        options:options,
+        options:options
     }
 }

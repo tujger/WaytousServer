@@ -11,7 +11,6 @@ function TrackingFB() {
 	var socket;
 
     var start = function() {
-
         messaging.getToken().then(function(currentToken) {
             if (currentToken) {
                 firebaseToken = currentToken;
@@ -29,7 +28,7 @@ function TrackingFB() {
         }).catch(function(err) {
             console.log('An error occurred while retrieving token. ', err);
         });
-    }
+    };
 
     var connectWss = function () {
         socket = new WebSocket(data.general.uri);
@@ -66,7 +65,7 @@ function TrackingFB() {
     return {
         start: start,
         title: "Group",
-        menu: true,
+        menu: true
     }
 }
 // document.addEventListener("DOMContentLoaded", (new TrackingFB()).start);

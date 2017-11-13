@@ -54,18 +54,13 @@ function StreetViewHolder(main) {
     }
 
     function createView(myUser){
-
-        var view = {};
-        return view;
-        // console.log("SAMPLECREATEVIEW",user);
+        return {};
     }
 
     function onChangeLocation(location) {
         if(this.properties.selected) {
             update();
         }
-        // console.log("SAMPLEONCHANGELOCATION",this,location);
-
     }
 
     function update() {
@@ -81,7 +76,7 @@ function StreetViewHolder(main) {
                 tabindex: 1,
                 items: [
                     { type: HTML.DIV, className: "streetview-dialog-placeholder", innerHTML: u.lang.loading },
-                    { type: HTML.DIV, className: "streetview-dialog-view hidden", id: "streetview" },
+                    { type: HTML.DIV, className: "streetview-dialog-view hidden", id: "streetview" }
                 ],
                 onclose: function(){
                     u.save("streetview:show");
@@ -108,7 +103,7 @@ function StreetViewHolder(main) {
             streetview = view.items[1];
             if(show) view.open();
         }
-        if(streetviewService && show && main.users.getCountSelected() == 1) {
+        if(streetviewService && show && main.users.getCountSelected() === 1) {
             main.users.forAllUsers(function(number, user){
                 if(!user.properties.selected || !user.location) return;
 
@@ -153,6 +148,6 @@ function StreetViewHolder(main) {
         start:start,
         onEvent:onEvent,
         createView:createView,
-        onChangeLocation:onChangeLocation,
+        onChangeLocation:onChangeLocation
     }
 }

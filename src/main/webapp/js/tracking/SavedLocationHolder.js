@@ -54,7 +54,7 @@ function SavedLocationHolder(main) {
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
-                if(user && (user.type == "user" || user.saveable) && user.location && !user.saved_location) {
+                if(user && (user.type === "user" || user.saveable) && user.location && !user.saved_location) {
                     object.add(MENU.SECTION_NAVIGATION, EVENT.SAVE_LOCATION, u.lang.save_location, "pin_drop", function () {
                         user.fire(EVENTS.SAVE_LOCATION);
                     });
@@ -66,7 +66,7 @@ function SavedLocationHolder(main) {
                     object.add(MENU.SECTION_VIEWS, EVENT.HIDE_SAVED_LOCATION, u.lang.hide, "pin_drop", function () {
                         main.fire(EVENTS.HIDE_SAVED_LOCATION, user.number - 10000);
                     });
-                    if(main.tracking && main.tracking.getStatus() == EVENTS.TRACKING_ACTIVE) {
+                    if(main.tracking && main.tracking.getStatus() === EVENTS.TRACKING_ACTIVE) {
                         object.add(MENU.SECTION_COMMUNICATION, EVENT.SEND_SAVED_LOCATION, u.lang.send_to_group, "chat", function () {
                             main.fire(EVENTS.SEND_SAVED_LOCATION, user.number - 10000);
                         });
@@ -188,7 +188,7 @@ function SavedLocationHolder(main) {
                     items: [
                         { type: HTML.HIDDEN },
                         { type: HTML.INPUT, label: u.lang.name },
-                        { type: HTML.TEXTAREA, label: u.lang.description },
+                        { type: HTML.TEXTAREA, label: u.lang.description }
                     ],
                     className: "saved-location-edit-dialog",
                     positive: {
@@ -292,7 +292,7 @@ function SavedLocationHolder(main) {
                     title: u.lang.send_location,
                     items: [
                         { type: HTML.HIDDEN },
-                        { type: HTML.DIV },
+                        { type: HTML.DIV }
                     ],
                     positive: {
                         label: u.lang.yes,
@@ -312,7 +312,7 @@ function SavedLocationHolder(main) {
                     },
                     negative: {
                         label: u.lang.no
-                    },
+                    }
                 }, main.right);
 
                 if(loc) {
@@ -332,7 +332,7 @@ function SavedLocationHolder(main) {
                     title: u.lang.delete_location,
                     items: [
                         { type: HTML.HIDDEN },
-                        { type: HTML.DIV, innerHTML: u.lang.delete_this_location },
+                        { type: HTML.DIV, innerHTML: u.lang.delete_this_location }
                     ],
                     className: "saved-location-delete-dialog",
                     positive: {
@@ -352,7 +352,7 @@ function SavedLocationHolder(main) {
                     },
                     negative: {
                         label: u.lang.no
-                    },
+                    }
                 }, main.right);
 
                 if(loc) {
@@ -397,7 +397,7 @@ function SavedLocationHolder(main) {
                             onerror: function(e) {
                                 console.error(e);
                             },
-                            innerHTML:"update",
+                            innerHTML:"update"
                         }, div);
 
                         var content = u.create(HTML.DIV, { className: "saved-locations-dialog-item-text" }, div);
@@ -508,6 +508,7 @@ function SavedLocationHolder(main) {
                         console.warn("Not ready for sync.")
                     }
                 }catch (e) {console.error(e)}
+                break;
             default:
                 break;
         }
@@ -516,7 +517,7 @@ function SavedLocationHolder(main) {
 
     function createView(user){
         var view = {
-            user: user,
+            user: user
         };
         return view;
     }
@@ -534,7 +535,7 @@ function SavedLocationHolder(main) {
         xhr.open("GET", "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + loc.la + "&lon=" + loc.lo + "&zoom=18&addressdetails=1", true);
 
         xhr.onreadystatechange = function () {
-            if (xhr.readyState != 4) return;
+            if (xhr.readyState !== 4) return;
             delete self._fetching[number];
             try {
                 var address = JSON.parse(xhr.response);
@@ -602,7 +603,7 @@ function SavedLocationHolder(main) {
              positive: {
                  label: u.lang.yes,
                  onclick: function() {
-                     this.options.location.views[type] = createView(this.options.location)
+                     this.options.location.views[type] = createView(this.options.location);
                      this.options.location.fire(EVENTS.SAVE_LOCATION);
                  }
              },

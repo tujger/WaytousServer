@@ -234,6 +234,6 @@ function ShareHolder(main) {
     return {
         type:type,
         start:start,
-        onEvent:onEvent,
+        onEvent:onEvent
     }
 }
