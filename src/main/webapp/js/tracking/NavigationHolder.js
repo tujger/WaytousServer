@@ -28,19 +28,6 @@ function NavigationHolder(main) {
     var listenerHandler;
     var showModeButtonsTask;
 
-    var navigation_outline_svg = {
-        xmlns:"http://www.w3.org/2000/svg",
-        viewbox:"0 0 24 24",
-        version:"1.1",
-        className: "menu-item"
-    };
-    var navigation_outline_path = {
-        xmlns:"http://www.w3.org/2000/svg",
-        strokeWidth:"2",
-        fill:"transparent",
-        d: "M12,2L4.5,20.29l0.71,0.71L12,18l6.79,3 0.71,-0.71z"
-    };
-
     function start() {
         view = {};
     }
@@ -55,8 +42,10 @@ function NavigationHolder(main) {
                         drawerPopulate();
                     });
                 });*/
-                navigation_outline_drawer = navigation_outline_drawer || u.create(HTML.PATH, navigation_outline_path, u.create(HTML.SVG, navigation_outline_svg)).parentNode;
-                drawerItemHide = object.add(DRAWER.SECTION_VIEWS, EVENTS.HIDE_NAVIGATIONS, u.lang.hide_navigations, navigation_outline_drawer, function(){
+                drawerItemHide = object.add(DRAWER.SECTION_VIEWS, EVENTS.HIDE_NAVIGATIONS, u.lang.hide_navigations, u.create(HTML.IMG, {
+                    src: "/images/navigation_outline.svg",
+                    className: "icon drawer-menu-item-icon"
+                }), function(){
                     main.users.forAllUsers(function (number, user) {
                         user.fire(EVENTS.HIDE_NAVIGATION);
                         drawerPopulate();

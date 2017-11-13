@@ -21,7 +21,7 @@ MENU = {
     SECTION_EDIT: 5,
     SECTION_MAP: 8,
     SECTION_LAST: 9
-};
+}
 
 function ButtonHolder(main) {
 
@@ -31,6 +31,7 @@ function ButtonHolder(main) {
     var sections;
     var contextMenuLayout;
     var delayDismiss;
+    var startTime;
 
     function start() {
         buttons = u.dialog({
@@ -103,14 +104,14 @@ function ButtonHolder(main) {
 //                buttons.titleLayout.innerHTML = "Users (" + main.users.getCountActive() +")";
                 if(main.users.getCountActive() > 1) {
                     buttons.open();
-                } else if(!main.tracking || main.tracking.getStatus() === EVENTS.TRACKING_DISABLED) {
+                } else if(!main.tracking || main.tracking.getStatus() == EVENTS.TRACKING_DISABLED) {
                     buttons.close();
                 }
                 break;
             case EVENTS.MAKE_INACTIVE:
                 if(this.views && this.views.button && this.views.button.button && this.views.button.button.classList) this.views.button.button.hide();
                 u.lang.updateNode(buttons.titleLayout, u.lang.users_d.format(main.users.getCountActive()));
-                if(main.users.getCountActive() < 2 && (!main.tracking || main.tracking.getStatus() === EVENTS.TRACKING_DISABLED)) {
+                if(main.users.getCountActive() < 2 && (!main.tracking || main.tracking.getStatus() == EVENTS.TRACKING_DISABLED)) {
                     buttons.close();
                 }
                 break;
@@ -146,8 +147,9 @@ function ButtonHolder(main) {
                     this.views.button.button.classList.add("user-button-away");
                     if(this != main.me) {
                         delta = new Date().getTime() - parseInt(object || this.properties.changed || 0);
+                        console.log("DELTA",delta)
                         if(delta > 60000) {
-                            text = utils.toDateString(new Date().getTime() - parseInt(object || this.properties.changed));
+                            var text = utils.toDateString(new Date().getTime() - parseInt(object || this.properties.changed));
                             this.fire(EVENTS.UPDATE_MENU_SUFFIX, u.lang.s_ago.format(text).innerHTML);
                         } else {
                             this.fire(EVENTS.UPDATE_MENU_SUFFIX);
@@ -156,7 +158,7 @@ function ButtonHolder(main) {
                 }
                 break;
             case EVENTS.SHOW_BADGE:
-                if(object === EVENTS.INCREASE_BADGE) {
+                if(object == EVENTS.INCREASE_BADGE) {
                     var value = parseInt(this.views.button.badge.innerHTML);
                     value = value || 0;
                     this.views.button.badge.innerHTML = ""+(++value);
@@ -197,7 +199,7 @@ function ButtonHolder(main) {
             case EVENTS.CHANGE_COLOR:
                 if(!object && object.constructor === String) {
                     var color = object || "#0000FF";
-                    color = utils.getRGBAColor(color, 0.4);
+                    color = utils.getRGBAColor(color, 0.4)
                     this.views.button.button.style.backgroundColor = color;
                 } else if(object && object.constructor === Number) {
 //                    console.log("TODO NUMERIC")
@@ -236,7 +238,7 @@ function ButtonHolder(main) {
 
         var firstClick;
         var b = u.create(HTML.DIV, {
-            className:"user-button hidden" + (user.locations && user.locations.length > 0 ? "" : " disabled") + (user.type === "user" ? " user-button-away" : ""),
+            className:"user-button hidden" + (user.locations && user.locations.length > 0 ? "" : " disabled") + (user.type == "user" ? " user-button-away" : ""),
             dataNumber:user.number,
             style:{backgroundColor:color},
             onclick: function() {
@@ -364,6 +366,13 @@ function ButtonHolder(main) {
             u.create(HTML.DIV, { className:"user-context-menu-item-title", innerHTML: name}, th);
             sections[section].show();
             return th;
+        }
+        function getContextMenu(){
+            console.log("GETCONTEXTMENU:",items);
+        }
+        return {
+            add:add,
+            getContextMenu:getContextMenu
         }
     }
 
