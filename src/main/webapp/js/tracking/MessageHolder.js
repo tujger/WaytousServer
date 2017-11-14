@@ -109,7 +109,7 @@ function MessageHolder(main) {
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
-                if(user.type === "user" && user != main.me) {
+                if(user.type === "user" && user !== main.me) {
                     object.add(MENU.SECTION_COMMUNICATION, type + "_1", u.lang.private_message, "chat", function () {
                         chat.open();
                         replyTo.value = user.properties.number;

@@ -120,7 +120,7 @@ function StreetViewHolder(main) {
                     location: utils.latLng(user.location),
                     radius: 50
                 }, function(data, status) {
-                    if (status == google.maps.StreetViewStatus.OK) {
+                    if (status === google.maps.StreetViewStatus.OK) {
                         panorama.setPano(data.location.pano);
                         panorama.setPov({
                             heading: user.location.coords.heading || 0,

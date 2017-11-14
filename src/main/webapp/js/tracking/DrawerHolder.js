@@ -143,7 +143,7 @@ function DrawerHolder(main) {
                 break;
             case EVENTS.SELECT_SINGLE_USER:
                 actionbar.titleNode.innerHTML = this.properties.getDisplayName();
-                if(this != main.me) {
+                if(this !== main.me) {
                     var delta = new Date().getTime() - this.properties.changed;
                     if(delta > 60000) {
                         var text = utils.toDateString(delta);

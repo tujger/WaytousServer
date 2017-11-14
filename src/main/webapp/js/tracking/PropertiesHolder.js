@@ -91,7 +91,7 @@ function PropertiesHolder(main) {
             case EVENTS.SELECT_SINGLE_USER:
                 var myUser = this;
                 main.users.forAllUsers(function(number,user){
-                    if(user == myUser) {
+                    if(user === myUser) {
                         user.properties.selected = true;
                         myUser.fire(EVENTS.SELECT_USER);
                     } else if(user.properties && user.properties.selected) {
@@ -149,6 +149,7 @@ function PropertiesHolder(main) {
                 break;
             case EVENTS.SYNC_PROFILE:
                 synchronizeName();
+                break;
             default:
                 break;
         }

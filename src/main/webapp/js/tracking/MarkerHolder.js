@@ -23,7 +23,7 @@ function MarkerHolder(main) {
             fillColor: user.color || user.properties.color || "blue",
             fillOpacity: 0.7,
             scale: 1.2,
-            strokeColor: user == main.me ? "darkorange" : "white",
+            strokeColor: user === main.me ? "darkorange" : "white",
             strokeOpacity: 0.6,
             strokeWeight: 2,
             anchor: new google.maps.Point(40/2, 40/2)
@@ -33,15 +33,15 @@ function MarkerHolder(main) {
             position: utils.latLng(user.location),
             title: user.properties ? user.properties.getDisplayName() : "",
             icon:icon,
-            optimized:false,
+            optimized:false
         });
-        marker.addListener(HTML.CLICK, function(e){
+        marker.addListener(HTML.CLICK, function(){
             user.fire(EVENTS.MARKER_CLICK, marker);
         });
-        marker.addListener("mouseover", function(e){
+        marker.addListener("mouseover", function(){
             user.fire(EVENTS.MOUSE_OVER);
         });
-        marker.addListener("mouseout", function(e){
+        marker.addListener("mouseout", function(){
             user.fire(EVENTS.MOUSE_OUT);
         });
 
@@ -100,7 +100,7 @@ function MarkerHolder(main) {
             case EVENTS.MOUSE_OUT:
                 if(this.views.marker.marker) {
                     icon = this.views.marker.marker.getIcon();
-                    icon.strokeColor = this == main.me ? "darkorange" : "white";
+                    icon.strokeColor = this === main.me ? "darkorange" : "white";
                     icon.strokeWidth = 2;
                     this.views.marker.marker.setIcon(icon);
                 }

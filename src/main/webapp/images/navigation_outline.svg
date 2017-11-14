@@ -1,5 +1,10 @@
 <svg width="1536" height="1536" viewBox="2 2 20 20" xmlns="http://www.w3.org/2000/svg">
  <g>
-  <path fill="darkslategray" d="M12,2L4.5,20.29l0.71,0.71L12,18l6.79,3 0.71,-0.71z"/>
+  <path fill="darkslategray" d="
+     M12,2L4.5,20.29l0.71,0.71L12,18l6.79,3 0.71,-0.71 -7.5,-18.3
+     0,5 4.5,11 -4.5,-2 -4.5,2 4.5,-11
+     z
+
+"/>
  </g>
 </svg>

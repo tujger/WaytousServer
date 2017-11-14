@@ -247,7 +247,7 @@ function Main() {
                     if(failed) return;
                     loaded++;
                     u.loading(Math.ceil(loaded / files.length * 100) + "%");
-                    if(loaded == u.keys(files).length) {
+                    if(loaded === u.keys(files).length) {
                         initialize.call(main);
                     }
                 }).catch(function(code, moduleName, event) {

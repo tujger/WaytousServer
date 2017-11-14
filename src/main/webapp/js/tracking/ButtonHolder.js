@@ -21,7 +21,7 @@ MENU = {
     SECTION_EDIT: 5,
     SECTION_MAP: 8,
     SECTION_LAST: 9
-}
+};
 
 function ButtonHolder(main) {
 
@@ -31,7 +31,6 @@ function ButtonHolder(main) {
     var sections;
     var contextMenuLayout;
     var delayDismiss;
-    var startTime;
 
     function start() {
         buttons = u.dialog({
@@ -104,34 +103,22 @@ function ButtonHolder(main) {
 //                buttons.titleLayout.innerHTML = "Users (" + main.users.getCountActive() +")";
                 if(main.users.getCountActive() > 1) {
                     buttons.open();
-                } else if(!main.tracking || main.tracking.getStatus() == EVENTS.TRACKING_DISABLED) {
+                } else if(!main.tracking || main.tracking.getStatus() === EVENTS.TRACKING_DISABLED) {
                     buttons.close();
                 }
                 break;
             case EVENTS.MAKE_INACTIVE:
                 if(this.views && this.views.button && this.views.button.button && this.views.button.button.classList) this.views.button.button.hide();
                 u.lang.updateNode(buttons.titleLayout, u.lang.users_d.format(main.users.getCountActive()));
-                if(main.users.getCountActive() < 2 && (!main.tracking || main.tracking.getStatus() == EVENTS.TRACKING_DISABLED)) {
+                if(main.users.getCountActive() < 2 && (!main.tracking || main.tracking.getStatus() === EVENTS.TRACKING_DISABLED)) {
                     buttons.close();
                 }
                 break;
-//            case EVENTS.UPDATE_ADDRESS:
-//                var subtitle = this.views.button.subtitle;
-//                if(object) {
-//                    subtitle.innerHTML = object;
-//                    if(!u.load("button:minimized")) {
-//                        subtitle.show();
-//                        updateSubtitle.call(this);
-//                    }
-//                } else {
-//                    subtitle.hide();
-//                }
-//                break;
             case EVENTS.MAKE_ENABLED:
                 if(this.views && this.views.button && this.views.button.button && this.views.button.button.classList) {
                     this.views.button.button.classList.remove("user-button-away");
                     this.views.button.button.classList.remove("disabled");
-                    if(this != main.me) {
+                    if(this !== main.me) {
                         var delta = new Date().getTime() - parseInt(object || this.properties.changed);
                         if(delta > 60000) {
                             var text = utils.toDateString(new Date().getTime() - parseInt(object || this.properties.changed));
@@ -145,11 +132,10 @@ function ButtonHolder(main) {
             case EVENTS.MAKE_DISABLED:
                 if(this.views && this.views.button && this.views.button.button && this.views.button.button.classList) {
                     this.views.button.button.classList.add("user-button-away");
-                    if(this != main.me) {
+                    if(this !== main.me) {
                         delta = new Date().getTime() - parseInt(object || this.properties.changed || 0);
-                        console.log("DELTA",delta)
                         if(delta > 60000) {
-                            var text = utils.toDateString(new Date().getTime() - parseInt(object || this.properties.changed));
+                            text = utils.toDateString(new Date().getTime() - parseInt(object || this.properties.changed));
                             this.fire(EVENTS.UPDATE_MENU_SUFFIX, u.lang.s_ago.format(text).innerHTML);
                         } else {
                             this.fire(EVENTS.UPDATE_MENU_SUFFIX);
@@ -158,7 +144,7 @@ function ButtonHolder(main) {
                 }
                 break;
             case EVENTS.SHOW_BADGE:
-                if(object == EVENTS.INCREASE_BADGE) {
+                if(object === EVENTS.INCREASE_BADGE) {
                     var value = parseInt(this.views.button.badge.innerHTML);
                     value = value || 0;
                     this.views.button.badge.innerHTML = ""+(++value);
@@ -199,7 +185,7 @@ function ButtonHolder(main) {
             case EVENTS.CHANGE_COLOR:
                 if(!object && object.constructor === String) {
                     var color = object || "#0000FF";
-                    color = utils.getRGBAColor(color, 0.4)
+                    color = utils.getRGBAColor(color, 0.4);
                     this.views.button.button.style.backgroundColor = color;
                 } else if(object && object.constructor === Number) {
 //                    console.log("TODO NUMERIC")
@@ -238,7 +224,7 @@ function ButtonHolder(main) {
 
         var firstClick;
         var b = u.create(HTML.DIV, {
-            className:"user-button hidden" + (user.locations && user.locations.length > 0 ? "" : " disabled") + (user.type == "user" ? " user-button-away" : ""),
+            className:"user-button hidden" + (user.locations && user.locations.length > 0 ? "" : " disabled") + (user.type === "user" ? " user-button-away" : ""),
             dataNumber:user.number,
             style:{backgroundColor:color},
             onclick: function() {

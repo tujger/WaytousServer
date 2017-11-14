@@ -75,12 +75,12 @@ function DistanceHolder(main) {
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
-                if(user && user != main.me && user.location && !user.views.distance.show) {
+                if(user && user !== main.me && user.location && !user.views.distance.show) {
                     object.add(MENU.SECTION_VIEWS, EVENTS.SHOW_DISTANCE, u.lang.show_distance, "settings_ethernet", function(){
                         user.fire(EVENTS.SHOW_DISTANCE);
                         drawerPopulate();
                     });
-                } else if(user && user != main.me && user.views.distance.show) {
+                } else if(user && user !== main.me && user.views.distance.show) {
                     object.add(MENU.SECTION_VIEWS, EVENTS.HIDE_DISTANCE, u.lang.hide_distance, "code", function(){
                         user.fire(EVENTS.HIDE_DISTANCE);
                         drawerPopulate();
@@ -88,7 +88,7 @@ function DistanceHolder(main) {
                 }
                 break;
             case EVENTS.SHOW_DISTANCE:
-                if(this != main.me && this.properties && this.properties.active) {
+                if(this !== main.me && this.properties && this.properties.active) {
                     this.views.distance.show = true;
                     u.saveForContext("distance:show:" + this.number, true);
                     show.call(this);
@@ -273,7 +273,7 @@ function DistanceHolder(main) {
         this.span_ = node;
         var div = this.div_ = u.create(HTML.DIV, {style: "position: absolute; display: none"});
         div.appendChild(node);
-    };
+    }
 
     function help(){
         return {
@@ -281,7 +281,7 @@ function DistanceHolder(main) {
             1: {
                 title: u.lang.distance_article_1_title,
                 body: u.lang.distance_article_1_body
-            },
+            }
         }
     }
 

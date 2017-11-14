@@ -139,7 +139,7 @@ function PlaceHolder(main) {
                     object.buttonIcon = "place";
                     object.type = type;
 
-                    var user = main.users.addUser(object);
+                    user = main.users.addUser(object);
                     user.type = type;
                     user.origin = object;
                     user.saveable = true;
@@ -166,7 +166,7 @@ function PlaceHolder(main) {
                 placeSendDialog && placeSendDialog.close();
                 placeShareDialog && placeShareDialog.close();
 
-                var place = this;
+                place = this;
                 if(place) {
                     placeEditDialog = placeEditDialog || u.dialog({
                         title: "Edit place",
@@ -191,7 +191,7 @@ function PlaceHolder(main) {
                         },
                         negative: {
                             label: u.lang.cancel
-                        },
+                        }
                     }, main.right);
                     placeEditDialog.items[0].value = place.number;
                     placeEditDialog.items[1].value = place.origin.name || "";

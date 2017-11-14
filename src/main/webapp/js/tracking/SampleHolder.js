@@ -40,12 +40,11 @@ function SampleHolder(main) {
     }
 
     function createView(user){
-        var view = {
+        // console.log("SAMPLECREATEVIEW",user);
+        return {
             user: user,
             show: u.load("sample:user:" + user.number)
         };
-        // console.log("SAMPLECREATEVIEW",user);
-        return view;
     }
 
     function onChangeLocation(location) {

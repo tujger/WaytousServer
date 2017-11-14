@@ -168,14 +168,14 @@ function MapHolder(main) {
                 }
                 break;
             case EVENTS.REQUEST_MODE_SATELLITE:
-                if(map && map.getMapTypeId() != google.maps.MapTypeId.SATELLITE){
+                if(map && map.getMapTypeId() !== google.maps.MapTypeId.SATELLITE){
                     map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
                 } else {
                     main.fire(EVENTS.REQUEST_MODE_NORMAL);
                 }
                 break;
             case EVENTS.REQUEST_MODE_TERRAIN:
-                if(map && map.getMapTypeId() != google.maps.MapTypeId.TERRAIN){
+                if(map && map.getMapTypeId() !== google.maps.MapTypeId.TERRAIN){
                     map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
                 } else {
                     main.fire(EVENTS.REQUEST_MODE_NORMAL);

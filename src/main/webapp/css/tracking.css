@@ -274,6 +274,8 @@ p.bottom-desc {
     font-size: 20px;
     -webkit-font-feature-settings: "liga";
     -webkit-font-smoothing: antialiased;
+    height: 20px;
+    width: 20px;
 }
 .user-context-menu-item svg {
     width: 20px;

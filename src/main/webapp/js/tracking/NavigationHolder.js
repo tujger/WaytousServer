@@ -21,7 +21,6 @@ function NavigationHolder(main) {
     var type = "navigation";
     var view;
     var drawerItemHide;
-    var navigation_outline_drawer, navigation_outline_menu;
     var modeButtons;
     var modeDialog;
     var installation;
@@ -55,7 +54,7 @@ function NavigationHolder(main) {
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
-                if(user && user != main.me && !user.views.navigation.show) {
+                if(user && user !== main.me && !user.views.navigation.show) {
                     var menuItemShow = object.add(MENU.SECTION_VIEWS, EVENTS.SHOW_NAVIGATION, u.lang.show_navigation, "navigation", function(){
                         user.fire(EVENTS.SHOW_NAVIGATION);
                         menuItemShow.hide();
@@ -71,13 +70,15 @@ function NavigationHolder(main) {
                         }
                     }
                 } else if(user.views.navigation.show) {
-                    navigation_outline_menu = navigation_outline_menu || u.create(HTML.PATH, navigation_outline_path, u.create(HTML.SVG, navigation_outline_svg)).parentNode;
-                    object.add(MENU.SECTION_VIEWS, EVENTS.HIDE_NAVIGATION, u.lang.hide_navigation, navigation_outline_menu, function(){
+                    object.add(MENU.SECTION_VIEWS, EVENTS.HIDE_NAVIGATION, u.lang.hide_navigation, u.create(HTML.IMG, {
+                        src: "/images/navigation_outline.svg",
+                        className: "icon user-context-menu-item-icon"
+                    }), function(){
                         user.fire(EVENTS.HIDE_NAVIGATION);
                         drawerPopulate();
                     });
                 }
-                if(user && user != main.me && user.location && main.me.location) {
+                if(user && user !== main.me && user.location && main.me.location) {
                     object.add(MENU.SECTION_VIEWS, "gmap", u.lang.navigate_with_google_maps, "directions", function(){
                         var req = "https://maps.google.com/?saddr=" + main.me.location.coords.latitude + "," + main.me.location.coords.longitude + "&daddr=" + + user.location.coords.latitude + "," + user.location.coords.longitude;
 
@@ -317,7 +318,7 @@ function NavigationHolder(main) {
     }
 
     function onChangeLocation(location) {
-        if(this == main.me) {
+        if(this === main.me) {
             main.users.forAllUsersExceptMe(function(number,user){
                 if(user.views.navigation && user.views.navigation.show) {
                     update.call(user);

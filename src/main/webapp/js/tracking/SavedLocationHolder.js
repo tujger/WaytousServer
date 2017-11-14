@@ -77,7 +77,7 @@ function SavedLocationHolder(main) {
                 }
                 break;
             case EVENTS.SAVE_LOCATION:
-                var user = this;
+                user = this;
                 if(user) {
                     var loc = {
                         la:user.location.coords.latitude,
