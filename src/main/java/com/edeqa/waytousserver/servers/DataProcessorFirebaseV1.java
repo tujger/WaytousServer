@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.internal.NonNull;
 import com.google.firebase.tasks.OnFailureListener;
 import com.google.firebase.tasks.OnSuccessListener;
@@ -769,7 +770,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     }
 
     private void createOrUpdateUserAccount(final MyUser user, final Runnable onsuccess, final Runnable1<Throwable> onerror) {
-        if(SignProvider.NONE.equals(user.getSignProvider())) {
+        if(user.getSignProvider() == null || SignProvider.NONE.equals(user.getSignProvider())) {
             Common.log(LOG, "createOrUpdateAccount:skipCreating:" + user.getUid(), user.getSignProvider());
             onsuccess.run();
             return;
@@ -1496,7 +1497,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     }
 
     @Override
-    public void putStaticticsAccount(String accountId, String action, String key, Object value, String errorMessage) {
+    public void putStaticticsAccount(final String accountId, final String action, final String key, final Object value, String errorMessage) {
         DatabaseReference referenceTotal;
         DatabaseReference referenceToday;
         Calendar cal = Calendar.getInstance();
@@ -1528,27 +1529,36 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         }
 
         if(key != null && accountId != null && accountId.length() > 0) {
-            Map<String, Object> map = new HashMap<>();
-            map.put(Firebase.TIMESTAMP, new Date().getTime());
-            map.put(Firebase.KEYS, key);
-            if(action != null) map.put(Firebase.MODE, action);
+            new TaskSingleValueEventFor<JSONObject>(ref.child(Firebase.SECTION_USERS).child(accountId)).setFirebaseRest(true).addOnCompleteListener(new Runnable1<JSONObject>() {
+                @Override
+                public void call(JSONObject json) {
+                    if(json.has(Firebase.PRIVATE) && json.getBoolean(Firebase.PRIVATE)) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put(Firebase.TIMESTAMP, new Date().getTime());
+                        map.put(Firebase.KEYS, key);
+                        if (action != null) map.put(Firebase.MODE, action);
 
-            if (value instanceof Boolean) {
-                map.put(Firebase.VALUE, value);
-            } else if (value instanceof Number) {
-                map.put(Firebase.VALUE, value);
-            } else if (value instanceof String) {
-                if (((String) value).length() < 50) {
-                    map.put(Firebase.VALUE, value);
-                } else {
-                    map.put(Firebase.VALUE, ((String) value).substring(0, 40) + "...");
+                        if (value instanceof Boolean) {
+                            map.put(Firebase.VALUE, value);
+                        } else if (value instanceof Number) {
+                            map.put(Firebase.VALUE, value);
+                        } else if (value instanceof String) {
+                            if (((String) value).length() < 50) {
+                                map.put(Firebase.VALUE, value);
+                            } else {
+                                map.put(Firebase.VALUE, ((String) value).substring(0, 40) + "...");
+                            }
+                        } else if (value instanceof ArrayList) {
+                            map.put(Firebase.VALUE, "Array(" + ((ArrayList) value).size() + ")");
+                        } else if (value != null) {
+                            map.put(Firebase.VALUE, "[" + value.getClass().getSimpleName() + "]");
+                        }
+                        ref.child(Firebase.SECTION_USERS).child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValue(map);
+                        Common.log(LOG, "putStaticticsAccount:", accountId, "action:", action);
+                    }
                 }
-            } else if (value instanceof ArrayList) {
-                map.put(Firebase.VALUE, "Array(" + ((ArrayList) value).size() + ")");
-            } else if (value != null) {
-                map.put(Firebase.VALUE, "[" + value.getClass().getSimpleName() + "]");
-            }
-            ref.child(Firebase.SECTION_USERS).child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValue(map);
+            }).start();
+
         }
     }
 
