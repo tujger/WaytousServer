@@ -969,7 +969,7 @@ p.bottom-desc {
         flex-direction: column;
         box-shadow: 3px 3px 7px 2px rgba(0,0,0,.5);
         background-color: rgba(211, 211, 211, 0.7);
-        height: 70%;
+        max-height: 70%;
         overflow-y: auto;
         flex-wrap: nowrap;
         justify-content: flex-start;
