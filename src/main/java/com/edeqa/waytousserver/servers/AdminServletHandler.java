@@ -103,7 +103,9 @@ public class AdminServletHandler extends AbstractServletHandler {
                     HtmlGenerator html = new HtmlGenerator();
                     html.getHead().add(TITLE).with("Admin");
 
+                    html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/4.6.2/firebase.js");
                     html.getHead().add(SCRIPT).with("data", o);
+                    html.getHead().add(SCRIPT).with("firebase.initializeApp(data.firebase_config);");
                     html.getHead().add(SCRIPT).with(SRC, "/js/admin/Main.js");
 
                     Utils.sendResult.call(requestWrapper, 200, Mime.TEXT_HTML, html.build().getBytes());

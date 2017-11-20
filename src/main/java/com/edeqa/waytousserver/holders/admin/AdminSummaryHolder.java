@@ -72,7 +72,10 @@ public class AdminSummaryHolder implements PageHolder {
         o.put("ipToToken",fetchIpToTokenData());
         o.put("ipToCheck",fetchIpToCheckData());
 
+        html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/4.6.2/firebase.js");
         html.getHead().add(SCRIPT).with("data", o);
+        html.getHead().add(SCRIPT).with("firebase.initializeApp(data.firebase_config);");
+
         html.getHead().add(SCRIPT).with(SRC, "/js/admin/Summary.js");
 
 

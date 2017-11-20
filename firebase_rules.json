@@ -10,9 +10,10 @@
       ".write": false
     },
     "_users": {
+      ".write": false,
       "$user_id": {
         ".read": "$user_id === auth.uid",
-        ".write": "$user_id === auth.uid",
+        ".write": "$user_id === auth.uid && root.child('_users').child($user_id).exists()",
         "p": { // user persistent private data
           "cr": {
             ".validate": "!data.exists() && newData.exists()"

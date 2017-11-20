@@ -249,6 +249,10 @@ public class MyUser {
         return signProvider;
     }
 
+    public boolean isAccountAllowed() {
+        return getSignProvider() != null && !SignProvider.NONE.equals(getSignProvider());
+    }
+
     public void setSignProvider(SignProvider signProvider) {
         this.signProvider = signProvider;
     }

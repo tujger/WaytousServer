@@ -64,7 +64,10 @@ public class AdminMainHolder implements PageHolder {
         o.put("WSS_PORT", OPTIONS.getWssPortDedicated());
         o.put("firebase_config", OPTIONS.getFirebaseConfig());
 
+        html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/4.6.2/firebase.js");
         html.getHead().add(SCRIPT).with("data", o);
+        html.getHead().add(SCRIPT).with("firebase.initializeApp(data.firebase_config);");
+
         html.getHead().add(SCRIPT).with(SRC, "/js/admin/Main.js");
 
         return html;

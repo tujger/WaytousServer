@@ -102,6 +102,10 @@ public class TrackingServletHandler extends AbstractServletHandler {
             return;
         }
 
+
+        html.clear();
+        html.getHead().add(TITLE).with("Waytous");
+
         JSONObject o = new JSONObject();
         o.put("request", parts);
         o.put("version", SERVER_BUILD);
@@ -116,10 +120,10 @@ public class TrackingServletHandler extends AbstractServletHandler {
         if(OPTIONS.isDebugMode()) o.put("is_debug_mode", true);
         o.put("google_analytics_tracking_id", OPTIONS.getGoogleAnalyticsTrackingId());
 
-        html.clear();
-        html.getHead().add(TITLE).with("Waytous");
-//        html.getHead().add(META).with(NAME, "theme-color").with(CONTENT, "#aaeeee");
+        html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/4.6.2/firebase.js");
         html.getHead().add(SCRIPT).with("data", o);
+        html.getHead().add(SCRIPT).with("firebase.initializeApp(data.firebase_config);");
+
         html.getHead().add(SCRIPT).with("(function checkVersion(){var l=localStorage;if(l){var w=\"waytous:version\";var d=data.version;var i=parseInt(l[w]||0);if(i<d){l[w]=d;console.warn(\"Forced reloading because of version \"+d+\" is newer than \"+i);window.location.reload(true);}}})();");
         html.getHead().add(SCRIPT).with(SRC, "/js/tracking/Main.js").with("async",true).with("defer",true).with(ONLOAD, "(window.WTU = new Main()).start();");
 

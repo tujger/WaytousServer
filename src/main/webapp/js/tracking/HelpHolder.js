@@ -29,7 +29,6 @@ function HelpHolder(main) {
                 dialog && dialog.close();
                 break;
             case EVENTS.SHOW_HELP:
-
                 dialog = dialog || u.dialog({
                     title: {
                         label: u.lang.help,

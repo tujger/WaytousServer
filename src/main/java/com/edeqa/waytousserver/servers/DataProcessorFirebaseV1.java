@@ -770,7 +770,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     }
 
     private void createOrUpdateUserAccount(final MyUser user, final Runnable onsuccess, final Runnable1<Throwable> onerror) {
-        if(user.getSignProvider() == null || SignProvider.NONE.equals(user.getSignProvider())) {
+        if(!user.isAccountAllowed()) {
             Common.log(LOG, "createOrUpdateAccount:skipCreating:" + user.getUid(), user.getSignProvider());
             onsuccess.run();
             return;

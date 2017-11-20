@@ -29,6 +29,7 @@ function UserProfileHolder(main) {
                 { type: HTML.DIV, className: "progress-dialog-title", innerHTML: u.lang.waiting_for_sign_in }
             ]
         }, document.body);
+
     }
 
     function onEvent(EVENT,object){
@@ -43,7 +44,12 @@ function UserProfileHolder(main) {
                 profileDialog.open();
                 break;
             case EVENTS.FIREBASE_READY:
-                doGlobalSync();
+                var redirectResult = firebase.auth().getRedirectResult();
+                if(redirectResult) {
+                    redirectResult.then(onAuthStateChanged).catch(onAuthStateError);
+                } else {
+                    doGlobalSync();
+                }
                 break;
             default:
                 break;
@@ -312,6 +318,7 @@ function UserProfileHolder(main) {
                                 provider.setCustomParameters({
                                     display: "popup"
                                 });
+                                // firebase.auth().signInWithRedirect(provider).catch(onAuthStateError);
                                 firebase.auth().signInWithPopup(provider).then(onAuthStateChanged).catch(onAuthStateError);
                             });
                         }
@@ -329,6 +336,7 @@ function UserProfileHolder(main) {
                             signOtherLogin(function () {
                                 console.log("LOGIN GOOGLE", this);
                                 var provider = new firebase.auth.GoogleAuthProvider();
+                                // firebase.auth().signInWithRedirect(provider).catch(onAuthStateError);
                                 firebase.auth().signInWithPopup(provider).then(onAuthStateChanged).catch(onAuthStateError);
                             });
                         }
@@ -345,8 +353,8 @@ function UserProfileHolder(main) {
                         onclick: function () {
                             signOtherLogin(function () {
                                 console.log("LOGIN TWITTER", this);
-
                                 var provider = new firebase.auth.TwitterAuthProvider();
+                                // firebase.auth().signInWithRedirect(provider).catch(onAuthStateError);
                                 firebase.auth().signInWithPopup(provider).then(onAuthStateChanged).catch(onAuthStateError);
                             });
                         }
@@ -424,14 +432,14 @@ function UserProfileHolder(main) {
 
     function onAuthStateChanged(result) {
         waitingDialog.close();
-        doGlobalSync();
-        if (result) {
+        if (result && result.user) {
             try {
                 result = result.user ? result.user.toJSON() : result.toJSON();
                 u.save("uuid", result.uid);
                 result.providerData.forEach(function (profile) {
                     u.save(REQUEST.SIGN_PROVIDER, profile.providerId);
                     main.toast.show(u.lang.signed_as_s_using_s.format(profile.displayName || profile.email, profile.providerId));
+                    doGlobalSync();
                 });
                 initProfileDialog();
             }catch(e) {

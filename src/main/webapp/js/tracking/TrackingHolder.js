@@ -257,13 +257,13 @@ function TrackingHolder(main) {
                             key: DATABASE.TERMS_OF_SERVICE_CONFIRMED,
                             log: true,
                             onfinish: function(mode, key, value) {
-                                if(value) {
+                                // if(value) {
                                     u.save("tracking:terms_of_service_confirmed", true);
                                     u.require("/js/helpers/TrackingFB.js").then(startTrackingReady.bind(self));
-                                } else {
-                                    console.error("Unable to start tracking");
-                                    main.toast.show("Unable to start tracking");
-                                }
+                                // } else {
+                                //     console.error("Unable to start tracking");
+                                //     main.toast.show("Unable to start tracking");
+                                // }
                             },
                             onerror: function(key, error) {
                                 console.error(error);

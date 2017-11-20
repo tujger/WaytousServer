@@ -50,7 +50,7 @@ public class RedirectHandler implements HttpHandler {
                 tokenId = parts.get(2);
             }
 
-            if(uri.getPath().startsWith("/.well-known/")) {
+            if(uri.getPath().startsWith("/.well-known/") || uri.getPath().contains("googlee7b16def95e75693.html")) {
                 Headers responseHeaders = exchange.getResponseHeaders();
                 responseHeaders.set(HttpHeaders.CONTENT_TYPE, Mime.TEXT_PLAIN);
                 responseHeaders.set(HttpHeaders.DATE, new Date().toString());

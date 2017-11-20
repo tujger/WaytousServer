@@ -138,9 +138,9 @@ function Main() {
 
     function loadScripts(){
         var files = data.is_debug_mode ? [
-            "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js", // https://firebase.google.com/docs/web/setup
-            "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
-            "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js",
+            // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js", // https://firebase.google.com/docs/web/setup
+            // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
+            // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js",
             "https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js", // https://cdnjs.com/libraries/fingerprintjs2
             "/js/helpers/Utils.js",
             "/js/helpers/MyUser",
@@ -170,9 +170,9 @@ function Main() {
 //            "/js/tracking/WelcomeHolder",
 //             "/js/tracking/SampleHolder",
         ] : [
-            "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js", // https://firebase.google.com/docs/web/setup
-            "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
-            "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js",
+            // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js", // https://firebase.google.com/docs/web/setup
+            // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
+            // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js",
             "https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js", // https://cdnjs.com/libraries/fingerprintjs2
             "/js/all.js"
         ];
@@ -262,7 +262,7 @@ function Main() {
 
             return;
         }
-        firebase.initializeApp(data.firebase_config);
+        // firebase.initializeApp(data.firebase_config);
         database = firebase.database();
 
         firebase.auth().onAuthStateChanged(function(user) {
@@ -411,7 +411,7 @@ function Main() {
         main:main,
 //        fire:fire,
         initialize:initialize,
-        help:help,
+        // help:help,
         options:options
     }
 }

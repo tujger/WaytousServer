@@ -685,11 +685,11 @@ function Utils(main) {
             var onsuccess = function (data) {
                 var val = data.val();
                 ongetvalue(data.key, val);
-                if(onfinish) onfinish(data.key, val);
+                if(onfinish) onfinish(options.mode, data.key, val);
             };
             var onfail = function (error) {
                 onerror(key, error);
-                if(onfinish) onfinish(data.key, val);
+                if(onfinish) onfinish(options.mode, data.key);
             };
             this._ref.child(key).once("value").then(onsuccess).catch(onfail);
         };
@@ -919,7 +919,7 @@ function Utils(main) {
                         onerror(key, "Mode not defined");
                         break;
                 }
-            }, null, onerror);
+            }, onfinish, onerror);
         };
 
         function registerHistory(mode, key, value) {
