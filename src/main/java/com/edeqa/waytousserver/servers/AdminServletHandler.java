@@ -88,6 +88,7 @@ public class AdminServletHandler extends AbstractServletHandler {
             if (requestWrapper.getRequestURI().getPath().startsWith("/admin")) {
                 try {
                     String customToken = Common.getInstance().getDataProcessor("v1").createCustomToken("Viewer");
+                    String accessToken = Common.getInstance().getDataProcessor("v1").createAccessToken("Viewer");
 
                     final JSONObject o = new JSONObject();
                     o.put("version", SERVER_BUILD);
@@ -99,6 +100,7 @@ public class AdminServletHandler extends AbstractServletHandler {
                     o.put("WSS_PORT", OPTIONS.getWssPortDedicated());
                     o.put("firebase_config", OPTIONS.getFirebaseConfig());
                     o.put("sign", customToken);
+                    o.put("access", accessToken);
 
                     HtmlGenerator html = new HtmlGenerator();
                     html.getHead().add(TITLE).with("Admin");

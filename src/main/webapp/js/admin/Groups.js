@@ -78,7 +78,7 @@ function Groups() {
                 { className:"option", innerHTML: 0 }
             ]
         });
-         tableSummary.add({
+        tableSummary.add({
             cells: [
                 { className:"th", innerHTML: "Maintenance" },
                 { className:"option", innerHTML: "" }
@@ -132,90 +132,105 @@ function Groups() {
         u.clear(tableGroups.body);
 
         ref.child(DATABASE.SECTION_GROUPS).off();
-        ref.child(DATABASE.SECTION_GROUPS).on("child_added", function(data) {
-            resign = false;
-            ref.child(data.key).child(DATABASE.OPTIONS).once("value").then(function(snapshot) {
-                if(!snapshot || !snapshot.val()) return;
 
-                setTimeout(function(){
-                    var snapshot = this;
+        u.getJSON(ref.toString() + "_g.json?shallow=true&print=pretty&access_token=" + data.access).then(function(json) {
+            for(var x in json) {
+                if(!json[x]) continue;
 
-                    var row = tableGroups.add({
-                        id: data.key,
-                        className: "highlight",
-                        onclick: function(){
-                            WTU.switchTo("/admin/group/"+data.key);
-                            return false;
-                        },
-                        cells: [
-                            { innerHTML: u.clear(data.key) },
-                            { innerHTML: snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No" },
-                            { innerHTML: snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No" },
-                            { innerHTML: snapshot.val()[DATABASE.PERSISTENT] ? "&#150;" : u.clear(snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY]) },
-                            { innerHTML: snapshot.val()[DATABASE.DISMISS_INACTIVE] ? u.clear(snapshot.val()[DATABASE.DELAY_TO_DISMISS]) : "&#150;" },
-                            { innerHTML: "..." },
-                            { sort: snapshot.val()[DATABASE.CREATED], innerHTML:snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
-                            { sort: 0, innerHTML:"..." }
-                        ]
-                    });
-                    var usersNode = row.cells[5];
-                    var changedNode = row.cells[7];
-                    updateTableSummary();
+                var groupId = x;
+                resign = false;
+                ref.child(DATABASE.SECTION_GROUPS).child(groupId).child(DATABASE.OPTIONS).once("value").then(function(snapshot) {
+                    if(!snapshot || !snapshot.val()) return;
 
-                    ref.child(data.key).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("value", function(snapshot){
-                        if(!snapshot.val()) return;
+                    setTimeout(function(){
+                        var snapshot = this;
+                        var groupId = snapshot.getRef().getParent().key;
 
-                        var changed = 0, active = 0, total = 0;
-                        for(var i in snapshot.val()) {
-                            total++;
-                            var c = parseInt(snapshot.val()[i][DATABASE.CREATED]);
-                            if(c > changed) changed = c;
-                            if(snapshot.val()[i][DATABASE.ACTIVE]) active ++;
+                        var row = tableGroups.add({
+                            id: groupId,
+                            className: "highlight",
+                            onclick: function(){
+                                WTU.switchTo("/admin/group/"+groupId);
+                                return false;
+                            },
+                            cells: [
+                                { innerHTML: u.clear(groupId) },
+                                { innerHTML: snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No" },
+                                { innerHTML: snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No" },
+                                { innerHTML: snapshot.val()[DATABASE.PERSISTENT] ? "&#150;" : u.clear(snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY]) },
+                                { innerHTML: snapshot.val()[DATABASE.DISMISS_INACTIVE] ? u.clear(snapshot.val()[DATABASE.DELAY_TO_DISMISS]) : "&#150;" },
+                                { innerHTML: "..." },
+                                { sort: snapshot.val()[DATABASE.CREATED], innerHTML:snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;" },
+                                { sort: 0, innerHTML:"..." }
+                            ]
+                        });
+                        var usersNode = row.cells[5];
+                        var changedNode = row.cells[7];
+                        updateTableSummary();
+
+                        ref.child(DATABASE.SECTION_GROUPS).child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("value", function(snapshot){
+                            if(!snapshot.val()) return;
+
+                            var changed = 0, active = 0, total = 0;
+                            for(var i in snapshot.val()) {
+                                total++;
+                                var c = parseInt(snapshot.val()[i][DATABASE.CREATED]);
+                                if(c > changed) changed = c;
+                                if(snapshot.val()[i][DATABASE.ACTIVE]) active ++;
+                            }
+                            usersNode.innerHTML = active + " / " + total;
+
+                            changed = 0;
+                            for(i in snapshot.val()) {
+                                c = parseInt(snapshot.val()[i][DATABASE.CHANGED]);
+                                if(c > changed) changed = c;
+                            }
+                            changedNode.sort = changed;
+                            changedNode.innerHTML = new Date(changed).toLocaleString();
+                            if(!initial) row.classList.add("changed");
+                            setTimeout(function(){row.classList.remove("changed")}, 5000);
+                            tableGroups.update();
+                            updateTableSummary()
+                        });
+                    }.bind(snapshot), 0);
+
+                }).catch(function(error){
+                    console.error(error);
+                    tableGroups.placeholder.show();
+                });
+                // }, function(e) {
+                //     console.warn("Resign because of",e.message);
+                //     resign = true;
+                //     WTU.resign(updateData);
+                // });
+                ref.child(DATABASE.SECTION_GROUPS).on("child_removed", function(data) {
+                    for(var i in tableGroups.rows) {
+                        if(tableGroups.rows[i].id === data.key) {
+                            tableGroups.body.removeChild(tableGroups.rows[i]);
+                            tableGroups.rows.splice(i,1);
                         }
-                        usersNode.innerHTML = active + " / " + total;
+                    }
+                    u.toast.show("Group "+data.key+" was removed.");
+                    updateTableSummary()
+                }, function(error){
+                    console.error("REMOVED",error);
 
-                        changed = 0;
-                        for(i in snapshot.val()) {
-                            c = parseInt(snapshot.val()[i][DATABASE.CHANGED]);
-                            if(c > changed) changed = c;
-                        }
-                        changedNode.sort = changed;
-                        changedNode.innerHTML = new Date(changed).toLocaleString();
-                        if(!initial) row.classList.add("changed");
-                        setTimeout(function(){row.classList.remove("changed")}, 5000);
-                        tableGroups.update();
-                        updateTableSummary()
-                    });
-                }.bind(snapshot), 0);
+                });
+                ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).off();
+                ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).on("value",function(data) {
+                    tableSummary.lastGroupsClean.lastChild.innerHTML = new Date(data.val()).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(data.val())) + " ago)";
+                },function(error){
+                    console.error("REMOVED",error);
+                });
 
-            }).catch(function(error){
-                console.error(error);
-                tableGroups.placeholder.show();
-            });
-        }, function(e) {
-            console.warn("Resign because of",e.message);
-            resign = true;
-            WTU.resign(updateData);
-        });
-        ref.child(DATABASE.SECTION_GROUPS).on("child_removed", function(data) {
-            for(var i in tableGroups.rows) {
-                if(tableGroups.rows[i].id === data.key) {
-                    tableGroups.body.removeChild(tableGroups.rows[i]);
-                    tableGroups.rows.splice(i,1);
-                }
             }
-            u.toast.show("Group "+data.key+" was removed.");
-            updateTableSummary()
-        }, function(error){
-            console.error("REMOVED",error);
 
+
+        }).catch(function(error) {
+            console.error("FAILED",error);
         });
-        ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).off();
-        ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).on("value",function(data) {
-            tableSummary.lastGroupsClean.lastChild.innerHTML = new Date(data.val()).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(data.val())) + " ago)";
-        },function(error){
-            console.error("REMOVED",error);
-        });
+
+
     }
 
     function renderButtons(div) {

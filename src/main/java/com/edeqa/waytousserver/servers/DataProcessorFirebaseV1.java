@@ -12,6 +12,7 @@ import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.helpers.Utils;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 import com.edeqa.waytousserver.interfaces.RequestHolder;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,6 +41,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -1406,6 +1408,30 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             customToken = String.valueOf(FirebaseAuth.getInstance().createCustomToken(uid));
         }
         return customToken;
+    }
+
+    /**
+     * This method requests and returns accessToken for Firebase. Depending on current installation type
+     * it defines the properly request and performs it. Installation type can be defined in gradle.build.
+     */
+    @Override
+    public String createAccessToken(String uid) {
+        String token = "";
+        try {
+            FileInputStream serviceAccount = new FileInputStream(OPTIONS.getFirebasePrivateKeyFile());
+            GoogleCredential googleCred = GoogleCredential.fromStream(serviceAccount);
+            GoogleCredential scoped = googleCred.createScoped(
+                    Arrays.asList(
+                            "https://www.googleapis.com/auth/firebase.database",
+                            "https://www.googleapis.com/auth/userinfo.email"
+                    )
+            );
+            scoped.refreshToken();
+            token = scoped.getAccessToken();
+        } catch (Exception e) {
+            Common.err(e);
+        }
+        return token;
     }
 
     @Override

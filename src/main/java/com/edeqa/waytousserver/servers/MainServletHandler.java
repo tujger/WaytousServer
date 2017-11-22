@@ -49,8 +49,6 @@ public class MainServletHandler extends AbstractServletHandler {
             o.put("google_analytics_tracking_id", OPTIONS.getGoogleAnalyticsTrackingId());
             substitutions.put("\\$\\{APP_DATA\\}", "var data = " + o.toString());
 
-
-
             try {
                 //noinspection LoopStatementThatDoesntLoop
                 for (String x : requestWrapper.getRequestHeader(HttpHeaders.REFERER)) {

@@ -21,7 +21,7 @@ function Group() {
 
     var renderInterface = function() {
 
-        var ref = database.ref();
+        var ref = database.ref().child(DATABASE.SECTION_GROUPS);
         u.clear(div);
         u.create(HTML.H2, "Summary", div);
 
@@ -301,7 +301,7 @@ function Group() {
             return;
         }
 
-        var ref = database.ref();
+        var ref = database.ref().child(DATABASE.SECTION_GROUPS);
 
         ref.child(groupId).child(DATABASE.OPTIONS).once("value").then(function(snapshot) {
             if(!snapshot || !snapshot.val()) return;
@@ -343,7 +343,7 @@ function Group() {
 
     function updateData(){
 
-        var ref = database.ref();
+        var ref = database.ref().child(DATABASE.SECTION_GROUPS);
         tableUsers.placeholder.show();
         u.clear(tableUsers.body);
         var reload = false;
