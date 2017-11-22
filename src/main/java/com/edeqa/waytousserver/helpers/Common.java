@@ -23,7 +23,7 @@ import static com.edeqa.waytous.Constants.OPTIONS;
 
 public class Common {
 
-    public final static int SERVER_BUILD = 41;
+    public final static int SERVER_BUILD = 50;
 
 
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z", Locale.getDefault());

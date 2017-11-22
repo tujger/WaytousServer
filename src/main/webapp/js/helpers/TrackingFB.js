@@ -15,7 +15,10 @@ function TrackingFB(main) {
     var token;
     var status;
     var serverUri;
-    var ref;
+    var refRoot;
+    var refGroup;
+    var refAccounts;
+    var refStat;
     var updateTask;
     var refs = [];
     var updateFocusTask;
@@ -65,9 +68,9 @@ function TrackingFB(main) {
         }
         refs = [];
 
-        if(ref) {
-            ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).update(updates).then(function () {
-                ref.database.goOffline();
+        if(refRoot) {
+            refAccounts.child(DATABASE.PUBLIC).child(main.me.number).update(updates).then(function () {
+                refRoot.database.goOffline();
 
                 trackingListener.onStop();
 
@@ -80,7 +83,7 @@ function TrackingFB(main) {
             })
             .catch(function (error) {
                 console.error(error);
-                ref.database.goOffline();
+                refRoot.database.goOffline();
                 //firebase.auth().signOut();
                 trackingListener.onStop();
 
@@ -184,23 +187,26 @@ function TrackingFB(main) {
                                 }
                                 o[RESPONSE.INITIAL] = true;
 
-                                ref = database.ref().child(getToken());
-                                ref.database.goOnline();
+                                refRoot = database.ref();
+                                refGroup = refRoot.child(DATABASE.SECTION_GROUPS).child(getToken());
+                                refAccounts = refRoot.child(DATABASE.SECTION_USERS);
+                                refStat = refRoot.child(DATABASE.SECTION_STAT);
+                                refRoot.database.goOnline();
 
                                 if(main.me && main.me.number != undefined) {
-                                    ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.ACTIVE).set(true);
+                                    refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.ACTIVE).set(true);
                                 }
 
                                 updateTask = setInterval(updateActive, 60000);
                                 window.addEventListener("focus", updateActive);
                                 document.addEventListener("visibilitychange", updateActive);
 
-                                registerValueListener(ref.child(DATABASE.OPTIONS).child(DATABASE.CREATED), groupListener, groupErrorListener);
-                                registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.ACTIVE), userActiveListener);
-                                registerChildListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC), usersDataListener, -1);
+                                registerValueListener(refGroup.child(DATABASE.OPTIONS).child(DATABASE.CREATED), groupListener, groupErrorListener);
+                                registerValueListener(refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.ACTIVE), userActiveListener);
+                                registerChildListener(refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC), usersDataListener, -1);
                                 main.eventBus.fire(function(holder){
                                     if(holder.saveable) {
-                                        registerChildListener(ref.child(DATABASE.PRIVATE).child(holder.type).child(main.me.number), userPrivateDataListener, -1);
+                                        registerChildListener(refGroup.child(DATABASE.PRIVATE).child(holder.type).child(main.me.number), userPrivateDataListener, -1);
                                     }
                                 });
 
@@ -352,13 +358,13 @@ function TrackingFB(main) {
             webSocketListener.send(JSON.stringify(json));
             //
             // }
-        } else if(ref) {
+        } else if(refGroup) {
             if(type === REQUEST.CHANGE_NAME) {
                 updates = {};
                 updates[USER.NAME] = jsonMessage[USER.NAME];
                 updates[DATABASE.CHANGED] = firebase.database.ServerValue.TIMESTAMP;
 
-                ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).update(updates).catch(function(error) {
+                refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).update(updates).catch(function(error) {
                     console.error(error);
                 });
 
@@ -385,14 +391,14 @@ function TrackingFB(main) {
             } else {
                 path = DATABASE.PUBLIC + "/" + type + "/" + main.me.number;
             }
-            var key = ref.push().key;
+            var key = refGroup.push().key;
 
             updates = {};
             updates[path + "/" + key] = jsonMessage;
             updates[DATABASE.USERS + "/" + DATABASE.PUBLIC + "/" + main.me.number + "/" + DATABASE.CHANGED] = firebase.database.ServerValue.TIMESTAMP;
 
 //console.log("UPDATE2",updates);
-            ref.update(updates).catch(function(error) {
+            refGroup.update(updates).catch(function(error) {
                console.error(error);
            });
 
@@ -507,14 +513,14 @@ function TrackingFB(main) {
                 user.type = "user";
 
                 //registers
-                registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.NAME), usersDataNameListener);
-                registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.ACTIVE), usersDataActiveListener);
-                registerValueListener(ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.CHANGED), usersDataChangedListener);
+                registerValueListener(refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.NAME), usersDataNameListener);
+                registerValueListener(refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.ACTIVE), usersDataActiveListener);
+                registerValueListener(refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.CHANGED), usersDataChangedListener);
 
                 main.eventBus.fire(function(holder){
                     if(holder.saveable) {
                         var loadSaved = holder.loadsaved || 1;
-                        registerChildListener(ref.child(DATABASE.PUBLIC).child(holder.type).child(user.number), userPublicDataListener, loadSaved);
+                        registerChildListener(refGroup.child(DATABASE.PUBLIC).child(holder.type).child(user.number), userPublicDataListener, loadSaved);
                     }
                 });
 
@@ -629,8 +635,8 @@ function TrackingFB(main) {
     function updateActive() {
         try {
             if(main.me && main.me.number != undefined) {
-                ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.ACTIVE).set(true);
-                ref.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.CHANGED).set(firebase.database.ServerValue.TIMESTAMP);
+                refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.ACTIVE).set(true);
+                refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.CHANGED).set(firebase.database.ServerValue.TIMESTAMP);
             }
         } catch(e) {
             console.error(e.message);

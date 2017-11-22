@@ -126,7 +126,7 @@ function Constants() {
         DESCRIPTION : "description"
     };
     window.DATABASE = {
-        SECTION_GROUPS : "_groups",
+        SECTION_GROUPS : "_g",
         ACTIVE : "active", // active
         CHANGED : "ch",
         COLOR : "color", // color
@@ -136,7 +136,7 @@ function Constants() {
         KEYS: "k",
         NAME : "name", // name
         OPTIONS : "o", // options
-        ORDER: "n",
+        QUEUE: "q",
         PERSISTENT : "persistent",
         PRIVATE : "p", // private
         PUBLIC : "b", // public
@@ -147,7 +147,7 @@ function Constants() {
         USERS : "u", // users
         WELCOME_MESSAGE : "welcome-message",
 
-        SECTION_STAT: "_stat",
+        SECTION_STAT: "_s",
         STAT_TOTAL: "total",
         STAT_BY_DATE: "by-date",
         STAT_GROUPS_CREATED_PERSISTENT: "gp",
@@ -165,7 +165,7 @@ function Constants() {
         STAT_ACCOUNTS_DELETED: "cd",
 
 
-        SECTION_USERS: "_users",
+        SECTION_USERS: "_u",
         HISTORY: "h",
         MODE: "m",
         TERMS_OF_SERVICE_CONFIRMED: "tos-confirmed",
