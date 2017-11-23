@@ -605,7 +605,7 @@ function Edequate(options) {
     create.variables = {};
 
     function clear(element) {
-        if(!element) return;
+        if(!element) return "";
         if(element instanceof HTMLElement) {
             for(var i = element.childNodes.length-1; i>=0; i--) {
                 element.removeChild(element.children[i]);

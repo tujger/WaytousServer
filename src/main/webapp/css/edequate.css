@@ -341,6 +341,7 @@ button:active {
     padding-top: 10px;
     outline-style: dashed;
     outline-width: 1px;
+    white-space: normal;
 }
 .dialog-footer {
     padding: 10px;

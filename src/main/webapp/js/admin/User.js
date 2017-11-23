@@ -154,21 +154,22 @@ function User() {
     };
 
     function updateSummary() {
-        var ref = database.ref();
+        var refRoot = database.ref();
+        var refGroups = refRoot.child(DATABASE.SECTION_GROUPS);
         tableSummary.placeholder.show();
 
-        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).off();
-        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).child(userNumber).once("value").then(function(snapshot){
+        refGroups.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).off();
+        refGroups.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).child(userNumber).once("value").then(function(snapshot){
             if(!snapshot || !snapshot.val()) return;
 
             var uid = snapshot.val()[REQUEST.UID];
             tableSummary.userUidNode.lastChild.innerHTML = uid || "[invalid]";
             if(uid) {
-                ref.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
+                refRoot.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
                 .then(function(snapshot){
                     if(snapshot.val()) {
-                        tableSummary.userOsNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.OS]);
-                        tableSummary.userDeviceNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.MODEL]);
+                        tableSummary.userOsNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.OS] || "&#150;");
+                        tableSummary.userDeviceNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.MODEL] || "&#150;");
                         tableSummary.userSignProviderNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous");
                     }
                 });
@@ -178,8 +179,8 @@ function User() {
             WTU.resign(updateSummary);
         });
 
-        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).off();
-        ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).on("value",function(snapshot) {
+        refGroups.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).off();
+        refGroups.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).on("value",function(snapshot) {
             if(!snapshot || !snapshot.val()) return;
 
             tableSummary.placeholder.hide();
@@ -202,16 +203,17 @@ function User() {
     }
 
     function updateData(){
+        var refRoot = database.ref();
+        var refGroups = refRoot.child(DATABASE.SECTION_GROUPS);
 
-        var ref = database.ref();
         tableLocations.placeholder.show();
         u.clear(tableLocations.body);
         var reload = false;
         var initial = true;
         setTimeout(function(){initial = false;}, 3000);
 
-        ref.child(groupId).child(DATABASE.PUBLIC).child("tracking").child(userNumber).off();
-        ref.child(groupId).child(DATABASE.PUBLIC).child("tracking").child(userNumber).limitToLast(limit).on("child_added", function(snapshot) {
+        refGroups.child(groupId).child(DATABASE.PUBLIC).child("tracking").child(userNumber).off();
+        refGroups.child(groupId).child(DATABASE.PUBLIC).child("tracking").child(userNumber).limitToLast(limit).on("child_added", function(snapshot) {
 
             if(!snapshot || !snapshot.val()){
                 tableLocations.placeholder.show("No locations");

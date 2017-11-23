@@ -456,10 +456,10 @@ function Statistics() {
 //                  },
                     cells: [
                         { innerHTML: u.clear(data.key) },
-                        { innerHTML: u.clear(actions[json["action"]] || json["action"])},
-                        { innerHTML: u.clear(json["group"]) },
-                        { innerHTML: u.clear(json["user"] || json["account"]) },
-                        { innerHTML: u.clear(json["message"]) }
+                        { innerHTML: u.clear(actions[json["action"]] || json["action"] || "&#150;")},
+                        { innerHTML: u.clear(json["group"] || "&#150;") },
+                        { innerHTML: u.clear(json["user"] || json["account"] || "&#150;") },
+                        { innerHTML: u.clear(json["message"] || "&#150;") }
                     ]
                 });
                 messagesCounterNode.innerHTML = +messagesCounterNode.innerHTML + 1;

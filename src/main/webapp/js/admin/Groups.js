@@ -87,7 +87,7 @@ function Groups() {
         tableSummary.lastGroupsClean = tableSummary.add({
             cells: [
                 { className:"th", innerHTML: "&#150; groups cleaned" },
-                { className:"option", innerHTML: "never" }
+                { className:"option", innerHTML: "..." }
             ]
         });
         tableSummary.lastUsersClean = tableSummary.add({
@@ -139,11 +139,11 @@ function Groups() {
 
                 var groupId = x;
                 resign = false;
-                ref.child(DATABASE.SECTION_GROUPS).child(groupId).child(DATABASE.OPTIONS).once("value").then(function(snapshot) {
-                    if(!snapshot || !snapshot.val()) return;
+                setTimeout(function(){
+                    var groupId = this.toString();
+                    ref.child(DATABASE.SECTION_GROUPS).child(groupId).child(DATABASE.OPTIONS).once("value").then(function(snapshot) {
+                        if(!snapshot || !snapshot.val()) return;
 
-                    setTimeout(function(){
-                        var snapshot = this;
                         var groupId = snapshot.getRef().getParent().key;
 
                         var row = tableGroups.add({
@@ -190,42 +190,40 @@ function Groups() {
                             if(!initial) row.classList.add("changed");
                             setTimeout(function(){row.classList.remove("changed")}, 5000);
                             tableGroups.update();
+
                             updateTableSummary()
                         });
-                    }.bind(snapshot), 0);
 
-                }).catch(function(error){
-                    console.error(error);
-                    tableGroups.placeholder.show();
-                });
-                // }, function(e) {
-                //     console.warn("Resign because of",e.message);
-                //     resign = true;
-                //     WTU.resign(updateData);
-                // });
-                ref.child(DATABASE.SECTION_GROUPS).on("child_removed", function(data) {
-                    for(var i in tableGroups.rows) {
-                        if(tableGroups.rows[i].id === data.key) {
-                            tableGroups.body.removeChild(tableGroups.rows[i]);
-                            tableGroups.rows.splice(i,1);
+                    }).catch(function(error){
+                        console.error(error);
+                        tableGroups.placeholder.show();
+                    });
+                    // }, function(e) {
+                    //     console.warn("Resign because of",e.message);
+                    //     resign = true;
+                    //     WTU.resign(updateData);
+                    // });
+                    ref.child(DATABASE.SECTION_GROUPS).on("child_removed", function(data) {
+                        for(var i in tableGroups.rows) {
+                            if(tableGroups.rows[i].id === data.key) {
+                                tableGroups.body.removeChild(tableGroups.rows[i]);
+                                tableGroups.rows.splice(i,1);
+                            }
                         }
-                    }
-                    u.toast.show("Group "+data.key+" was removed.");
-                    updateTableSummary()
-                }, function(error){
-                    console.error("REMOVED",error);
+                        u.toast.show("Group "+data.key+" was removed.");
+                        updateTableSummary()
+                    }, function(error){
+                        console.error("REMOVED",error);
 
-                });
-                ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).off();
-                ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).on("value",function(data) {
-                    tableSummary.lastGroupsClean.lastChild.innerHTML = new Date(data.val()).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(data.val())) + " ago)";
-                },function(error){
-                    console.error("REMOVED",error);
-                });
-
+                    });
+                    ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).off();
+                    ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_GROUPS_CLEANED).on("value",function(data) {
+                        tableSummary.lastGroupsClean.lastChild.innerHTML = new Date(data.val()).toLocaleString() + " (" + utils.toDateString(new Date().getTime() - new Date(data.val())) + " ago)";
+                    },function(error){
+                        console.error("REMOVED",error);
+                    });
+                }.bind(groupId), 0);
             }
-
-
         }).catch(function(error) {
             console.error("FAILED",error);
         });

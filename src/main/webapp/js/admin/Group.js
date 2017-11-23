@@ -313,7 +313,7 @@ function Group() {
 //                tableSummary.requiresPasswordNode.lastChild.innerHTML = snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No";
 //                tableSummary.passwordNode[snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "show":"hide"]();
 
-                tableSummary.welcomeMessageNode.lastChild.innerHTML = u.clear(snapshot.val()[DATABASE.WELCOME_MESSAGE] || "");
+                tableSummary.welcomeMessageNode.lastChild.innerHTML = u.clear(snapshot.val()[DATABASE.WELCOME_MESSAGE] || "&lt;not defined&gt;");
 
                 tableSummary.persistentNode.lastChild.innerHTML = snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No";
                 tableSummary.timeToLiveNode[snapshot.val()[DATABASE.PERSISTENT] ? "hide":"show"]();
@@ -482,8 +482,8 @@ function Group() {
                         ref.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
                             .then(function(snapshot){
                                 if(snapshot.val()) {
-                                    userOsNode.innerHTML = u.clear(snapshot.val()[REQUEST.OS]);
-                                    userDeviceNode.innerHTML = u.clear(snapshot.val()[REQUEST.MODEL]);
+                                    userOsNode.innerHTML = u.clear(snapshot.val()[REQUEST.OS] || "&#150");
+                                    userDeviceNode.innerHTML = u.clear(snapshot.val()[REQUEST.MODEL] || "&#150;");
                                     userSignProviderNode.innerHTML = u.clear(snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous");
                                     tableUsers.update();
                                 }

@@ -192,7 +192,7 @@ function Accounts() {
                     lastRegistered = privateData;
                     lastRegistered[REQUEST.UID] = snapshot.key;
                     tableSummary.lastRegisteredItem.lastChild.innerHTML = new Date(lastRegistered[DATABASE.CREATED]).toLocaleString();
-                    tableSummary.lastRegisteredItem.uid = u.clear(lastRegistered[REQUEST.UID]);
+                    tableSummary.lastRegisteredItem.uid = u.clear(lastRegistered[REQUEST.UID] || "&#150;");
                 }
 
                 if(activeToday) tableSummary.accountsRecentItem.lastChild.innerHTML = +tableSummary.accountsRecentItem.lastChild.innerHTML + 1;
@@ -207,12 +207,12 @@ function Accounts() {
                         return false;
                     },
                     cells: [
-                        { innerHTML: u.clear(privateData[DATABASE.NAME]) },
+                        { innerHTML: u.clear(privateData[DATABASE.NAME] || "&#150;") },
                         { innerHTML: new Date(privateData[DATABASE.CREATED]).toLocaleString(), sort: privateData[DATABASE.CREATED] },
                         { innerHTML: new Date(privateData[DATABASE.CHANGED]).toLocaleString(), sort: privateData[DATABASE.CHANGED] },
-                        { innerHTML: u.clear(privateData[REQUEST.SIGN_PROVIDER]) },
-                        { innerHTML: u.clear(privateData[REQUEST.OS]) },
-                        { innerHTML: u.clear(privateData[REQUEST.MODEL]) }
+                        { innerHTML: u.clear(privateData[REQUEST.SIGN_PROVIDER] || "&#150;") },
+                        { innerHTML: u.clear(privateData[REQUEST.OS] || "&#150;") },
+                        { innerHTML: u.clear(privateData[REQUEST.MODEL] || "&#150;") }
                     ]
                 });
                 if(!expired) row.classList.remove("inactive");
