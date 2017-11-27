@@ -116,14 +116,14 @@ public class AdminRestHolder implements PageHolder {
             JSONObject json = new JSONObject();
             json.put(Rest.STATUS, Rest.SUCCESS);
             json.put(Rest.MESSAGE, "Clean started.");
-            Utils.sendResultJson.call(requestWrapper, json);
+            requestWrapper.sendResult(json);
 
         } catch(Exception e) {
             e.printStackTrace();
             JSONObject json = new JSONObject();
             json.put(Rest.STATUS, Rest.ERROR);
             json.put(Rest.MESSAGE, "Incorrect request.");
-            Utils.sendError.call(requestWrapper, 400, json);
+            requestWrapper.sendError(400, json);
         }
 
     }
@@ -139,14 +139,14 @@ public class AdminRestHolder implements PageHolder {
             JSONObject json = new JSONObject();
             json.put(Rest.STATUS, Rest.SUCCESS);
             json.put(Rest.MESSAGE, "Clean started.");
-            Utils.sendResultJson.call(requestWrapper, json);
+            requestWrapper.sendResult(json);
 
         } catch(Exception e) {
             e.printStackTrace();
             JSONObject json = new JSONObject();
             json.put(Rest.STATUS, Rest.ERROR);
             json.put(Rest.MESSAGE, "Incorrect request.");
-            Utils.sendError.call(requestWrapper, 400, json);
+            requestWrapper.sendError(400, json);
         }
 
     }
@@ -218,19 +218,19 @@ public class AdminRestHolder implements PageHolder {
                                 Common.getInstance().getDataProcessor("v1").registerUser(group.getId(), user, REQUEST_NEW_GROUP, new Runnable1<JSONObject>() {
                                     @Override
                                     public void call(JSONObject json) {
-                                        Utils.sendResultJson.call(requestWrapper, json);
+                                        requestWrapper.sendResult(json);
                                     }
                                 }, new Runnable1<JSONObject>() {
                                     @Override
                                     public void call(JSONObject json) {
-                                        Utils.sendError.call(requestWrapper, 500, json);
+                                        requestWrapper.sendError(500, json);
                                     }
                                 });
                             }
                         }, new Runnable1<JSONObject>() {
                             @Override
                             public void call(JSONObject json) {
-                                Utils.sendError.call(requestWrapper, 500, json);
+                                requestWrapper.sendError(500, json);
                             }
                         });
 
@@ -244,7 +244,7 @@ public class AdminRestHolder implements PageHolder {
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
                 json.put(Rest.REASON, e.getMessage());
-                Utils.sendError.call(requestWrapper, 400, json);
+                requestWrapper.sendError(400, json);
             }
         });
     }
@@ -265,12 +265,12 @@ public class AdminRestHolder implements PageHolder {
                 Common.getInstance().getDataProcessor("v1").deleteGroup(groupId,new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendResultJson.call(requestWrapper, json);
+                        requestWrapper.sendResult(json);
                     }
                 }, new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendError.call(requestWrapper, 500, json);
+                        requestWrapper.sendError(500, json);
                     }
                 });
             }
@@ -283,7 +283,7 @@ public class AdminRestHolder implements PageHolder {
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
                 json.put(Rest.REASON, e.getMessage());
-                Utils.sendError.call(requestWrapper, 400, json);
+                requestWrapper.sendError(400, json);
             }
         });
     }
@@ -305,12 +305,12 @@ public class AdminRestHolder implements PageHolder {
                 Common.getInstance().getDataProcessor("v1").removeUserFromGroup(groupId,userNumber,new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendResultJson.call(requestWrapper, json);
+                        requestWrapper.sendResult(json);
                     }
                 }, new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendError.call(requestWrapper, 500, json);
+                        requestWrapper.sendError(500, json);
                     }
                 });
             }
@@ -323,7 +323,7 @@ public class AdminRestHolder implements PageHolder {
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
                 json.put(Rest.REASON, e.getMessage());
-                Utils.sendError.call(requestWrapper, 400, json);
+                requestWrapper.sendError(400, json);
             }
         });
     }
@@ -344,12 +344,12 @@ public class AdminRestHolder implements PageHolder {
                 Common.getInstance().getDataProcessor("v1").deleteAccount(accountId,new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendResultJson.call(requestWrapper, json);
+                        requestWrapper.sendResult(json);
                     }
                 }, new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendError.call(requestWrapper, 500, json);
+                        requestWrapper.sendError(500, json);
                     }
                 });
             }
@@ -362,7 +362,7 @@ public class AdminRestHolder implements PageHolder {
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
                 json.put(Rest.REASON, e.getMessage());
-                Utils.sendError.call(requestWrapper, 400, json);
+                requestWrapper.sendError(400, json);
             }
         });
     }
@@ -384,12 +384,12 @@ public class AdminRestHolder implements PageHolder {
                 Common.getInstance().getDataProcessor("v1").switchPropertyInGroup(groupId,property,new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendResultJson.call(requestWrapper, json);
+                        requestWrapper.sendResult(json);
                     }
                 }, new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendError.call(requestWrapper, 500, json);
+                        requestWrapper.sendError(500, json);
                     }
                 });
             }
@@ -402,7 +402,7 @@ public class AdminRestHolder implements PageHolder {
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
                 json.put(Rest.REASON, e.getMessage());
-                Utils.sendError.call(requestWrapper, 400, json);
+                requestWrapper.sendError(400, json);
             }
         });
 
@@ -427,12 +427,12 @@ public class AdminRestHolder implements PageHolder {
                 Common.getInstance().getDataProcessor("v1").switchPropertyForUser(groupId,userNumber,property,value,new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendResultJson.call(requestWrapper, json);
+                        requestWrapper.sendResult(json);
                     }
                 }, new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendError.call(requestWrapper, 500, json);
+                        requestWrapper.sendError(500, json);
                     }
                 });
             }
@@ -445,7 +445,7 @@ public class AdminRestHolder implements PageHolder {
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
                 json.put(Rest.REASON, e.getMessage());
-                Utils.sendError.call(requestWrapper, 400, json);
+                requestWrapper.sendError(400, json);
             }
         });
     }
@@ -463,7 +463,7 @@ public class AdminRestHolder implements PageHolder {
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Action not supported.");
                 json.put(Rest.REQUEST, options);
-                Utils.sendError.call(requestWrapper, 400, json);
+                requestWrapper.sendError(400, json);
             }
         }, new Runnable1<Exception>() {
             @SuppressWarnings("HardCodedStringLiteral")
@@ -474,7 +474,7 @@ public class AdminRestHolder implements PageHolder {
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
                 json.put(Rest.REASON, e.getMessage());
-                Utils.sendError.call(requestWrapper, 400, json);
+                requestWrapper.sendError(400, json);
             }
         });
     }
@@ -497,12 +497,12 @@ public class AdminRestHolder implements PageHolder {
                 Common.getInstance().getDataProcessor("v1").modifyPropertyInGroup(groupId,property,value,new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendResultJson.call(requestWrapper, json);
+                        requestWrapper.sendResult(json);
                     }
                 }, new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
-                        Utils.sendError.call(requestWrapper, 500, json);
+                        requestWrapper.sendError(500, json);
                     }
                 });
             }
@@ -515,7 +515,7 @@ public class AdminRestHolder implements PageHolder {
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
                 json.put(Rest.REASON, e.getMessage());
-                Utils.sendError.call(requestWrapper, 400, json);
+                requestWrapper.sendError(400, json);
             }
         });
     }
@@ -527,7 +527,7 @@ public class AdminRestHolder implements PageHolder {
             @Override
             public void call(JSONObject json) {
                 Common.log(LOG, "cleanStatMessagesV1:done");
-                Utils.sendResultJson.call(requestWrapper, json);
+                requestWrapper.sendResult(json);
             }
         }, new Runnable1<JSONObject>() {
             @Override
@@ -535,7 +535,7 @@ public class AdminRestHolder implements PageHolder {
                 Common.err(LOG, "cleanStatMessagesV1:failed");
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Messages cleaning failed.");
-                Utils.sendError.call(requestWrapper, 500, json);
+                requestWrapper.sendError(500, json);
             }
         });
     }

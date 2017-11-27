@@ -51,14 +51,20 @@ public class RestServletHandler extends AbstractServletHandler {
 
         try {
             URI uri = requestWrapper.getRequestURI();
-            String host = null;
+            String host = null, referer = null;
             try {
                 host = requestWrapper.getRequestHeader(HttpHeaders.HOST).get(0);
                 host = host.split(":")[0];
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Common.log(LOG, host + uri.getPath(), requestWrapper.getRemoteAddress());
+            try {
+                referer = requestWrapper.getRequestHeaders().get(HttpHeaders.REFERER).get(0);
+                if(referer.contains(host)) referer = null;
+            } catch(Exception e){
+//                e.printStackTrace();
+            }
+            Common.log(LOG, host + uri.getPath(), requestWrapper.getRemoteAddress() + (referer != null ? ", referer: " + referer : ""));
 
 //        List<String> parts = Arrays.asList(uri.getPath().split("/"));
             JSONObject json = new JSONObject();
@@ -98,7 +104,7 @@ public class RestServletHandler extends AbstractServletHandler {
 //                break;
 //        }
 
-            if (printRes) Utils.sendResultJson.call(requestWrapper, json);
+            if (printRes) requestWrapper.sendResult(json);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -159,7 +165,7 @@ public class RestServletHandler extends AbstractServletHandler {
                 json.put(Rest.STATUS, "error");
                 json.put(Rest.REASON, "Action failed");
                 json.put(Rest.MESSAGE, e.getMessage());
-                Utils.sendResultJson.call(requestWrapper, json);
+                requestWrapper.sendResult(json);
             }
             return false;
         }
@@ -332,7 +338,7 @@ public class RestServletHandler extends AbstractServletHandler {
                     json.put(Rest.STATUS, "error");
                     json.put(Rest.REASON, "Incorrect request");
                     json.put(Rest.MESSAGE, arg.getMessage());
-                    Utils.sendError.call(requestWrapper, 413, json);
+                    requestWrapper.sendError(413, json);
                 }
             });
             return false;
@@ -413,7 +419,7 @@ public class RestServletHandler extends AbstractServletHandler {
                 json.put(Rest.STATUS, "error");
                 json.put(Rest.REASON, "Action failed");
                 json.put(Rest.MESSAGE, e.getMessage());
-                Utils.sendResultJson.call(requestWrapper, json);
+                requestWrapper.sendResult(json);
             }
             return false;
         }

@@ -231,37 +231,37 @@ function Main() {
 
     function initialize() {
 
-        if(!firebase || !firebase.database || !firebase.auth) {
-            console.error("Failed firebase loading, trying again...");
-//debugger;
-            var files = [];
-            if(!firebase) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js");
-            if(!firebase.database) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js");
-            if(!firebase.auth) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js");
-
-            var loaded = 0;
-            var failed = false;
-            for(var i in files) {
-                var file = files[i];
-                u.require(file, main).then(function() {
-                    if(failed) return;
-                    loaded++;
-                    u.loading(Math.ceil(loaded / files.length * 100) + "%");
-                    if(loaded === u.keys(files).length) {
-                        initialize.call(main);
-                    }
-                }).catch(function(code, moduleName, event) {
-                    console.log(code, moduleName, event.srcElement.src);
-                    if(failed) return;
-                    failed = true;
-
-                    u.lang.updateNode(main.alert.items[1].body, u.lang.error_while_loading_s_code_s.format(moduleName,code));
-                    main.alert.open();
-                });
-            }
-
-            return;
-        }
+//        if(!firebase || !firebase.database || !firebase.auth) {
+//            console.error("Failed firebase loading, trying again...");
+////debugger;
+//            var files = [];
+//            if(!firebase) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js");
+//            if(!firebase.database) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js");
+//            if(!firebase.auth) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js");
+//
+//            var loaded = 0;
+//            var failed = false;
+//            for(var i in files) {
+//                var file = files[i];
+//                u.require(file, main).then(function() {
+//                    if(failed) return;
+//                    loaded++;
+//                    u.loading(Math.ceil(loaded / files.length * 100) + "%");
+//                    if(loaded === u.keys(files).length) {
+//                        initialize.call(main);
+//                    }
+//                }).catch(function(code, moduleName, event) {
+//                    console.log(code, moduleName, event.srcElement.src);
+//                    if(failed) return;
+//                    failed = true;
+//
+//                    u.lang.updateNode(main.alert.items[1].body, u.lang.error_while_loading_s_code_s.format(moduleName,code));
+//                    main.alert.open();
+//                });
+//            }
+//
+//            return;
+//        }
         // firebase.initializeApp(data.firebase_config);
         database = firebase.database();
 

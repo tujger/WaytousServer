@@ -28,7 +28,7 @@ public class HttpDPConnection implements DataProcessorConnection {
 
     @Override
     public void send(String string) {
-        Utils.sendResult.call(requestWrapper, 200, Mime.APPLICATION_JSON, string.getBytes());
+        requestWrapper.sendResult(200, Mime.APPLICATION_JSON, string.getBytes());
     }
 
     @Override

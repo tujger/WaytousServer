@@ -118,7 +118,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }
 
     @Override
-    public String createAccessToken(String viewer) {
+    public String createAccessToken() {
         return null;
     }
 

@@ -1078,7 +1078,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         refStat.child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_GROUPS_CLEANED).setValue(ServerValue.TIMESTAMP);
 
         Common.log(LOG, "Groups validation is performing, checking online users");
-        new TaskSingleValueEventFor<JSONObject>(refGroups.child("/")).setFirebaseRest(true).addOnCompleteListener(new Runnable1<JSONObject>() {
+        new TaskSingleValueEventFor<JSONObject>(refGroups.child("/")).setFirebaseRest(createAccessToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject groups) {
                 try {
@@ -1336,7 +1336,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
         Common.log(LOG, "Accounts validation is performing, checking online users");
 
-        new TaskSingleValueEventFor<JSONObject>(refAccounts).setFirebaseRest(true).addOnCompleteListener(new Runnable1<JSONObject>() {
+        new TaskSingleValueEventFor<JSONObject>(refAccounts).setFirebaseRest(createAccessToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject accounts) {
                 try {
@@ -1415,7 +1415,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
      * it defines the properly request and performs it. Installation type can be defined in gradle.build.
      */
     @Override
-    public String createAccessToken(String uid) {
+    public String createAccessToken() {
         String token = "";
         try {
             FileInputStream serviceAccount = new FileInputStream(OPTIONS.getFirebasePrivateKeyFile());
@@ -1552,7 +1552,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         }
 
         if(key != null && accountId != null && accountId.length() > 0) {
-            new TaskSingleValueEventFor<JSONObject>(refAccounts.child(accountId)).setFirebaseRest(true).addOnCompleteListener(new Runnable1<JSONObject>() {
+            new TaskSingleValueEventFor<JSONObject>(refAccounts.child(accountId)).setFirebaseRest(createAccessToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
                 @Override
                 public void call(JSONObject json) {
                     if(json.has(Firebase.PRIVATE) && json.getBoolean(Firebase.PRIVATE)) {

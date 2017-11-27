@@ -24,6 +24,7 @@ import static com.edeqa.helpers.HtmlGenerator.SCRIPT;
 import static com.edeqa.helpers.HtmlGenerator.SRC;
 import static com.edeqa.helpers.HtmlGenerator.TITLE;
 import static com.edeqa.waytous.Constants.OPTIONS;
+import static com.edeqa.waytousserver.helpers.Common.FIREBASE_JAVASCRIPT_VERSION;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 
 
@@ -88,7 +89,7 @@ public class AdminServletHandler extends AbstractServletHandler {
             if (requestWrapper.getRequestURI().getPath().startsWith("/admin")) {
                 try {
                     String customToken = Common.getInstance().getDataProcessor("v1").createCustomToken("Viewer");
-                    String accessToken = Common.getInstance().getDataProcessor("v1").createAccessToken("Viewer");
+                    String accessToken = Common.getInstance().getDataProcessor("v1").createAccessToken();
 
                     final JSONObject o = new JSONObject();
                     o.put("version", SERVER_BUILD);
@@ -105,12 +106,12 @@ public class AdminServletHandler extends AbstractServletHandler {
                     HtmlGenerator html = new HtmlGenerator();
                     html.getHead().add(TITLE).with("Admin");
 
-                    html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/4.6.2/firebase.js");
+                    html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/" + FIREBASE_JAVASCRIPT_VERSION + "/firebase.js");
                     html.getHead().add(SCRIPT).with("data", o);
                     html.getHead().add(SCRIPT).with("firebase.initializeApp(data.firebase_config);");
                     html.getHead().add(SCRIPT).with(SRC, "/js/admin/Main.js");
 
-                    Utils.sendResult.call(requestWrapper, 200, Mime.TEXT_HTML, html.build().getBytes());
+                    requestWrapper.sendResult(200, Mime.TEXT_HTML, html.build().getBytes());
 
                 } catch (Exception e) {
                     e.printStackTrace();

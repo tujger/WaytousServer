@@ -7,16 +7,16 @@
  */
 
 function Main() {
-    var firebaseVersion = "4.6.2";
+//    var firebaseVersion = "4.6.2";
     var drawer;
     var layout;
     var actionbar;
 
     var holders = {};
     var holderFiles = [
-        "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js",
-        "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
-        "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js",
+//        "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js",
+//        "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
+//        "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js",
         "/js/helpers/Utils.js",
         "/js/helpers/Constants",
         "Home",
@@ -118,50 +118,49 @@ function Main() {
 
     function initialize() {
 
-        if(!firebase || !firebase.database || !firebase.auth) {
-            console.error("Failed firebase loading, trying again...");
-
-            var files = [];
-            if(!firebase) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js");
-            if(!firebase.database) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js");
-            if(!firebase.auth) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js");
-
-            var loaded = 0;
-            var failed = false;
-            for(var i in files) {
-                var file = files[i];
-                u.require(file).then(function() {
-                    if(failed) return;
-                    loaded++;
-                    //progress.innerHTML = Math.ceil(loaded / files.length * 100) + "%";
-                    if(loaded === u.keys(files).length) {
-                        initialize();
-                    }
-                }).catch(function(){
-                    u.dialog({
-                        title: "Alert",
-                        items: [
-                            { type:HTML.DIV, innerHTML: "Error loading service."}
-                        ],
-                        positive: {
-                            label: "Reload",
-                            onclick: function(){
-                                window.location = window.location.href;
-                            }
-                        }
-                    }).open();
-                });
-            }
-
-            return;
-        }
+//        if(!firebase || !firebase.database || !firebase.auth) {
+//            console.error("Failed firebase loading, trying again...");
+//
+//            var files = [];
+//            if(!firebase) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js");
+//            if(!firebase.database) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js");
+//            if(!firebase.auth) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js");
+//
+//            var loaded = 0;
+//            var failed = false;
+//            for(var i in files) {
+//                var file = files[i];
+//                u.require(file).then(function() {
+//                    if(failed) return;
+//                    loaded++;
+//                    //progress.innerHTML = Math.ceil(loaded / files.length * 100) + "%";
+//                    if(loaded === u.keys(files).length) {
+//                        initialize();
+//                    }
+//                }).catch(function(){
+//                    u.dialog({
+//                        title: "Alert",
+//                        items: [
+//                            { type:HTML.DIV, innerHTML: "Error loading service."}
+//                        ],
+//                        positive: {
+//                            label: "Reload",
+//                            onclick: function(){
+//                                window.location = window.location.href;
+//                            }
+//                        }
+//                    }).open();
+//                });
+//            }
+//
+//            return;
+//        }
 
         try {
-            firebase.initializeApp(data.firebase_config);
+//            firebase.initializeApp(data.firebase_config);
             database = firebase.database();
         } catch(e) {
             console.error(e);
-            resign(resume);
         }
 
         resign(resume);

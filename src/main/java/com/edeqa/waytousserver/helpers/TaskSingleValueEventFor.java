@@ -33,6 +33,7 @@ public class TaskSingleValueEventFor<T> {
     private DatabaseReference ref;
     private boolean firebaseRest = false;
     private String customToken;
+    private String accessToken;
 
     private Runnable1<T> onCompleteListener;
     private Runnable1<T> onSuccessListener;
@@ -129,46 +130,14 @@ public class TaskSingleValueEventFor<T> {
     }
 
     private void restRequestWithTokenUpdate() {
-
-        try {
-            GoogleCredential googleCred = GoogleCredential.fromStream(new FileInputStream(OPTIONS.getFirebasePrivateKeyFile()));
-            GoogleCredential scoped = googleCred.createScoped(
-                    Arrays.asList(
-                            "https://www.googleapis.com/auth/firebase.database",
-                            "https://www.googleapis.com/auth/userinfo.email"
-                    )
-            );
-            scoped.refreshToken();
-            customToken = scoped.getAccessToken();
-            restRequest();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        /*HashMap<String, Object> additionalClaims = new HashMap<String, Object>();
-        additionalClaims.put("Administrator", true);
-        FirebaseAuth.getInstance().createCustomToken("Administrator", additionalClaims)
-                .addOnSuccessListener(new OnSuccessListener<String>() {
-                    @Override
-                    public void onSuccess(String customToken) {
-                        // Send token back to client
-                        Common.log(LOG, "--debug-- init003:"+customToken);
-                        restRequest();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Common.err(LOG, "--debug-- init004:"+e);
-                        onCompleteListener.call(null);
-                        e.printStackTrace();
-                    }
-                });*/
+        customToken = this.accessToken;
+        restRequest();
     }
 
     private void restRequest() {
         try {
-            String url = "" + ref.getDatabase().getReference() + ref.getPath() + ".json?shallow=true&print=pretty&access_token=" + customToken;
-            Common.log(LOG, "restRequest:"+url);
+            String url = "" + ref.getDatabase().getReference() + ref.getPath() + ".json?shallow=true&access_token=" + customToken;
+            Common.log(LOG, "restRequest:" + url);
             String res = Misc.getUrl(url, "UTF-8");
             if(res == null || res.length() == 0 || res.startsWith("null")) {
                 return;
@@ -191,8 +160,9 @@ public class TaskSingleValueEventFor<T> {
         return firebaseRest;
     }
 
-    public TaskSingleValueEventFor<T> setFirebaseRest(boolean firebaseRest) {
-        this.firebaseRest = firebaseRest;
+    public TaskSingleValueEventFor<T> setFirebaseRest(String accessToken) {
+        this.firebaseRest = true;
+        this.customToken = accessToken;
         return this;
     }
 }

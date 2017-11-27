@@ -38,7 +38,6 @@ public class MyUser {
     public long changed;
     public int color;
     public int number;
-//    private ArrayList<MyPosition> positions;
     transient private MyPosition position;
     private String uid;
     private String control;
@@ -53,10 +52,8 @@ public class MyUser {
         this.uid = uid;
         created = new Date().getTime();
         setChanged();
-//        positions = new ArrayList<MyPosition>();
 
         newControl();
-//        System.out.println("USER CONTROL:" + control);
         calculateHash();
     }
 
@@ -106,11 +103,6 @@ public class MyUser {
         return connection.getRemoteSocketAddress().toString();
     }
 
-//    @Transient
-//    public WebSocket getConnection() {
-//        return connection;
-//    }
-
     public void setConnection(DataProcessorConnection connection) {
         this.connection = connection;
     }
@@ -136,7 +128,7 @@ public class MyUser {
         res += ", created:" + getCreated() + "/" + new Date(getCreated()).toString();
         res += ", changed:" + getChanged() + "/" + new Date(getChanged()).toString();
         res += ", control:" + getControl();
-        if (hasName()) res += ", name:" + name;
+        if (name != null) res += ", name:" + name;
         if (model != null) res += ", model:" + model;
         if (manufacturer != null) res += ", manufacturer:" + manufacturer;
         if (os != null) res += ", os:" + os;
@@ -151,10 +143,6 @@ public class MyUser {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean hasName() {
-        return name != null;
     }
 
     public void send(JSONObject o) {
@@ -184,7 +172,6 @@ public class MyUser {
             if (message.has(USER_PROVIDER)) pos.provider = message.getString(USER_PROVIDER);
             pos.timestamp = timestamp;
 
-//            positions.add(pos);
             setPosition(pos);
             setChanged();
         }
@@ -197,12 +184,6 @@ public class MyUser {
     @Transient
     public MyPosition getPosition() {
         return position;
-/*
-        if (positions.size() > 0) {
-            return positions.get(positions.size() - 1);
-        }
-        return new MyPosition();
-*/
     }
 
     public void setPosition(MyPosition position) {
@@ -236,14 +217,6 @@ public class MyUser {
     public void setChanged() {
         changed = new Date().getTime();
     }
-
-//    public String getUserId() {
-//        return userId;
-//    }
-//
-//    public void setUserId(String userId) {
-//        this.userId = userId;
-//    }
 
     public SignProvider getSignProvider() {
         return signProvider;
@@ -287,11 +260,5 @@ public class MyUser {
         }
 
     }
-
-/*
-    public ArrayList<MyPosition> getPositions() {
-        return positions;
-    }
-*/
 
 }

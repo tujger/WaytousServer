@@ -23,7 +23,6 @@ function Main() {
         "/js/index/SupportHolder",
         "/js/index/FeedbackHolder",
         "/js/index/ContactHolder",
-//        "/js/index/BlablaHolder",
         "/js/index/AboutHolder"
     ];
     var type = "home";

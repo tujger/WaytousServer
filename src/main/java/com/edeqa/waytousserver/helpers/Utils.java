@@ -20,7 +20,6 @@ import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 
 public class Utils {
 
-
     public static int selectColor(int number) {
         Random randomGenerator = new Random();
         int red = randomGenerator.nextInt(256);
@@ -42,7 +41,7 @@ public class Utils {
     }
 
 
-    public static final Runnable2<RequestWrapper,JSONObject> sendResultJson = new Runnable2<RequestWrapper,JSONObject>() {
+    /*public static final Runnable2<RequestWrapper,JSONObject> sendResultJson = new Runnable2<RequestWrapper,JSONObject>() {
         @Override
         public void call(RequestWrapper requestWrapper, JSONObject json) {
             sendResult.call(requestWrapper, 200, Mime.APPLICATION_JSON, json.toString().getBytes());
@@ -73,6 +72,6 @@ public class Utils {
                 e.printStackTrace();
             }
         }
-    };
+    };*/
 
 }

@@ -14,6 +14,7 @@ import static com.edeqa.helpers.HtmlGenerator.SCRIPT;
 import static com.edeqa.helpers.HtmlGenerator.SRC;
 import static com.edeqa.helpers.HtmlGenerator.TITLE;
 import static com.edeqa.waytous.Constants.OPTIONS;
+import static com.edeqa.waytousserver.helpers.Common.FIREBASE_JAVASCRIPT_VERSION;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 
 
@@ -64,7 +65,7 @@ public class AdminMainHolder implements PageHolder {
         o.put("WSS_PORT", OPTIONS.getWssPortDedicated());
         o.put("firebase_config", OPTIONS.getFirebaseConfig());
 
-        html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/4.6.2/firebase.js");
+        html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/" + FIREBASE_JAVASCRIPT_VERSION + "/firebase.js");
         html.getHead().add(SCRIPT).with("data", o);
         html.getHead().add(SCRIPT).with("firebase.initializeApp(data.firebase_config);");
 

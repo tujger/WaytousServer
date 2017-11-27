@@ -24,6 +24,7 @@ import static com.edeqa.waytous.Constants.OPTIONS;
 public class Common {
 
     public final static int SERVER_BUILD = 50;
+    public final static String FIREBASE_JAVASCRIPT_VERSION = "4.6.2";
 
 
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z", Locale.getDefault());

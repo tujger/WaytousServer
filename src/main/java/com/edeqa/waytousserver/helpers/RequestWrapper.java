@@ -1,9 +1,15 @@
 package com.edeqa.waytousserver.helpers;
 
+import com.edeqa.helpers.Mime;
 import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Runnable2;
+import com.edeqa.helpers.interfaces.Runnable3;
+import com.edeqa.helpers.interfaces.Runnable4;
 import com.google.common.net.HttpHeaders;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+
+import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -24,6 +30,8 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 
 /**
  * Created 6/9/2017.
@@ -252,6 +260,30 @@ public class RequestWrapper  {
             return httpExchange.getRequestMethod();
         }
         return null;
+    }
+
+    public void sendResult(JSONObject json) {
+        sendResult(200, Mime.APPLICATION_JSON, json.toString().getBytes());
+    }
+
+    public void sendError(Integer code, JSONObject json) {
+        sendResult(code, Mime.APPLICATION_JSON, json.toString().getBytes());
+    }
+
+    public void sendResult(Integer code, String contentType, byte[] bytes) {
+        try {
+            addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+            if(contentType != null) setHeader(HttpHeaders.CONTENT_TYPE, contentType);
+            setHeader(HttpHeaders.SERVER, "Waytous/" + SERVER_BUILD);
+            setHeader(HttpHeaders.DATE, new Date().toString());
+            sendResponseHeaders(code, bytes.length);
+
+            OutputStream os = getResponseBody();
+            os.write(bytes);
+            os.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getMethod() {

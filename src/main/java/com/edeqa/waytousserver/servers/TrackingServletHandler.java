@@ -22,6 +22,7 @@ import static com.edeqa.helpers.HtmlGenerator.SCRIPT;
 import static com.edeqa.helpers.HtmlGenerator.SRC;
 import static com.edeqa.helpers.HtmlGenerator.TITLE;
 import static com.edeqa.waytous.Constants.OPTIONS;
+import static com.edeqa.waytousserver.helpers.Common.FIREBASE_JAVASCRIPT_VERSION;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 
 
@@ -50,7 +51,7 @@ public class TrackingServletHandler extends AbstractServletHandler {
 
         URI uri = requestWrapper.getRequestURI();
 
-        String host = null;
+        String host = null, referer = null;
         try {
             host = requestWrapper.getRequestHeader(HttpHeaders.HOST).get(0);
             host = host.split(":")[0];
@@ -58,8 +59,13 @@ public class TrackingServletHandler extends AbstractServletHandler {
             e.printStackTrace();
             host = InetAddress.getLocalHost().getHostAddress();
         }
+        try {
+            referer = requestWrapper.getRequestHeaders().get(HttpHeaders.REFERER).get(0);
+            if(referer.contains(host)) referer = null;
+        } catch(Exception e){
+        }
 
-        Common.log("Tracking",requestWrapper.getRemoteAddress(),host + uri.getPath() );
+        Common.log("Tracking",requestWrapper.getRemoteAddress(),host + uri.getPath() + (referer != null ? ", referer: " + referer : ""));
 
         ArrayList<String> parts = new ArrayList<>();
         parts.addAll(Arrays.asList(uri.getPath().split("/")));
@@ -120,12 +126,13 @@ public class TrackingServletHandler extends AbstractServletHandler {
         if(OPTIONS.isDebugMode()) o.put("is_debug_mode", true);
         o.put("google_analytics_tracking_id", OPTIONS.getGoogleAnalyticsTrackingId());
 
-        html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/4.6.2/firebase.js");
-        html.getHead().add(SCRIPT).with("data", o);
-        html.getHead().add(SCRIPT).with("firebase.initializeApp(data.firebase_config);");
+        html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/" + FIREBASE_JAVASCRIPT_VERSION + "/firebase.js").with("nonce", "waytous");
+        html.getHead().add(SCRIPT).with("var inline = 1;").with("nonce", "waytous");
+        html.getHead().add(SCRIPT).with("data", o).with("nonce", "waytous");
+        html.getHead().add(SCRIPT).with("firebase.initializeApp(data.firebase_config);").with("nonce", "waytous");
 
-        html.getHead().add(SCRIPT).with("(function checkVersion(){var l=localStorage;if(l){var w=\"waytous:version\";var d=data.version;var i=parseInt(l[w]||0);if(i<d){l[w]=d;console.warn(\"Forced reloading because of version \"+d+\" is newer than \"+i);window.location.reload(true);}}})();");
-        html.getHead().add(SCRIPT).with(SRC, "/js/tracking/Main.js").with("async",true).with("defer",true).with(ONLOAD, "(window.WTU = new Main()).start();");
+        html.getHead().add(SCRIPT).with("(function checkVersion(){var l=localStorage;if(l){var w=\"waytous:version\";var d=data.version;var i=parseInt(l[w]||0);if(i<d){l[w]=d;console.warn(\"Forced reloading because of version \"+d+\" is newer than \"+i);window.location.reload(true);}}})();").with("nonce", "waytous");
+        html.getHead().add(SCRIPT).with(SRC, "/js/tracking/Main.js").with("async",true).with("defer",true).with(ONLOAD, "(window.WTU = new Main()).start();").with("nonce", "waytous");
 
 
         // FIXME - need to check by https://observatory.mozilla.org/analyze.html?host=waytous.net
@@ -134,11 +141,13 @@ public class TrackingServletHandler extends AbstractServletHandler {
         requestWrapper.setHeader(HttpHeaders.X_FRAME_OPTIONS, "SAMEORIGIN");
         requestWrapper.setHeader(HttpHeaders.X_XSS_PROTECTION, "1; mode=block");
         requestWrapper.setHeader(HttpHeaders.STRICT_TRANSPORT_SECURITY, "max-age=63072000; includeSubDomains; preload");
+//        requestWrapper.setHeader(HttpHeaders.CONTENT_SECURITY_POLICY, "script-src 'unsafe-inline' 'unsafe-eval' https: 'nonce-waytous' 'strict-dynamic'");
+//        requestWrapper.setHeader(HttpHeaders.CONTENT_SECURITY_POLICY, "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://www.googletagmanager.com https://cdnjs.cloudflare.com https://www.google-analytics.com https://connect.facebook.net https://platform.twitter.com https://maps.googleapis.com https://apis.google.com");
         requestWrapper.setHeader(HttpHeaders.VARY, "Accept-Encoding");
         String etag = "W/1976-" + uri.getPath().hashCode();
         requestWrapper.setHeader(HttpHeaders.ETAG, etag);
 
-        Utils.sendResult.call(requestWrapper, 200, Mime.TEXT_HTML, html.build().getBytes());
+        requestWrapper.sendResult(200, Mime.TEXT_HTML, html.build().getBytes());
 
     }
 

@@ -42,8 +42,6 @@ abstract public class AbstractDataProcessor {
 
     public abstract void validateAccounts();
 
-    public abstract String createAccessToken(String viewer);
-
     public enum GroupAction {
         GROUP_CREATED_PERSISTENT(Firebase.STAT_GROUPS_CREATED_PERSISTENT), GROUP_CREATED_TEMPORARY(Firebase.STAT_GROUPS_CREATED_TEMPORARY), GROUP_DELETED(Firebase.STAT_GROUPS_DELETED), GROUP_REJECTED(Firebase.STAT_GROUPS_REJECTED);
         private String id;
@@ -212,6 +210,8 @@ abstract public class AbstractDataProcessor {
     }
 
     public abstract String createCustomToken(String id);
+
+    public abstract String createAccessToken();
 
     public abstract void putStaticticsGroup(String groupId, boolean isPermanent, GroupAction action, String errorMessage);
 
