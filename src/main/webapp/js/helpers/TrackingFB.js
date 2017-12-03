@@ -69,7 +69,7 @@ function TrackingFB(main) {
         refs = [];
 
         if(refRoot) {
-            refAccounts.child(DATABASE.PUBLIC).child(main.me.number).update(updates).then(function () {
+            refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).update(updates).then(function () {
                 refRoot.database.goOffline();
 
                 trackingListener.onStop();
