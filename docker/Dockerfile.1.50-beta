@@ -8,4 +8,4 @@ COPY conf/debug-beta.jks /home/waytous/conf/debug-beta.jks
 COPY build/libs/WaytousServer-1.50.war /home/waytous/WaytousServer.war
 RUN ["unzip", "/home/waytous/WaytousServer.war", "-d", "/home/waytous"]
 ADD docker/run.sh /home/waytous/run.sh
-ENTRYPOINT [ "/home/waytous/run.sh" ]
+CMD [ "/home/waytous/run.sh" ]
