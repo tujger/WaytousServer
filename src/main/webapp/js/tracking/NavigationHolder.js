@@ -454,7 +454,7 @@ function NavigationHolder(main) {
                     }
                 ]
             }, main.right);
-            modeButtons.addEventListener("mouseover", showModeButtons);
+            modeButtons.addEventListener("mouseover", showModeButtons, {passive: true});
 
             modeDialog = u.dialog({
                 title: u.lang.navigation_options,

@@ -17,6 +17,7 @@ import java.util.Arrays;
 
 import javax.servlet.ServletException;
 
+import static com.edeqa.helpers.HtmlGenerator.NOSCRIPT;
 import static com.edeqa.helpers.HtmlGenerator.ONLOAD;
 import static com.edeqa.helpers.HtmlGenerator.SCRIPT;
 import static com.edeqa.helpers.HtmlGenerator.SRC;
@@ -133,6 +134,8 @@ public class TrackingServletHandler extends AbstractServletHandler {
 
         html.getHead().add(SCRIPT).with("(function checkVersion(){var l=localStorage;if(l){var w=\"waytous:version\";var d=data.version;var i=parseInt(l[w]||0);if(i<d){l[w]=d;console.warn(\"Forced reloading because of version \"+d+\" is newer than \"+i);window.location.reload(true);}}})();").with("nonce", "waytous");
         html.getHead().add(SCRIPT).with(SRC, "/js/tracking/Main.js").with("async",true).with("defer",true).with(ONLOAD, "(window.WTU = new Main()).start();").with("nonce", "waytous");
+
+        Common.addNoscript(html);
 
 
         // FIXME - need to check by https://observatory.mozilla.org/analyze.html?host=waytous.net

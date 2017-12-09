@@ -479,15 +479,15 @@ function Edequate(options) {
                             } else if (typeof properties[x] === "string") {
                                 properties[x] = properties[x].replace(/\$\{(\w+)\}/g, function (x, y) {
                                     return Lang[y] ? Lang[y].outerHTML : y
-                                })
+                                });
                                 el[x] = properties[x];
                             } else {
                                 el[x] = properties[x];
                             }
                         }
-                    } else if(x == "variable") {
+                    } else if(x === "variable") {
                         create.variables[properties[x]] = el;
-                    } else if(x == "childName") {
+                    } else if(x === "childName") {
                         if(appendTo ) {
                             if(appendTo instanceof HTMLElement) {
                                 if(appendTo.hasOwnProperty(properties[x])) {
@@ -500,7 +500,7 @@ function Edequate(options) {
                         } else {
                             console.error("Property " + properties[x] + " can not be defined for null.")
                         }
-                    } else if(x == "content" && properties[x].constructor === Array) {
+                    } else if(x === "content" && properties[x].constructor === Array) {
                         for(var i = 0; i < properties[x].length; i++) {
                             el.appendChild(properties[x][i]);
                         }
@@ -528,11 +528,11 @@ function Edequate(options) {
                         el.longclickFunction = properties[x];
                         mousedown = function(evt){
                             clearTimeout(el.longTask);
-                            el.addEventListener("mouseup", mouseup);
-                            el.addEventListener("touchend", mouseup);
+                            el.addEventListener("mouseup", mouseup, {passive: true});
+                            el.addEventListener("touchend", mouseup, {passive: true});
                             el.longTask = setTimeout(function(){
-                                el.removeEventListener("mouseup", mouseup);
-                                el.removeEventListener("touchend", mouseup);
+                                el.removeEventListener("mouseup", mouseup, {passive: true});
+                                el.removeEventListener("touchend", mouseup, {passive: true});
                                 el.longTask = -1;
                                 el.longclickFunction(evt);
                             }, 500);
@@ -540,12 +540,12 @@ function Edequate(options) {
                         mouseup = function(){
                             clearTimeout(el.longTask);
                         };
-                        el.addEventListener("mousedown", mousedown, false);
-                        el.addEventListener("touchstart", mousedown, false);
+                        el.addEventListener("mousedown", mousedown, {passive: true});
+                        el.addEventListener("touchstart", mousedown, {passive: true});
                         el.addEventListener("contextmenu", function(evt){
                             evt.preventDefault();
                             evt.stopPropagation();
-                        }, false);
+                        }, {passive: true});
                     } else if(x.toLowerCase() === "onclick") {
                         el.clickFunction = properties[x];
                         if(el.clickFunction) {
@@ -553,14 +553,14 @@ function Edequate(options) {
                                 if(el.longTask && el.longTask < 0) return;
                                 el.clickFunction(evt);
                             };
-                            el.addEventListener("click", call, false);
-                            el.addEventListener("touch", call, false);
+                            el.addEventListener("click", call, {passive: true});
+                            el.addEventListener("touch", call, {passive: true});
                         }
                     } else if(x.indexOf("on") == 0) {
                         var action = x.substr(2).toLowerCase();
                         var call = properties[x];
                         if(call) {
-                            el.addEventListener(action, call, false);
+                            el.addEventListener(action, call, {passive: true});
                         }
                     } else {
                         var propertyName = normalizeName(x), value = properties[x];
@@ -1125,7 +1125,7 @@ function Edequate(options) {
 
 //            window.history.pushState(null, document.title, location.href);
             if(options.title && options.title.button == defaultCloseButton) {
-                window.addEventListener("popstate", backButtonAction);
+                window.addEventListener("popstate", backButtonAction, {passive: true});
             }
             return dialog;
         };
@@ -1167,7 +1167,7 @@ function Edequate(options) {
                     options.negative.onclick.call(dialog,dialog.items);
                 }
             }
-        });
+        }, {passive: true});
 
         options = options || {};
 
@@ -1221,8 +1221,8 @@ function Edequate(options) {
                             dialog.style.bottom = "auto";
                         }
                     }
-                    window.addEventListener(HTML.MOUSEUP, mouseup);
-                    window.addEventListener(HTML.MOUSEMOVE, mousemove);
+                    window.addEventListener(HTML.MOUSEUP, mouseup, {passive: true});
+                    window.addEventListener(HTML.MOUSEMOVE, mousemove, {passive: true});
                     e.preventDefault();
                 },
                 ondblclick: function(e) {
@@ -1409,7 +1409,7 @@ function Edequate(options) {
                 };
                 return dialog.positive;
             }
-            item.tabindex = 98;
+            item.tabindex = -1;
             item.className = "dialog-button dialog-button-positive" + optionalClassName(item.className);
             item._onclick = item.onclick;
             item.onclick = function(event){
@@ -1445,7 +1445,7 @@ function Edequate(options) {
                 };
                 return dialog.neutral;
             }
-            item.tabindex = 100;
+            item.tabindex = -1;
             item.className = "dialog-button dialog-button-neutral" + optionalClassName(item.className);
             item._onclick = item.onclick;
             item.onclick = function(event){
@@ -1479,7 +1479,7 @@ function Edequate(options) {
                 dialog.negative.hide();
                 return dialog.negative;
             }
-            item.tabindex = 99;
+            item.tabindex = -1;
             item.className = "dialog-button dialog-button-negative" + optionalClassName(item.className);
             item._onclick = item.onclick;
             item.onclick = function(event){
@@ -1532,8 +1532,8 @@ function Edequate(options) {
                             dialog.style.height = (position.height + deltaY)+"px";
                         }
                     }
-                    window.addEventListener(HTML.MOUSEUP, mouseup);
-                    window.addEventListener(HTML.MOUSEMOVE, mousemove);
+                    window.addEventListener(HTML.MOUSEUP, mouseup, {passive: true});
+                    window.addEventListener(HTML.MOUSEMOVE, mousemove, {passive: true});
                     e.preventDefault();
                 }
             }, dialog);
@@ -1873,8 +1873,8 @@ function Edequate(options) {
                     e.stopPropagation();
                 }
             };
-            window.addEventListener("touchend", endHolder);
-            window.addEventListener("touchmove", moveHolder);
+            window.addEventListener("touchend", endHolder, {passive: true});
+            window.addEventListener("touchmove", moveHolder, {passive: true});
 
             layout.style.transition = "none";
         };
@@ -1930,7 +1930,7 @@ function Edequate(options) {
                 if(options.ontogglesize) options.ontogglesize();
                 delete layout.resizeTask;
             }, 500);
-        });
+        }, {passive: true});
 
         var swipeRightHolder = function(e){
 
@@ -1968,8 +1968,8 @@ function Edequate(options) {
                     layout.style.left = delta + "px";
                     e.stopPropagation();
             };
-            window.addEventListener("touchend", endHolder);
-            window.addEventListener("touchmove", moveHolder);
+            window.addEventListener("touchend", endHolder, {passive: true});
+            window.addEventListener("touchmove", moveHolder, {passive: true});
 
         };
         //var layoutSwipeCatcher = create(HTML.DIV, {
@@ -2027,7 +2027,7 @@ function Edequate(options) {
                         this.lastChild.previousSibling.show();
                         save("drawer:section:collapsed:"+this.parentNode.order, true);
                     }
-                });
+                }, {passive: true});
                 layout.sections[i].firstChild.place({ className: "icon drawer-menu-item drawer-menu-item-expand notranslate" + (sectionCollapsed ? "" : " hidden"), innerHTML: "expand_more"});
                 layout.sections[i].firstChild.place({ className: "icon drawer-menu-item drawer-menu-item-collapse notranslate" + (sectionCollapsed ? " hidden" : ""), innerHTML: "expand_less"});
             }

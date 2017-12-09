@@ -245,7 +245,7 @@ function MessageHolder(main) {
                                 var sample = u.create(HTML.AUDIO, {className:"hidden", preload:true, src:"/sounds/"+this.value}, main.right);
                                 sample.addEventListener("load", function() {
                                     sample.play();
-                                }, true);
+                                }, {passive: true});
                                 sample.play();
                             },
                             onshow: function(e) {

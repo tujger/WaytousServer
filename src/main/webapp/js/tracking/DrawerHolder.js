@@ -71,7 +71,7 @@ function DrawerHolder(main) {
             },
             footer: {
                 className: "drawer-footer-label",
-                content: u.create(HTML.DIV).place(HTML.SPAN, {className: "drawer-footer-link", innerHTML: "${APP_NAME} &copy;2017 Edeqa", onclick: function(e){
+                content: u.create(HTML.DIV).place(HTML.SPAN, {className: "drawer-footer-link", innerHTML: "${APP_NAME} &copy;2017-18 Edeqa", onclick: function(e){
                     dialogAbout.open();
                     e.preventDefault();
                     e.stopPropagation();

@@ -37,7 +37,7 @@ function Logs() {
             if(e && e.srcElement === table && task && task.readyState === task.OPEN) {
                 task.close();
             }
-        });
+        }, {passive: true});
 
     };
 

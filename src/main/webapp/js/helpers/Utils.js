@@ -504,14 +504,10 @@ function Utils(main) {
                 { content: [
                     u.create(HTML.IMG, {src: "/images/edeqa-logo.svg", className: "about-dialog-edeqa-logo"}),
                     u.create(HTML.DIV)
-                        .place(HTML.DIV, { innerHTML: "Copyright &copy;2017 Edeqa" })
+                        .place(HTML.DIV, { innerHTML: "Copyright &copy;2017-18 Edeqa" })
                         .place(HTML.A, {className: "about-dialog-edeqa-link", href: "http://www.edeqa.com", target: "_blank", rel:"noopener", innerHTML: "http://www.edeqa.com" })
                 ]
                 },
-                /*
-                               { innerHTML: "Copyright &copy;2017 Edeqa" },
-                               { type: HTML.A, className: "about-dialog-edeqa-link", href: "http://www.edeqa.com", target: "_blank", rel:"noopener", innerHTML: "http://www.edeqa.com" },
-                */
                 { enclosed: true, label: u.lang.legal_information || "Legal information", body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." },
             ],
             positive: {

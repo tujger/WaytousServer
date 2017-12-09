@@ -73,7 +73,7 @@ function StreetViewHolder(main) {
                 },
                 className: "streetview-dialog",
                 itemsClassName: "streetview-dialog-items",
-                tabindex: 1,
+                tabindex: -1,
                 items: [
                     { type: HTML.DIV, className: "streetview-dialog-placeholder", innerHTML: u.lang.loading },
                     { type: HTML.DIV, className: "streetview-dialog-view hidden", id: "streetview" }

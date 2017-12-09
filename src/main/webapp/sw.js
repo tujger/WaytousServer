@@ -7,6 +7,7 @@
  */
 var CACHE_NAME = "${APP_NAME}-v${SERVER_BUILD}";
 var urlsToCache = [
+    "/group/",
     "/css/tracking.css",
     "/css/edequate.css",
     "/images/logo.png",

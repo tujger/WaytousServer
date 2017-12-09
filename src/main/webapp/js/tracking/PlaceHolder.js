@@ -88,7 +88,7 @@ function PlaceHolder(main) {
                             u.saveForContext("place:"+last, o);
                             main.fire(EVENTS.SHOW_PLACE, o);
                         });
-                        searchDialog.items[0].addEventListener("blur", function(){ searchDialog.close() });
+                        searchDialog.items[0].addEventListener("blur", function(){ searchDialog.close() }, {passive: true});
                     }
                     searchDialog.open();
                 });

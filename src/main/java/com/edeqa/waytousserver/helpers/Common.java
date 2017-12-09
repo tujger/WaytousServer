@@ -1,5 +1,7 @@
 package com.edeqa.waytousserver.helpers;
 
+import com.edeqa.helpers.HtmlGenerator;
+import com.edeqa.helpers.Mime;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.edeqa.waytousserver.servers.DataProcessorFirebaseV1;
 
@@ -14,6 +16,20 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.edeqa.helpers.HtmlGenerator.A;
+import static com.edeqa.helpers.HtmlGenerator.CLASS;
+import static com.edeqa.helpers.HtmlGenerator.DIV;
+import static com.edeqa.helpers.HtmlGenerator.HEIGHT;
+import static com.edeqa.helpers.HtmlGenerator.HREF;
+import static com.edeqa.helpers.HtmlGenerator.IMG;
+import static com.edeqa.helpers.HtmlGenerator.LINK;
+import static com.edeqa.helpers.HtmlGenerator.NOSCRIPT;
+import static com.edeqa.helpers.HtmlGenerator.REL;
+import static com.edeqa.helpers.HtmlGenerator.SRC;
+import static com.edeqa.helpers.HtmlGenerator.STYLE;
+import static com.edeqa.helpers.HtmlGenerator.STYLESHEET;
+import static com.edeqa.helpers.HtmlGenerator.TYPE;
+import static com.edeqa.helpers.HtmlGenerator.WIDTH;
 import static com.edeqa.waytous.Constants.OPTIONS;
 
 
@@ -23,8 +39,8 @@ import static com.edeqa.waytous.Constants.OPTIONS;
 
 public class Common {
 
-    public final static int SERVER_BUILD = 50;
-    public final static String FIREBASE_JAVASCRIPT_VERSION = "4.6.2";
+    public final static int SERVER_BUILD = 51;
+    public final static String FIREBASE_JAVASCRIPT_VERSION = "4.6.2"; // https://firebase.google.com/docs/web/setup
 
 
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z", Locale.getDefault());
@@ -115,5 +131,17 @@ public class Common {
         this.dataProcessor.put(DataProcessorFirebaseV1.VERSION, dataProcessor);
     }
 
+    public static void addNoscript(HtmlGenerator html) {
+        HtmlGenerator.Tag noscript = html.getBody().add(NOSCRIPT);
+
+        noscript.add(LINK).with(TYPE, Mime.TEXT_CSS).with(REL, STYLESHEET).with(HREF, "/css/noscript.css");
+
+        HtmlGenerator.Tag header = noscript.add(DIV).with(CLASS, "header");
+        header.add(IMG).with(SRC, "/images/logo.svg").with(WIDTH, 24).with(HEIGHT, 24);
+        header.with(" Waytous");
+
+        noscript.add(DIV).with(CLASS, "text").with("This service requires to allow Javascript. Please enable Javascript in your browser or use other browser that supports Javascript and try again.");
+        noscript.add(DIV).with(CLASS, "copyright").with("Waytous &copy;2017-18 ").add(A).with(CLASS, "link").with(HREF, "http://www.edeqa.com").with("Edeqa");
+    }
 
 }
