@@ -63,13 +63,13 @@ dependencies {
         compile 'com.google.appengine:appengine-api-1.0-sdk:1.9.59'
         compile 'com.google.firebase:firebase-server-sdk:3.0.3'
         compile 'com.google.guava:guava:23.5-jre'
-        compile 'javax.servlet:javax.servlet-api:4.0.0'
+        compile 'javax.servlet:javax.servlet-api:3.1.0'
         compile 'org.apache.httpcomponents:httpcomponents-client:4.5.4'
     }
 
 // server rows
     compile 'com.google.firebase:firebase-admin:5.5.0'
-    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0'
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 //    testCompile group: 'junit', name: 'junit', version: '4.12'

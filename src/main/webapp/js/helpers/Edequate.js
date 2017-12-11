@@ -1227,7 +1227,7 @@ function Edequate(options) {
                     }
                     window.addEventListener(HTML.MOUSEUP, mouseup, {passive: true});
                     window.addEventListener(HTML.MOUSEMOVE, mousemove, {passive: true});
-                    e.preventDefault();
+                    // e.preventDefault();
                 },
                 ondblclick: function(e) {
                     var id = options.id || (options.title.label && (options.title.label.dataset.lang ? options.title.label.dataset.lang : options.title.label));
