@@ -96,7 +96,7 @@ function Edequate(options) {
         INCORRECT_JSON: 4,
         ERROR_LOADING: 8,
         ERROR_SENDING_REQUEST: 16,
-        INVALID_MODULE: 32,
+        INVALID_MODULE: 32
     };
 
     var DRAWER = {
@@ -118,7 +118,7 @@ function Edequate(options) {
         SCALE_X_RIGHT: "scale-x-right",
         SCALE_Y: "scale-y",
         SCALE_Y_TOP: "scale-y-top",
-        SCALE_Y_BOTTOM: "scale-y-bottom",
+        SCALE_Y_BOTTOM: "scale-y-bottom"
     };
 
     URL = function(link) {
@@ -362,9 +362,9 @@ function Edequate(options) {
                 for(var i = 0; i < arguments.length; i++) {
                     args.push(arguments[i]);
                 }
-                return this.replace(/%[\d\.]*[sdf]/g, function(pattern){
+                return this.replace(/%[\d.]*[sdf]/g, function(pattern){
                     var value = args.shift();
-                    var tokens = pattern.match(/^%(0)?([\d\.]*)(.)$/);
+                    var tokens = pattern.match(/^%(0)?([\d.]*)(.)$/);
                     switch(tokens[3]) {
                         case "d":
                             var length = +tokens[2];
@@ -423,7 +423,7 @@ function Edequate(options) {
             var ps = name.split(/([A-Z])/);
             name = ps[0];
             for(var i = 1; i < ps.length; i++) {
-                if(i % 2 != 0) name += "-";
+                if(i % 2 !== 0) name += "-";
                 name += ps[i].toLowerCase();
             }
         }
@@ -477,7 +477,7 @@ function Edequate(options) {
                             if (properties[x] instanceof HTMLElement) {
                                 el.appendChild(properties[x]);
                             } else if (typeof properties[x] === "string") {
-                                properties[x] = properties[x].replace(/\$\{(\w+)\}/g, function (x, y) {
+                                properties[x] = properties[x].replace(/\${(\w+)}/g, function (x, y) {
                                     return Lang[y] ? Lang[y].outerHTML : y
                                 });
                                 el[x] = properties[x];
@@ -556,11 +556,15 @@ function Edequate(options) {
                             el.addEventListener("click", call, {passive: true});
                             el.addEventListener("touch", call, {passive: true});
                         }
-                    } else if(x.indexOf("on") == 0) {
+                    } else if(x.indexOf("on") === 0) {
                         var action = x.substr(2).toLowerCase();
                         var call = properties[x];
                         if(call) {
                             el.addEventListener(action, call, {passive: true});
+                        }
+                    } else if(x === "async" || x === "defer") {
+                        if(!!properties[x]) {
+                            el.setAttribute(x, "");
                         }
                     } else {
                         var propertyName = normalizeName(x), value = properties[x];
@@ -605,16 +609,16 @@ function Edequate(options) {
     create.variables = {};
 
     function clear(element) {
-        if(!element) return "";
+        if(element === null || element === undefined) return "";
         if(element instanceof HTMLElement) {
             for(var i = element.childNodes.length-1; i>=0; i--) {
                 element.removeChild(element.children[i]);
             }
-        } else if(typeof element == "boolean") {
+        } else if(typeof element === "boolean") {
             return element;
-        } else if(typeof element == "number") {
+        } else if(typeof element === "number") {
             return element;
-        } else if(typeof element == "string") {
+        } else if(typeof element === "string") {
             element = element.replace(/<.*?>/g, "");
             return element;
         } else if(element instanceof Array || element instanceof Object) {
@@ -661,8 +665,8 @@ function Edequate(options) {
             origin:origin,
             module:name,
             instance: needInstantiate ? onlyname : null,
-            async: "true",
-            defer: "true",
+            async: true,
+            defer: true,
             onload: function(e) {
                 var a;
                 if(needInstantiate) {
@@ -696,13 +700,13 @@ function Edequate(options) {
         return typeof value === "function" ? value.toString() : value;
     }
     function _parse(key, value) {
-        if (typeof value === "string" && /^function.*?\([\s\S]*?\)\s*\{[\s\S]*\}[\s\S]*$/.test(value)) {
+        if (typeof value === "string" && /^function.*?\([\s\S]*?\)\s*{[\s\S]*}[\s\S]*$/.test(value)) {
             var args = value
                     .replace(/\/\/.*$|\/\*[\s\S]*?\*\//mg, "") //strip comments
                     .match(/\([\s\S]*?\)/m)[0]                      //find argument list
                     .replace(/^\(|\)$/g, "")                    //remove parens
                     .match(/[^\s(),]+/g) || [],                //find arguments
-                body = value.replace(/\n/mg, "").match(/\{([\s\S]*)\}/)[1]          //extract body between curlies
+                body = value.replace(/\n/mg, "").match(/{([\s\S]*)}/)[1];          //extract body between curlies
             return Function.apply(0, args.concat(body));
         } else {
             return value;
@@ -928,7 +932,7 @@ function Edequate(options) {
                 div = create(HTML.DIV, {className:item.itemClassName, onclick: function(){this.lastChild.click();}});
 
                 if(item.label) {
-                    var labelOptions = {
+                    labelOptions = {
                         className:"dialog-item-label" + optionalClassName(item.labelClassName)
                     };
                     if(item.label.constructor === String) {
@@ -942,13 +946,13 @@ function Edequate(options) {
                     create(HTML.LABEL, labelOptions , div);
                 }
 
-                var type = HTML.INPUT;
+                type = HTML.INPUT;
                 if(item.type.toLowerCase() === HTML.TEXTAREA) type = HTML.TEXTAREA;
                 else if(item.type.toLowerCase() === HTML.BUTTON) type = HTML.BUTTON;
 
                 item.tabindex = i;
                 item.className = "dialog-item-input-"+item.type + optionalClassName(item.className);
-                if(item.onclick && item.type != HTML.BUTTON) {
+                if(item.onclick && item.type !== HTML.BUTTON) {
                     var a = item.onclick;
                     item.onclick = function(e) { this.focus(); a.call(this); e.stopPropagation(); };
                 } else if(item.onclick) {
@@ -1184,7 +1188,7 @@ function Edequate(options) {
                 options.title = {
                     label: options.title,
                     className: "",
-                    button: defaultCloseButton,
+                    button: defaultCloseButton
                 }
             } else {
                 options.title.className = optionalClassName(options.title.className);
@@ -1414,7 +1418,7 @@ function Edequate(options) {
             item._onclick = item.onclick;
             item.onclick = function(event){
                 if(item._onclick) item._onclick.call(dialog,dialog.items,event);
-                if(item.dismiss == undefined || item.dismiss) dialog.close();
+                if(item.dismiss === undefined || item.dismiss) dialog.close();
             };
             item.innerHTML = item.label;
 
@@ -1450,7 +1454,7 @@ function Edequate(options) {
             item._onclick = item.onclick;
             item.onclick = function(event){
                 if(item._onclick) item._onclick.call(dialog,dialog.items,event);
-                if(item.dismiss == undefined || item.dismiss) dialog.close();
+                if(item.dismiss === undefined || item.dismiss) dialog.close();
             };
             item.innerHTML = item.label;
 
@@ -1484,7 +1488,7 @@ function Edequate(options) {
             item._onclick = item.onclick;
             item.onclick = function(event){
                 if(item._onclick) item._onclick.call(dialog,dialog.items,event);
-                if(item.dismiss == undefined || item.dismiss) dialog.close();
+                if(item.dismiss === undefined || item.dismiss) dialog.close();
             };
             item.innerHTML = item.label;
 
@@ -1629,7 +1633,7 @@ function Edequate(options) {
     Lang.$arguments = Lang.$arguments || {};
 
     Lang.overrideResources = function(options) {
-        if(options.locale == "en") {
+        if(options.locale === "en") {
             Lang._overrideResources(options);
         } else {
             Lang._overrideResources({
@@ -1677,14 +1681,14 @@ function Edequate(options) {
                 switch(code) {
                     case ERRORS.ERROR_LOADING:
                         console.warn("Error fetching resources for",options,xhr.status + ': ' + xhr.statusText);
-                        if(options.default != options.resources){
+                        if(options.default !== options.resources){
                             console.warn("Switching to default resources \""+options.default+"\".");
                             Lang._overrideResources({"default":options.default});
                         }
                         break;
                     case ERRORS.INCORRECT_JSON:
                         console.warn("Incorrect, empty or damaged resources file for",options,error,xhr);
-                        if(options.default != options.resources){
+                        if(options.default !== options.resources){
                             console.warn("Switching to default resources \""+options.default+"\".");
                             Lang._overrideResources({"default":options.default});
                         }
@@ -1693,7 +1697,7 @@ function Edequate(options) {
                         console.warn("Incorrect, empty or damaged resources file for",options,error,xhr);
                         break;
                 }
-                if(options.default != options.resources){
+                if(options.default !== options.resources){
                     console.warn("Switching to default resources \""+options.default+"\".");
                     Lang._overrideResources({"default":options.default});
                 } else {
@@ -1730,8 +1734,8 @@ function Edequate(options) {
 
         xhr.open(method, url, true);
         xhr.onreadystatechange = function() {
-            if (xhr.readyState != 4) return;
-            if (xhr.status != 200) {
+            if (xhr.readyState !== 4) return;
+            if (xhr.status !== 200) {
                 returned.onRejected(xhr.status, xhr);
             } else {
                 returned.onResolved(xhr);
@@ -1801,7 +1805,7 @@ function Edequate(options) {
     function Drawer(options, appendTo) {
 //        collapsed = options.collapsed;
         var collapsed = load(options.collapsed);
-        if(options.collapsed == undefined) {
+        if(options.collapsed === undefined) {
             collapsed = load("drawer:collapsed");
             options.collapsed = "drawer:collapsed";
         } else if(typeof options.collapsed === "boolean") {
@@ -1830,7 +1834,7 @@ function Edequate(options) {
         };
         var footerButtonCollapsePath = {
             xmlns:"http://www.w3.org/2000/svg",
-            d: "M5.46 8.846l3.444-3.442-1.058-1.058-4.5 4.5 4.5 4.5 1.058-1.057L5.46 8.84zm7.194 4.5v-9h-1.5v9h1.5z",
+            d: "M5.46 8.846l3.444-3.442-1.058-1.058-4.5 4.5 4.5 4.5 1.058-1.057L5.46 8.84zm7.194 4.5v-9h-1.5v9h1.5z"
         };
         var footerButtonExpandPath = {
             xmlns:"http://www.w3.org/2000/svg",
@@ -1907,7 +1911,7 @@ function Edequate(options) {
             sections: [],
             toggleSize: function(force) {
                 collapsed = !collapsed;
-                if(force != undefined) collapsed = force;
+                if(force !== undefined) collapsed = force;
                 save("drawer:collapsed", collapsed);
                 layout.toggleButton.innerHTML = collapsed ? "last_page" : "first_page";
                 layout.classList[collapsed ? "add" : "remove"]("drawer-collapsed");
@@ -2188,7 +2192,7 @@ function Edequate(options) {
             className:"actionbar changeable" + optionalClassName(options.className),
             toggleSize: function(force){
                 var cvollapsed = actionbar.classList.contains("actionbar-collapsed");
-                if(force != undefined) collapsed = force;
+                if(force !== undefined) collapsed = force;
                 actionbar.classList[collapsed ? "add" : "remove"]("actionbar-collapsed");
                 actionbarHolder.classList[collapsed ? "add" : "remove"]("actionbar-collapsed");
                 if(options.ontogglesize) options.ontogglesize(force);
@@ -2359,10 +2363,10 @@ function Edequate(options) {
                     rows.push(table.body.childNodes[i]);
                 }
                 rows.sort(function(a, b) {
-                    var aCriteria = a.cells[index].sort == undefined ? a.cells[index].innerText.toLowerCase() : a.cells[index].sort;
-                    var bCriteria = b.cells[index].sort == undefined ? b.cells[index].innerText.toLowerCase() : b.cells[index].sort;
+                    var aCriteria = a.cells[index].sort === undefined ? a.cells[index].innerText.toLowerCase() : a.cells[index].sort;
+                    var bCriteria = b.cells[index].sort === undefined ? b.cells[index].innerText.toLowerCase() : b.cells[index].sort;
 
-                    return aCriteria == bCriteria ? 0 : (aCriteria > bCriteria ? 1 : -1) * sort;
+                    return aCriteria === bCriteria ? 0 : (aCriteria > bCriteria ? 1 : -1) * sort;
                 });
                 for(i in rows) {
                     table.body.appendChild(rows[i]);
@@ -2410,12 +2414,12 @@ function Edequate(options) {
                 item.className = "th" + optionalClassName(item.className);
                 var innerHTML = item.innerHTML;
                 delete item.innerHTML;
-                if(options.sort == undefined || options.sort) {
+                if(options.sort === undefined || options.sort) {
                     item.index = i;
                     item.sort = 0;
                     item.onclick = function() {
                         this.sort ++;
-                        if(this.sort == 0) this.sort ++;
+                        if(this.sort === 0) this.sort ++;
                         else if(this.sort > 1) this.sort = -1;
 
                         table.sorts({ index: this.index, mode: this.sort });
@@ -2517,7 +2521,7 @@ function Edequate(options) {
                 table.head.cells.push(cell);
             }
 
-            if((options.filter == undefined || options.filter) || (options.sort == undefined || options.sort) || selectable) {
+            if((options.filter === undefined || options.filter) || (options.sort === undefined || options.sort) || selectable) {
                 table.resetButton = create(HTML.DIV, {
                     className: "table-reset-button notranslate",
                     innerHTML: "clear_all",
@@ -2545,7 +2549,7 @@ function Edequate(options) {
                 }, table);
             }
 
-            if(options.filter == undefined || options.filter) {
+            if(options.filter === undefined || options.filter) {
 
                 table.filterLayout = create(HTML.DIV, {
                     className: "table-filter"
@@ -2807,7 +2811,7 @@ function Edequate(options) {
                     }
                     if(options.onprogress) options.onprogress(loaded);
 
-                    if(loaded == self.eventBus.origins.length) {
+                    if(loaded === self.eventBus.origins.length) {
                         console.log("Preload finished: "+loaded+" files done.");
 
                         if(options.validate && !options.validate()) {
@@ -2847,23 +2851,21 @@ function Edequate(options) {
 
         this.fire = function(event, object) {
             if(!event) return;
-            //setTimeout(function(){
-                for(var i in self.eventBus.modules) {
-                    var module = self.eventBus.modules[i];
-                    if(self.eventBus.holders[module] && self.eventBus.holders[module].onEvent) {
-                        try {
-                            if(event.constructor === Function) {
-                                var res = event.call(this, self.eventBus.holders[self.eventBus.modules[i]]);
-                                if(res !== undefined && !res) break;
-                            } else {
-                                if (!self.eventBus.holders[module].onEvent.call(this, event, object)) break;
-                            }
-                        } catch(e) {
-                            console.error(module, event, e);
+            for(var i in self.eventBus.modules) {
+                var module = self.eventBus.modules[i];
+                if(self.eventBus.holders[module] && self.eventBus.holders[module].onEvent) {
+                    try {
+                        if(event.constructor === Function) {
+                            var res = event.call(this, self.eventBus.holders[self.eventBus.modules[i]]);
+                            if(res !== undefined && !res) break;
+                        } else {
+                            if (!self.eventBus.holders[module].onEvent.call(this, event, object)) break;
                         }
+                    } catch(e) {
+                        console.error(module, event, e);
                     }
                 }
-            //}.bind(this), 0);
+            }
         };
 
         this.chain = function(callback) {
@@ -2910,7 +2912,7 @@ function Edequate(options) {
                 if(this._onclick) this._onclick(evt);
                 menu.close(HIDING.OPACITY)
             };
-            item.oncontextmenu = function(e){e.stopPropagation(); e.preventDefault(); return false;}
+            item.oncontextmenu = function(e){e.stopPropagation(); e.preventDefault(); return false;};
             menu._addItem(item);
         };
         menu.addItems(items);

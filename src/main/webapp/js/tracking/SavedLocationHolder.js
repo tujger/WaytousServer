@@ -59,7 +59,7 @@ function SavedLocationHolder(main) {
                         user.fire(EVENTS.SAVE_LOCATION);
                     });
                 }
-                if(user.type == type) {
+                if(user.type === type) {
                     object.add(MENU.SECTION_EDIT, EVENT.EDIT_SAVED_LOCATION, u.lang.edit, "mode_edit", function () {
                         main.fire(EVENTS.EDIT_SAVED_LOCATION, user.number - 10000);
                     });
@@ -410,7 +410,7 @@ function SavedLocationHolder(main) {
                             locationsDialog.close();
                             main.fire(EVENTS.SHOW_SAVED_LOCATION, this.dataset.number);
                         } }, content);
-                        u.create(HTML.BUTTON, { className: "saved-locations-dialog-item-button saved-locations-dialog-item-navigate notranslate", dataNumber: i, innerHTML:"navigation", title:u.lang.show_direction_to_location.innerText, onclick:function(){
+                        u.create(HTML.BUTTON, { className: "saved-locations-dialog-item-button saved-locations-dialog-item-navigate icon notranslate", dataNumber: i, innerHTML:"navigation", title:u.lang.show_direction_to_location.innerText, onclick:function(){
                             locationsDialog.close();
                             var number = this.dataset.number;
                             main.fire(EVENTS.SHOW_SAVED_LOCATION, number);

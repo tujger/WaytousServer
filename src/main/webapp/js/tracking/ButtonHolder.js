@@ -271,7 +271,7 @@ function ButtonHolder(main) {
         for(var i = 0; i < buttons.itemsLayout.children.length; i++) {
             var node = buttons.itemsLayout.children[i];
             var number = parseInt(node.dataset.number);
-            if(number != main.me.number && number > user.number) {
+            if(number !== main.me.number && number > user.number) {
                 buttons.itemsLayout.insertBefore(b, node);
                 added = true;
                 break;

@@ -61,7 +61,8 @@ function HelpHolder(main) {
                 } else {
                     var modules = Object.assign({}, {main:main}, main.eventBus.holders);
                     for(var i in modules) {
-                        console.log(i);
+                        if(!modules.hasOwnProperty(i)) continue;
+                        // console.log(i);
                         if(modules[i] && modules[i].help && modules[i].help().title) {
                             var help = modules[i].help();
                             var title = help.title;
@@ -75,6 +76,7 @@ function HelpHolder(main) {
                                 innerHTML: title
                             });
                             for(var j in help) {
+                                if(!help.hasOwnProperty(j)) continue;
                                 if(j === "title" || help[j].ignore) continue;
                                 title = help[j].title;
                                 if(title && title instanceof HTMLElement) {

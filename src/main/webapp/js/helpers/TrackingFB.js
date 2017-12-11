@@ -21,7 +21,6 @@ function TrackingFB(main) {
     var refStat;
     var updateTask;
     var refs = [];
-    var updateFocusTask;
 
     function start() {
         status = EVENTS.TRACKING_DISABLED;
@@ -502,34 +501,31 @@ function TrackingFB(main) {
     }
 
     function usersDataListener(data){
-//        if(main.me.number != parseInt(data.key)) {
-            try{
-                var o = data.val();
-                o[RESPONSE.NUMBER] = parseInt(data.key);
-                o[RESPONSE.INITIAL] = true;
-                delete o.active;
-                var user = main.users.addUser(o);
+        try{
+            var o = data.val();
+            o[RESPONSE.NUMBER] = parseInt(data.key);
+            o[RESPONSE.INITIAL] = true;
+            delete o.active;
+            var user = main.users.addUser(o);
 
-                user.type = "user";
+            user.type = "user";
 
-                //registers
-                registerValueListener(refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.NAME), usersDataNameListener);
-                registerValueListener(refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.ACTIVE), usersDataActiveListener);
-                registerValueListener(refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.CHANGED), usersDataChangedListener);
+            //registers
+            registerValueListener(refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.NAME), usersDataNameListener);
+            registerValueListener(refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.ACTIVE), usersDataActiveListener);
+            registerValueListener(refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(user.number).child(DATABASE.CHANGED), usersDataChangedListener);
 
-                main.eventBus.fire(function(holder){
-                    if(holder.saveable) {
-                        var loadSaved = holder.loadsaved || 1;
-                        registerChildListener(refGroup.child(DATABASE.PUBLIC).child(holder.type).child(user.number), userPublicDataListener, loadSaved);
-                    }
-                });
+            main.eventBus.fire(function(holder){
+                if(holder.saveable) {
+                    var loadSaved = holder.loadsaved || 1;
+                    registerChildListener(refGroup.child(DATABASE.PUBLIC).child(holder.type).child(user.number), userPublicDataListener, loadSaved);
+                }
+            });
 
-                trackingListener.onAccept(o);
-            } catch(e) {
-                console.error(e.message);
-            }
-//        }
-        // console.log(data);
+            trackingListener.onAccept(o);
+        } catch(e) {
+            console.error(e.message);
+        }
     }
 
     function userPublicDataListener(data) {

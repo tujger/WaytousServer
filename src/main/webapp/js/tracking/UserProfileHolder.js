@@ -446,7 +446,7 @@ function UserProfileHolder(main) {
                 console.error(e);
             }
         } else {
-            console.log("OUT:");
+            // console.log("OUT:");
         }
         if(resign) {
             main.tracking.setLink(window.location.href);

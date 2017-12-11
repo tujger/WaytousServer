@@ -32,8 +32,8 @@ function Main() {
     function start() {
         var a = document.createElement("script");
         a.setAttribute("src","/js/helpers/Edequate.js");
-        a.setAttribute("defer",true);
-        a.setAttribute("async",true);
+        a.setAttribute("defer","");
+        a.setAttribute("async","");
         a.setAttribute("onload","preloaded()");
         document.head.appendChild(a);
     }
@@ -99,7 +99,7 @@ function Main() {
             //.place(HTML.SCRIPT, {src: "https://www.google-analytics.com/analytics.js", async: true});
 
         if(data && data.google_analytics_tracking_id) {
-            document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + data.google_analytics_tracking_id, async:true})
+            document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + data.google_analytics_tracking_id, async:""})
                 .place(HTML.SCRIPT, {innerHTML: "window.dataLayer = window.dataLayer || [];\n" +
                 "function gtag(){dataLayer.push(arguments)};\n" +
                 "gtag('js', new Date());\n" +
