@@ -1,6 +1,7 @@
 package com.edeqa.waytousserver.servers;
 
 import com.edeqa.helpers.Mime;
+import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.RequestWrapper;
 import com.google.common.net.HttpHeaders;
@@ -105,19 +106,19 @@ public class MainServletHandler extends AbstractServletHandler {
             String path = uri.getPath().toLowerCase();
             if (!file.getCanonicalPath().startsWith(root.getCanonicalPath())) {
                 // Suspected path traversal attack: reject with 403 error.
-                Common.log("Main", uri.getPath(), "[403 - suspected path traversal attack]" + (referer != null ? ", referer: " + referer : ""));
+                Misc.log("Main", uri.getPath(), "[403 - suspected path traversal attack]" + (referer != null ? ", referer: " + referer : ""));
                 resultCode = 403;
                 file = new File(root + "/403.html");
 //                Utils.sendResult.call(exchange, 403, Constants.MIME.TEXT_PLAIN, "403 Forbidden\n".getBytes());
             } else if (file.isDirectory()) {
                 file = new File(file.getCanonicalPath() + "/index.html");
-                Common.log("Main", uri.getPath() + "/index.html", "[" + (file.exists() ? file.length() + " byte(s)" : "not found") + "]" + (referer != null ? ", referer: " + referer : ""));
+                Misc.log("Main", uri.getPath() + "/index.html", "[" + (file.exists() ? file.length() + " byte(s)" : "not found") + "]" + (referer != null ? ", referer: " + referer : ""));
 //            } else if (etag.equals(ifModifiedSince)) {
 //                resultCode = 304;
 //                file = new File(root + "/304.html");
 //                Utils.sendResult.call(exchange, 304, null, "304 Not Modified\n".getBytes());
             } else if (!uri.getPath().endsWith("/") && !file.exists()) {
-                Common.log("Main", "-> " + uri.getPath() + "/" + (referer != null ? ", referer: " + referer : ""));
+                Misc.log("Main", "-> " + uri.getPath() + "/" + (referer != null ? ", referer: " + referer : ""));
 //                Common.log("Main", uri.getPath(), "[302 - redirected]");
                 requestWrapper.sendRedirect(uri.getPath() + "/");
                 return;
@@ -130,7 +131,7 @@ public class MainServletHandler extends AbstractServletHandler {
                     for (int i = 0; i < OPTIONS.getPages().length(); i++) {
                         if(parts[1].equals(OPTIONS.getPages().get(i))) {
                             resultCode = 200;
-                            Common.log("Main", uri.getPath(), "[200 - page found]" + (referer != null ? ", referer: " + referer : ""));
+                            Misc.log("Main", uri.getPath(), "[200 - page found]" + (referer != null ? ", referer: " + referer : ""));
                             file = new File(OPTIONS.getWebRootDirectory() + "/index.html");
                             found = true;
                             break;
@@ -139,11 +140,11 @@ public class MainServletHandler extends AbstractServletHandler {
                 }
                 if(!found) {
                     resultCode = 404;
-                    Common.log("Main", uri.getPath(), "[404 - not found]" + (referer != null ? ", referer: " + referer : ""));
+                    Misc.log("Main", uri.getPath(), "[404 - not found]" + (referer != null ? ", referer: " + referer : ""));
                     file = new File(root + "/404.html");
                 }
             } else {
-                Common.log("Main", uri.getPath(), "[" + file.length() + " byte(s)]" + (referer != null ? ", referer: " + referer : ""));
+                Misc.log("Main", uri.getPath(), "[" + file.length() + " byte(s)]" + (referer != null ? ", referer: " + referer : ""));
             }
 
             {
@@ -164,7 +165,7 @@ public class MainServletHandler extends AbstractServletHandler {
                 try {
                     types.put(new JSONObject("{\"type\":\"\",\"mime\":\"application/unknown\"}"));
                 } catch(Exception e) {
-                    Common.err(e);
+                    Misc.err(e);
                 }
                 JSONObject json = null;
                 for (int i = 0; i < types.length(); i++) {

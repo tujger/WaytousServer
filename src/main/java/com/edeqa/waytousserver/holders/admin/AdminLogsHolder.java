@@ -3,6 +3,7 @@ package com.edeqa.waytousserver.holders.admin;
 
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Mime;
+import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.RequestWrapper;
 import com.edeqa.waytousserver.interfaces.PageHolder;
@@ -10,17 +11,13 @@ import com.edeqa.waytousserver.servers.AdminServletHandler;
 import com.google.api.client.http.HttpMethods;
 import com.google.common.net.HttpHeaders;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URI;
-import java.util.zip.GZIPOutputStream;
 
 import static com.edeqa.waytous.Constants.OPTIONS;
 
@@ -85,7 +82,7 @@ public class AdminLogsHolder implements PageHolder {
     private void clearLog(RequestWrapper requestWrapper) {
         try {
             File file = new File(OPTIONS.getLogFile());
-            Common.log(LOG, "Clear:", file.getCanonicalPath());
+            Misc.log(LOG, "Clear:", file.getCanonicalPath());
 
             PrintWriter writer = new PrintWriter(file);
             writer.close();
@@ -108,10 +105,10 @@ public class AdminLogsHolder implements PageHolder {
     private void printLog(final RequestWrapper requestWrapper) {
         try {
             final File file = new File(OPTIONS.getLogFile());
-            Common.log(LOG,"printLog:",file.getCanonicalPath());
+            Misc.log(LOG,"printLog:",file.getCanonicalPath());
 
             if(!file.exists()) {
-                Common.log(LOG,"printLog:", "file not found");
+                Misc.log(LOG,"printLog:", "file not found");
                 requestWrapper.setHeader(HttpHeaders.CONTENT_TYPE, Mime.TEXT_PLAIN);
                 requestWrapper.setHeader(HttpHeaders.SERVER, "Waytous/"+ Common.SERVER_BUILD);
                 requestWrapper.setHeader(HttpHeaders.ACCEPT_RANGES, "bytes");

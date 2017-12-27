@@ -1,11 +1,11 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.HttpDPConnection;
 import com.edeqa.waytousserver.helpers.RequestWrapper;
-import com.edeqa.waytousserver.helpers.Utils;
 import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;
@@ -64,7 +64,7 @@ public class RestServletHandler extends AbstractServletHandler {
             } catch(Exception e){
 //                e.printStackTrace();
             }
-            Common.log(LOG, host + uri.getPath(), requestWrapper.getRemoteAddress() + (referer != null ? ", referer: " + referer : ""));
+            Misc.log(LOG, host + uri.getPath(), requestWrapper.getRemoteAddress() + (referer != null ? ", referer: " + referer : ""));
 
 //        List<String> parts = Arrays.asList(uri.getPath().split("/"));
             JSONObject json = new JSONObject();
@@ -112,7 +112,7 @@ public class RestServletHandler extends AbstractServletHandler {
 
 
     private boolean noAction(JSONObject json) {
-        Common.log(LOG, "perform:noAction", json);
+        Misc.log(LOG, "perform:noAction", json);
         json.put(Rest.STATUS, "error");
         json.put(Rest.REASON, "Action not supported");
         json.put(Rest.MESSAGE, "Action not supported");
@@ -158,7 +158,7 @@ public class RestServletHandler extends AbstractServletHandler {
                 String body = br.readLine();
                 br.close();
 
-                Common.log("Rest", requestWrapper.getRemoteAddress(), "joinV1:", body);
+                Misc.log("Rest", requestWrapper.getRemoteAddress(), "joinV1:", body);
                 Common.getInstance().getDataProcessor(requestWrapper.getRequestURI().getPath().split("/")[3]).onMessage(new HttpDPConnection(requestWrapper), body);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -287,7 +287,7 @@ public class RestServletHandler extends AbstractServletHandler {
                 @Override
                 public void call(StringBuilder body) {
                     JSONObject options = new JSONObject(body.toString());
-                    Common.log(LOG, "Content requested: " + options);
+                    Misc.log(LOG, "Content requested: " + options);
 
                     ArrayList<File> files = new ArrayList<>();
 
@@ -321,20 +321,20 @@ public class RestServletHandler extends AbstractServletHandler {
 
                     if (exists) {
                         String path = file.getAbsolutePath().replace(OPTIONS.getWebRootDirectory(), "").replaceAll("\\\\", "/");
-                        Common.log(LOG, "->", path);
+                        Misc.log(LOG, "->", path);
                         try {
                             requestWrapper.sendRedirect(path);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Common.log(LOG, "Content not found: " + files);
+                        Misc.log(LOG, "Content not found: " + files);
                     }
                 }
             }, new Runnable1<Exception>() {
                 @Override
                 public void call(Exception arg) {
-                    Common.err(LOG, "getContent:", arg);
+                    Misc.err(LOG, "getContent:", arg);
                     json.put(Rest.STATUS, "error");
                     json.put(Rest.REASON, "Incorrect request");
                     json.put(Rest.MESSAGE, arg.getMessage());
@@ -412,7 +412,7 @@ public class RestServletHandler extends AbstractServletHandler {
                 String body = br.readLine();
                 br.close();
 
-                Common.log("Rest", requestWrapper.getRemoteAddress(), "tosAgreement:", body);
+                Misc.log("Rest", requestWrapper.getRemoteAddress(), "tosAgreement:", body);
                 Common.getInstance().getDataProcessor(requestWrapper.getRequestURI().getPath().split("/")[3]).onMessage(new HttpDPConnection(requestWrapper), body);
             } catch (Exception e) {
                 e.printStackTrace();

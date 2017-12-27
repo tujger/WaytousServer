@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.WebsocketDPConnection;
 
@@ -16,7 +17,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static com.edeqa.waytous.Constants.LIFETIME_INACTIVE_GROUP;
-import static com.edeqa.waytous.Constants.LIFETIME_INACTIVE_USER;
 import static com.edeqa.waytous.Constants.OPTIONS;
 
 /**
@@ -51,19 +51,19 @@ public class MyWsServer extends WebSocketServer {
 */
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        Common.log("WS","onOpen:"+conn.getRemoteSocketAddress(),handshake.getResourceDescriptor() );
+        Misc.log("WS","onOpen:"+conn.getRemoteSocketAddress(),handshake.getResourceDescriptor() );
         Common.getInstance().getDataProcessor("v1").onOpen(new WebsocketDPConnection(conn), handshake);
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        Common.log("WS","onClose:"+conn.getRemoteSocketAddress(),"code:"+code, "reason:"+reason);
+        Misc.log("WS","onClose:"+conn.getRemoteSocketAddress(),"code:"+code, "reason:"+reason);
         Common.getInstance().getDataProcessor("v1").onClose(new WebsocketDPConnection(conn), code, reason, remote);
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        Common.log("WS","onMessage:"+conn.getRemoteSocketAddress(), message.length() > 200 ? "("+message.length() + " byte(s))" : message );
+        Misc.log("WS","onMessage:"+conn.getRemoteSocketAddress(), message.length() > 200 ? "("+message.length() + " byte(s))" : message );
         Common.getInstance().getDataProcessor("v1").onMessage(new WebsocketDPConnection(conn), message);
     }
 
@@ -75,13 +75,13 @@ public class MyWsServer extends WebSocketServer {
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-        Common.log("WS","onError:"+conn.getRemoteSocketAddress(),"exception:"+ex.getMessage());
+        Misc.log("WS","onError:"+conn.getRemoteSocketAddress(),"exception:"+ex.getMessage());
         Common.getInstance().getDataProcessor("v1").onError(new WebsocketDPConnection(conn), ex);
     }
 
     @Override
     public void onStart() {
-        Common.log("WS","onStart/"+this.getClass().getSimpleName()+":"+this.getPort());
+        Misc.log("WS","onStart/"+this.getClass().getSimpleName()+":"+this.getPort());
 //        Common.log("WS","onStart/"+Common.getInstance().getDataProcessor("v1").getClass().getSimpleName()+":"+this.getPort());
     }
 

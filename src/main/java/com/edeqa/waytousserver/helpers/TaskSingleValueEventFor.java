@@ -2,7 +2,6 @@ package com.edeqa.waytousserver.helpers;
 
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,12 +16,8 @@ import com.google.firebase.tasks.Tasks;
 
 import org.json.JSONObject;
 
-import java.io.FileInputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-
-import static com.edeqa.waytous.Constants.OPTIONS;
 
 /**
  * Created 6/13/2017.
@@ -137,7 +132,7 @@ public class TaskSingleValueEventFor<T> {
     private void restRequest() {
         try {
             String url = "" + ref.getDatabase().getReference() + ref.getPath() + ".json?shallow=true&access_token=" + customToken;
-            Common.log(LOG, "restRequest:" + url);
+            Misc.log(LOG, "restRequest:" + url);
             String res = Misc.getUrl(url, "UTF-8");
             if(res == null || res.length() == 0 || res.startsWith("null")) {
                 return;
@@ -149,7 +144,7 @@ public class TaskSingleValueEventFor<T> {
             if(onCompleteListener != null) onCompleteListener.call((T) json);
 
         } catch(Exception e) {
-            Common.err(LOG, "restRequest:error:"+ref.getDatabase().getReference() + ref.getPath(), e.getMessage());
+            Misc.err(LOG, "restRequest:error:"+ref.getDatabase().getReference() + ref.getPath(), e.getMessage());
             if(onFailureListener != null) onFailureListener.call(e);
             if(onCompleteListener != null) onCompleteListener.call(null);
         }

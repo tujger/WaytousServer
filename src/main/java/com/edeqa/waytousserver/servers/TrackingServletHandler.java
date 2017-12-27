@@ -2,9 +2,9 @@ package com.edeqa.waytousserver.servers;
 
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Mime;
+import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.RequestWrapper;
-import com.edeqa.waytousserver.helpers.Utils;
 import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;
@@ -17,7 +17,6 @@ import java.util.Arrays;
 
 import javax.servlet.ServletException;
 
-import static com.edeqa.helpers.HtmlGenerator.NOSCRIPT;
 import static com.edeqa.helpers.HtmlGenerator.ONLOAD;
 import static com.edeqa.helpers.HtmlGenerator.SCRIPT;
 import static com.edeqa.helpers.HtmlGenerator.SRC;
@@ -66,7 +65,7 @@ public class TrackingServletHandler extends AbstractServletHandler {
         } catch(Exception e){
         }
 
-        Common.log("Tracking",requestWrapper.getRemoteAddress(),host + uri.getPath() + (referer != null ? ", referer: " + referer : ""));
+        Misc.log("Tracking",requestWrapper.getRemoteAddress(),host + uri.getPath() + (referer != null ? ", referer: " + referer : ""));
 
         ArrayList<String> parts = new ArrayList<>();
         parts.addAll(Arrays.asList(uri.getPath().split("/")));
@@ -103,7 +102,7 @@ public class TrackingServletHandler extends AbstractServletHandler {
                     + "&sd=Be+always+on+the+same+way+with+your+friends"
                     + "&si=https://www.waytous.net/icons/favicon-256x256.png";
 
-            Common.log("Tracking", "->", redirectLink);
+            Misc.log("Tracking", "->", redirectLink);
 
             requestWrapper.sendRedirect(redirectLink);
             return;

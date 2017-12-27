@@ -1,6 +1,7 @@
 package com.edeqa.waytousserver.servers;
 
 import com.edeqa.helpers.Mime;
+import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
 import com.google.common.net.HttpHeaders;
 import com.sun.net.httpserver.Headers;
@@ -46,7 +47,7 @@ public class RedirectHandler implements HttpHandler {
             }
 
 
-            Common.log(LOG, exchange.getRemoteAddress(), host + uri.getPath() + (referer != null ? ", referer: " + referer : ""));
+            Misc.log(LOG, exchange.getRemoteAddress(), host + uri.getPath() + (referer != null ? ", referer: " + referer : ""));
 
             ArrayList<String> parts = new ArrayList<>();
             parts.addAll(Arrays.asList(uri.getPath().split("/")));
@@ -91,7 +92,7 @@ public class RedirectHandler implements HttpHandler {
                         + "&sd=Be+always+on+the+same+way+with+your+friends"
                         + "&si=https://www.waytous.net/images/waytous-transparent-256.png";
 
-                Common.log(LOG,"->", redirectLink);
+                Misc.log(LOG,"->", redirectLink);
 
                 Headers responseHeaders = exchange.getResponseHeaders();
                 responseHeaders.set(HttpHeaders.CONTENT_TYPE, Mime.TEXT_PLAIN);
@@ -129,7 +130,7 @@ public class RedirectHandler implements HttpHandler {
     public void redirect(HttpExchange exchange, String host, String path) throws IOException {
         String newUri = "https://" + host + Common.getWrappedHttpsPort() + path;
 
-        Common.log(LOG, exchange.getRemoteAddress(), "->", newUri);
+        Misc.log(LOG, exchange.getRemoteAddress(), "->", newUri);
 
         String requestMethod = exchange.getRequestMethod();
         if (requestMethod.equalsIgnoreCase("GET")) {

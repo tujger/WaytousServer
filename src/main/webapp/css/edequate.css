@@ -910,7 +910,8 @@ button:active {
 }
 .progress-dialog-title {
     white-space: nowrap;
-    padding: 10px;
+    padding: 0;
+    display: inline-block;
 }
 
 /* media specific classes */

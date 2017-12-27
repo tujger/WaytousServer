@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver;
 
+import com.edeqa.helpers.Misc;
 import com.edeqa.waytous.Options;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.DigestAuthenticator;
@@ -49,7 +50,7 @@ public class WaytousServer {
 
     public static void main(final String[] args ) throws Exception {
 
-        Common.log(LOG, "====== Waytous server v1."+SERVER_BUILD+". Copyright (C) Edeqa. http://www.edeqa.com ======");
+        Misc.log(LOG, "====== Waytous server v1."+SERVER_BUILD+". Copyright (C) Edeqa. http://www.edeqa.com ======");
         OPTIONS = new Options(args);
 
         Common.getInstance().setDataProcessor(new DataProcessorFirebaseV1());
@@ -61,7 +62,7 @@ public class WaytousServer {
         wsServer = new MyWsServer(OPTIONS.getWsPortFirebase());
         wssServer = new MyWsServer(OPTIONS.getWssPortFirebase());
 
-        Common.log(LOG,"Server web root directory: "+new File(OPTIONS.getWebRootDirectory()).getCanonicalPath());
+        Misc.log(LOG,"Server web root directory: "+new File(OPTIONS.getWebRootDirectory()).getCanonicalPath());
 
         String storePassword = OPTIONS.getSSLCertificatePassword();
 
@@ -69,12 +70,12 @@ public class WaytousServer {
         File kf = new File(OPTIONS.getKeystoreFilename());
 
         if(OPTIONS.isDebugMode()) {
-            Common.log(LOG, "Keystore file: " + kf.getCanonicalPath());
+            Misc.log(LOG, "Keystore file: " + kf.getCanonicalPath());
         }
         keyStore.load(new FileInputStream(kf), storePassword.toCharArray());
 
-        Common.log(LOG, "Server \t\t\t\t| Port \t| Path");
-        Common.log(LOG, "----------------------------------------------");
+        Misc.log(LOG, "Server \t\t\t\t| Port \t| Path");
+        Misc.log(LOG, "----------------------------------------------");
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509"/*KeyManagerFactory.getDefaultAlgorithm()*/);
         kmf.init(keyStore, storePassword.toCharArray());
@@ -91,9 +92,9 @@ public class WaytousServer {
             public void run() {
                 try {
                     WebSocketImpl.DEBUG = false;
-                    Common.log(LOG, "WS FB\t\t\t\t| " + OPTIONS.getWsPortFirebase() + "\t|");
+                    Misc.log(LOG, "WS FB\t\t\t\t| " + OPTIONS.getWsPortFirebase() + "\t|");
                     wsServer.start();
-                    Common.log(LOG, "WSS FB\t\t\t\t| " + OPTIONS.getWssPortFirebase() + "\t|");
+                    Misc.log(LOG, "WSS FB\t\t\t\t| " + OPTIONS.getWssPortFirebase() + "\t|");
                     wssServer.start();
 
                         /*BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
@@ -117,7 +118,7 @@ public class WaytousServer {
         server.bind(new InetSocketAddress(OPTIONS.getHttpPort()), 0);
 
         RedirectHandler redirectServer = new RedirectHandler();
-        Common.log(LOG, "Redirect HTTP\t\t| " + OPTIONS.getHttpPort() + "\t| " + "/" + (OPTIONS.getHttpPort() == OPTIONS.getHttpPortMasked() ? " (masked by "+ OPTIONS.getHttpPortMasked() +")" : ""));
+        Misc.log(LOG, "Redirect HTTP\t\t| " + OPTIONS.getHttpPort() + "\t| " + "/" + (OPTIONS.getHttpPort() == OPTIONS.getHttpPortMasked() ? " (masked by "+ OPTIONS.getHttpPortMasked() +")" : ""));
         server.createContext("/", redirectServer);
 
         MainServletHandler mainServer = new MainServletHandler();
@@ -162,7 +163,7 @@ public class WaytousServer {
                     params.setSSLParameters(defaultSSLParameters);
 
                 } catch (Exception ex) {
-                    Common.log(LOG,"Failed to configure SSL server");
+                    Misc.log(LOG,"Failed to configure SSL server");
                 }
             }
         });
@@ -182,27 +183,27 @@ public class WaytousServer {
                     params.setSSLParameters(defaultSSLParameters);
 
                 } catch (Exception ex) {
-                    Common.log(LOG,"Failed to configure admin SSL server");
+                    Misc.log(LOG,"Failed to configure admin SSL server");
                 }
             }
         });
 
         sslServer.createContext("/", mainServer);
-        Common.log(LOG, "Main HTTPS\t\t\t| " + OPTIONS.getHttpsPort() + "\t| /, /*" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
+        Misc.log(LOG, "Main HTTPS\t\t\t| " + OPTIONS.getHttpsPort() + "\t| /, /*" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
 
         sslServer.createContext("/track/", trackingServer);
-        Common.log(LOG, "Tracking HTTPS\t\t| " + OPTIONS.getHttpsPort() + "\t| /track/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
+        Misc.log(LOG, "Tracking HTTPS\t\t| " + OPTIONS.getHttpsPort() + "\t| /track/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
 
         sslServer.createContext("/group/", trackingServer);
-        Common.log(LOG, "Tracking HTTPS\t\t| " + OPTIONS.getHttpsPort() + "\t| /group/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
+        Misc.log(LOG, "Tracking HTTPS\t\t| " + OPTIONS.getHttpsPort() + "\t| /group/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
 
         sslServer.createContext("/rest/", restServer);
-        Common.log(LOG, "Rest HTTPS\t\t\t| " + OPTIONS.getHttpsPort() + "\t| /rest/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
+        Misc.log(LOG, "Rest HTTPS\t\t\t| " + OPTIONS.getHttpsPort() + "\t| /rest/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
 
         sslAdminServer.createContext("/rest/", restServer);
         sslAdminServer.createContext("/", adminServer).setAuthenticator(new DigestAuthenticator("waytous"));
         sslAdminServer.createContext("/admin/logout", adminServer);
-        Common.log(LOG, "Admin HTTPS\t\t\t| " + OPTIONS.getHttpsAdminPort() + "\t| " + "/");
+        Misc.log(LOG, "Admin HTTPS\t\t\t| " + OPTIONS.getHttpsAdminPort() + "\t| " + "/");
 
 //        sslAdminServer.createContext("/", mainServer);
 //        Common.log(LOG, "Main HTTPS\t\t\t| " + OPTIONS.getHttpsAdminPort() + "\t| /, /*");
@@ -216,9 +217,9 @@ public class WaytousServer {
         sslServer.start();
         sslAdminServer.start();
 
-        Common.log("Web\t\t", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort());
-        Common.log("Track\t", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort() + "/track/");
-        Common.log("Admin\t", "https://" + InetAddress.getLocalHost().getHostAddress() + ":" + OPTIONS.getHttpsAdminPort() + "/admin/");
+        Misc.log("Web\t\t", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort());
+        Misc.log("Track\t", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort() + "/track/");
+        Misc.log("Admin\t", "https://" + InetAddress.getLocalHost().getHostAddress() + ":" + OPTIONS.getHttpsAdminPort() + "/admin/");
 
     }
 

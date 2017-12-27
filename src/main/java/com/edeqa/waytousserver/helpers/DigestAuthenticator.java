@@ -4,6 +4,7 @@ package com.edeqa.waytousserver.helpers;
  * Created 5/16/2017.
  */
 
+import com.edeqa.helpers.Misc;
 import com.google.common.net.HttpHeaders;
 import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.Headers;
@@ -42,7 +43,7 @@ public class DigestAuthenticator extends Authenticator {
             String auth = httpExchange.getRequestHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
             if(auth == null || "Digest logout".equals(auth)) {
-                Common.log("DA", httpExchange.getRemoteAddress(), "Logout/" + context.getPrincipal().getName());
+                Misc.log("DA", httpExchange.getRemoteAddress(), "Logout/" + context.getPrincipal().getName());
 
                 httpExchange.setAttribute("digest-context", null);
                 Headers responseHeaders = httpExchange.getResponseHeaders();
@@ -83,7 +84,7 @@ public class DigestAuthenticator extends Authenticator {
         }
         if (useNonce(challengeParameters.get("nonce"))) {
             context.principal = principal;
-            Common.log("DA", httpExchange.getRemoteAddress(), "Login/" + principal.getName());
+            Misc.log("DA", httpExchange.getRemoteAddress(), "Login/" + principal.getName());
             return new Authenticator.Success(principal);
         }
         Headers responseHeaders = httpExchange.getResponseHeaders();

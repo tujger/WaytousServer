@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.helpers;
 
+import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 
 import org.java_websocket.WebSocket;
@@ -33,10 +34,10 @@ public class WebsocketDPConnection implements DataProcessorConnection {
             if(conn.isOpen()) {
                 conn.send(string);
             } else {
-                Common.err(WebsocketDPConnection.this, "send:failed", "connectionState:" + conn.getReadyState());
+                Misc.err(WebsocketDPConnection.this, "send:failed", "connectionState:" + conn.getReadyState());
             }
         } catch(Exception e) {
-            Common.err(WebsocketDPConnection.this, "send:", string, "error:", e.getMessage());
+            Misc.err(WebsocketDPConnection.this, "send:", string, "error:", e.getMessage());
         }
     }
 

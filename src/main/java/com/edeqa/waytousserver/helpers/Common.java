@@ -7,13 +7,9 @@ import com.edeqa.waytousserver.servers.DataProcessorFirebaseV1;
 
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import static com.edeqa.helpers.HtmlGenerator.A;
@@ -26,7 +22,6 @@ import static com.edeqa.helpers.HtmlGenerator.LINK;
 import static com.edeqa.helpers.HtmlGenerator.NOSCRIPT;
 import static com.edeqa.helpers.HtmlGenerator.REL;
 import static com.edeqa.helpers.HtmlGenerator.SRC;
-import static com.edeqa.helpers.HtmlGenerator.STYLE;
 import static com.edeqa.helpers.HtmlGenerator.STYLESHEET;
 import static com.edeqa.helpers.HtmlGenerator.TYPE;
 import static com.edeqa.helpers.HtmlGenerator.WIDTH;
@@ -42,10 +37,6 @@ public class Common {
     public final static int SERVER_BUILD = 51;
     public final static String FIREBASE_JAVASCRIPT_VERSION = "4.6.2"; // https://firebase.google.com/docs/web/setup
 
-
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z", Locale.getDefault());
-//    volatile private static PrintWriter out;
-
     private volatile Map<String,AbstractDataProcessor> dataProcessor;
 
     private static final Common ourInstance = new Common();
@@ -56,12 +47,10 @@ public class Common {
 
     private Common() {
         dataProcessor = new HashMap<>();
-
     }
 
     public static JSONObject fetchGeneralInfo() {
         JSONObject o = new JSONObject();
-
         try {
             String wss = "ws://" + InetAddress.getLocalHost().getHostAddress() + ":" + OPTIONS.getWssPortDedicated();
             o.put("uri", wss);
@@ -69,46 +58,6 @@ public class Common {
             e.printStackTrace();
         }
         return o;
-    }
-
-    public static void log(Object... text) {
-        StringBuffer buf = new StringBuffer();
-        for (Object aText : text) {
-            buf.append(aText + " ");
-        }
-        System.out.println(Common.dateFormat.format(new Date()) + "/" + buf.toString());
-        System.out.flush();
-    }
-
-    public static void err(Object... text) {
-        StringBuffer buf = new StringBuffer();
-        for (Object aText : text) {
-            if (aText instanceof Throwable) {
-                buf.append(aText + " ");
-            } else if(aText instanceof Serializable) {
-                buf.append(aText.toString() + " ");
-            } else {
-                buf.append(aText.getClass().getSimpleName() + ": ");
-            }
-        }
-        System.err.println(Common.dateFormat.format(new Date()) + "/" + buf.toString());
-        System.err.flush();
-
-        /*try {
-            if(out == null) {
-                File log = new File("WaytousServer/WTU.log");
-                System.out.println("Log file: "+log.getAbsolutePath());
-//            out = new PrintWriter(new BufferedWriter(new FileWriter("WaytousServer/WTU.log", true)));
-                out = new PrintWriter(log);
-            }
-
-            out.println(Common.dateFormat.format(new Date()) + "/" + str);
-            out.flush();
-//            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
     }
 
     public static String getWrappedHttpPort(){

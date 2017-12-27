@@ -3,7 +3,6 @@ package com.edeqa.waytousserver.servers;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytousserver.helpers.CheckReq;
-import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
@@ -60,7 +59,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
 
     public DataProcessorDedicated() {
         super();
-        Common.log("DPD","Data Processor Dedicated "+VERSION+".");
+        Misc.log("DPD","Data Processor Dedicated "+VERSION+".");
     }
 
     @Override

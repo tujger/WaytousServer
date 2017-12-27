@@ -2,6 +2,7 @@
 package com.edeqa.waytousserver.holders.admin;
 
 import com.edeqa.helpers.HtmlGenerator;
+import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
@@ -10,7 +11,6 @@ import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.RequestWrapper;
-import com.edeqa.waytousserver.helpers.Utils;
 import com.edeqa.waytousserver.interfaces.PageHolder;
 import com.edeqa.waytousserver.servers.AdminServletHandler;
 import com.google.api.client.http.HttpMethods;
@@ -54,7 +54,7 @@ public class AdminRestHolder implements PageHolder {
 
         URI uri = requestWrapper.getRequestURI();
 
-        Common.log(LOG, requestWrapper.getRemoteAddress(), uri.getPath());
+        Misc.log(LOG, requestWrapper.getRemoteAddress(), uri.getPath());
 
         switch(requestWrapper.getRequestMethod()) {
             case HttpMethods.GET:
@@ -109,7 +109,7 @@ public class AdminRestHolder implements PageHolder {
     private void cleanGroupsV1(RequestWrapper requestWrapper) {
         try {
             //noinspection HardCodedStringLiteral
-            Common.log(LOG, "cleanGroupsV1");
+            Misc.log(LOG, "cleanGroupsV1");
 
             Common.getInstance().getDataProcessor("v1").validateGroups();
 
@@ -132,7 +132,7 @@ public class AdminRestHolder implements PageHolder {
     private void cleanAccountsV1(RequestWrapper requestWrapper) {
         try {
             //noinspection HardCodedStringLiteral
-            Common.log(LOG, "cleanAccountsV1");
+            Misc.log(LOG, "cleanAccountsV1");
 
             Common.getInstance().getDataProcessor("v1").validateAccounts();
 
@@ -159,7 +159,7 @@ public class AdminRestHolder implements PageHolder {
                 String options = buf.toString();
 
                 //noinspection HardCodedStringLiteral
-                Common.log(LOG, "createGroupV1:", options);
+                Misc.log(LOG, "createGroupV1:", options);
 
                 JSONObject json = new JSONObject(options);
 
@@ -239,7 +239,7 @@ public class AdminRestHolder implements PageHolder {
             @SuppressWarnings("HardCodedStringLiteral")
             @Override
             public void call(Exception e) {
-                Common.err(LOG, "createGroupV1:", e);
+                Misc.err(LOG, "createGroupV1:", e);
                 JSONObject json = new JSONObject();
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
@@ -257,7 +257,7 @@ public class AdminRestHolder implements PageHolder {
                 String options = buf.toString();
 
                 //noinspection HardCodedStringLiteral
-                Common.log(LOG, "deleteGroupV1:", options);
+                Misc.log(LOG, "deleteGroupV1:", options);
 
                 JSONObject json = new JSONObject(options);
                 String groupId = json.getString(Rest.GROUP_ID);
@@ -278,7 +278,7 @@ public class AdminRestHolder implements PageHolder {
             @SuppressWarnings("HardCodedStringLiteral")
             @Override
             public void call(Exception e) {
-                Common.err(LOG, "deleteGroupV1:", e);
+                Misc.err(LOG, "deleteGroupV1:", e);
                 JSONObject json = new JSONObject();
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
@@ -296,7 +296,7 @@ public class AdminRestHolder implements PageHolder {
                 String options = buf.toString();
 
                 //noinspection HardCodedStringLiteral
-                Common.log(LOG, "removeUserV1:", options);
+                Misc.log(LOG, "removeUserV1:", options);
 
                 JSONObject json = new JSONObject(options);
                 String groupId = json.getString(Rest.GROUP_ID);
@@ -318,7 +318,7 @@ public class AdminRestHolder implements PageHolder {
             @SuppressWarnings("HardCodedStringLiteral")
             @Override
             public void call(Exception e) {
-                Common.err(LOG, "removeUserV1:", e);
+                Misc.err(LOG, "removeUserV1:", e);
                 JSONObject json = new JSONObject();
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
@@ -336,7 +336,7 @@ public class AdminRestHolder implements PageHolder {
                 String options = buf.toString();
 
                 //noinspection HardCodedStringLiteral
-                Common.log(LOG, "deleteAccountV1:", options);
+                Misc.log(LOG, "deleteAccountV1:", options);
 
                 JSONObject json = new JSONObject(options);
                 String accountId = json.getString(Rest.UID);
@@ -357,7 +357,7 @@ public class AdminRestHolder implements PageHolder {
             @SuppressWarnings("HardCodedStringLiteral")
             @Override
             public void call(Exception e) {
-                Common.err(LOG, "deleteAccountV1:", e);
+                Misc.err(LOG, "deleteAccountV1:", e);
                 JSONObject json = new JSONObject();
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
@@ -375,7 +375,7 @@ public class AdminRestHolder implements PageHolder {
                 String options = buf.toString();
 
                 //noinspection HardCodedStringLiteral
-                Common.log(LOG, "switchPropertyInGroupV1:", options);
+                Misc.log(LOG, "switchPropertyInGroupV1:", options);
 
                 JSONObject json = new JSONObject(options);
                 String groupId = json.getString(Rest.GROUP_ID);
@@ -397,7 +397,7 @@ public class AdminRestHolder implements PageHolder {
             @SuppressWarnings("HardCodedStringLiteral")
             @Override
             public void call(Exception e) {
-                Common.err(LOG, "switchPropertyInGroupV1:", e);
+                Misc.err(LOG, "switchPropertyInGroupV1:", e);
                 JSONObject json = new JSONObject();
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
@@ -416,7 +416,7 @@ public class AdminRestHolder implements PageHolder {
                 String options = buf.toString();
 
                 //noinspection HardCodedStringLiteral
-                Common.log(LOG, "switchPropertyForUserV1:", options);
+                Misc.log(LOG, "switchPropertyForUserV1:", options);
 
                 JSONObject json = new JSONObject(options);
                 String groupId = json.getString(Rest.GROUP_ID);
@@ -440,7 +440,7 @@ public class AdminRestHolder implements PageHolder {
             @SuppressWarnings("HardCodedStringLiteral")
             @Override
             public void call(Exception e) {
-                Common.err(LOG, "switchPropertyForUserV1:", e);
+                Misc.err(LOG, "switchPropertyForUserV1:", e);
                 JSONObject json = new JSONObject();
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
@@ -457,7 +457,7 @@ public class AdminRestHolder implements PageHolder {
             public void call(StringBuilder buf) {
                 String options = buf.toString();
 
-                Common.log(LOG, "actionNotSupported:" + type, requestWrapper.getRequestURI().getPath());
+                Misc.log(LOG, "actionNotSupported:" + type, requestWrapper.getRequestURI().getPath());
 
                 JSONObject json = new JSONObject();
                 json.put(Rest.STATUS, Rest.ERROR);
@@ -469,7 +469,7 @@ public class AdminRestHolder implements PageHolder {
             @SuppressWarnings("HardCodedStringLiteral")
             @Override
             public void call(Exception e) {
-                Common.err(LOG, "actionNotSupported:", e);
+                Misc.err(LOG, "actionNotSupported:", e);
                 JSONObject json = new JSONObject();
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
@@ -487,7 +487,7 @@ public class AdminRestHolder implements PageHolder {
                 String options = buf.toString();
 
                 //noinspection HardCodedStringLiteral
-                Common.log(LOG, "modifyPropertyInGroupV1:", options);
+                Misc.log(LOG, "modifyPropertyInGroupV1:", options);
 
                 JSONObject json = new JSONObject(options);
                 String groupId = json.getString(Rest.GROUP_ID);
@@ -510,7 +510,7 @@ public class AdminRestHolder implements PageHolder {
             @SuppressWarnings("HardCodedStringLiteral")
             @Override
             public void call(Exception e) {
-                Common.err(LOG, "modifyPropertyInGroupV1:", e);
+                Misc.err(LOG, "modifyPropertyInGroupV1:", e);
                 JSONObject json = new JSONObject();
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Incorrect request.");
@@ -522,17 +522,17 @@ public class AdminRestHolder implements PageHolder {
 
     @SuppressWarnings("HardCodedStringLiteral")
     private void cleanStatMessagesV1(final RequestWrapper requestWrapper) {
-        Common.log(LOG, "cleanStatMessagesV1:started");
+        Misc.log(LOG, "cleanStatMessagesV1:started");
         Common.getInstance().getDataProcessor("v1").cleanStatisticsMessages(new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject json) {
-                Common.log(LOG, "cleanStatMessagesV1:done");
+                Misc.log(LOG, "cleanStatMessagesV1:done");
                 requestWrapper.sendResult(json);
             }
         }, new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject json) {
-                Common.err(LOG, "cleanStatMessagesV1:failed");
+                Misc.err(LOG, "cleanStatMessagesV1:failed");
                 json.put(Rest.STATUS, Rest.ERROR);
                 json.put(Rest.MESSAGE, "Messages cleaning failed.");
                 requestWrapper.sendError(500, json);
