@@ -15,3 +15,6 @@ generate_letsencrypt_jks.sh
 waytous-beta.log
 /out/
 /conf/aws/googlee7b16def95e75693.html
+/src/gradlew
+/src/gradlew.bat
+/src/gradle/
