@@ -21,6 +21,7 @@ import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.security.KeyStore;
@@ -48,6 +49,7 @@ public class WaytousServer {
     private static MyWsServer wsServer;
     private static MyWsServer wssServer;
 
+    @SuppressWarnings("AppEngineForbiddenCode")
     public static void main(final String[] args ) throws Exception {
 
         Misc.log(LOG, "====== Waytous server v1."+SERVER_BUILD+". Copyright (C) Edeqa. http://www.edeqa.com ======");
@@ -58,9 +60,6 @@ public class WaytousServer {
         if(!Common.getInstance().getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode()){
             throw new RuntimeException("\n\nThis configuration can not be runned in stand-alone server mode. Set the installation type in build.gradle with the following property:\n\tdef installationType = 'standalone-server'\n");
         }
-
-        wsServer = new MyWsServer(OPTIONS.getWsPortFirebase());
-        wssServer = new MyWsServer(OPTIONS.getWssPortFirebase());
 
         Misc.log(LOG,"Server web root directory: "+new File(OPTIONS.getWebRootDirectory()).getCanonicalPath());
 
@@ -85,37 +84,13 @@ public class WaytousServer {
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
-        DefaultSSLWebSocketServerFactory socket = new DefaultSSLWebSocketServerFactory(sslContext);
-        wssServer.setWebSocketFactory(socket);
-
-        new Thread() {
-            public void run() {
-                try {
-                    WebSocketImpl.DEBUG = false;
-                    Misc.log(LOG, "WS FB\t\t\t\t| " + OPTIONS.getWsPortFirebase() + "\t|");
-                    wsServer.start();
-                    Misc.log(LOG, "WSS FB\t\t\t\t| " + OPTIONS.getWssPortFirebase() + "\t|");
-                    wssServer.start();
-
-                        /*BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
-                        while (true) {
-    //                        if(!wssServer.parse(sysin)) break;
-                            String in = sysin.readLine();
-                            Common.log(LOG, "READ:" + in);
-    //                        s.sendToAll(in);
-                            if (in.equals("exit")) {
-                                wssServer.stop();
-                                break;
-                            }
-                        }*/
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-
         HttpServer server = HttpServer.create();
-        server.bind(new InetSocketAddress(OPTIONS.getHttpPort()), 0);
+        try {
+            server.bind(new InetSocketAddress(OPTIONS.getHttpPort()), 0);
+        } catch(BindException e) {
+            Misc.err(LOG, "Port in use: " + OPTIONS.getHttpPort() + ", server exits.");
+            System.exit(1);
+        }
 
         RedirectHandler redirectServer = new RedirectHandler();
         Misc.log(LOG, "Redirect HTTP\t\t| " + OPTIONS.getHttpPort() + "\t| " + "/" + (OPTIONS.getHttpPort() == OPTIONS.getHttpPortMasked() ? " (masked by "+ OPTIONS.getHttpPortMasked() +")" : ""));
@@ -126,8 +101,20 @@ public class WaytousServer {
         TrackingServletHandler trackingServer = new TrackingServletHandler();
         AdminServletHandler adminServer = new AdminServletHandler();
 
-        HttpsServer sslServer = HttpsServer.create(new InetSocketAddress(OPTIONS.getHttpsPort()), 0);
-        HttpsServer sslAdminServer = HttpsServer.create(new InetSocketAddress(OPTIONS.getHttpsAdminPort()), 0);
+        HttpsServer sslServer = HttpsServer.create();
+        try {
+            sslServer.bind(new InetSocketAddress(OPTIONS.getHttpsPort()), 0);
+        } catch(BindException e) {
+            Misc.err(LOG, "Secured port in use: " + OPTIONS.getHttpsPort() + ", server exits.");
+            System.exit(1);
+        }
+        HttpsServer sslAdminServer = HttpsServer.create();
+        try {
+            sslAdminServer.bind(new InetSocketAddress(OPTIONS.getHttpsAdminPort()), 0);
+        } catch(BindException e) {
+            Misc.err(LOG, "Admin port in use: " + OPTIONS.getHttpsAdminPort() + ", server exits.");
+            System.exit(1);
+        }
 
  /*           SSLContext sslContext = SSLContext.getInstance("TLS");
 
@@ -216,6 +203,43 @@ public class WaytousServer {
         server.start();
         sslServer.start();
         sslAdminServer.start();
+
+
+        /*
+         * Websocket part
+         */
+        wsServer = new MyWsServer(OPTIONS.getWsPortFirebase());
+        wssServer = new MyWsServer(OPTIONS.getWssPortFirebase());
+
+
+        DefaultSSLWebSocketServerFactory socket = new DefaultSSLWebSocketServerFactory(sslContext);
+        wssServer.setWebSocketFactory(socket);
+
+        new Thread() {
+            public void run() {
+                try {
+                    WebSocketImpl.DEBUG = false;
+                    Misc.log(LOG, "WS FB\t\t\t\t| " + OPTIONS.getWsPortFirebase() + "\t|");
+                    wsServer.start();
+                    Misc.log(LOG, "WSS FB\t\t\t\t| " + OPTIONS.getWssPortFirebase() + "\t|");
+                    wssServer.start();
+
+                        /*BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
+                        while (true) {
+    //                        if(!wssServer.parse(sysin)) break;
+                            String in = sysin.readLine();
+                            Common.log(LOG, "READ:" + in);
+    //                        s.sendToAll(in);
+                            if (in.equals("exit")) {
+                                wssServer.stop();
+                                break;
+                            }
+                        }*/
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
 
         Misc.log("Web\t\t", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort());
         Misc.log("Track\t", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort() + "/track/");
