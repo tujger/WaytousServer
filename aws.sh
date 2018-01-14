@@ -104,10 +104,10 @@ if [ $RESTART ]; then
     echo --- Restarting server...
     ssh -i conf/aws/aws_credentials.pem $USERNAME@wayto.us "pkill -f java"
 
-
-#scp -i ./conf/aws/aws_credentials.pem ./JkUBvVjs_Z4f15vkDJZMNX8FXf0HccqMErqaGzcFN48 ec2-user@wayto.us:prod/.well-known/acme-challenge/JkUBvVjs_Z4f15vkDJZMNX8FXf0HccqMErqaGzcFN48
-#scp -i ./conf/aws/aws_credentials.pem ./pX7ESUiT0ExIjKz60V2tIRNyvTdoJWYzkpDCj7K6_Eo ec2-user@wayto.us:prod/.well-known/acme-challenge/pX7ESUiT0ExIjKz60V2tIRNyvTdoJWYzkpDCj7K6_Eo
-#scp -i ./conf/aws/aws_credentials.pem ./uqPn2lT3ltmBG-IP4JmunOtBdJdsH4oC8P0Eqw904Rw ec2-user@wayto.us:prod/.well-known/acme-challenge/uqPn2lT3ltmBG-IP4JmunOtBdJdsH4oC8P0Eqw904Rw
+#scp -i ./conf/aws/aws_credentials.pem ./HiIsjKW8S6DO_gRsjD_owSMfVvL-CTdSzdZdoIUTJCM ec2-user@wayto.us:prod/.well-known/acme-challenge/HiIsjKW8S6DO_gRsjD_owSMfVvL-CTdSzdZdoIUTJCM
+#scp -i ./conf/aws/aws_credentials.pem ./pM0MgYHg_xNpfq8EibrA8ckIqLtLH9Ul_qI-r4xgU4M ec2-user@wayto.us:prod/.well-known/acme-challenge/pM0MgYHg_xNpfq8EibrA8ckIqLtLH9Ul_qI-r4xgU4M
+#scp -i ./conf/aws/aws_credentials.pem ./U4sLxx7cBoePpKPX96Hy_5gW9qVzVTdL7BSThpvPtaY ec2-user@wayto.us:prod/.well-known/acme-challenge/U4sLxx7cBoePpKPX96Hy_5gW9qVzVTdL7BSThpvPtaY
+#scp -i ./conf/aws/aws_credentials.pem ./ZBG1N29AuNNwYGO_M8E2j1_VNridX0gTB0dITA7Itqg ec2-user@wayto.us:prod/.well-known/acme-challenge/ZBG1N29AuNNwYGO_M8E2j1_VNridX0gTB0dITA7Itqg
 #scp -i ./conf/aws/aws_credentials.pem ./conf/assetlinks.json ec2-user@wayto.us:prod/.well-known/assetlinks.json
 
 
