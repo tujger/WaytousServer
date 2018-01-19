@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.helpers;
 
+import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.helpers.Mime;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 

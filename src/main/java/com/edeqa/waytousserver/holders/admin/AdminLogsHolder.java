@@ -1,11 +1,11 @@
 
 package com.edeqa.waytousserver.holders.admin;
 
+import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Mime;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.helpers.RequestWrapper;
 import com.edeqa.waytousserver.interfaces.PageHolder;
 import com.edeqa.waytousserver.servers.AdminServletHandler;
 import com.google.api.client.http.HttpMethods;

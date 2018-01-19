@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 1/19/17.
  */
 
@@ -32,7 +31,7 @@ function TrackingFB(main) {
             uri = new URL(window.location.href);
         }
 
-        var path = uri.pathname.replace("/group/","/track/");
+        var path = uri.path.replace("/group/","/track/");
         serverUri = "wss://" + uri.hostname + ":"+ data.WSS_FB_PORT + "/v1" + path;
 //         serverUri = "ws://" + uri.hostname + ":" + data.WS_FB_PORT + "/v1" + path;
 
@@ -255,7 +254,7 @@ function TrackingFB(main) {
 
         var xhrModeStart = function(link) {
             var uri = new URL(link);
-            link = "/rest/v1/join"/* + uri.pathname*/;
+            link = "/rest/join"/* + uri.pathname*/;
 //            link = "https://" + uri.hostname + (data.HTTPS_PORT == 443 ? "" : ":" + data.HTTPS_PORT) + "/rest/v1/join"/* + uri.pathname*/;
 
             var xhr = new XMLHttpRequest();

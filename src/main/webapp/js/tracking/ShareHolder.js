@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 3/10/17.
  */
 EVENTS.SHARE_LINK = "share_link";

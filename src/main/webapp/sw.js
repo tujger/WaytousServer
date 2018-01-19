@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 3/9/17.
  */
 var CACHE_NAME = "${APP_NAME}-v${SERVER_BUILD}";
@@ -13,7 +12,7 @@ var urlsToCache = [
     "/images/logo.png",
     "/images/marker.svg",
     "/js/helpers/Constants.js",
-    "/js/helpers/Edequate.js",
+    "/js/Edequate.js",
     "/js/helpers/MyUser.js",
     "/js/helpers/MyUsers.js",
     "/js/helpers/NoSleep.js",

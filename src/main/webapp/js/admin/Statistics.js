@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 9/11/17.
  */
 function Statistics() {
@@ -497,7 +496,7 @@ function Statistics() {
             yes.hide();
             no.hide();
             u.toast.show("Messages removing is performing.");
-            u.get("/admin/rest/v1/stat/clean")
+            u.get("/admin/rest/stat/clean")
                 .then(function(xhr){
                 }).catch(function(code,xhr){
                 var res = JSON.parse(xhr.responseText) || {};

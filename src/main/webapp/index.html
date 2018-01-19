@@ -1,37 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>
-        ${APP_NAME}
-    </title>
+    <title>Waytous</title>
+    <link rel="icon" href="/icons/favicon.ico">
+    <style>
+        @import url("/css/edequate.css");
+        @import url("/css/edequate-horizontal.css");
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=no">
+    <script async src="/js/Edequate.js" variable="u"
+            callback="u.require('/js/main/Main', u).then(function(main){main.start({type:'main'})})" exportConstants="true">
+    </script>
     <script>
         ${APP_DATA}
     </script>
-    <script async src="/js/index/Main.js"></script>
 </head>
 <body>
+<div id="loading-dialog" class="modal shadow progress-dialog" tabindex="-1">
+    <div class="dialog-items">
+        <div class="dialog-item progress-dialog-circle"></div>
+        <div class="dialog-item progress-dialog-title">Loading...</div>
+        <div id="loading-dialog-progress" class="dialog-item progress-dialog-title"></div>
+    </div>
+</div>
 <noscript>
     <link type="text/css" rel="stylesheet" href="/css/noscript.css">
     <div class="header">
-        <img src="/images/logo.svg" width="24" height="24"> Waytous
+        <img src="/images/edeqa-logo.svg" width="24" height="24">
+        Waytous
     </div>
     <div class="text">
-        This service requires to allow Javascript. Please enable Javascript in your browser or use other browser that supports Javascript and try again.
+        This site requires to allow Javascript. Please enable Javascript in your browser and try again or use
+        other browser that supports Javascript.
     </div>
     <div class="copyright">
-        Waytous &copy;2017-18
-        <a href="http://www.edeqa.com" class="link">Edeqa</a>
+        <a href="http://www.waytous.net" class="link">Waytous</a> &copy;2017-18 <a href="http://www.edeqa.com" class="link">Edeqa</a>
     </div>
 </noscript>
-<div id="actionbar"></div>
-<div id="drawer"></div>
-<div id="layout" class="layout">
-    <div id="top"></div>
-    <div id="content" class="content">
-        <!--${site_is_under_construction}-->
-    </div>
-    <div id="bottom"></div>
-</div>
-
 </body>
 </html>

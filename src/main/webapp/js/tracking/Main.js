@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 1/20/17.
  */
 
@@ -31,7 +30,7 @@ function Main() {
 
     function start() {
         var a = document.createElement("script");
-        a.setAttribute("src","/js/helpers/Edequate.js");
+        a.setAttribute("src","/js/Edequate.js");
         a.setAttribute("defer","");
         a.setAttribute("async","");
         a.setAttribute("onload","preloaded()");
@@ -398,8 +397,7 @@ function Main() {
         var lang = (locale || u.load("lang") || navigator.language).toLowerCase().slice(0,2);
         u.lang.overrideResources({
             "default": "/resources/en/" + resource,
-            resources: "/rest/v1/getContent",
-            type: "resources",
+            resources: "/rest/resources",
             resource: resource,
             locale: lang,
             callback: callback

@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 2/9/17.
  */
 
@@ -218,7 +217,7 @@ function TrackingHolder(main) {
                     onopen: function(e) {
                         if(!e.loaded) {
                             var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0, 2);
-                            u.post("/rest/v1/getContent", {
+                            u.post("/rest/content", {
                                 resource: "terms-of-service.html",
                                 locale: lang
                             }).then(function (xhr) {
@@ -558,12 +557,12 @@ function TrackingHolder(main) {
                             onshow: function(e) {
                                 if(sounds) {
                                 } else {
-                                    u.getJSON("/rest/v1/getSounds").then(function(json){
+                                    u.getJSON("/rest/sounds").then(function(json){
                                         sounds = {};
                                         u.clear(e);
                                         var selected = 0;
-                                        for(var i in json.files) {
-                                            var file = json.files[i];
+                                        for(var i in json.message) {
+                                            var file = json.message[i];
                                             var name = (file.replace(/\..*$/,"").replace(/[\-_]/g," ")).toUpperCaseFirst();
                                             sounds[file] = name;
                                             u.create(HTML.OPTION, {value:file, innerHTML:name}, e);

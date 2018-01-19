@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 2/9/17.
  */
 EVENTS.REQUEST_MODE_DAY = "request_mode_day";

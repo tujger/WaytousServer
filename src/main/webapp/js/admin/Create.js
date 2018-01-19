@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 1/19/17.
  */
 function Create() {
@@ -110,7 +109,7 @@ function Create() {
             "dismiss-inactive": inputDismissInactive.checked,
             "delay-to-dismiss": inputDelay.value
         };
-        u.post("/admin/rest/v1/group/create", JSON.stringify(options))
+        u.post("/admin/rest/group/create", JSON.stringify(options))
             .then(function(){
                 u.toast.show("Group "+inputId.value+" has created.");
                 WTU.switchTo("/admin/groups");

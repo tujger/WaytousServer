@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 4/24/17.
  */
 
@@ -13,23 +12,23 @@ function Main() {
     var files = [
         "/js/helpers/Utils.js",
 //        "/js/helpers/Constants",
-        "/js/index/HomeHolder",
-        "/js/index/StartHolder",
+        "/js/main/HomeHolder",
+        "/js/main/StartHolder",
 
-        "/js/index/HelpHolder",
-        "/js/index/PrivacyPolicyHolder",
-//        "/js/index/ApiHolder",
+        "/js/main/HelpHolder",
+        "/js/main/PrivacyPolicyHolder",
+//        "/js/main/ApiHolder",
 
-        "/js/index/SupportHolder",
-        "/js/index/FeedbackHolder",
-        "/js/index/ContactHolder",
-        "/js/index/AboutHolder"
+        "/js/main/SupportHolder",
+        "/js/main/FeedbackHolder",
+        "/js/main/ContactHolder",
+        "/js/main/AboutHolder"
     ];
     var type = "home";
 
     self.start = function() {
         var a = document.createElement("script");
-        a.setAttribute("src","/js/helpers/Edequate.js");
+        a.setAttribute("src","/js/Edequate.js");
         a.setAttribute("onload","preloaded()");
         document.head.appendChild(a);
     };
@@ -38,13 +37,24 @@ function Main() {
 
         window.u = new Edequate({exportConstants:true, origin:"waytous"});
 
+        DRAWER = {
+            SECTION_PRIMARY: 0,
+            SECTION_COMMUNICATION: 2,
+            SECTION_SHARE: 3,
+            SECTION_NAVIGATION: 5,
+            SECTION_VIEWS: 6,
+            SECTION_MAP: 7,
+            SECTION_MISCELLANEOUS: 8,
+            SECTION_LAST: 9
+        };
+
         u.loading("Loading resources...");
 
         document.head
             .place(HTML.META, {name:"viewport", content:"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"})
             .place(HTML.LINK, {rel:"stylesheet", href:"https://fonts.googleapis.com/icon?family=Material+Icons", async:"", defer:""})
             .place(HTML.LINK, {rel:"stylesheet", href:"/css/edequate.css", async:"", defer:""})
-            .place(HTML.LINK, {rel:"stylesheet", href:"/css/index.css", async:"", defer:""})
+            .place(HTML.LINK, {rel:"stylesheet", href:"/css/main.css", async:"", defer:""})
             .place(HTML.LINK, {rel:"icon", type:"image/png", sizes:"192x192", href:"/icons/android-chrome-192x192.png"})
             .place(HTML.LINK, {rel:"icon", type:"image/png", sizes:"32x32", href:"/icons/favicon-32x32.png"})
             .place(HTML.LINK, {rel:"icon", type:"image/png", sizes:"16x16", href:"/icons/favicon-16x16.png"})
@@ -60,7 +70,7 @@ function Main() {
 
         u.require("/js/helpers/Constants").then(function(){
             EVENTS.RELOAD = "reload";
-            loadResources("index.json", function() {
+            loadResources("main.json", function() {
                 u.eventBus.register(files, {
                     context: self,
                     onprogress: function (loaded) {
@@ -106,6 +116,7 @@ function Main() {
                 window.scrollTo(0, 1); }, 0);
             });
 
+
             var out = u.create("div", {className:"layout"}, "layout");
 
             self.actionbar = u.actionBar({
@@ -121,17 +132,16 @@ function Main() {
             var selectLang = u.create(HTML.SELECT, { className: "actionbar-select-lang changeable", onchange: function(e, event) {
                 var lang = (this.value || navigator.language).toLowerCase().slice(0,2);
                 u.save("lang", lang);
-                loadResources("index.json");
+                loadResources("main.json");
                 u.fire.call(EVENTS.RELOAD, type);
             }}, self.actionbar).place(HTML.OPTION, { name: u.lang.loading, value:"" });
 
-            //u.post("/rest/v1/getContent", {resource: "index-contact.html", locale: lang}).then(function(xhr){
-            u.getJSON("/rest/v1/getLocales").then(function(json){
+            u.getJSON("/rest/locales").then(function(json){
                 u.clear(selectLang);
                 var count = 1;
                 selectLang.place(HTML.OPTION, { innerHTML: "Default", value: "en" });
-                for(var x in json.locales) {
-                    selectLang.place(HTML.OPTION, { innerHTML: json.locales[x], value: x });
+                for(var x in json.message) {
+                    selectLang.place(HTML.OPTION, { innerHTML: json.message[x], value: x });
                     if(u.load("lang") === x) selectLang.selectedIndex = count;
                     count++;
                 }
@@ -254,7 +264,7 @@ function Main() {
         showPrivacy.dialog.open();
 
         var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);
-        u.post("/rest/v1/getContent", {resource: "privacy-policy.html", locale: lang}).then(function(xhr){
+        u.post("/rest/content", {resource: "privacy-policy.html", locale: lang}).then(function(xhr){
             showPrivacy.dialog.items[0].innerHTML = xhr.response;
         }).catch(function(error, json) {
             showPrivacy.dialog.items[0].innerHTML = "Error";
@@ -279,7 +289,7 @@ function Main() {
         showTerms.dialog.open();
 
         var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);
-        u.post("/rest/v1/getContent", {resource: "terms-of-service.html", locale: lang}).then(function(xhr){
+        u.post("/rest/content", {resource: "terms-of-service.html", locale: lang}).then(function(xhr){
             showTerms.dialog.items[0].innerHTML = xhr.response;
         }).catch(function(error, json) {
             showTerms.dialog.items[0].innerHTML = "Error";
@@ -294,8 +304,7 @@ function Main() {
         var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);
         u.lang.overrideResources({
             "default": "/resources/en/" + resource,
-            resources: "/rest/v1/getContent",
-            type: "resources",
+            resources: "/rest/resources",
             resource: resource,
             locale: lang,
             callback: callback

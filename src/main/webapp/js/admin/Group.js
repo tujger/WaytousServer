@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 1/19/17.
  */
 function Group() {
@@ -49,7 +48,7 @@ function Group() {
         /*var requiresPasswordNode = tableSummary.add({
             onclick: function() {
                 this.lastChild.innerHTML += " ...wait";
-                u.post("/admin/rest/v1/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.REQUIRES_PASSWORD}))
+                u.post("/admin/rest/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.REQUIRES_PASSWORD}))
                 .catch(function(code,xhr){
                    console.error(code,xhr);
                    WTU.resign(updateSummary);
@@ -88,7 +87,7 @@ function Group() {
                                 var newValue = items[0].value;
                                 if(tableSummary.welcomeMessageNode.lastChild.innerHTML !== newValue) {
                                     tableSummary.welcomeMessageNode.lastChild.innerHTML += " ...wait";
-                                    u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.WELCOME_MESSAGE, value:newValue}))
+                                    u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.WELCOME_MESSAGE, value:newValue}))
                                         .catch(function(code,xhr){
                                             console.error(code,xhr);
                                             WTU.resign(updateSummary);
@@ -113,7 +112,7 @@ function Group() {
         tableSummary.persistentNode = tableSummary.add({
             onclick: function() {
                 this.lastChild.innerHTML += " ...wait";
-                u.post("/admin/rest/v1/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.PERSISTENT}))
+                u.post("/admin/rest/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.PERSISTENT}))
                     .catch(function(code,xhr){
                         console.warn("Resign because of",code,xhr);
                         WTU.resign(updateSummary);
@@ -142,7 +141,7 @@ function Group() {
                             var newValue = items[1].value;
                             if(tableSummary.timeToLiveNode.lastChild.innerHTML !== newValue) {
                                 tableSummary.timeToLiveNode.lastChild.innerHTML += " ...wait";
-                                u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.TIME_TO_LIVE_IF_EMPTY, value:newValue}))
+                                u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.TIME_TO_LIVE_IF_EMPTY, value:newValue}))
                                     .catch(function(code,xhr){
                                         console.warn("Resign because of",code,xhr);
                                         WTU.resign(updateSummary);
@@ -164,7 +163,7 @@ function Group() {
         tableSummary.dismissInactiveNode = tableSummary.add({
             onclick: function() {
                 this.lastChild.innerHTML += " ...wait";
-                u.post("/admin/rest/v1/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.DISMISS_INACTIVE}))
+                u.post("/admin/rest/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.DISMISS_INACTIVE}))
                     .catch(function(code,xhr){
                         console.warn("Resign because of",code,xhr);
                         WTU.resign(updateSummary);
@@ -192,7 +191,7 @@ function Group() {
                             var newValue = items[1].value;
                             if(tableSummary.delayToDismissNode.lastChild.innerHTML !== newValue) {
                                 tableSummary.delayToDismissNode.lastChild.innerHTML += " ...wait";
-                                u.post("/admin/rest/v1/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.DELAY_TO_DISMISS, value:newValue}))
+                                u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.DELAY_TO_DISMISS, value:newValue}))
                                     .catch(function(code,xhr){
                                         console.warn("Resign because of",code,xhr);
                                         WTU.resign(updateSummary);
@@ -534,7 +533,7 @@ function Group() {
         u.clear(buttons);
         u.create({className:"question", innerHTML: "Are you sure you want to delete group "+groupId+"?"}, buttons);
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
-            u.post("/admin/rest/v1/group/delete", JSON.stringify({group_id:groupId}))
+            u.post("/admin/rest/group/delete", JSON.stringify({group_id:groupId}))
                 .then(function(){
                     WTU.switchTo("/admin/groups");
                     u.toast.show("Group "+groupId+" was deleted.");

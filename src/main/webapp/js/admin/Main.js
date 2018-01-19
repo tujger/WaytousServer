@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 1/20/17.
  */
 
@@ -33,10 +32,9 @@ function Main() {
 //        "Help",
     ];
 
-
     function start() {
         var a = document.createElement("script");
-        a.setAttribute("src","/js/helpers/Edequate.js");
+        a.setAttribute("src","/js/Edequate.js");
         a.setAttribute("onload","preloaded()");
         document.head.appendChild(a);
     }
@@ -50,6 +48,17 @@ function Main() {
         }
 
         window.u = new Edequate({exportConstants:true, origin:"waytous"});
+
+        DRAWER = {
+            SECTION_PRIMARY: 0,
+            SECTION_COMMUNICATION: 2,
+            SECTION_SHARE: 3,
+            SECTION_NAVIGATION: 5,
+            SECTION_VIEWS: 6,
+            SECTION_MAP: 7,
+            SECTION_MISCELLANEOUS: 8,
+            SECTION_LAST: 9
+        };
 
         document.title = u.create(HTML.DIV, "${APP_NAME} - Admin").innerHTML;
         u.loading("Loading resources...");
@@ -228,7 +237,7 @@ function Main() {
             for(var i in holderFiles) {
                 var x = holderFiles[i].toLowerCase();
                 if(holders[x] && holders[x].menu) {
-                    var item = drawer.add(holders[x].move ? u.DRAWER.SECTION_PRIMARY : u.DRAWER.SECTION_VIEWS, x, holders[x].menu, holders[x].icon, function(){
+                    var item = drawer.add(holders[x].move ? DRAWER.SECTION_PRIMARY : DRAWER.SECTION_VIEWS, x, holders[x].menu, holders[x].icon, function(){
                         switchTo("/admin/" + holders[this.instance].page);
                         return false;
                     });
@@ -298,8 +307,7 @@ function Main() {
         var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);
         u.lang.overrideResources({
             "default": "/resources/en/" + resource,
-            resources: "/rest/v1/getContent",
-            type: "resources",
+            resources: "/rest/resources",
             resource: resource,
             locale: lang,
             callback: callback

@@ -2,6 +2,7 @@ package com.edeqa.waytousserver.helpers;
 
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
+import com.google.api.core.ApiFuture;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -78,6 +79,13 @@ public class TaskSingleValueEventFor<T> {
             if(customToken == null) {
                 HashMap<String, Object> additionalClaims = new HashMap<String, Object>();
                 additionalClaims.put("Administrator", true);
+                try {
+                    customToken = FirebaseAuth.getInstance().createCustomTokenAsync("Administrator", additionalClaims).get();
+                    restRequestWithTokenUpdate();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+/*
                 FirebaseAuth.getInstance().createCustomToken("Administrator", additionalClaims)
                         .addOnSuccessListener(new OnSuccessListener<String>() {
                             @Override
@@ -93,6 +101,7 @@ public class TaskSingleValueEventFor<T> {
                                 e.printStackTrace();
                             }
                         });
+*/
             } else {
                 restRequest();
             }

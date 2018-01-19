@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 1/19/17.
  */
 function Groups() {
@@ -245,7 +244,7 @@ function Groups() {
             yes.hide();
             no.hide();
             u.toast.show("Groups clean is performing.");
-            u.get("/admin/rest/v1/groups/clean")
+            u.get("/admin/rest/groups/clean")
                 .then(function(xhr){
                 }).catch(function(code,xhr){
                 var res = JSON.parse(xhr.responseText) || {};

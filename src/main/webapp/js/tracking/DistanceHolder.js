@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 3/9/17.
  */
 
@@ -313,12 +312,12 @@ function DistanceHolder(main) {
                             onshow: function(e) {
                                 if(sounds) {
                                 } else {
-                                    u.getJSON("/rest/v1/getSounds").then(function(json){
+                                    u.getJSON("/rest/sounds").then(function(json){
                                         sounds = {};
                                         u.clear(e);
                                         var selected = 0;
-                                        for(var i in json.files) {
-                                            var file = json.files[i];
+                                        for(var i in json.message) {
+                                            var file = json.message[i];
                                             var name = (file.replace(/\..*$/,"").replace(/[\-_]/g," ")).toUpperCaseFirst();
                                             sounds[file] = name;
                                             u.create(HTML.OPTION, {value:file, innerHTML:name}, e);
@@ -349,12 +348,12 @@ function DistanceHolder(main) {
                             onshow: function(e) {
                                 if(sounds) {
                                 } else {
-                                    u.getJSON("/rest/v1/getSounds").then(function(json){
+                                    u.getJSON("/rest/sounds").then(function(json){
                                         sounds = {};
                                         u.clear(e);
                                         var selected = 0;
-                                        for(var i in json.files) {
-                                            var file = json.files[i];
+                                        for(var i in json.message) {
+                                            var file = json.message[i];
                                             var name = (file.replace(/\..*$/,"").replace(/[\-_]/g," ")).toUpperCaseFirst();
                                             sounds[file] = name;
                                             u.create(HTML.OPTION, {value:file, innerHTML:name}, e);

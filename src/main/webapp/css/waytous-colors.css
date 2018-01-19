@@ -1,0 +1,242 @@
+::selection {
+    background-color: lightgray;
+}
+::-moz-selection {
+    background-color: lightgray;
+}
+html, body {
+    color: darkslategray;
+}
+button:hover {
+    background-color: #eeeeee;
+}
+button:active {
+    background-color: #aaaaaa;
+}
+.layout {
+    background-color: white;
+}
+.toast {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+.clickable:hover {
+    background-color: lightcyan;
+}
+.disabled {
+    color: gray;
+}
+.modal {
+    background-color: floralwhite;
+}
+.dialog-title {
+    background-color: #4c93af;
+    color: white;
+}
+.dialog-title-button:hover {
+    color: red;
+}
+.dialog-filter-button:hover {
+    color: red;
+}
+.dialog-filter-clear {
+    color: gray;
+}
+.dialog-item-input-input, .dialog-item-input-password, .dialog-item-input-number {
+    background-color: antiquewhite;
+}
+.dialog-item-input-button {
+    background-color: #4c93af;
+    color: white;
+}
+.dialog-item-input-button:hover, .dialog-item-input-button:focus {
+    background-color: #2e5d7d;
+}
+.dialog-item-enclosed-button:hover {
+    background-color: burlywood;
+}
+.dialog-button:before {
+    background-color: rgba(236, 240, 241, .3);
+}
+.dialog-button-positive {
+    background-color: #4c93af;
+    color: white;
+}
+.dialog-button-positive:hover/*, .dialog-button-positive:focus*/ {
+    background-color: #2e5d7d;
+}
+.dialog-button-neutral {
+    background-color: #4c93af;
+    color: white;
+}
+.dialog-button-neutral:hover/*, .dialog-button-neutral:focus*/ {
+    background-color: #2e5d7d;
+}
+.dialog-button-negative {
+    background-color: #4c93af;
+    color: white;
+}
+.dialog-button-negative:hover/*, .dialog-button-negative:focus*/ {
+    background-color: #2e5d7d;
+}
+.dialog-progress-bar {
+    background-color: darkgray;
+}
+.dialog-progress-value {
+    background-color: #4c93af;
+}
+.dialog-help-button {
+    color: darkslategray;
+}
+.dialog-help-button:hover {
+    background-color: burlywood;
+}
+.dialog-dim {
+    background-color: rgba(128, 128, 128, 0.4);
+}
+.drawer {
+    background-color: azure;
+}
+.drawer-header {
+    background: linear-gradient(135deg, #2e5d7d 0%,#32667b 54%,#819bc7 100%);
+}
+.drawer-header-name, .drawer-collapsed:hover .drawer-header-name {
+    color: white;
+}
+.drawer-header-title {
+    color: white;
+}
+.drawer-header-subtitle {
+    color: white;
+}
+.drawer-menu-divider {
+    border-bottom-color: darkgray;
+}
+.drawer-menu-section-title:hover {
+    background: #dddd99;
+}
+.drawer-menu-section-title:active {
+    background: burlywood;
+}
+.drawer-menu-item:hover {
+    background: gainsboro;
+}
+.drawer-menu-item:active {
+    background: burlywood;
+}
+.drawer-menu-item-icon, .drawer-menu-item svg {
+    stroke: darkslategray;
+}
+.drawer-menu-item-badge, .drawer-collapsed:hover .drawer-menu-item-badge {
+    background-color: lightgreen;
+}
+.drawer-footer-button:hover {
+    background-color: #dddd99;
+}
+.drawer-footer-button:active {
+    background-color: burlywood;
+}
+.menu {
+    background-color: white;
+}
+.menu .dialog-item:hover {
+    background-color: gainsboro;
+}
+.table-placeholder {
+    border: 1px solid black;
+}
+.table-filter-clear {
+    color: gray;
+}
+.table-select-active {
+    background-color: darkslategray;
+    color: white;
+}
+.thead {
+    background: #ffffdd;
+}
+.th {
+    border: 1px solid black;
+}
+.td {
+    border: 1px solid black;
+}
+.progress-dialog-circle {
+    border: 8px solid #888888;
+    border-right-color: transparent;
+}
+
+.actionbar {
+    background: linear-gradient(135deg, #2e5d7d 0%,#32667b 54%,#819bc7 100%);
+}
+
+.actionbar-label {
+    color: white;
+}
+.actionbar-select-lang {
+    background-color: #819bc7;
+}
+.button-scroll-top {
+    background-color: white;
+}
+
+.create-dialog-button {
+    color: white;
+}
+.create-dialog-button:hover/*, .dialog-button-positive:focus*/ {
+    background-color: #2e5d7d;
+}
+
+.image-full-width {
+    border-color: darkslategray;
+}
+
+@media screen and (min-width: 1001px) {
+    .drawer {
+        background: none;
+    }
+    .drawer-header {
+        background: none;
+    }
+    .drawer-menu {
+        color: white;
+    }
+    .drawer-menu:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+        color: black;
+    }
+    .drawer-footer {
+        background-color: lightgray;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    body {
+        color: darkslategray;
+    }
+    button {
+        border-color: gray;
+        background-color: ivory;
+    }
+    .actionbar {
+        background-color: rgba(76, 147, 175, 1);
+        color: white;
+    }
+    .dialog-filter-input {
+        background-color: #4c93af;
+        color: white;
+    }
+    .dialog-filter-clear {
+        color: white;
+    }
+    .drawer, .drawer-collapsed {
+        background-color: white;
+    }
+    .drawer-menu-item:hover {
+        background: #dddd99;
+    }
+    .toast {
+        border-color: rgba(255, 255, 240, 0.7);
+    }
+}
+

@@ -2,15 +2,20 @@ package com.edeqa.waytousserver.helpers;
 
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Mime;
+import com.edeqa.waytous.Options;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.edeqa.waytousserver.servers.DataProcessorFirebaseV1;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
 import static com.edeqa.helpers.HtmlGenerator.A;
 import static com.edeqa.helpers.HtmlGenerator.CLASS;
@@ -34,7 +39,7 @@ import static com.edeqa.waytous.Constants.OPTIONS;
 
 public class Common {
 
-    public final static int SERVER_BUILD = 51;
+    public final static int SERVER_BUILD = 60;
     public final static String FIREBASE_JAVASCRIPT_VERSION = "4.8.1"; // https://firebase.google.com/docs/web/setup
 
     private volatile Map<String,AbstractDataProcessor> dataProcessor;
@@ -66,6 +71,27 @@ public class Common {
 
     public static String getWrappedHttpsPort(){
         return OPTIONS.getHttpsPortMasked() == 443 ? "" : ":" + OPTIONS.getHttpsPortMasked();
+    }
+
+    public void initOptions(ServletContext servletContext) {
+        if(OPTIONS == null) {
+            //noinspection HardCodedStringLiteral
+            String options = servletContext.getInitParameter("options");
+            OPTIONS = new Options(new String[]{options});
+        }
+    }
+
+    public void initDataProcessor() throws ServletException {
+        if(getDataProcessor(DataProcessorFirebaseV1.VERSION) == null) {
+            try {
+                setDataProcessor(new DataProcessorFirebaseV1());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode()){
+                throw new ServletException("\n\nThis configuration can not be runned in Google AppEngine mode. Set the installation type in build.gradle with the following property:\n\tdef installationType = 'google-appengine'\n");
+            }
+        }
     }
 
     public AbstractDataProcessor getDataProcessor(String version) {

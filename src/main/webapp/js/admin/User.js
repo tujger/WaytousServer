@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 1/23/17.
  */
 function User() {
@@ -324,7 +323,7 @@ function User() {
 
     function switchActive(number, active) {
         u.progress.show("Switching...");
-        u.post("/admin/rest/v1/user/switch", JSON.stringify({group_id:groupId, user_number:userNumber,property:DATABASE.ACTIVE,value:active}))
+        u.post("/admin/rest/user/switch", JSON.stringify({group_id:groupId, user_number:userNumber,property:DATABASE.ACTIVE,value:active}))
             .then(function(){
                 u.progress.hide();
                 if(!active) {
@@ -349,7 +348,7 @@ function User() {
         u.create({className:"question", innerHTML: "Are you sure you want to remove user "+userNumber+" from group "+groupId+"? Note that all user information will be removed from group."}, buttons);
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
             u.progress.show("Removing...");
-            u.post("/admin/rest/v1/user/remove", JSON.stringify({group_id:groupId, user_number:userNumber}))
+            u.post("/admin/rest/user/remove", JSON.stringify({group_id:groupId, user_number:userNumber}))
                 .then(function(){
                     u.progress.hide();
                     u.toast.show("User #"+userNumber+" was removed.");

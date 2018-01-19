@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 10/12/17.
  */
 function Account() {
@@ -231,7 +230,7 @@ function Account() {
         u.clear(buttons);
         u.create({className:"question", innerHTML: "Are you sure you want to delete account "+accountId+"?"}, buttons);
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
-            u.post("/admin/rest/v1/account/delete", JSON.stringify({uid:accountId}))
+            u.post("/admin/rest/account/delete", JSON.stringify({uid:accountId}))
                 .then(function(){
                     WTU.switchTo("/admin/accounts");
                     u.toast.show("Account " + accountId + " was deleted.");

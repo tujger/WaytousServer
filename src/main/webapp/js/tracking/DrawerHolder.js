@@ -2,10 +2,19 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 2/8/17.
  */
 EVENTS.UPDATE_ACTIONBAR_SUBTITLE = "update_actionbar_subtitle";
+DRAWER = {
+    SECTION_PRIMARY: 0,
+    SECTION_COMMUNICATION: 2,
+    SECTION_SHARE: 3,
+    SECTION_NAVIGATION: 5,
+    SECTION_VIEWS: 6,
+    SECTION_MAP: 7,
+    SECTION_MISCELLANEOUS: 8,
+    SECTION_LAST: 9
+};
 
 function DrawerHolder(main) {
 
@@ -23,7 +32,7 @@ function DrawerHolder(main) {
             body: u.lang.loading.outerHTML,
             onopen: function(e) {
                 var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);
-                u.post("/rest/v1/getContent", {resource: "privacy-policy.html", locale: lang}).then(function(xhr){
+                u.post("/rest/content", {resource: "privacy-policy.html", locale: lang}).then(function(xhr){
                     e.body.innerHTML = xhr.response;
                 }).catch(function(error, json) {
                     e.body.innerHTML = u.lang.error;
@@ -37,7 +46,7 @@ function DrawerHolder(main) {
             className: "dialog-about-terms",
             onopen: function(e) {
                 var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);
-                u.post("/rest/v1/getContent", {resource: "terms-of-service.html", locale: lang}).then(function(xhr){
+                u.post("/rest/content", {resource: "terms-of-service.html", locale: lang}).then(function(xhr){
                     e.body.innerHTML = xhr.response;
                 }).catch(function(error, json) {
                     e.body.innerHTML = u.lang.error;

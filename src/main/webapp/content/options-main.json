@@ -1,0 +1,16 @@
+{
+  "title": "Waytous",
+  "copyright": "Test &copy;2017-18 Edeqa",
+  "drawer": {
+    "0": "Main",
+    "1": "Summary",
+    "2": "Main",
+    "3": "Products",
+    "4": "Share",
+    "5": "Docs",
+    "6": "Miscellaneous",
+    "7": "Settings",
+    "8": "Help",
+    "9": "Information"
+  }
+}

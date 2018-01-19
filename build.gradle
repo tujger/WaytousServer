@@ -1,18 +1,29 @@
 buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
     dependencies {
         classpath 'com.google.appengine:gradle-appengine-plugin:1.9.59'
-//        classpath 'com.google.javascript:closure-compiler:v20150609'
-//        classpath 'com.yahoo.platform.yui:yuicompressor:2.4.6'
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:+'
+        classpath 'org.akhikhl.gretty:gretty:+'
     }
 }
 
 plugins {
     id "com.eriwen.gradle.js" version "2.14.1"
-//    id "com.eriwen.gradle.css" version "2.14.0"
+    id "com.eriwen.gradle.css" version "2.14.0"
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 group 'com.edeqa'
-version '1.51'
+version '1.60'
 
 /**
  * NOTE!
@@ -30,16 +41,12 @@ apply plugin: 'java'
 apply plugin: 'war'
 
 if (installationType.compareTo('google-appengine') == 0) {
+    apply plugin: 'org.akhikhl.gretty'
+    apply plugin: 'com.google.cloud.tools.appengine-standard'
 //    apply plugin: 'appengine'
 }
 
 sourceCompatibility = 1.7
-
-repositories {
-    mavenCentral()
-    jcenter()
-    maven { url "https://jitpack.io" }
-}
 
 
 //minifyCss {
@@ -50,12 +57,24 @@ repositories {
 //    }
 //}
 
-
 dependencies {
     compile 'org.java-websocket:Java-WebSocket:1.3.7'
 //    compile 'org.json:json:20160212'
-    compile project(':WaytousFramework')
-    compile project(':Helpers')
+    compile (project(':WaytousFramework')) {
+        exclude group: 'com.github.edeqa', module: 'helpers'
+        exclude group: 'org.json', module: 'json'
+        exclude group: 'org.slf4j', module: 'slf4j-nop'
+    }
+    compile (project(':Helpers')) {
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.json', module: 'json'
+    }
+    compile (project(':Edequate')) {
+        exclude group: 'org.json', module: 'json'
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'javax.servlet', module: 'javax.servlet-api'
+    }
 
 // gae servlet rows
     if (installationType.compareTo('google-appengine') == 0) {
@@ -65,11 +84,13 @@ dependencies {
         compile 'com.google.guava:guava:23.6-jre'
         compile 'javax.servlet:javax.servlet-api:3.1.0'
         compile 'org.apache.httpcomponents:httpclient:4.5.4'
+
+        compile 'com.google.appengine:appengine:+'
     }
 
 // server rows
-    compile 'com.google.firebase:firebase-admin:5.6.0'
-    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
+    compile 'com.google.firebase:firebase-admin:+'
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 //    testCompile group: 'junit', name: 'junit', version: '4.12'
@@ -94,7 +115,7 @@ minifyJs {
 }
 
 task minifyAllJS {
-    def path = new File("${projectDir}/src/main/webapp");
+    /*def path = new File("${projectDir}/src/main/webapp");
     print "Minifying from ${path}\n"
     print "    to \"${buildDir}/exploded-app\nProcessing:\n"
     fileTree(path).eachWithIndex { file, index ->
@@ -115,7 +136,7 @@ task minifyAllJS {
         tasks."$dynamicTask".execute()
         print " done.\n"
     }
-    print "Minifying done.\n"
+    print "Minifying done.\n"*/
 }
 
 war {
@@ -124,19 +145,48 @@ war {
     allMap.delete()
     tasks.minifyJs.execute()
     it.dependsOn minifyAllJS
-//    exclude '**/*.js'
 
-//    print "TYPE ${buildType}"
     print "Final stage...\n"
 }
 
 if (installationType.compareTo('google-appengine') == 0) {
     appengine {
-        downloadSdk = true
-        appcfg {
-            oauth2 = true
+//        downloadSdk = true
+//        appcfg {
+//            oauth2 = true
+//        }
+        run {
+            port = 8180
+            host = "0.0.0.0"
         }
-        httpAddress = "0.0.0.0"
+//        httpAddress = "0.0.0.0"
+//        httpPort = 8180
+//        host = "0.0.0.0"
+        deploy {
+            stopPreviousVersion = true  // default - stop the current version
+            promote = true              // default - & make this the current version
+        }
+    }
+    gretty {
         httpPort = 8180
+        httpsPort = 8444
+        contextPath = '/'
+        servletContainer = 'jetty9'  // What App Engine Flexible uses
+    }
+}
+
+task updateChanged(type: Copy) {
+    from "${project(':Edequate').projectDir}/src/main/webapp", "${projectDir}/src/main/webapp"
+    into "${buildDir}/exploded-app"
+    exclude "**/.idea/*"
+}
+
+war.dependsOn(':Edequate:war')
+
+war {
+    with copySpec {
+        from zipTree("${project(':Edequate').buildDir}/libs/Edequate.war")
+        into("/")
+        duplicatesStrategy DuplicatesStrategy.EXCLUDE
     }
 }

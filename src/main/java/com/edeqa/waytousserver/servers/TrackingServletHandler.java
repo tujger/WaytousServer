@@ -1,10 +1,11 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.edequate.abstracts.AbstractServletHandler;
+import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Mime;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.helpers.RequestWrapper;
 import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;
@@ -43,7 +44,8 @@ public class TrackingServletHandler extends AbstractServletHandler {
     @Override
     public void init() throws ServletException {
         super.init();
-        initDataProcessor();
+        Common.getInstance().initOptions(getServletContext());
+        Common.getInstance().initDataProcessor();
     }
 
     @Override
@@ -107,7 +109,6 @@ public class TrackingServletHandler extends AbstractServletHandler {
             requestWrapper.sendRedirect(redirectLink);
             return;
         }
-
 
         html.clear();
         html.getHead().add(TITLE).with("Waytous");

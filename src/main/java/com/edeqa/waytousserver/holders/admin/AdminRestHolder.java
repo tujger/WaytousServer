@@ -1,6 +1,7 @@
 
 package com.edeqa.waytousserver.holders.admin;
 
+import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
@@ -10,7 +11,6 @@ import com.edeqa.waytous.SignProvider;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
-import com.edeqa.waytousserver.helpers.RequestWrapper;
 import com.edeqa.waytousserver.interfaces.PageHolder;
 import com.edeqa.waytousserver.servers.AdminServletHandler;
 import com.google.api.client.http.HttpMethods;
@@ -60,13 +60,13 @@ public class AdminRestHolder implements PageHolder {
             case HttpMethods.GET:
             case HttpMethods.PUT:
                 switch (uri.getPath()) {
-                    case "/admin/rest/v1/groups/clean":
+                    case "/admin/rest/groups/clean":
                         cleanGroupsV1(requestWrapper);
                         return true;
-                    case "/admin/rest/v1/stat/clean":
+                    case "/admin/rest/stat/clean":
                         cleanStatMessagesV1(requestWrapper);
                         return true;
-                    case "/admin/rest/v1/accounts/clean":
+                    case "/admin/rest/accounts/clean":
                         cleanAccountsV1(requestWrapper);
                         return true;
                     default:
@@ -75,25 +75,25 @@ public class AdminRestHolder implements PageHolder {
                 }
             case HttpMethods.POST:
                 switch (uri.getPath()) {
-                    case "/admin/rest/v1/group/create":
+                    case "/admin/rest/group/create":
                         createGroupV1(requestWrapper);
                         return true;
-                    case "/admin/rest/v1/group/delete":
+                    case "/admin/rest/group/delete":
                         deleteGroupV1(requestWrapper);
                         return true;
-                    case "/admin/rest/v1/group/modify":
+                    case "/admin/rest/group/modify":
                         modifyPropertyInGroupV1(requestWrapper);
                         return true;
-                    case "/admin/rest/v1/group/switch":
+                    case "/admin/rest/group/switch":
                         switchPropertyInGroupV1(requestWrapper);
                         return true;
-                    case "/admin/rest/v1/user/remove":
+                    case "/admin/rest/user/remove":
                         removeUserV1(requestWrapper);
                         return true;
-                    case "/admin/rest/v1/user/switch":
+                    case "/admin/rest/user/switch":
                         switchPropertyForUserV1(requestWrapper);
                         return true;
-                    case "/admin/rest/v1/account/delete":
+                    case "/admin/rest/account/delete":
                         deleteAccountV1(requestWrapper);
                         return true;
                     default:

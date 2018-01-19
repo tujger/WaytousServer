@@ -2,7 +2,6 @@
  * Part of Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 2/9/17.
  */
 EVENTS.NEW_MESSAGE = "new_message";
@@ -251,12 +250,12 @@ function MessageHolder(main) {
                             onshow: function(e) {
                                 if(incomingMessageSounds) {
                                 } else {
-                                    u.getJSON("/rest/v1/getSounds").then(function(json){
+                                    u.getJSON("/rest/sounds").then(function(json){
                                         incomingMessageSounds = {};
                                         u.clear(e);
                                         var selected = 0;
-                                        for(var i in json.files) {
-                                            var file = json.files[i];
+                                        for(var i in json.message) {
+                                            var file = json.message[i];
                                             var name = (file.replace(/\..*$/,"").replace(/[\-_]/g," ")).toUpperCaseFirst();
                                             incomingMessageSounds[file] = name;
                                             u.create(HTML.OPTION, {value:file, innerHTML:name}, e);

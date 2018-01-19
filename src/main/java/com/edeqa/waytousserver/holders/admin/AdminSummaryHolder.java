@@ -1,11 +1,11 @@
 package com.edeqa.waytousserver.holders.admin;
 
+import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.waytousserver.helpers.CheckReq;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
-import com.edeqa.waytousserver.helpers.RequestWrapper;
 import com.edeqa.waytousserver.interfaces.PageHolder;
 import com.edeqa.waytousserver.servers.AdminServletHandler;
 import com.sun.net.httpserver.HttpExchange;

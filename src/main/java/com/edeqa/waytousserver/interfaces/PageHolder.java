@@ -1,6 +1,7 @@
 package com.edeqa.waytousserver.interfaces;
 
-import com.edeqa.waytousserver.helpers.RequestWrapper;
+
+import com.edeqa.edequate.helpers.RequestWrapper;
 
 /**
  * Created 1/23/2017.
