@@ -23,7 +23,7 @@ public class LogsClear implements RestAction {
 
     @Override
     public String getActionName() {
-        return "logs/log";
+        return "logs/clear";
     }
 
     @Override
