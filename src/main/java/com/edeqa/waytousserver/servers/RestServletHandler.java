@@ -16,18 +16,20 @@ import javax.servlet.ServletException;
 
 import static com.edeqa.waytous.Constants.OPTIONS;
 
-
 /**
  * Created 1/19/17.
  */
+
 @SuppressWarnings("HardCodedStringLiteral")
 public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
 
     public RestServletHandler() {
         super();
+        useDefault();
         registerAction(new Content().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("content"));
         registerAction(new Content().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources"));
         registerAction(new Join());
+        registerAction(new Locales().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources"));
         registerAction(new TosAgreement());
         registerAction(new Version());
 
@@ -57,7 +59,6 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
             }
         }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("js/tracking").setActionName("tracking"));
 
-        registerAction(new Locales().setWebDirectory(OPTIONS.getWebRootDirectory()));
     }
 
     @Override

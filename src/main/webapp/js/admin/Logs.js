@@ -44,7 +44,7 @@ function Logs() {
         // var scroll = table.body.scrollTop;
         table.placeholder.show("Loading...");
 
-        task = new EventSource("/admin/logs/log");
+        task = new EventSource("/admin/rest/logs/log");
         task.onmessage = function(e) {
             setTimeout(function(){
                 table.head.cells[0].lastChild.innerHTML = "Logs (updated "+(new Date().toLocaleString())+")";

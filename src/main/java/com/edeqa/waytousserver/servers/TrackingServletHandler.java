@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -95,14 +96,49 @@ public class TrackingServletHandler extends AbstractServletHandler {
                 mainLink = "http://" + requestWrapper.getRequestHeader(HttpHeaders.HOST).get(0) + "/group/" + tokenId;
             }
 
-            String redirectLink = "https://" + OPTIONS.getFirebaseDynamicLinkHost() + "/?"
-                    + "link=" + mainLink
-                    + "&apn=com.edeqa.waytous"
-                    + "&al=" + mobileRedirect
-                    + "&afl=" + webRedirect
-                    + "&st=Waytous"
-                    + "&sd=Be+always+on+the+same+way+with+your+friends"
-                    + "&si=https://www.waytous.net/icons/favicon-256x256.png";
+            String redirectLink;
+            try {
+// https://firebase.google.com/docs/reference/dynamic-links/link-shortener
+                JSONObject json = new JSONObject();
+                JSONObject dynamicLinkInfo = new JSONObject();
+                json.put("dynamicLinkInfo", dynamicLinkInfo);
+                dynamicLinkInfo.put("dynamicLinkDomain", OPTIONS.getFirebaseDynamicLinkHost());
+                dynamicLinkInfo.put("link", mainLink);
+
+                JSONObject child = new JSONObject();
+                dynamicLinkInfo.put("androidInfo", child);
+                child.put("androidPackageName", "com.edeqa.waytous");
+                child.put("androidLink", mobileRedirect);
+                child.put("androidFallbackLink", webRedirect);
+
+//                child = new JSONObject();
+//                dynamicLinkInfo.put("iosInfo", child);
+
+                child = new JSONObject();
+                dynamicLinkInfo.put("socialMetaTagInfo", child);
+                child.put("socialTitle", "Waytous");
+                child.put("socialDescription", "Be always on the same way with your friends");
+                child.put("socialImageLink", "https://www.waytous.net/icons/favicon-256x256.png");
+
+                child = new JSONObject();
+                json.put("suffix", child);
+//                child.put("option", "UNGUESSABLE");
+                child.put("option", "SHORT");
+
+                json = new JSONObject(Misc.getUrl("https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=" + URLEncoder.encode( OPTIONS.getFirebaseApiKey(), "UTF-8" ), json.toString(), "UTF-8"));
+                redirectLink = json.getString("shortLink");
+                Misc.log("Tracking", "dynamic link payload", json);
+            }catch (Exception e) {
+                e.printStackTrace();
+                redirectLink = "https://" + OPTIONS.getFirebaseDynamicLinkHost() + "/?"
+                        + "link=" + mainLink
+                        + "&apn=com.edeqa.waytous"
+                        + "&al=" + mobileRedirect
+                        + "&afl=" + webRedirect
+                        + "&st=Waytous"
+                        + "&sd=Be+always+on+the+same+way+with+your+friends"
+                        + "&si=https://www.waytous.net/icons/favicon-256x256.png";
+            }
 
             Misc.log("Tracking", "->", redirectLink);
 
