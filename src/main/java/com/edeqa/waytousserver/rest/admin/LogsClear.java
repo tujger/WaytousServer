@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,29 +28,24 @@ public class LogsClear implements RestAction {
     }
 
     @Override
-    public void call(JSONObject json, final RequestWrapper request) {
+    public void call(JSONObject json, final RequestWrapper request) throws Exception {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, CODE_DELAYED);
 
-        //noinspection HardCodedStringLiteral
-        try {
-            File file = new File(OPTIONS.getLogFile());
-            Misc.log(this.getClass().getSimpleName(), file.getCanonicalPath());
+        File file = new File(OPTIONS.getLogFile());
+        Misc.log(this.getClass().getSimpleName(), file.getCanonicalPath());
 
-            PrintWriter writer = new PrintWriter(file);
-            writer.close();
+        PrintWriter writer = new PrintWriter(file);
+        writer.close();
 
-            byte[] bytes = "".getBytes();
+        byte[] bytes = "".getBytes();
 
-            request.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-            request.setHeader(HttpHeaders.CONTENT_TYPE, Mime.TEXT_PLAIN);
-            request.sendResponseHeaders(200, bytes.length);
+        request.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        request.setHeader(HttpHeaders.CONTENT_TYPE, Mime.TEXT_PLAIN);
+        request.sendResponseHeaders(200, bytes.length);
 
-            OutputStream os = request.getResponseBody();
-            os.write(bytes);
-            os.close();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        OutputStream os = request.getResponseBody();
+        os.write(bytes);
+        os.close();
     }
 }

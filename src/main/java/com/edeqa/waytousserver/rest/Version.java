@@ -16,12 +16,8 @@ public class Version implements RestAction {
 
     @Override
     public void call(JSONObject json, RequestWrapper request) {
-        try {
-            json.put(STATUS, STATUS_SUCCESS);
-            json.put(CODE, 1);
-            json.put(MESSAGE, Common.SERVER_BUILD);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        json.put(STATUS, STATUS_SUCCESS);
+        json.put(CODE, 1);
+        json.put(MESSAGE, Common.SERVER_BUILD);
     }
 }

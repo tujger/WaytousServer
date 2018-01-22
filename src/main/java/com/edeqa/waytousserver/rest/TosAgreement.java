@@ -22,15 +22,11 @@ public class TosAgreement implements RestAction {
 
     @Override
     public void call(JSONObject json, RequestWrapper request) {
-        try {
-            String body = request.getBody();
-            Misc.log("TosAgreement", request.getRemoteAddress(), "tosAgreement:", body);
+        String body = request.getBody();
+        Misc.log("TosAgreement", request.getRemoteAddress(), "tosAgreement:", body);
 
-            Common.getInstance().getDataProcessor(request.getRequestURI().getPath().split("/")[3]).onMessage(new HttpDPConnection(request), body);
+        Common.getInstance().getDataProcessor(request.getRequestURI().getPath().split("/")[3]).onMessage(new HttpDPConnection(request), body);
 
-            json.put(STATUS, STATUS_SUCCESS);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        json.put(STATUS, STATUS_SUCCESS);
     }
 }

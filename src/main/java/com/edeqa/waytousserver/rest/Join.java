@@ -22,21 +22,12 @@ public class Join implements RestAction {
 
     @Override
     public void call(JSONObject json, RequestWrapper request) {
-        try {
-            String body = request.getBody();
-            JSONObject options = new JSONObject(request.getBody());
+        String body = request.getBody();
+        JSONObject options = new JSONObject(request.getBody());
 
-            Misc.log("Join", request.getRemoteAddress(), "joinV1:", body);
-            Common.getInstance().getDataProcessor(request.getRequestURI().getPath().split("/")[3]).onMessage(new HttpDPConnection(request), body);
+        Misc.log("Join", request.getRemoteAddress(), "joinV1:", body);
+        Common.getInstance().getDataProcessor(request.getRequestURI().getPath().split("/")[3]).onMessage(new HttpDPConnection(request), body);
 
-            json.put(STATUS, STATUS_SUCCESS);
-
-//            System.out.println(json.toString(4));
-        } catch (Exception e) {
-            e.printStackTrace();
-            json.put(Rest.STATUS, "error");
-            json.put(Rest.REASON, "Action failed");
-            json.put(Rest.MESSAGE, e.getMessage());
-        }
+        json.put(STATUS, STATUS_SUCCESS);
     }
 }
