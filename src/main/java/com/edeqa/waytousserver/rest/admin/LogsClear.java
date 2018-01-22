@@ -4,16 +4,11 @@ import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.edequate.interfaces.RestAction;
 import com.edeqa.helpers.Mime;
 import com.edeqa.helpers.Misc;
-import com.edeqa.waytousserver.helpers.Common;
 import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 

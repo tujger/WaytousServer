@@ -71,6 +71,7 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
     compile (project(':Edequate')) {
+        exclude group: 'com.github.edeqa', module: 'helpers'
         exclude group: 'org.json', module: 'json'
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'javax.servlet', module: 'javax.servlet-api'

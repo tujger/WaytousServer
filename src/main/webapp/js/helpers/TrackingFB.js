@@ -241,7 +241,7 @@ function TrackingFB(main) {
         var onclose = function(event) {
 //            console.log("CLOSE",opened,event.code,event.reason,event.wasClean);
             if(!opened) {
-                console.error("Websocket processing closed unexpectedly, will try to use XHR instead of " + link + " (error " + event.code + (event.reason?": "+event.reason:")")+".");
+                console.error("Websocket processing closed unexpectedly, will try to use XHR instead of " + link + " (error " + event.code + (event.extra?": "+event.extra:")")+".");
                 xhrModeStart(link);
             }
         };

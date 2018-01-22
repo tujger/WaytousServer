@@ -4,17 +4,9 @@ import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.edequate.interfaces.RestAction;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
-import com.edeqa.waytous.Firebase;
-import com.edeqa.waytous.Rest;
-import com.edeqa.waytous.SignProvider;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.helpers.MyGroup;
-import com.edeqa.waytousserver.helpers.MyUser;
 
 import org.json.JSONObject;
-
-import static com.edeqa.waytous.Constants.OPTIONS;
-import static com.edeqa.waytous.Constants.REQUEST_NEW_GROUP;
 
 @SuppressWarnings("unused")
 public class GroupsClean implements RestAction {
@@ -40,8 +32,8 @@ public class GroupsClean implements RestAction {
                 Common.getInstance().getDataProcessor("v1").validateGroups();
 
                 JSONObject json = new JSONObject();
-                json.put(Rest.STATUS, Rest.SUCCESS);
-                json.put(Rest.MESSAGE, "Clean started.");
+                json.put(STATUS, STATUS_SUCCESS);
+                json.put(MESSAGE, "Clean started.");
                 request.sendResult(json);
 
             }
@@ -53,7 +45,7 @@ public class GroupsClean implements RestAction {
                 JSONObject json = new JSONObject();
                 json.put(STATUS, STATUS_ERROR);
                 json.put(MESSAGE, "Incorrect request.");
-                json.put(Rest.REASON, e.getMessage());
+                json.put(EXTRA, e.getMessage());
                 request.sendError(400, json);
             }
         });

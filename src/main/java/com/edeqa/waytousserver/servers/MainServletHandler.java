@@ -25,17 +25,17 @@ public class MainServletHandler extends com.edeqa.edequate.MainServletHandler {
     public MainServletHandler() {
         setMimeTypes(OPTIONS.getMimeTypes());
         setWebDirectory(OPTIONS.getWebRootDirectory());
-        initSubstitutions();
+        initReplacements();
     }
 
     @Override
     public void init() throws ServletException {
         super.init();
         Common.getInstance().initOptions(getServletContext());
-        initSubstitutions();
+        initReplacements();
     }
 
-    private void initSubstitutions() {
+    private void initReplacements() {
         setReplacements(new Replacements());
 
         getReplacements().add(new Replacement().setPattern("\\$\\{SERVER_BUILD\\}").setReplace("" + SERVER_BUILD));

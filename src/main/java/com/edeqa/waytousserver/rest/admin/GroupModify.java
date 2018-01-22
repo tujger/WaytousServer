@@ -55,7 +55,7 @@ public class GroupModify implements RestAction {
                 JSONObject json = new JSONObject();
                 json.put(STATUS, STATUS_ERROR);
                 json.put(MESSAGE, "Incorrect request.");
-                json.put(Rest.REASON, e.getMessage());
+                json.put(EXTRA, e.getMessage());
                 request.sendError(400, json);
             }
         });

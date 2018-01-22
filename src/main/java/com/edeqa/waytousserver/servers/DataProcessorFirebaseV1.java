@@ -53,6 +53,10 @@ import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletException;
 
+import static com.edeqa.edequate.interfaces.RestAction.MESSAGE;
+import static com.edeqa.edequate.interfaces.RestAction.STATUS;
+import static com.edeqa.edequate.interfaces.RestAction.STATUS_ERROR;
+import static com.edeqa.edequate.interfaces.RestAction.STATUS_SUCCESS;
 import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.REQUEST;
 import static com.edeqa.waytous.Constants.REQUEST_CHECK_USER;
@@ -655,7 +659,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             refGroups.child(group.getId()).updateChildren(childUpdates);
 //                            refGroups.child(Firebase.SECTION_GROUPS).child(group.getId()).setValue(0);
 
-                            json.put(Rest.STATUS, Rest.SUCCESS);
+                            json.put(STATUS, STATUS_SUCCESS);
                             json.put(Rest.GROUP_ID, group.getId());
 
                             Misc.log(LOG, "createGroup:created:" + group.getId());
@@ -664,9 +668,9 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
                             putStaticticsGroup(group.getId(), group.isPersistent(), group.isPersistent() ? GroupAction.GROUP_CREATED_PERSISTENT : GroupAction.GROUP_CREATED_TEMPORARY, null);
                         } else {
-                            json.put(Rest.STATUS, Rest.ERROR);
+                            json.put(STATUS, STATUS_ERROR);
                             json.put(Rest.GROUP_ID, group.getId());
-                            json.put(Rest.MESSAGE, "Group " + group.getId() + " already exists.");
+                            json.put(MESSAGE, "Group " + group.getId() + " already exists.");
                             Misc.err(LOG, "createGroup:alreadyExists:" + group.getId());
                             if (onerror != null) onerror.call(json);
                             putStaticticsGroup(group.getId(), group.isPersistent(), GroupAction.GROUP_REJECTED, "already exists");
@@ -685,8 +689,8 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         final OnFailureListener onFailureListener = new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                json.put(Rest.STATUS, Rest.ERROR);
-                json.put(Rest.MESSAGE, e.getMessage());
+                json.put(STATUS, STATUS_ERROR);
+                json.put(MESSAGE, e.getMessage());
                 Misc.err(LOG, "deleteGroup:" + groupId, "error:" + e.getMessage());
                 onerror.call(json);
             }
@@ -695,7 +699,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         Task<Void> deleteGroupTask = refGroups.child(groupId).removeValue();
         try {
             Tasks.await(deleteGroupTask);
-            json.put(Rest.STATUS, Rest.SUCCESS);
+            json.put(STATUS, STATUS_SUCCESS);
             Misc.log(LOG, "deleteGroup:" + groupId);
             onsuccess.call(json);
 
@@ -715,8 +719,8 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         final OnFailureListener onFailureListener = new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                res.put(Rest.STATUS, Rest.ERROR);
-                res.put(Rest.MESSAGE, e.getMessage());
+                res.put(STATUS, STATUS_ERROR);
+                res.put(MESSAGE, e.getMessage());
                 Misc.log(LOG, "switchPropertyInGroup:", property, e.getMessage());
                 onerror.call(res);
             }
@@ -733,7 +737,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             refGroups.child(groupId).child(Firebase.OPTIONS).child(property).setValue(value).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    res.put(Rest.STATUS, Rest.SUCCESS);
+                                    res.put(STATUS, STATUS_SUCCESS);
                                     onsuccess.call(res);
                                 }
                             }).addOnFailureListener(onFailureListener);
@@ -760,11 +764,11 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                         if (oldValue != null && value != null) {
                             res.put(Rest.OLD_VALUE, oldValue);
                             refGroups.child(groupId).child(Firebase.OPTIONS).child(property).setValue(value);
-                            res.put(Rest.STATUS, Rest.SUCCESS);
+                            res.put(STATUS, STATUS_SUCCESS);
                             onsuccess.call(res);
                         } else {
                             Misc.err(LOG, "modifyPropertyInGroup:nullValue:", property);
-                            res.put(Rest.STATUS, Rest.ERROR);
+                            res.put(STATUS, STATUS_ERROR);
                             onerror.call(res);
                         }
                     }
@@ -944,8 +948,8 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         final OnFailureListener onFailureListener = new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                res.put(Rest.STATUS, Rest.ERROR);
-                res.put(Rest.MESSAGE, e.getMessage());
+                res.put(STATUS, STATUS_ERROR);
+                res.put(MESSAGE, e.getMessage());
                 Misc.log(LOG, "removeUserFromGroup:error:", e.getMessage(), "userNumber:" + userNumber, "groupId:" + groupId);
                 onerror.call(res);
             }
@@ -984,7 +988,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                     refGroups.child(groupId).updateChildren(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void result) {
-                                                            res.put(Rest.STATUS, Rest.SUCCESS);
+                                                            res.put(STATUS, STATUS_SUCCESS);
                                                             Misc.log(LOG, "removeUserFromGroup:removed:userNumber:" + userNumber, "groupId:" + groupId);
                                                             onsuccess.call(res);
                                                             putStaticticsUser(groupId, value.toString(), UserAction.USER_REMOVED, null);
@@ -1011,8 +1015,8 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         final OnFailureListener onFailureListener = new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                json.put(Rest.STATUS, Rest.ERROR);
-                json.put(Rest.MESSAGE, e.getMessage());
+                json.put(STATUS, STATUS_ERROR);
+                json.put(MESSAGE, e.getMessage());
                 Misc.err(LOG, "deleteAccount:" + accountId, "error:" + e.getMessage());
                 onerror.call(json);
             }
@@ -1022,7 +1026,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         try {
             Tasks.await(deleteAccountTask);
 
-            json.put(Rest.STATUS, Rest.SUCCESS);
+            json.put(STATUS, STATUS_SUCCESS);
             Misc.log(LOG, "deleteAccount:" + accountId);
             onsuccess.call(json);
 
@@ -1043,8 +1047,8 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         final OnFailureListener onFailureListener = new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                res.put(Rest.STATUS, Rest.ERROR);
-                res.put(Rest.MESSAGE, e.getMessage());
+                res.put(STATUS, STATUS_ERROR);
+                res.put(MESSAGE, e.getMessage());
                 Misc.log(LOG, "switchPropertyForUser:", property, e.getMessage());
                 onerror.call(res);
             }
@@ -1062,7 +1066,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             refGroups.child(groupId).child(Firebase.USERS).child(Firebase.PUBLIC).child(String.valueOf(userNumber)).child(property).setValue(newValue).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    res.put(Rest.STATUS, Rest.SUCCESS);
+                                    res.put(STATUS, STATUS_SUCCESS);
                                     onsuccess.call(res);
                                 }
                             }).addOnFailureListener(onFailureListener);
@@ -1605,15 +1609,15 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         refStat.child(Firebase.STAT_MESSAGES).setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void result) {
-                res.put(Rest.STATUS, Rest.SUCCESS);
+                res.put(STATUS, STATUS_SUCCESS);
                 Misc.log(LOG, "cleanStatisticsMessages:done");
                 onsuccess.call(res);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                res.put(Rest.STATUS, Rest.ERROR);
-                res.put(Rest.MESSAGE, e.getMessage());
+                res.put(STATUS, STATUS_ERROR);
+                res.put(MESSAGE, e.getMessage());
                 Misc.err(LOG, "cleanStatisticsMessages:failed", e.getMessage());
                 onerror.call(res);
             }

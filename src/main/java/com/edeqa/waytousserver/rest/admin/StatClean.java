@@ -4,7 +4,6 @@ import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.edequate.interfaces.RestAction;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
-import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.Common;
 
 import org.json.JSONObject;
