@@ -55,7 +55,7 @@ function ButtonHolder(main) {
         }, main.right);
 
         contextMenuLayout = u.create(HTML.DIV, {
-            className: "user-context-menu shadow hidden",
+            className: "user-context-menu shadow noselect hidden",
             tabindex: 2,
             onblur: function(){
                 contextMenuLayout.scrollTop = 0;

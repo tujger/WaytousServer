@@ -36,7 +36,7 @@ function PlaceHolder(main) {
                             itemsClassName: "place-search-items",
                             tabindex: -1,
                             items: [
-                                { type: HTML.INPUT, className: "place-search-input", label: "keyboard_backspace", labelClassName: "place-search-label" }
+                                { type: HTML.INPUT, className: "place-search-input", label: "keyboard_backspace", labelClassName: "place-search-label icon" }
                             ]
 //                            onblur: function() {
 //                                searchDialog.close();

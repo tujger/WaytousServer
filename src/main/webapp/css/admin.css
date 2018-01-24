@@ -281,6 +281,20 @@ div.question {
         white-space: nowrap;
     }
 
+    .actionbar {
+        flex: 0 0 50px;
+        justify-content: center;
+    }
+    .actionbar-label {
+        filter: drop-shadow(1px 1px gray);
+        mix-blend-mode: difference;
+        bottom: auto;
+        padding-left: 50px;
+    }
+    .actionbar-label-title {
+        font-size: 16px;
+    }
+
     /* CLASSES */
     .alert {
         margin: 0px;

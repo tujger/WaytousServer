@@ -40,8 +40,8 @@ function Main() {
     preloaded = function(){
         window.u = new Edequate({exportConstants:true, origin:"waytous"});
 
+        main.right = main.layout = u.create(HTML.DIV, {className:"layout changeable"}, document.body);
         main.appName = "${APP_NAME}";
-        main.right = main.layout = u.create({className:"layout changeable"}, document.body);
 
         u.loading("0%");
         u.require("/js/helpers/Constants").then(function(){

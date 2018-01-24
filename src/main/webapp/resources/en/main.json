@@ -5,6 +5,19 @@
  * Version 1.${SERVER_BUILD}
  */
 {
+  "title": "Waytous",
+
+  "drawer_primary": "Main",
+  "drawer_summary": "Summary",
+  "drawer_main": "Main",
+  "drawer_explore": "Products",
+  "drawer_share": "Share",
+  "drawer_resources": "Resources",
+  "drawer_miscellaneous": "Miscellaneous",
+  "drawer_settings": "Settings",
+  "drawer_help": "Help",
+  "drawer_last": "Information",
+
   "about": "About",
   "about_body": "\nAbout is coming soon.",
   "api": "API",

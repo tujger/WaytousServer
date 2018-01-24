@@ -6,6 +6,16 @@
  * Created 1/20/17.
  */
 {
+  "drawer_primary": "Главная",
+  "drawer_summary": "Сводка",
+  "drawer_main": "Главная",
+  "drawer_explore": "Продукты",
+  "drawer_share": "Поделиться",
+  "drawer_resources": "Ресурсы",
+  "drawer_miscellaneous": "Разное",
+  "drawer_settings": "Параметры",
+  "drawer_help": "Справка",
+  "drawer_last": "Информация",
 
 
   "about": "О сайте",

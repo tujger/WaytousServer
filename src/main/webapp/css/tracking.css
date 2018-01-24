@@ -813,6 +813,7 @@ p.bottom-desc {
     background: none;
     box-shadow: none;
     color: darkslategray;
+    padding: 2px 20px 0px 2px;
 }
 .user-profile-dialog-menu-button:hover {
     background-color: #4c93af;
@@ -1181,9 +1182,6 @@ p.bottom-desc {
         color: white !important;
     }
     .place-search-label {
-        font-family: "Material Icons";
-        font-feature-settings: "liga" 1;
-        font-style: normal;
         outline: none;
         max-width: 24px;
         display: block;
@@ -1199,10 +1197,10 @@ p.bottom-desc {
         transform: translate(-50%,0%) !important;
     }
     .user-profile-dialog-menu-button {
-        height: 32px;
         width: 32px;
+        padding: 0;
+        height: 24px;
     }
-
 
     /* shift zoom control */
     .gm-bundled-control {
