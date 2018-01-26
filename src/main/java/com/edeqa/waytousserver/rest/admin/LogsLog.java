@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.admin;
 
 import com.edeqa.edequate.helpers.RequestWrapper;
-import com.edeqa.edequate.interfaces.RestAction;
+import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.helpers.Mime;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
@@ -19,10 +19,10 @@ import java.io.PrintWriter;
 import static com.edeqa.waytous.Constants.OPTIONS;
 
 @SuppressWarnings("unused")
-public class LogsLog implements RestAction {
+public class LogsLog implements NamedCall<RequestWrapper> {
 
     @Override
-    public String getActionName() {
+    public String getName() {
         return "logs/log";
     }
 

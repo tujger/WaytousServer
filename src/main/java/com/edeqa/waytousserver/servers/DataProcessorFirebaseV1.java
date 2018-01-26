@@ -53,10 +53,10 @@ import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletException;
 
-import static com.edeqa.edequate.interfaces.RestAction.MESSAGE;
-import static com.edeqa.edequate.interfaces.RestAction.STATUS;
-import static com.edeqa.edequate.interfaces.RestAction.STATUS_ERROR;
-import static com.edeqa.edequate.interfaces.RestAction.STATUS_SUCCESS;
+import static com.edeqa.edequate.interfaces.NamedCall.MESSAGE;
+import static com.edeqa.edequate.interfaces.NamedCall.STATUS;
+import static com.edeqa.edequate.interfaces.NamedCall.STATUS_ERROR;
+import static com.edeqa.edequate.interfaces.NamedCall.STATUS_SUCCESS;
 import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.REQUEST;
 import static com.edeqa.waytous.Constants.REQUEST_CHECK_USER;
@@ -1003,7 +1003,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                         }
                     }
                 }).start();
-
     }
 
     @Override

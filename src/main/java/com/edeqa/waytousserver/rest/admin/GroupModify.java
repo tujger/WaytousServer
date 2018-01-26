@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.admin;
 
 import com.edeqa.edequate.helpers.RequestWrapper;
-import com.edeqa.edequate.interfaces.RestAction;
+import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Rest;
@@ -10,10 +10,10 @@ import com.edeqa.waytousserver.helpers.Common;
 import org.json.JSONObject;
 
 @SuppressWarnings("unused")
-public class GroupModify implements RestAction {
+public class GroupModify implements NamedCall<RequestWrapper> {
 
     @Override
-    public String getActionName() {
+    public String getName() {
         return "group/modify";
     }
 

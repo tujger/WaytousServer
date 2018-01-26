@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.admin;
 
 import com.edeqa.edequate.helpers.RequestWrapper;
-import com.edeqa.edequate.interfaces.RestAction;
+import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -17,10 +17,10 @@ import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.REQUEST_NEW_GROUP;
 
 @SuppressWarnings("unused")
-public class GroupCreate implements RestAction {
+public class GroupCreate implements NamedCall<RequestWrapper> {
 
     @Override
-    public String getActionName() {
+    public String getName() {
         return "group/create";
     }
 

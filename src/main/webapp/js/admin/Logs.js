@@ -44,6 +44,13 @@ function Logs() {
         // var scroll = table.body.scrollTop;
         table.placeholder.show("Loading...");
 
+        try {
+            if(task) task.close();
+        } catch(e) {
+            console.error(e);
+        }
+
+        table.rows.clear();
         task = new EventSource("/admin/rest/logs/log");
         task.onmessage = function(e) {
             setTimeout(function(){
@@ -65,8 +72,6 @@ function Logs() {
     }
 
     function renderButtons(div) {
-        //u.clear(div);
-        //u.create(HTML.BUTTON, { className:"button-clean", innerHTML: "clear_all", title:"Clean groups", onclick: cleanGroupsQuestion}, div);
         div.place(HTML.BUTTON, {className: "icon button-inline", innerHTML:"refresh", title: "Refresh logs", onclick: function(){
             updateData();
         }});
@@ -83,7 +88,7 @@ function Logs() {
             question.hide();
             yes.hide();
             no.hide();
-            u.get("/admin/logs/clear")
+            u.get("/admin/rest/logs/clear")
                 .then(updateData);
         }}, div);
         var no = u.create(HTML.BUTTON, { className: "hidden", innerHTML:"No", onclick: function(){
@@ -93,7 +98,6 @@ function Logs() {
             no.hide();
         }}, div);
     }
-
 
     return {
         start: function() {
