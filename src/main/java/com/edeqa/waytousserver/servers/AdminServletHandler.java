@@ -18,6 +18,7 @@ import com.edeqa.waytousserver.rest.admin.LogsLog;
 import com.edeqa.waytousserver.rest.admin.StatClean;
 import com.edeqa.waytousserver.rest.admin.UserRemove;
 import com.edeqa.waytousserver.rest.admin.UserSwitch;
+import com.edeqa.waytousserver.rest.firebase.AccessToken;
 import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;
@@ -84,7 +85,7 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
         } else if (requestWrapper.getRequestURI().getPath().startsWith("/admin")) {
             try {
                 String customToken = Common.getInstance().getDataProcessor("v1").createCustomToken("Viewer");
-                String accessToken = Common.getInstance().getDataProcessor("v1").createAccessToken();
+                String accessToken = new AccessToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile()).fetchToken();
 
                 final JSONObject o = new JSONObject();
                 o.put("version", SERVER_BUILD);

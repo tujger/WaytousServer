@@ -211,8 +211,6 @@ abstract public class AbstractDataProcessor {
 
     public abstract String createCustomToken(String id);
 
-    public abstract String createAccessToken();
-
     public abstract void putStaticticsGroup(String groupId, boolean isPermanent, GroupAction action, String errorMessage);
 
     public abstract void putStaticticsUser(String groupId, String userId, UserAction action, String errorMessage);

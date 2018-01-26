@@ -6,6 +6,7 @@ import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.DigestAuthenticator;
 import com.edeqa.waytousserver.servers.AdminServletHandler;
 import com.edeqa.waytousserver.servers.DataProcessorFirebaseV1;
+import com.edeqa.waytousserver.servers.DataProcessorFirebaseV2;
 import com.edeqa.waytousserver.servers.MainServletHandler;
 import com.edeqa.waytousserver.servers.MyWsServer;
 import com.edeqa.waytousserver.servers.RedirectHandler;
@@ -55,9 +56,9 @@ public class WaytousServer {
         Misc.log(LOG, "====== Waytous server v1."+SERVER_BUILD+". Copyright (C) Edeqa. http://www.edeqa.com ======");
         OPTIONS = new Options(args);
 
-        Common.getInstance().setDataProcessor(new DataProcessorFirebaseV1());
+        Common.getInstance().setDataProcessor(new DataProcessorFirebaseV2());
 
-        if(!Common.getInstance().getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode()){
+        if(!Common.getInstance().getDataProcessor(DataProcessorFirebaseV2.VERSION).isServerMode()){
             throw new RuntimeException("\n\nThis configuration can not be runned in stand-alone server mode. Set the installation type in build.gradle with the following property:\n\tdef installationType = 'standalone-server'\n");
         }
 

@@ -117,11 +117,6 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }
 
     @Override
-    public String createAccessToken() {
-        return null;
-    }
-
-    @Override
     public LinkedList<String> getRequestHoldersList() {
         LinkedList<String> classes = new LinkedList<>();
         classes.add("TrackingRequestHolder");
