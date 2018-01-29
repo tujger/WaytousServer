@@ -6,6 +6,7 @@
  */
 {
   "title": "Waytous",
+  "copyright": "Waytous &copy;2017-18 Edeqa",
 
   "drawer_primary": "Main",
   "drawer_summary": "Summary",

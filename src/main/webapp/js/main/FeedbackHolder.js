@@ -20,6 +20,8 @@ function FeedbackHolder(main) {
     this.resume = function() {
         console.log("Resuming FeedbackHolder");
         u.progress.show(u.lang.loading);
+        this.title = u.lang.feedback;
+        this.menu = u.lang.feedback;
         u.clear(main.content);
         u.post("/rest/content", {resource: "main-feedback.html", locale: main.selectLang.value}).then(function(xhr){
             u.create(HTML.DIV, {className: "content-normal", innerHTML: xhr.response}, main.content);

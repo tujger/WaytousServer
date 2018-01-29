@@ -20,6 +20,8 @@ function ContactHolder(main) {
     this.resume = function() {
         console.log("Resuming ContactHolder");
         u.progress.show(u.lang.loading);
+        this.title = u.lang.contact;
+        this.menu = u.lang.contact;
         u.clear(main.content);
         u.post("/rest/content", {resource: "main-contact.html", locale: main.selectLang.value}).then(function(xhr){
             u.create(HTML.DIV, {className: "content-normal", innerHTML: xhr.response}, main.content);

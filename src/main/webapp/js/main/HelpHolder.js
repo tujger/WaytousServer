@@ -20,6 +20,8 @@ function HelpHolder(main) {
     this.resume = function() {
         console.log("Resuming HelpHolder");
         u.progress.show(u.lang.loading);
+        this.title = u.lang.help;
+        this.menu = u.lang.help;
         u.clear(main.content);
         u.post("/rest/content", {resource: "main-help.html", locale: main.selectLang.value}).then(function(xhr){
             u.create(HTML.DIV, {className: "content-normal", innerHTML: xhr.response}, main.content);

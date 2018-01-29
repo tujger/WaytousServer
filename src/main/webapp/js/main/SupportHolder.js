@@ -20,6 +20,8 @@ function SupportHolder(main) {
     this.resume = function() {
         console.log("Resuming SupportHolder");
         u.progress.show(u.lang.loading);
+        this.title = u.lang.support;
+        this.menu = u.lang.support;
         u.clear(main.content);
         u.post("/rest/content", {resource: "main-support.html", locale: main.selectLang.value}).then(function(xhr){
             u.create(HTML.DIV, {className: "content-normal", innerHTML: xhr.response}, main.content);

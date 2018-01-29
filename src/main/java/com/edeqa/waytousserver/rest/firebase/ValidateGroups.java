@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -19,12 +18,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class ValidateGroups implements NamedCall {
+public class ValidateGroups extends AbstractAction<ValidateGroups, Object> {
 
-    private DatabaseReference firebaseStat;
-    private DatabaseReference firebaseGroups;
-    private String firebaseAccessToken;
-    private StatisticsGroups statisticsGroups;
+    private AccessToken firebaseAccessToken;
+    private StatisticsGroup statisticsGroup;
 
     @Override
     public String getName() {
@@ -34,10 +31,12 @@ public class ValidateGroups implements NamedCall {
     @Override
     public void call(JSONObject json, Object request) {
 
-        getFirebaseStat().child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_GROUPS_CLEANED).setValue(ServerValue.TIMESTAMP);
+        final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
-        Misc.log("ValidateGroups", "Groups validation is performing, checking online users");
-        new TaskSingleValueEventFor<JSONObject>(getFirebaseGroups().child("/")).setFirebaseRest(getFirebaseAccessToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
+        getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_GROUPS_CLEANED).setValue(ServerValue.TIMESTAMP);
+
+        Misc.log("ValidateGroups", "is performing, checking online users");
+        new TaskSingleValueEventFor<JSONObject>(refGroups.child("/")).setFirebaseRest(getFirebaseAccessToken().fetchToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject groups) {
                 try {
@@ -45,22 +44,22 @@ public class ValidateGroups implements NamedCall {
                     while (iter.hasNext()) {
                         final String group = iter.next();
                         if (group.startsWith("_") || "overview".equals(group)) {
-                            Misc.log("ValidateGroups", "Key skipped: " + group);
+                            Misc.log("ValidateGroups", "skips:", group);
                             continue;
                         }
 
-                        new TaskSingleValueEventFor<DataSnapshot>(getFirebaseGroups().child(group).child(Firebase.OPTIONS))
+                        new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Firebase.OPTIONS))
                                 .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                                     @Override
                                     public void call(DataSnapshot dataSnapshot) {
                                         Map value = (Map) dataSnapshot.getValue();
 
-                                        Misc.log("ValidateGroups", "Group found:", group/* + ", leader id:", leader, dataSnapshot.getValue()*/);
+                                        Misc.log("ValidateGroups", "found group:", group/* + ", leader id:", leader, dataSnapshot.getValue()*/);
 
                                         if (value == null) {
-                                            Misc.log("ValidateGroups", "--- corrupted group detected, removing ----- 1"); //TODO
-                                            getFirebaseGroups().child(group).removeValue();
-                                            getStatisticsGroups().setGroupId(group).setPersistent(false).setGroupAction(AbstractDataProcessor.GroupAction.GROUP_DELETED).setErrorMessage("corrupted group detected, removing: ----- 1").call(null, null);
+                                            Misc.log("ValidateGroups", "removes lost group"); //TODO
+                                            refGroups.child(group).removeValue();
+                                            getStatisticsGroup().setGroupId(group).setPersistentGroup(false).setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED).setMessage("lost group removing: " + group).call(null, null);
                                             return;
                                         }
 
@@ -90,11 +89,11 @@ public class ValidateGroups implements NamedCall {
                                             timeToLiveIfEmpty = Long.parseLong("0" + object.toString());
                                         else timeToLiveIfEmpty = 0;
 
-                                        new TaskSingleValueEventFor<DataSnapshot>(getFirebaseGroups().child(group).child(Firebase.USERS).child(Firebase.PUBLIC))
+                                        new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Firebase.USERS).child(Firebase.PUBLIC))
                                                 .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                                                     @Override
                                                     public void call(DataSnapshot dataSnapshot) {
-                                                        Misc.log("ValidateGroups", "Users validation for group:", group);
+                                                        Misc.log("ValidateGroups", "checking users for:", group);
 
                                                         ArrayList<Map<String, Serializable>> users = null;
                                                         try {
@@ -104,9 +103,9 @@ public class ValidateGroups implements NamedCall {
                                                             e.printStackTrace();
                                                         }
                                                         if (users == null) {
-                                                            Misc.log("ValidateGroups", "--- corrupted group detected, removing: ----- 2"); //TODO
-                                                            getFirebaseGroups().child(group).removeValue();
-                                                            getStatisticsGroups().setGroupId(group).setPersistent(false).setGroupAction(AbstractDataProcessor.GroupAction.GROUP_DELETED).setErrorMessage("corrupted group detected, removing: ----- 2").call(null, null);
+                                                            Misc.log("ValidateGroups", "corrupted group found, removing:", group); //TODO
+                                                            refGroups.child(group).removeValue();
+                                                            getStatisticsGroup().setGroupId(group).setPersistentGroup(false).setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED).setMessage("corrupted group removing: " + group).call(null, null);
                                                             return;
                                                         }
                                                         long groupChanged = 0;
@@ -144,9 +143,9 @@ public class ValidateGroups implements NamedCall {
 
                                                         if (!persistent && timeToLiveIfEmpty > 0 && new Date().getTime() - groupChanged > timeToLiveIfEmpty * 60 * 1000) {
                                                             String info = group + " expired for " + ((new Date().getTime() - groupChanged - timeToLiveIfEmpty * 60 * 1000) / 1000 / 60) + " minutes";
-                                                            Misc.log("ValidateGroups", "--- removing group " + info);
-                                                            getFirebaseGroups().child(group).removeValue();
-                                                            getStatisticsGroups().setGroupId(group).setPersistent(false).setGroupAction(AbstractDataProcessor.GroupAction.GROUP_DELETED).setErrorMessage(info).call(null, null);
+                                                            Misc.log("ValidateGroups", "removes group " + info);
+                                                            refGroups.child(group).removeValue();
+                                                            getStatisticsGroup().setGroupId(group).setPersistentGroup(false).setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED).setMessage(info).call(null, null);
                                                         }
                                                     }
                                                 }).start();
@@ -282,39 +281,22 @@ public class ValidateGroups implements NamedCall {
 //        json.put(STATUS, STATUS_SUCCESS);
     }
 
-    public DatabaseReference getFirebaseStat() {
-        return firebaseStat;
-    }
-
-    public ValidateGroups setFirebaseStat(DatabaseReference firebaseStat) {
-        this.firebaseStat = firebaseStat;
-        return this;
-    }
-
-    public DatabaseReference getFirebaseGroups() {
-        return firebaseGroups;
-    }
-
-    public ValidateGroups setFirebaseGroups(DatabaseReference firebaseGroups) {
-        this.firebaseGroups = firebaseGroups;
-        return this;
-    }
-
-    public String getFirebaseAccessToken() {
+    public AccessToken getFirebaseAccessToken() {
         return firebaseAccessToken;
     }
 
-    public ValidateGroups setFirebaseAccessToken(String firebaseAccessToken) {
+    public ValidateGroups setFirebaseAccessToken(AccessToken firebaseAccessToken) {
         this.firebaseAccessToken = firebaseAccessToken;
         return this;
     }
 
-    public StatisticsGroups getStatisticsGroups() {
-        return statisticsGroups;
+    public StatisticsGroup getStatisticsGroup() {
+        return statisticsGroup;
     }
 
-    public ValidateGroups setStatisticsGroups(StatisticsGroups statisticsGroups) {
-        this.statisticsGroups = statisticsGroups;
+    public ValidateGroups setStatisticsGroup(StatisticsGroup statisticsGroup) {
+        this.statisticsGroup = statisticsGroup;
         return this;
     }
+
 }

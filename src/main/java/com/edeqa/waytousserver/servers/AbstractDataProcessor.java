@@ -5,6 +5,7 @@ import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.CheckReq;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
+import com.edeqa.waytousserver.helpers.UserRequests;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 import com.edeqa.waytousserver.interfaces.FlagHolder;
 import com.edeqa.waytousserver.interfaces.RequestHolder;
@@ -18,7 +19,6 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,9 +29,10 @@ import java.util.concurrent.ConcurrentHashMap;
 abstract public class AbstractDataProcessor {
 
     final ConcurrentHashMap<String, MyGroup> groups;
-    final ConcurrentHashMap<String, MyGroup> ipToToken;
-    final ConcurrentHashMap<String, MyUser> ipToUser;
-    final ConcurrentHashMap<String, CheckReq> ipToCheck;
+    ConcurrentHashMap<String, MyGroup> ipToToken;
+    ConcurrentHashMap<String, MyUser> ipToUser;
+    ConcurrentHashMap<String, CheckReq> ipToCheck;
+    final UserRequests userRequests;
     final HashMap<String, RequestHolder> requestHolders;
     protected final HashMap<String, FlagHolder> flagHolders;
     private boolean serverMode = false;
@@ -77,9 +78,10 @@ abstract public class AbstractDataProcessor {
 
     public AbstractDataProcessor() {
         groups = new ConcurrentHashMap<>();
-        ipToToken = new ConcurrentHashMap<>();
-        ipToUser = new ConcurrentHashMap<>();
-        ipToCheck = new ConcurrentHashMap<>();
+//        ipToToken = new ConcurrentHashMap<>();
+//        ipToUser = new ConcurrentHashMap<>();
+//        ipToCheck = new ConcurrentHashMap<>();
+        userRequests = new UserRequests();
 
         requestHolders = new LinkedHashMap<>();
 
@@ -139,8 +141,9 @@ abstract public class AbstractDataProcessor {
     public void onClose(DataProcessorConnection conn, int code, String reason, boolean remote) {
 //        System.out.println("WSS:on close:" + conn.getRemoteSocketAddress() + " disconnected:by client:"+remote+":"+code+":"+reason);
 //        this.sendToAll( conn + " has left the room!" );
-        String ip = conn.getRemoteSocketAddress().toString();
-        if (ipToCheck.containsKey(ip)) ipToCheck.remove(ip);
+//        String ip = conn.getRemoteSocketAddress().toString();
+        getUserRequests().remove(conn);
+//        if (ipToCheck.containsKey(ip)) ipToCheck.remove(ip);
 
     }
 
@@ -149,20 +152,23 @@ abstract public class AbstractDataProcessor {
     final public void onError(DataProcessorConnection conn, Exception ex) {
         ex.printStackTrace();
         if (conn != null && conn.getRemoteSocketAddress() != null) {
-            String ip = conn.getRemoteSocketAddress().toString();
-            if (ipToToken.containsKey(ip)) ipToToken.remove(ip);
-            if (ipToUser.containsKey(ip)) ipToUser.remove(ip);
-            if (ipToCheck.containsKey(ip)) ipToCheck.remove(ip);
+            getUserRequests().remove(conn);
+//            String ip = conn.getRemoteSocketAddress().toString();
+//            if (ipToToken.containsKey(ip)) ipToToken.remove(ip);
+//            if (ipToUser.containsKey(ip)) ipToUser.remove(ip);
+//            if (ipToCheck.containsKey(ip)) ipToCheck.remove(ip);
             // some errors like port binding failed may not be assignable to a specific websocket
         }
     }
 
     public void onWebSocketPing(DataProcessorConnection conn, Framedata f) {
         try {
-            String ip = conn.getRemoteSocketAddress().toString();
-            if (ipToUser.containsKey(ip)) {
-                ipToUser.get(ip).setChanged();
-            }
+//            UserRequest userRequest = getUserRequests().findByConnection(conn);
+//            if(userRequest != null) userRequest.setChanged();
+//            String ip = conn.getRemoteSocketAddress().toString();
+//            if (ipToUser.containsKey(ip)) {
+//                ipToUser.get(ip).setChanged();
+//            }
 //            System.out.println("PING:" + conn.getRemoteSocketAddress() + ":" + f);
         } catch (Exception e) {
             e.printStackTrace();
@@ -189,17 +195,17 @@ abstract public class AbstractDataProcessor {
         return groups;
     }
 
-    public ConcurrentHashMap<String, MyGroup> getIpToToken() {
-        return ipToToken;
-    }
-
-    public ConcurrentHashMap<String, MyUser> getIpToUser() {
-        return ipToUser;
-    }
-
-    public ConcurrentHashMap<String, CheckReq> getIpToCheck() {
-        return ipToCheck;
-    }
+//    public ConcurrentHashMap<String, MyGroup> getIpToToken() {
+//        return ipToToken;
+//    }
+//
+//    public ConcurrentHashMap<String, MyUser> getIpToUser() {
+//        return ipToUser;
+//    }
+//
+//    public ConcurrentHashMap<String, CheckReq> getIpToCheck() {
+//        return ipToCheck;
+//    }
 
     public boolean isServerMode() {
         return serverMode;
@@ -211,13 +217,9 @@ abstract public class AbstractDataProcessor {
 
     public abstract String createCustomToken(String id);
 
-    public abstract void putStaticticsGroup(String groupId, boolean isPermanent, GroupAction action, String errorMessage);
-
-    public abstract void putStaticticsUser(String groupId, String userId, UserAction action, String errorMessage);
-
-    public abstract void putStaticticsAccount(String accountId, String action, String key, Object value, String errorMessage);
-
-    public abstract void putStaticticsMessage(String message, Map<String, String> map);
-
     public abstract void cleanStatisticsMessages(Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+
+    public UserRequests getUserRequests() {
+        return userRequests;
+    }
 }

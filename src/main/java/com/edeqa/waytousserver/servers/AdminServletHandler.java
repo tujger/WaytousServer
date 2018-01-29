@@ -1,11 +1,10 @@
 package com.edeqa.waytousserver.servers;
 
 import com.edeqa.edequate.helpers.RequestWrapper;
-import com.edeqa.edequate.rest.Locales;
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Mime;
+import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.interfaces.PageHolder;
 import com.edeqa.waytousserver.rest.admin.AccountDelete;
 import com.edeqa.waytousserver.rest.admin.AccountsClean;
 import com.edeqa.waytousserver.rest.admin.GroupCreate;
@@ -24,12 +23,8 @@ import com.google.common.net.HttpHeaders;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -79,10 +74,13 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
 
     @Override
     public void perform(final RequestWrapper requestWrapper) throws IOException {
-
         if(requestWrapper.getRequestURI().getPath().startsWith(getWebPrefix())) {
             super.perform(requestWrapper);
         } else if (requestWrapper.getRequestURI().getPath().startsWith("/admin")) {
+
+            String ipRemote = requestWrapper.getRemoteAddress().getAddress().getHostAddress();
+            Misc.log("Admin", "[" + ipRemote + "]", requestWrapper.getRequestURI().getPath());
+
             try {
                 String customToken = Common.getInstance().getDataProcessor("v1").createCustomToken("Viewer");
                 String accessToken = new AccessToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile()).fetchToken();

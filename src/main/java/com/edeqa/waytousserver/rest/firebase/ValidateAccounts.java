@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -19,12 +18,10 @@ import java.util.Map;
 import static com.edeqa.waytous.Constants.REQUEST_SIGN_PROVIDER;
 
 @SuppressWarnings("unused")
-public class ValidateAccounts implements NamedCall {
+public class ValidateAccounts extends AbstractAction<ValidateAccounts, Object> {
 
-    private DatabaseReference firebaseStat;
-    private DatabaseReference firebaseAccounts;
-    private String firebaseAccessToken;
-    private StatisticsAccounts statisticsAccounts;
+    private AccessToken firebaseAccessToken;
+    private StatisticsAccount statisticsAccount;
 
     @Override
     public String getName() {
@@ -34,11 +31,13 @@ public class ValidateAccounts implements NamedCall {
     @Override
     public void call(JSONObject json, Object request) {
 
-        getFirebaseStat().child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_ACCOUNTS_CLEANED).setValue(ServerValue.TIMESTAMP);
+        final DatabaseReference refAccounts = getFirebaseReference().child(Firebase.SECTION_USERS);
 
-        Misc.log("ValidateAccounts", "Accounts validation is performing, checking online users");
+        getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_ACCOUNTS_CLEANED).setValue(ServerValue.TIMESTAMP);
 
-        new TaskSingleValueEventFor<JSONObject>(getFirebaseAccounts()).setFirebaseRest(getFirebaseAccessToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
+        Misc.log("ValidateAccounts", "is performing, checking online users");
+
+        new TaskSingleValueEventFor<JSONObject>(refAccounts).setFirebaseRest(getFirebaseAccessToken().fetchToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject accounts) {
                 try {
@@ -46,7 +45,7 @@ public class ValidateAccounts implements NamedCall {
                     while (iter.hasNext()) {
                         final String uid = iter.next();
 
-                        new TaskSingleValueEventFor<DataSnapshot>(getFirebaseAccounts().child(uid).child(Firebase.PRIVATE))
+                        new TaskSingleValueEventFor<DataSnapshot>(refAccounts.child(uid).child(Firebase.PRIVATE))
                                 .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                                     @Override
                                     public void call(DataSnapshot dataSnapshot) {
@@ -68,13 +67,13 @@ public class ValidateAccounts implements NamedCall {
 
                                             if (!trusted && expired) {
                                                 String message = Misc.durationToString(new Date().getTime() - (long) value.get(Firebase.CHANGED));
-                                                Misc.log("ValidateAccounts", "--- removing account: " + uid, "expired for: " +message);
+                                                Misc.log("ValidateAccounts", "removes:", uid, "expired for:", message);
 
-                                                getFirebaseAccounts().child(uid).setValue(null);
-                                                getStatisticsAccounts().setAccountId(uid).setAccountAction(AbstractDataProcessor.AccountAction.ACCOUNT_DELETED.toString()).setKey(null).setValue(null).setErrorMessage("Expired for " + message).call(null, null);
+                                                refAccounts.child(uid).setValue(null);
+                                                getStatisticsAccount().setAccountId(uid).setAction(AbstractDataProcessor.AccountAction.ACCOUNT_DELETED.toString()).setKey(null).setValue(null).setMessage("Expired for " + message).call(null, null);
                                             }
                                         } catch(Exception e) {
-                                            Misc.err("ValidateAccounts", "validateAccounts:failed:", uid, e.getMessage());
+                                            Misc.err("ValidateAccounts", "failed:", uid, "error:", e.getMessage());
                                         }
                                     }
                                 }).start();
@@ -88,39 +87,22 @@ public class ValidateAccounts implements NamedCall {
 //        json.put(STATUS, STATUS_SUCCESS);
     }
 
-    public DatabaseReference getFirebaseStat() {
-        return firebaseStat;
-    }
-
-    public ValidateAccounts setFirebaseStat(DatabaseReference firebaseStat) {
-        this.firebaseStat = firebaseStat;
-        return this;
-    }
-
-    public String getFirebaseAccessToken() {
+    public AccessToken getFirebaseAccessToken() {
         return firebaseAccessToken;
     }
 
-    public ValidateAccounts setFirebaseAccessToken(String firebaseAccessToken) {
+    public ValidateAccounts setFirebaseAccessToken(AccessToken firebaseAccessToken) {
         this.firebaseAccessToken = firebaseAccessToken;
         return this;
     }
 
-    public StatisticsAccounts getStatisticsAccounts() {
-        return statisticsAccounts;
+    public StatisticsAccount getStatisticsAccount() {
+        return statisticsAccount;
     }
 
-    public ValidateAccounts setStatisticsAccounts(StatisticsAccounts statisticsAccounts) {
-        this.statisticsAccounts = statisticsAccounts;
+    public ValidateAccounts setStatisticsAccount(StatisticsAccount statisticsAccount) {
+        this.statisticsAccount = statisticsAccount;
         return this;
     }
 
-    public DatabaseReference getFirebaseAccounts() {
-        return firebaseAccounts;
-    }
-
-    public ValidateAccounts setFirebaseAccounts(DatabaseReference firebaseAccounts) {
-        this.firebaseAccounts = firebaseAccounts;
-        return this;
-    }
 }

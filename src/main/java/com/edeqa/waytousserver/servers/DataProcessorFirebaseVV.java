@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.servers;
 
-import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -13,12 +12,6 @@ import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.helpers.Utils;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 import com.edeqa.waytousserver.interfaces.RequestHolder;
-import com.edeqa.waytousserver.rest.firebase.AccessToken;
-import com.edeqa.waytousserver.rest.firebase.StatisticsAccounts;
-import com.edeqa.waytousserver.rest.firebase.StatisticsGroups;
-import com.edeqa.waytousserver.rest.firebase.StatisticsMessage;
-import com.edeqa.waytousserver.rest.firebase.ValidateAccounts;
-import com.edeqa.waytousserver.rest.firebase.ValidateGroups;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -94,35 +87,17 @@ import static com.edeqa.waytousserver.servers.AbstractDataProcessor.AccountActio
  */
 
 @SuppressWarnings("HardCodedStringLiteral")
-public class DataProcessorFirebaseV2 extends AbstractDataProcessor {
+public class DataProcessorFirebaseVV extends AbstractDataProcessor {
 
     public static final String VERSION = "v1";
     private static String LOG = "DPF1";
-    private final StatisticsGroups statisticsGroups;
-    private final StatisticsMessage statisticsMessage;
-    private final StatisticsAccounts statisticsAccounts;
-    private final AccessToken accessToken;
     private DatabaseReference refAccounts;
     private DatabaseReference refGroups;
     private DatabaseReference refStat;
     private DatabaseReference refRoot;
 
-    private Map<String,NamedCall> actions;
-
-    public DataProcessorFirebaseV2() throws ServletException, IOException {
+    public DataProcessorFirebaseVV() throws ServletException, IOException {
         super();
-
-        setActions(new HashMap<String, NamedCall>());
-
-        statisticsMessage = new StatisticsMessage();
-
-        statisticsGroups = new StatisticsGroups().setIncrementValue(incrementValue);
-        statisticsGroups.setStatisticsMessage(statisticsMessage);
-
-        statisticsAccounts = new StatisticsAccounts().setIncrementValue(incrementValue);
-        statisticsAccounts.setStatisticsMessage(statisticsMessage);
-
-        accessToken = new AccessToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile());
 
         if(OPTIONS.isDebugMode()) {
             try {
@@ -1100,7 +1075,255 @@ public class DataProcessorFirebaseV2 extends AbstractDataProcessor {
     }
 
     public void validateGroups() {
-        new ValidateGroups().setFirebaseGroups(refGroups).setFirebaseStat(refStat).setStatisticsGroups(statisticsGroups).setFirebaseAccessToken(accessToken.fetchToken()).call(null, null);
+
+        refStat.child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_GROUPS_CLEANED).setValue(ServerValue.TIMESTAMP);
+
+        Misc.log(LOG, "Groups validation is performing, checking online users");
+        new TaskSingleValueEventFor<JSONObject>(refGroups.child("/")).setFirebaseRest(createAccessToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
+            @Override
+            public void call(JSONObject groups) {
+                try {
+                    Iterator<String> iter = groups.keys();
+                    while (iter.hasNext()) {
+                        final String group = iter.next();
+                        if (group.startsWith("_") || "overview".equals(group)) {
+                            Misc.log(LOG, "Key skipped: " + group);
+                            continue;
+                        }
+
+                        new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Firebase.OPTIONS))
+                                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
+                                    @Override
+                                    public void call(DataSnapshot dataSnapshot) {
+                                        Map value = (Map) dataSnapshot.getValue();
+
+                                        Misc.log(LOG, "Group found:", group/* + ", leader id:", leader, dataSnapshot.getValue()*/);
+
+                                        if (value == null) {
+                                            Misc.log(LOG, "--- corrupted group detected, removing ----- 1"); //TODO
+                                            refGroups.child(group).removeValue();
+                                            putStaticticsGroup(group, false, GroupAction.GROUP_DELETED, "corrupted group detected, removing ----- 1");
+                                            return;
+                                        }
+
+                                        final boolean requiresPassword;
+                                        final boolean dismissInactive;
+                                        final boolean persistent;
+                                        final long delayToDismiss;
+                                        final long timeToLiveIfEmpty;
+
+
+                                        Object object = value.get(Firebase.REQUIRES_PASSWORD);
+                                        requiresPassword = object != null && (boolean) object;
+
+                                        object = value.get(Firebase.DISMISS_INACTIVE);
+                                        dismissInactive = object != null && (boolean) object;
+
+                                        object = value.get(Firebase.PERSISTENT);
+                                        persistent = object != null && (boolean) object;
+
+                                        object = value.get(Firebase.DELAY_TO_DISMISS);
+                                        if (object != null)
+                                            delayToDismiss = Long.parseLong("0" + object.toString());
+                                        else delayToDismiss = 0;
+
+                                        object = value.get(Firebase.TIME_TO_LIVE_IF_EMPTY);
+                                        if (object != null)
+                                            timeToLiveIfEmpty = Long.parseLong("0" + object.toString());
+                                        else timeToLiveIfEmpty = 0;
+
+                                        new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Firebase.USERS).child(Firebase.PUBLIC))
+                                                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
+                                                    @Override
+                                                    public void call(DataSnapshot dataSnapshot) {
+                                                        Misc.log(LOG, "Users validation for group:", group);
+
+                                                        ArrayList<Map<String, Serializable>> users = null;
+                                                        try {
+                                                            //noinspection unchecked
+                                                            users = (ArrayList<Map<String, Serializable>>) dataSnapshot.getValue();
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        if (users == null) {
+                                                            Misc.log(LOG, "--- corrupted group detected, removing: ----- 2"); //TODO
+                                                            refGroups.child(group).removeValue();
+                                                            putStaticticsGroup(group, false, GroupAction.GROUP_DELETED, "corrupted group detected, removing: ----- 2");
+                                                            return;
+                                                        }
+                                                        long groupChanged = 0;
+
+                                                        for (int i = 0; i < users.size(); i++) {
+                                                            Map<String, Serializable> user = users.get(i);
+                                                            if (user == null) continue;
+
+                                                            String name = (String) user.get(Firebase.NAME);
+                                                            Long changed = (Long) user.get(Firebase.CHANGED);
+                                                            if (changed != null && changed > groupChanged)
+                                                                groupChanged = changed;
+                                                            boolean active = false;
+                                                            Object object = user.get(Firebase.ACTIVE);
+                                                            if (object != null) {
+                                                                active = (Boolean) object;
+                                                            }
+
+                                                            if (!active) continue;
+
+                                                            if (dismissInactive) {
+                                                                Long current = new Date().getTime();
+                                                                if (changed == null) {
+                                                                    Misc.log(LOG, "--- user:", i, "name:", name, "is NULL");
+                                                                    dataSnapshot.getRef().child("" + i).child(Firebase.ACTIVE).setValue(false);
+                                                                } else if (current - delayToDismiss * 1000 > changed) {
+                                                                    Misc.log(LOG, "--- user:", i, "name:", name, "is EXPIRED for", ((current - delayToDismiss * 1000 - changed) / 1000), "seconds");
+                                                                    dataSnapshot.getRef().child("" + i).child(Firebase.ACTIVE).setValue(false);
+                                                                } else {
+                                                                    dataSnapshot.getRef().getParent().getParent().child(Firebase.OPTIONS).child(Firebase.CHANGED).setValue(changed);
+                                                                    Misc.log(LOG, "--- user:", i, "name:", name, "is OK");
+                                                                }
+                                                            }
+                                                        }
+
+                                                        if (!persistent && timeToLiveIfEmpty > 0 && new Date().getTime() - groupChanged > timeToLiveIfEmpty * 60 * 1000) {
+                                                            String info = group + " expired for " + ((new Date().getTime() - groupChanged - timeToLiveIfEmpty * 60 * 1000) / 1000 / 60) + " minutes";
+                                                            Misc.log(LOG, "--- removing group " + info);
+                                                            refGroups.child(group).removeValue();
+                                                            putStaticticsGroup(group, false, GroupAction.GROUP_DELETED, info);
+                                                        }
+                                                    }
+                                                }).start();
+                                    }
+                                }).start();
+
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+
+        /*try {
+            System.out.println("https://waytous-beta.firebaseio.com/.json?shallow=true&print=pretty&auth="+OPTIONS.getFirebaseApiKey());
+
+            String res = Utils.getUrl("https://waytous-beta.firebaseio.com/.json?shallow=true&print=pretty&auth="+OPTIONS.getFirebaseApiKey(),"UTF-8");
+
+            JSONObject groups = new JSONObject(res);
+
+            Iterator<String> iter = groups.keys();
+            while(iter.hasNext()) {
+                final String group = iter.next();
+                if(Constants.DATABASE.SECTION_GROUPS.equals(group) || "overview".equals(group)) continue;
+
+                new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Constants.DATABASE.OPTIONS))
+                        .addOnCompleteListener(new Runnable1<DataSnapshot>() {
+                            @Override
+                            public void call(DataSnapshot dataSnapshot) {
+                                Map value = (Map) dataSnapshot.getValue();
+
+                                Common.log(LOG, "Group found:", group*//* + ", leader id:", leader, dataSnapshot.getValue()*//*);
+
+                                if (value == null) {
+                                    Common.log(LOG, "--- corrupted group detected, removing ----- 1"); //TODO
+                                    refGroups.child(Constants.DATABASE.SECTION_GROUPS).child(group).removeValue();
+                                    refGroups.child(group).removeValue();
+                                    return;
+                                }
+
+                                final boolean requiresPassword;
+                                final boolean dismissInactive;
+                                final boolean persistent;
+                                final long delayToDismiss;
+                                final long timeToLiveIfEmpty;
+
+
+                                Object object = value.get(Constants.DATABASE.REQUIRES_PASSWORD);
+                                requiresPassword = object != null && (boolean) object;
+
+                                object = value.get(Constants.DATABASE.DISMISS_INACTIVE);
+                                dismissInactive = object != null && (boolean) object;
+
+                                object = value.get(Constants.DATABASE.PERSISTENT);
+                                persistent = object != null && (boolean) object;
+
+                                object = value.get(Constants.DATABASE.DELAY_TO_DISMISS);
+                                if (object != null)
+                                    delayToDismiss = Long.parseLong("0" + object.toString());
+                                else delayToDismiss = 0;
+
+                                object = value.get(Constants.DATABASE.TIME_TO_LIVE_IF_EMPTY);
+                                if (object != null)
+                                    timeToLiveIfEmpty = Long.parseLong("0" + object.toString());
+                                else timeToLiveIfEmpty = 0;
+
+                                new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Constants.DATABASE.SECTION_USERS_DATA))
+                                        .addOnCompleteListener(new Runnable1<DataSnapshot>() {
+                                            @Override
+                                            public void call(DataSnapshot dataSnapshot) {
+                                                Common.log(LOG, "Users validation for group:", group);
+
+                                                ArrayList<Map<String, Serializable>> users = null;
+                                                try {
+                                                    users = (ArrayList<Map<String, Serializable>>) dataSnapshot.getValue();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                                if (users == null) {
+                                                    Common.log(LOG, "--- corrupted group detected, removing: ----- 2"); //TODO
+                                                    refGroups.child(Constants.DATABASE.SECTION_GROUPS).child(group).removeValue();
+                                                    refGroups.child(group).removeValue();
+                                                    return;
+                                                }
+                                                long groupChanged = 0;
+
+                                                for (int i = 0; i < users.size(); i++) {
+                                                    Map<String, Serializable> user = users.get(i);
+                                                    if (user == null) continue;
+
+                                                    String name = (String) user.get(Constants.DATABASE.NAME);
+                                                    Long changed = (Long) user.get(Constants.DATABASE.CHANGED);
+                                                    if (changed != null && changed > groupChanged)
+                                                        groupChanged = changed;
+                                                    boolean active = false;
+                                                    Object object = user.get(Constants.DATABASE.ACTIVE);
+                                                    if (object != null) {
+                                                        active = (Boolean) object;
+                                                    }
+
+                                                    if (!active) continue;
+
+                                                    if (dismissInactive) {
+                                                        Long current = new Date().getTime();
+                                                        if (changed == null) {
+                                                            Common.log(LOG, "--- user:", i, "name:", name, "is NULL");
+                                                            dataSnapshot.getRef().child("" + i).child(Constants.DATABASE.ACTIVE).setValue(false);
+                                                        } else if (current - delayToDismiss * 1000 > changed) {
+                                                            Common.log(LOG, "--- user:", i, "name:", name, "is EXPIRED for", ((current - delayToDismiss * 1000 - changed) / 1000), "seconds");
+                                                            dataSnapshot.getRef().child("" + i).child(Constants.DATABASE.ACTIVE).setValue(false);
+                                                        } else {
+                                                            dataSnapshot.getRef().getParent().getParent().child(Constants.DATABASE.OPTIONS).child(Constants.DATABASE.CHANGED).setValue(changed);
+                                                            Common.log(LOG, "--- user:", i, "name:", name, "is OK");
+                                                        }
+                                                    }
+                                                }
+
+                                                if (!persistent && timeToLiveIfEmpty > 0 && new Date().getTime() - groupChanged > timeToLiveIfEmpty * 60 * 1000) {
+                                                    Common.log(LOG, "--- removing group " + group + " expired for", (new Date().getTime() - groupChanged - timeToLiveIfEmpty * 60 * 1000) / 1000 / 60, "minutes");
+                                                    refGroups.child(Constants.DATABASE.SECTION_GROUPS).child(group).removeValue();
+                                                    refGroups.child(group).removeValue();
+                                                }
+                                            }
+                                        }).start();
+                            }
+                        }).start();
+
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
     }
 
     @Override
@@ -1110,7 +1333,57 @@ public class DataProcessorFirebaseV2 extends AbstractDataProcessor {
 
     @Override
     public void validateAccounts() {
-        new ValidateAccounts().setFirebaseAccounts(refAccounts).setFirebaseAccessToken(accessToken.fetchToken()).setFirebaseStat(refStat).call(null,null);
+        refStat.child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_ACCOUNTS_CLEANED).setValue(ServerValue.TIMESTAMP);
+
+        Misc.log(LOG, "Accounts validation is performing, checking online users");
+
+        new TaskSingleValueEventFor<JSONObject>(refAccounts).setFirebaseRest(createAccessToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
+            @Override
+            public void call(JSONObject accounts) {
+                try {
+                    Iterator<String> iter = accounts.keys();
+                    while (iter.hasNext()) {
+                        final String uid = iter.next();
+
+                        new TaskSingleValueEventFor<DataSnapshot>(refAccounts.child(uid).child(Firebase.PRIVATE))
+                                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
+                                    @Override
+                                    public void call(DataSnapshot dataSnapshot) {
+                                        try {
+                                            Map value = (Map) dataSnapshot.getValue();
+                                            boolean expired = false;
+                                            boolean trusted = false;
+                                            if (value.containsKey(REQUEST_SIGN_PROVIDER) && !"anonymous".equals(value.get(REQUEST_SIGN_PROVIDER))) {
+                                                trusted = true;
+                                            }
+
+                                            if (value.containsKey(Firebase.CHANGED)) {
+                                                if ((new Date().getTime() - (long) value.get(Firebase.CHANGED)) > 30 * 24 * 60 * 60 * 1000L) {
+                                                    expired = true;
+                                                }
+                                            } else {
+                                                expired = true;
+                                            }
+
+                                            if (!trusted && expired) {
+                                                String message = Misc.durationToString(new Date().getTime() - (long) value.get(Firebase.CHANGED));
+                                                Misc.log(LOG, "--- removing account: " + uid, "expired for: " +message);
+
+                                                refAccounts.child(uid).setValue(null);
+                                                putStaticticsAccount(uid, AccountAction.ACCOUNT_DELETED.toString(), null, null, "Expired for " + message);
+                                            }
+                                        } catch(Exception e) {
+                                            Misc.err(LOG, "validateAccounts:failed:", uid, e.getMessage());
+                                        }
+                                    }
+                                }).start();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
     }
 
     /**
@@ -1138,7 +1411,29 @@ public class DataProcessorFirebaseV2 extends AbstractDataProcessor {
         return customToken;
     }
 
-    @Override
+    /**
+     * This method requests and returns accessToken for Firebase. Depending on current installation type
+     * it defines the properly request and performs it. Installation type can be defined in gradle.build.
+     */
+    public String createAccessToken() {
+        String token = "";
+        try {
+            FileInputStream serviceAccount = new FileInputStream(OPTIONS.getFirebasePrivateKeyFile());
+            GoogleCredential googleCred = GoogleCredential.fromStream(serviceAccount);
+            GoogleCredential scoped = googleCred.createScoped(
+                    Arrays.asList(
+                            "https://www.googleapis.com/auth/firebase.database",
+                            "https://www.googleapis.com/auth/userinfo.email"
+                    )
+            );
+            scoped.refreshToken();
+            token = scoped.getAccessToken();
+        } catch (Exception e) {
+            Misc.err(e);
+        }
+        return token;
+    }
+
     public void putStaticticsGroup(String groupId, boolean isPersistent, GroupAction action, String errorMessage) {
         DatabaseReference referenceTotal;
         DatabaseReference referenceToday;
@@ -1179,7 +1474,6 @@ public class DataProcessorFirebaseV2 extends AbstractDataProcessor {
 
     }
 
-    @Override
     public void putStaticticsUser(String groupId, String userId, UserAction action, String errorMessage) {
 
         putStaticticsAccount(userId, action.toString(), "group", groupId, errorMessage);
@@ -1223,7 +1517,6 @@ public class DataProcessorFirebaseV2 extends AbstractDataProcessor {
 
     }
 
-    @Override
     public void putStaticticsAccount(final String accountId, final String action, final String key, final Object value, String errorMessage) {
         DatabaseReference referenceTotal;
         DatabaseReference referenceToday;
@@ -1256,7 +1549,7 @@ public class DataProcessorFirebaseV2 extends AbstractDataProcessor {
         }
 
         if(key != null && accountId != null && accountId.length() > 0) {
-            new TaskSingleValueEventFor<JSONObject>(refAccounts.child(accountId)).setFirebaseRest(accessToken.fetchToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
+            new TaskSingleValueEventFor<JSONObject>(refAccounts.child(accountId)).setFirebaseRest(createAccessToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
                 @Override
                 public void call(JSONObject json) {
                     if(json.has(Firebase.PRIVATE) && json.getBoolean(Firebase.PRIVATE)) {
@@ -1289,7 +1582,6 @@ public class DataProcessorFirebaseV2 extends AbstractDataProcessor {
         }
     }
 
-    @Override
     public void putStaticticsMessage(String message, Map<String, String> map) {
         Calendar cal = Calendar.getInstance();
         String today = String.format("%04d-%02d-%02d %02d-%02d-%02d-%03d", cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH),cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND), cal.get(Calendar.MILLISECOND));
@@ -1344,11 +1636,4 @@ public class DataProcessorFirebaseV2 extends AbstractDataProcessor {
         }
     };
 
-    public Map<String, NamedCall> getActions() {
-        return actions;
-    }
-
-    public void setActions(Map<String, NamedCall> actions) {
-        this.actions = actions;
-    }
 }

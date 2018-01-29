@@ -1,11 +1,9 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
-import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Transaction;
 
@@ -18,14 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class StatisticsAccounts implements NamedCall {
+public class StatisticsAccount extends AbstractAction<StatisticsAccount, Object> {
 
-    private DatabaseReference firebaseStat;
-    private DatabaseReference firebaseAccounts;
     private String accountAction;
-    private String firebaseAccessToken;
+    private AccessToken firebaseAccessToken;
     private String accountId;
-    private String errorMessage;
+    private String message;
     private Boolean persistent;
     private StatisticsMessage statisticsMessage;
     private String key;
@@ -40,38 +36,38 @@ public class StatisticsAccounts implements NamedCall {
     @Override
     public void call(JSONObject json, Object request) {
 
-        DatabaseReference referenceTotal;
-        DatabaseReference referenceToday;
         Calendar cal = Calendar.getInstance();
         String today = String.format("%04d-%02d-%02d", cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH));
 
-        referenceTotal = getFirebaseStat().child(Firebase.STAT_TOTAL);
-        referenceToday = getFirebaseStat().child(Firebase.STAT_BY_DATE).child(today);
+        final DatabaseReference refAccounts = getFirebaseReference().child(Firebase.SECTION_USERS);
+
+        DatabaseReference refTotal = getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_TOTAL);
+        DatabaseReference refToday = getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_BY_DATE).child(today);
 
         switch(getAccountAction()) {
             case Firebase.STAT_ACCOUNTS_CREATED:
-                referenceTotal = referenceTotal.child(Firebase.STAT_ACCOUNTS_CREATED);
-                referenceToday = referenceToday.child(Firebase.STAT_ACCOUNTS_CREATED);
-                referenceToday.runTransaction(incrementValue);
-                referenceTotal.runTransaction(incrementValue);
+                refTotal = refTotal.child(Firebase.STAT_ACCOUNTS_CREATED);
+                refToday = refToday.child(Firebase.STAT_ACCOUNTS_CREATED);
+                refToday.runTransaction(getIncrementValue());
+                refTotal.runTransaction(getIncrementValue());
                 break;
             case Firebase.STAT_ACCOUNTS_DELETED:
-                referenceTotal = referenceTotal.child(Firebase.STAT_ACCOUNTS_DELETED);
-                referenceToday = referenceToday.child(Firebase.STAT_ACCOUNTS_DELETED);
-                referenceToday.runTransaction(incrementValue);
-                referenceTotal.runTransaction(incrementValue);
+                refTotal = refTotal.child(Firebase.STAT_ACCOUNTS_DELETED);
+                refToday = refToday.child(Firebase.STAT_ACCOUNTS_DELETED);
+                refToday.runTransaction(getIncrementValue());
+                refTotal.runTransaction(getIncrementValue());
                 break;
         }
 
-        if(getErrorMessage() != null && getErrorMessage().length() > 0) {
+        if(getMessage() != null && getMessage().length() > 0) {
             Map<String, String> map = new HashMap<>();
             map.put("account", getAccountId());
             map.put("action", getAccountAction());
-            getStatisticsMessage().setMessage(getErrorMessage()).call(null, map);
+            getStatisticsMessage().setMessage(getMessage()).call(null, map);
         }
 
-        if(getKey() != null && accountId != null && accountId.length() > 0) {
-            new TaskSingleValueEventFor<JSONObject>(getFirebaseAccounts().child(accountId)).setFirebaseRest(getFirebaseAccessToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
+        if(getKey() != null && getAccountId() != null && getAccountId().length() > 0) {
+            new TaskSingleValueEventFor<JSONObject>(refAccounts.child(getAccountId())).setFirebaseRest(getFirebaseAccessToken().fetchToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
                 @Override
                 public void call(JSONObject json) {
                     if(json.has(Firebase.PRIVATE) && json.getBoolean(Firebase.PRIVATE)) {
@@ -95,30 +91,34 @@ public class StatisticsAccounts implements NamedCall {
                         } else if (getValue() != null) {
                             map.put(Firebase.VALUE, "[" + getValue().getClass().getSimpleName() + "]");
                         }
-                        getFirebaseAccounts().child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValue(map);
-                        Misc.log("StatisticsAccounts", "putStaticticsAccount:", accountId, "action:", getAccountAction());
+                        refAccounts.child(getAccountId()).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValue(map);
+                        Misc.log("StatisticsAccount", getAccountId(), "action:", getAccountAction());
                     }
+                    clear();
                 }
             }).start();
 
+        } else {
+            clear();
         }
 //        json.put(STATUS, STATUS_SUCCESS);
     }
 
-    public DatabaseReference getFirebaseStat() {
-        return firebaseStat;
-    }
-
-    public StatisticsAccounts setFirebaseStat(DatabaseReference firebaseStat) {
-        this.firebaseStat = firebaseStat;
+    public StatisticsAccount clear() {
+        setAction(null);
+        setAccountId(null);
+        setMessage(null);
+        setKey(null);
+        setValue(null);
+        setPersistent(null);
         return this;
     }
 
-    public String getFirebaseAccessToken() {
+    public AccessToken getFirebaseAccessToken() {
         return firebaseAccessToken;
     }
 
-    public StatisticsAccounts setFirebaseAccessToken(String firebaseAccessToken) {
+    public StatisticsAccount setFirebaseAccessToken(AccessToken firebaseAccessToken) {
         this.firebaseAccessToken = firebaseAccessToken;
         return this;
     }
@@ -131,17 +131,17 @@ public class StatisticsAccounts implements NamedCall {
         return accountId;
     }
 
-    public StatisticsAccounts setAccountId(String accountId) {
+    public StatisticsAccount setAccountId(String accountId) {
         this.accountId = accountId;
         return this;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getMessage() {
+        return message;
     }
 
-    public StatisticsAccounts setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public StatisticsAccount setMessage(String message) {
+        this.message = message;
         return this;
     }
 
@@ -149,7 +149,7 @@ public class StatisticsAccounts implements NamedCall {
         return persistent;
     }
 
-    public StatisticsAccounts setPersistent(Boolean persistent) {
+    public StatisticsAccount setPersistent(Boolean persistent) {
         this.persistent = persistent;
         return this;
     }
@@ -158,21 +158,12 @@ public class StatisticsAccounts implements NamedCall {
         return statisticsMessage;
     }
 
-    public StatisticsAccounts setStatisticsMessage(StatisticsMessage statisticsMessage) {
+    public StatisticsAccount setStatisticsMessage(StatisticsMessage statisticsMessage) {
         this.statisticsMessage = statisticsMessage;
         return this;
     }
 
-    public DatabaseReference getFirebaseAccounts() {
-        return firebaseAccounts;
-    }
-
-    public StatisticsAccounts setFirebaseAccounts(DatabaseReference firebaseAccounts) {
-        this.firebaseAccounts = firebaseAccounts;
-        return this;
-    }
-
-    public StatisticsAccounts setAccountAction(String accountAction) {
+    public StatisticsAccount setAction(String accountAction) {
         this.accountAction = accountAction;
         return this;
     }
@@ -181,7 +172,7 @@ public class StatisticsAccounts implements NamedCall {
         return key;
     }
 
-    public StatisticsAccounts setKey(String key) {
+    public StatisticsAccount setKey(String key) {
         this.key = key;
         return this;
     }
@@ -190,7 +181,7 @@ public class StatisticsAccounts implements NamedCall {
         return value;
     }
 
-    public StatisticsAccounts setValue(Object value) {
+    public StatisticsAccount setValue(Object value) {
         this.value = value;
         return this;
     }
@@ -199,8 +190,9 @@ public class StatisticsAccounts implements NamedCall {
         return incrementValue;
     }
 
-    public StatisticsAccounts setIncrementValue(Transaction.Handler incrementValue) {
+    public StatisticsAccount setIncrementValue(Transaction.Handler incrementValue) {
         this.incrementValue = incrementValue;
         return this;
     }
+
 }

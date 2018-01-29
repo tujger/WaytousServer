@@ -24,6 +24,8 @@ function StartHolder(main) {
     this.resume = function() {
         console.log("Resuming StartHolder");
         window.location.href = "/group/new";
+        this.title = u.lang.start;
+        this.menu = u.lang.start;
     }
 
     this.onEvent = function(event, object) {

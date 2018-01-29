@@ -510,26 +510,6 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }
 
     @Override
-    public void putStaticticsGroup(String groupId, boolean isPermanent, GroupAction action, String errorMessage) {
-        // TODO
-    }
-
-    @Override
-    public void putStaticticsUser(String groupId, String userId, UserAction action, String errorMessage) {
-        // TODO
-    }
-
-    @Override
-    public void putStaticticsAccount(String accountId, String action, String key, Object value, String errorMessage) {
-
-    }
-
-    @Override
-    public void putStaticticsMessage(String message, Map<String, String> map) {
-        // TODO
-    }
-
-    @Override
     public void cleanStatisticsMessages(Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
 
     }

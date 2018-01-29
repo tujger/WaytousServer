@@ -51,19 +51,19 @@ public class MyWsServer extends WebSocketServer {
 */
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        Misc.log("WS","onOpen:"+conn.getRemoteSocketAddress(),handshake.getResourceDescriptor() );
+        Misc.log("WS", "[" + conn.getRemoteSocketAddress() + "]","onOpen:", handshake.getResourceDescriptor() );
         Common.getInstance().getDataProcessor("v1").onOpen(new WebsocketDPConnection(conn), handshake);
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        Misc.log("WS","onClose:"+conn.getRemoteSocketAddress(),"code:"+code, "reason:"+reason);
+        Misc.log("WS", "[" + conn.getRemoteSocketAddress() + "]", "onClose: code:"+code, "reason:"+reason);
         Common.getInstance().getDataProcessor("v1").onClose(new WebsocketDPConnection(conn), code, reason, remote);
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        Misc.log("WS","onMessage:"+conn.getRemoteSocketAddress(), message.length() > 200 ? "("+message.length() + " byte(s))" : message );
+        Misc.log("WS", "[" + conn.getRemoteSocketAddress() + "]", "onMessage:", message.length() > 200 ? "("+message.length() + " byte(s))" : message );
         Common.getInstance().getDataProcessor("v1").onMessage(new WebsocketDPConnection(conn), message);
     }
 
@@ -75,13 +75,13 @@ public class MyWsServer extends WebSocketServer {
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-        Misc.log("WS","onError:"+conn.getRemoteSocketAddress(),"exception:"+ex.getMessage());
+        Misc.err("WS", "[" + conn.getRemoteSocketAddress() + "]", "onError:", ex.getMessage());
         Common.getInstance().getDataProcessor("v1").onError(new WebsocketDPConnection(conn), ex);
     }
 
     @Override
     public void onStart() {
-        Misc.log("WS","onStart/"+this.getClass().getSimpleName()+":"+this.getPort());
+        Misc.log("WS", "onStart/"+this.getClass().getSimpleName()+":"+this.getPort());
 //        Common.log("WS","onStart/"+Common.getInstance().getDataProcessor("v1").getClass().getSimpleName()+":"+this.getPort());
     }
 
