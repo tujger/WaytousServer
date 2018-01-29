@@ -8,6 +8,8 @@ import com.edeqa.waytousserver.helpers.HttpDPConnection;
 
 import org.json.JSONObject;
 
+import static com.edeqa.waytous.Constants.REQUEST_TOKEN;
+
 @SuppressWarnings("unused")
 public class Join implements NamedCall<RequestWrapper> {
 
@@ -19,11 +21,15 @@ public class Join implements NamedCall<RequestWrapper> {
     @Override
     public void call(JSONObject json, RequestWrapper request) {
         String body = request.getBody();
-        JSONObject options = new JSONObject(request.getBody());
+        JSONObject options = new JSONObject(body);
 
-        Misc.log("Join", request.getRemoteAddress(), "joinV1:", body);
-        Common.getInstance().getDataProcessor(request.getRequestURI().getPath().split("/")[3]).onMessage(new HttpDPConnection(request), body);
-
-        json.put(STATUS, STATUS_SUCCESS);
+        Misc.log("Join", body);
+        try {
+            Common.getInstance().getDataProcessor("v1").onMessage(new HttpDPConnection(request), body);
+            json.put(STATUS, STATUS_SUCCESS);
+            json.put(CODE, CODE_DELAYED);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 }

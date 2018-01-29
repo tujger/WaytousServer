@@ -38,7 +38,7 @@ public class CreateAccount extends AbstractAction<CreateAccount, MyUser> {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         if(!user.isAccountAllowed()) {
-            Misc.log("CreateAccount", "skipped for:", user.getUid(), "[" + user.getSignProvider() +"]");
+            Misc.log("CreateAccount", "skipped for uid:", user.getUid(), "[" + user.getSignProvider() +"]");
             getOnSuccess().run();
             return;
         }
@@ -64,11 +64,11 @@ public class CreateAccount extends AbstractAction<CreateAccount, MyUser> {
                             accountPrivateData.put(REQUEST_MODEL, user.getModel());
                             accountPrivateData.put(REQUEST_OS, user.getOs());
                             accountPrivateData.put(Firebase.CREATED, ServerValue.TIMESTAMP);
-                            Misc.log("CreateAccount", "created for:", user.getUid(), accountPrivateData);
+                            Misc.log("CreateAccount", "created for uid:", user.getUid(), accountPrivateData);
 
                             getStatisticsAccount().setAccountId(user.getUid()).setAction(ACCOUNT_CREATED.toString()).call(null, null);
                         } else {
-                            Misc.log("CreateAccount", "updated for:", user.getUid(), accountPrivateData);
+                            Misc.log("CreateAccount", "updated for uid:", user.getUid(), accountPrivateData);
                         }
                         final Task<Void> updateAccountTask = refAccounts.child(user.getUid()).child(Firebase.PRIVATE).updateChildren(accountPrivateData);
 
@@ -77,7 +77,7 @@ public class CreateAccount extends AbstractAction<CreateAccount, MyUser> {
 //                            Misc.log(LOG, "createOrUpdateAccount:accountDone:" + user.getUid());
                             getOnSuccess().run();
                         } catch (Exception e) {
-                            Misc.err("CreateAccount", "failed for:", user.getUid(), e);
+                            Misc.err("CreateAccount", "failed for uid:", user.getUid(), e);
                             getOnError().call(e);
                         }
                     }
@@ -85,7 +85,7 @@ public class CreateAccount extends AbstractAction<CreateAccount, MyUser> {
                 .addOnFailureListener(new Runnable1<Throwable>() {
                     @Override
                     public void call(Throwable error) {
-                        Misc.err("CreateAccount", "failed for:", user.getUid(), error);
+                        Misc.err("CreateAccount", "failed for uid:", user.getUid(), error);
                         getOnError().call(error);
                     }
                 });

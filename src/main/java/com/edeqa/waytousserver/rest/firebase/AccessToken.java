@@ -27,9 +27,11 @@ public class AccessToken extends AbstractAction<AccessToken, Object> {
 
     @Override
     public void call(JSONObject json, Object request) throws Exception {
+        Misc.log("AccessToken", "is performing");
 
         Calendar cal = Calendar.getInstance();
         Long now = cal.getTime().getTime();
+
         if(token == null || timeCreated < now - 30*60*1000) {
             FileInputStream serviceAccount = new FileInputStream(getFirebasePrivateKeyFile());
             GoogleCredential googleCred = GoogleCredential.fromStream(serviceAccount);
@@ -51,7 +53,6 @@ public class AccessToken extends AbstractAction<AccessToken, Object> {
 
     public String fetchToken() {
         JSONObject json = new JSONObject();
-        Misc.log("AccessToken", "is performing");
         try {
             call(json, null);
             return json.getString(MESSAGE);

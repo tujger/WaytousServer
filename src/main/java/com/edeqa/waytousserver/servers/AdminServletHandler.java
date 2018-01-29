@@ -43,6 +43,7 @@ import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
 
 //    private final LinkedHashMap<String, PageHolder> holders;
+    private AccessToken accessToken;
 
     public AdminServletHandler(){
         super();
@@ -83,7 +84,9 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
 
             try {
                 String customToken = Common.getInstance().getDataProcessor("v1").createCustomToken("Viewer");
-                String accessToken = new AccessToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile()).fetchToken();
+                if(accessToken == null) {
+                    accessToken = new AccessToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile());
+                }
 
                 final JSONObject o = new JSONObject();
                 o.put("version", SERVER_BUILD);
@@ -95,7 +98,7 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
                 o.put("WSS_PORT", OPTIONS.getWssPortDedicated());
                 o.put("firebase_config", OPTIONS.getFirebaseConfig());
                 o.put("sign", customToken);
-                o.put("access", accessToken);
+                o.put("access", accessToken.fetchToken());
 
                 HtmlGenerator html = new HtmlGenerator();
                 html.getHead().add(TITLE).with("Admin");

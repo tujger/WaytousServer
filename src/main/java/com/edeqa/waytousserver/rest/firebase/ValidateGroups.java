@@ -57,7 +57,7 @@ public class ValidateGroups extends AbstractAction<ValidateGroups, Object> {
                                         Misc.log("ValidateGroups", "found group:", group/* + ", leader id:", leader, dataSnapshot.getValue()*/);
 
                                         if (value == null) {
-                                            Misc.log("ValidateGroups", "removes lost group"); //TODO
+                                            Misc.log("ValidateGroups", "removes lost group");
                                             refGroups.child(group).removeValue();
                                             getStatisticsGroup().setGroupId(group).setPersistentGroup(false).setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED).setMessage("lost group removing: " + group).call(null, null);
                                             return;

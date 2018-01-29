@@ -20,6 +20,8 @@ import java.util.Map;
  */
 public class CustomToken extends AbstractAction<CustomToken, String> {
 
+    private final int MAXIMUM_CACHED_TOKENS = 1000;
+
     private Long timeCreated = 0L;
     private Map<String,String> tokens = new HashMap<>();
 
@@ -30,6 +32,13 @@ public class CustomToken extends AbstractAction<CustomToken, String> {
 
     @Override
     public void call(JSONObject json, String uid) throws Exception {
+        Misc.log("CustomToken", "is performing for uid:", uid);
+
+        if(tokens.size() > MAXIMUM_CACHED_TOKENS) {
+            Misc.log("CustomToken", "clears cache due to overflow");
+            tokens.clear();
+        }
+
         Calendar cal = Calendar.getInstance();
         Long now = cal.getTime().getTime();
         if(!tokens.containsKey(uid) || tokens.get(uid) == null || timeCreated < now - 30*60*1000) {
@@ -57,7 +66,6 @@ public class CustomToken extends AbstractAction<CustomToken, String> {
 
     public String fetchToken(String uid) {
         JSONObject json = new JSONObject();
-        Misc.log("CustomToken", "is performing");
         try {
             call(json, uid);
             return json.getString(MESSAGE);
