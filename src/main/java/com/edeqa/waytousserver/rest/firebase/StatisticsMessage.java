@@ -17,7 +17,7 @@ public class StatisticsMessage extends AbstractAction<StatisticsMessage, Map<Str
 
     @Override
     public String getName() {
-        return "statistics/message";
+        return "firebase/statistics/message";
     }
 
     @Override

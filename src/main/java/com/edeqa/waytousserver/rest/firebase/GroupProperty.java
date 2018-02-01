@@ -27,7 +27,7 @@ public class GroupProperty extends AbstractAction<GroupProperty, Object> {
 
     @Override
     public String getName() {
-        return "group/property";
+        return "firebase/group/property";
     }
 
     @Override

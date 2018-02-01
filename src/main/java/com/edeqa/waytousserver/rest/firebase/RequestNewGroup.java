@@ -19,7 +19,7 @@ public class RequestNewGroup extends AbstractAction<RequestNewGroup, Object> {
 
     @Override
     public String getName() {
-        return "join/new";
+        return "firebase/join/new";
     }
 
     @Override

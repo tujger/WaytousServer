@@ -87,7 +87,7 @@ import static com.edeqa.waytousserver.servers.AbstractDataProcessor.AccountActio
  */
 
 @SuppressWarnings("HardCodedStringLiteral")
-public class DataProcessorFirebaseVV extends AbstractDataProcessor {
+public class DataProcessorFirebaseOld extends AbstractDataProcessor {
 
     public static final String VERSION = "v1";
     private static String LOG = "DPF1";
@@ -96,7 +96,7 @@ public class DataProcessorFirebaseVV extends AbstractDataProcessor {
     private DatabaseReference refStat;
     private DatabaseReference refRoot;
 
-    public DataProcessorFirebaseVV() throws ServletException, IOException {
+    public DataProcessorFirebaseOld() throws ServletException, IOException {
         super();
 
         if(OPTIONS.isDebugMode()) {

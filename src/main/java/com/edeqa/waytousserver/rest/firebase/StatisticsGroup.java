@@ -23,7 +23,7 @@ public class StatisticsGroup extends AbstractAction<StatisticsGroup, Object> {
 
     @Override
     public String getName() {
-        return "statistics/group";
+        return "firebase/statistics/group";
     }
 
     @Override

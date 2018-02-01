@@ -30,7 +30,7 @@ public class StatisticsAccount extends AbstractAction<StatisticsAccount, Object>
 
     @Override
     public String getName() {
-        return "statistics/account";
+        return "firebase/statistics/account";
     }
 
     @Override

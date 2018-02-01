@@ -30,7 +30,7 @@ public class CreateAccount extends AbstractAction<CreateAccount, MyUser> {
 
     @Override
     public String getName() {
-        return "create/group";
+        return "firebase/create/group";
     }
 
     @Override

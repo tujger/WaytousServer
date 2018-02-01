@@ -28,7 +28,7 @@ public class UserProperty extends AbstractAction<UserProperty, Object> {
 
     @Override
     public String getName() {
-        return "user/property";
+        return "firebase/user/property";
     }
 
     @Override

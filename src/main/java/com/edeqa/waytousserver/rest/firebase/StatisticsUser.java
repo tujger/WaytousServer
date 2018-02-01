@@ -1,6 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.waytous.Firebase;
+import com.edeqa.waytousserver.helpers.UserRequest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Transaction;
@@ -21,10 +22,11 @@ public class StatisticsUser extends AbstractAction<StatisticsUser, Object> {
     private StatisticsMessage statisticsMessage;
     private StatisticsAccount statisticsAccount;
     private Transaction.Handler incrementValue;
+    private UserRequest userRequest;
 
     @Override
     public String getName() {
-        return "statistics/user";
+        return "firebase/statistics/user";
     }
 
     @Override
@@ -36,6 +38,11 @@ public class StatisticsUser extends AbstractAction<StatisticsUser, Object> {
                 .setValue(getGroupId())
                 .setMessage(getMessage())
                 .call(null, null);
+
+        if(getUserRequest() != null) {
+            setGroupId(getUserRequest().getGroupId());
+            setUserId(getUserRequest().getUid());
+        }
 
         Calendar cal = Calendar.getInstance();
         String today = String.format("%04d-%02d-%02d", cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH));
@@ -145,6 +152,15 @@ public class StatisticsUser extends AbstractAction<StatisticsUser, Object> {
 
     public StatisticsUser setStatisticsAccount(StatisticsAccount statisticsAccount) {
         this.statisticsAccount = statisticsAccount;
+        return this;
+    }
+
+    public UserRequest getUserRequest() {
+        return userRequest;
+    }
+
+    public StatisticsUser setUserRequest(UserRequest userRequest) {
+        this.userRequest = userRequest;
         return this;
     }
 }

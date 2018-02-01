@@ -33,7 +33,7 @@ public class RemoveUser extends AbstractAction<RemoveUser, Object> {
 
     @Override
     public String getName() {
-        return "remove/user";
+        return "firebase/remove/user";
     }
 
     @Override

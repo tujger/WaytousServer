@@ -21,7 +21,7 @@ public class DeleteGroup extends AbstractAction<DeleteGroup, String> {
 
     @Override
     public String getName() {
-        return "delete/group";
+        return "firebase/delete/group";
     }
 
     @Override

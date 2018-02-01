@@ -25,7 +25,7 @@ public class ValidateAccounts extends AbstractAction<ValidateAccounts, Object> {
 
     @Override
     public String getName() {
-        return "validate/accounts";
+        return "firebase/validate/accounts";
     }
 
     @Override

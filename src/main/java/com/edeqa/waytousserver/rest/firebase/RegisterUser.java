@@ -43,7 +43,7 @@ public class RegisterUser extends AbstractAction<RegisterUser, Object> {
 
     @Override
     public String getName() {
-        return "register/user";
+        return "firebase/register/user";
     }
 
     @Override

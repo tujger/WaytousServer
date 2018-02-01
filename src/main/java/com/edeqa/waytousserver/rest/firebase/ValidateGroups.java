@@ -25,7 +25,7 @@ public class ValidateGroups extends AbstractAction<ValidateGroups, Object> {
 
     @Override
     public String getName() {
-        return "validate/groups";
+        return "firebase/validate/groups";
     }
 
     @Override

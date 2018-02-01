@@ -20,7 +20,7 @@ import static com.edeqa.waytous.Constants.USER_NAME;
  */
 public class UserRequest {
 
-    private final DataProcessorConnection dataProcessorConnection;
+    private DataProcessorConnection dataProcessorConnection;
     private long timestamp;
     private String control;
     private String name;
@@ -85,6 +85,10 @@ public class UserRequest {
 
     public DataProcessorConnection getDataProcessorConnection() {
         return dataProcessorConnection;
+    }
+
+    public void setDataProcessorConnection(DataProcessorConnection dataProcessorConnection) {
+        this.dataProcessorConnection = dataProcessorConnection;
     }
 
     public String getAddress() {

@@ -17,7 +17,7 @@ public class CleanStatistics extends AbstractAction<CleanStatistics, Object> {
 
     @Override
     public String getName() {
-        return "clean/statistics";
+        return "firebase/clean/statistics";
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
+import com.edeqa.waytousserver.helpers.UserRequest;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 
@@ -14,13 +15,14 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ERROR;
 public class RejectUser extends AbstractAction<RejectUser, String> {
 
     private StatisticsUser statisticsUser;
+    private UserRequest userRequest;
     private String groupId;
     private String userId;
     private DataProcessorConnection dataProcessorConnection;
 
     @Override
     public String getName() {
-        return "register/user";
+        return "firebase/reject/user";
     }
 
     @Override
@@ -29,9 +31,14 @@ public class RejectUser extends AbstractAction<RejectUser, String> {
         Misc.err("RejectUser", "for uid:", getUserId(), "in group:" + groupId, "reason:" + message, "response:" + response);
         response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
         response.put(RESPONSE_MESSAGE, message);
+
+        if(getUserRequest() != null) {
+            setDataProcessorConnection(userRequest.getDataProcessorConnection());
+        }
         getDataProcessorConnection().send(response.toString());
         getDataProcessorConnection().close();
-        getStatisticsUser().setGroupId(getGroupId()).setUserId(getUserId()).setAction(AbstractDataProcessor.UserAction.USER_REJECTED).setMessage(message).call(null,null);
+
+        getStatisticsUser().setUserRequest(getUserRequest()).setGroupId(getGroupId()).setUserId(getUserId()).setAction(AbstractDataProcessor.UserAction.USER_REJECTED).setMessage(message).call(null,null);
 
         response.put(STATUS, STATUS_SUCCESS);
         response.put(CODE, CODE_DELAYED);
@@ -79,6 +86,15 @@ public class RejectUser extends AbstractAction<RejectUser, String> {
 
     public RejectUser setDataProcessorConnection(DataProcessorConnection dataProcessorConnection) {
         this.dataProcessorConnection = dataProcessorConnection;
+        return this;
+    }
+
+    public UserRequest getUserRequest() {
+        return userRequest;
+    }
+
+    public RejectUser setUserRequest(UserRequest userRequest) {
+        this.userRequest = userRequest;
         return this;
     }
 }

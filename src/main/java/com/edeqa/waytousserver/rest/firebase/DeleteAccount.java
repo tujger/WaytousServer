@@ -21,7 +21,7 @@ public class DeleteAccount extends AbstractAction<DeleteAccount, String> {
 
     @Override
     public String getName() {
-        return "delete/account";
+        return "firebase/delete/account";
     }
 
     @Override

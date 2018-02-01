@@ -25,7 +25,7 @@ public class CreateGroup extends AbstractAction<CreateGroup, MyGroup> {
 
     @Override
     public String getName() {
-        return "create/group";
+        return "firebase/create/group";
     }
 
     @Override
