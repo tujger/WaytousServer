@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.rest.firebase;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -30,32 +31,29 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ERROR;
 import static com.edeqa.waytous.Constants.RESPONSE_TOKEN;
 
 @SuppressWarnings("unused")
-public class RegisterUser extends AbstractAction<RegisterUser, Object> {
+public class RegisterUser extends AbstractFirebaseAction<RegisterUser, Object> {
+
+    public static final String TYPE = "/rest/firebase/register/user";
 
     private Runnable1<JSONObject> onSuccess;
     private Runnable1<JSONObject> onError;
-    private StatisticsUser statisticsUser;
-    private CustomToken customToken;
     private String groupId;
     private MyUser user;
     private String action;
     private HashMap<String, RequestHolder> requestHolders;
 
     @Override
-    public String getName() {
-        return "firebase/register/user";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(final JSONObject json, Object object) {
-
-//        public void registerUser(final String groupId, final MyUser user, final String action, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public boolean onEvent(final JSONObject json, Object object) {
 
         final JSONObject response = new JSONObject();
 
         DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
         final DatabaseReference refGroup = refGroups.child(getGroupId());
-
 
         if(REQUEST_NEW_GROUP.equals(getAction())) {
 //            refGroups.child(groupId).setValue(user.getUid());
@@ -101,7 +99,7 @@ public class RegisterUser extends AbstractAction<RegisterUser, Object> {
             Misc.log("RegisterUser", "with number", getUser().getNumber(), "uid:", getUser().getUid(), "[" + getGroupId() + "]");
 
             if(getAction() != null) {
-                String customToken = getCustomToken().fetchToken(getUser().getUid());
+                String customToken = ((CustomToken) EventBus.getOrCreateEventBus().getHolder(CustomToken.TYPE)).fetchToken(getUser().getUid());
 
                 response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
                 if (!REQUEST_JOIN_GROUP.equals(getAction()) && !REQUEST_CHECK_USER.equals(action)) {
@@ -117,7 +115,10 @@ public class RegisterUser extends AbstractAction<RegisterUser, Object> {
                 getUser().connection.send(response.toString());
                 getUser().connection.close();
             }
-            getStatisticsUser().setGroupId(getGroupId()).setUserId(getUser().getUid()).setAction(AbstractDataProcessor.UserAction.USER_JOINED).call(null, null);
+            ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
+                    .setGroupId(getGroupId())
+                    .setAction(AbstractDataProcessor.UserAction.USER_JOINED)
+                    .onEvent(null, getUser().getUid());
         } catch (Exception e) {
             e.printStackTrace();
             if(getOnError() != null) getOnError().call(response);
@@ -131,9 +132,14 @@ public class RegisterUser extends AbstractAction<RegisterUser, Object> {
                 getUser().connection.send(response.toString());
                 getUser().connection.close();
             }
-            getStatisticsUser().setGroupId(getGroupId()).setUserId(getUser().getUid()).setAction(AbstractDataProcessor.UserAction.USER_REJECTED).setMessage(e.getMessage()).call(null, null);
+            ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
+                    .setGroupId(getGroupId())
+                    .setAction(AbstractDataProcessor.UserAction.USER_REJECTED)
+                    .setMessage(e.getMessage())
+                    .onEvent(null, getUser().getUid());
         }
 
+        return true;
     }
 
     public Runnable1<JSONObject> getOnSuccess() {
@@ -151,15 +157,6 @@ public class RegisterUser extends AbstractAction<RegisterUser, Object> {
 
     public RegisterUser setOnError(Runnable1<JSONObject> onError) {
         this.onError = onError;
-        return this;
-    }
-
-    public CustomToken getCustomToken() {
-        return customToken;
-    }
-
-    public RegisterUser setCustomToken(CustomToken customToken) {
-        this.customToken = customToken;
         return this;
     }
 
@@ -187,15 +184,6 @@ public class RegisterUser extends AbstractAction<RegisterUser, Object> {
 
     public RegisterUser setAction(String action) {
         this.action = action;
-        return this;
-    }
-
-    public StatisticsUser getStatisticsUser() {
-        return statisticsUser;
-    }
-
-    public RegisterUser setStatisticsUser(StatisticsUser statisticsUser) {
-        this.statisticsUser = statisticsUser;
         return this;
     }
 

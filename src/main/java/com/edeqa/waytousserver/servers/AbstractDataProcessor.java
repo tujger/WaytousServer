@@ -2,7 +2,7 @@ package com.edeqa.waytousserver.servers;
 
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
-import com.edeqa.waytousserver.helpers.CheckReq;
+import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.UserRequests;
@@ -31,7 +31,7 @@ abstract public class AbstractDataProcessor {
     final ConcurrentHashMap<String, MyGroup> groups;
     ConcurrentHashMap<String, MyGroup> ipToToken;
     ConcurrentHashMap<String, MyUser> ipToUser;
-    ConcurrentHashMap<String, CheckReq> ipToCheck;
+//    ConcurrentHashMap<String, CheckReq> ipToCheck;
     final UserRequests userRequests;
     final HashMap<String, RequestHolder> requestHolders;
     protected final HashMap<String, FlagHolder> flagHolders;
@@ -175,7 +175,7 @@ abstract public class AbstractDataProcessor {
         }
     }
 
-    abstract public void createGroup(MyGroup group, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    abstract public void createGroup(GroupRequest groupRequest, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
 
     abstract public void deleteGroup(String groupId, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
 

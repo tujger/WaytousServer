@@ -6,6 +6,7 @@ import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.CheckReq;
 import com.edeqa.waytousserver.helpers.Common;
+import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
@@ -53,10 +54,10 @@ import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletException;
 
-import static com.edeqa.edequate.interfaces.NamedCall.MESSAGE;
-import static com.edeqa.edequate.interfaces.NamedCall.STATUS;
-import static com.edeqa.edequate.interfaces.NamedCall.STATUS_ERROR;
-import static com.edeqa.edequate.interfaces.NamedCall.STATUS_SUCCESS;
+import static com.edeqa.edequate.abstracts.AbstractAction.MESSAGE;
+import static com.edeqa.edequate.abstracts.AbstractAction.STATUS;
+import static com.edeqa.edequate.abstracts.AbstractAction.STATUS_ERROR;
+import static com.edeqa.edequate.abstracts.AbstractAction.STATUS_SUCCESS;
 import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.REQUEST;
 import static com.edeqa.waytous.Constants.REQUEST_CHECK_USER;
@@ -110,7 +111,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
         FirebaseOptions options = createFirebaseOptions();
 
         FirebaseApp defaultApp = FirebaseApp.initializeApp(options);
-//        System.out.println(defaultApp.getName());  // "[DEFAULT]"
+//        System.out.println(defaultApp.getType());  // "[DEFAULT]"
 //        System.out.println(FirebaseDatabase.getInstance(defaultApp));
 
 
@@ -283,7 +284,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
                     final MyUser user = new MyUser(conn, request);
                     Misc.log(LOG, "onMessage:requestNew:" + conn.getRemoteSocketAddress(), "{ uid:" + uid + " }");
 
-                    createOrUpdateUserAccount(user, new Runnable() {
+                    /*createOrUpdateUserAccount(user, new Runnable() {
                         @Override
                         public void run() {
                             //noinspection unchecked
@@ -309,7 +310,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
                             onresult[1] = new Runnable1<JSONObject>() {
                                 @Override
                                 public void call(JSONObject json) {
-                                    group.fetchNewId();
+//                                    group.fetchNewId();
                                     createGroup(group, onresult[0], onresult[1]);
                                     putStaticticsAccount(user.getUid(), GroupAction.GROUP_CREATED_TEMPORARY.toString(), "group", group.getId(), null);
 
@@ -324,7 +325,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
                             Misc.err(LOG, "onMessage:newGroup:",user, error);
                             rejectUser(response, user.connection, null, null, "Cannot create group (code 16).");
                         }
-                    });
+                    });*/
                 } else {
                     rejectUser(response, conn, null, null, "Cannot create group (code 15).");
                     Misc.err(LOG, "onMessage:newGroup:", response);
@@ -404,7 +405,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
 
                                         response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
                                         response.put(RESPONSE_CONTROL, check.getControl());
-                                        ipToCheck.put(ip, check);
+//                                        ipToCheck.put(ip, check);
                                         try {
                                             conn.send(response.toString());
                                         } catch (Exception e) {
@@ -438,7 +439,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
 
                         response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
                         response.put(RESPONSE_CONTROL, check.getControl());
-                        ipToCheck.put(ip, check);
+//                        ipToCheck.put(ip, check);
                         Misc.log(LOG, "onMessage:requestReconnect:" + conn.getRemoteSocketAddress(), "{ groupId:" + groupId, "} control:", check.getControl());
                         conn.send(response.toString());
                     }
@@ -450,7 +451,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
                 if (request.has(REQUEST_HASH)) {
                     final String hash = request.getString((REQUEST_HASH));
                     Misc.log(LOG, "onMessage:checkResponse:" + conn.getRemoteSocketAddress(), "hash:" + hash);
-                    if (ipToCheck.containsKey(ip)) {
+                    /*if (ipToCheck.containsKey(ip)) {
                         final CheckReq check = ipToCheck.get(ip);
                         ipToCheck.remove(ip);
 
@@ -491,7 +492,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
                                                             response.put(RESPONSE_SIGN, customToken);
                                                             conn.send(response.toString());
 
-                                                            Misc.log(LOG, "onMessage:joined:" + conn.getRemoteSocketAddress(), "signToken: [provided]"/*+customToken*/);
+                                                            Misc.log(LOG, "onMessage:joined:" + conn.getRemoteSocketAddress(), "signToken: [provided]"*//*+customToken*//*);
                                                             conn.close();
 
                                                             putStaticticsUser(check.getGroupId(), check.getUid(), UserAction.USER_RECONNECTED, null);
@@ -603,7 +604,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
                     } else {
                         Misc.err(LOG, "onMessage:joinNotAuthorized:" + conn.getRemoteSocketAddress());
                         rejectUser(response, conn, null, null, "Cannot join to group (user not authorized).");
-                    }
+                    }*/
                 } else {
                     Misc.err(LOG, "onMessage:joinNotDefined:" + conn.getRemoteSocketAddress());
                     rejectUser(response, conn, null, null, "Cannot join to group (hash not defined).");
@@ -626,7 +627,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
     }
 
     @Override
-    public void createGroup(final MyGroup group, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public void createGroup(final GroupRequest group, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
 
         final JSONObject json = new JSONObject();
 
@@ -641,7 +642,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
                             childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.WELCOME_MESSAGE, group.getWelcomeMessage());
                             childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.REQUIRES_PASSWORD, group.isRequirePassword());
+                                    + Firebase.REQUIRES_PASSWORD, group.isRequiresPassword());
                             childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.TIME_TO_LIVE_IF_EMPTY, group.getTimeToLiveIfEmpty());
                             childUpdates.put(Firebase.OPTIONS + "/"
@@ -675,7 +676,6 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
                         }
                     }
                 }).start();
-
     }
 
     @Override
@@ -1219,7 +1219,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
                 new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Constants.DATABASE.OPTIONS))
                         .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                             @Override
-                            public void call(DataSnapshot dataSnapshot) {
+                            public void onEvent(DataSnapshot dataSnapshot) {
                                 Map value = (Map) dataSnapshot.getValue();
 
                                 Common.log(LOG, "Group found:", group*//* + ", leader id:", leader, dataSnapshot.getValue()*//*);
@@ -1260,7 +1260,7 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
                                 new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Constants.DATABASE.SECTION_USERS_DATA))
                                         .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                                             @Override
-                                            public void call(DataSnapshot dataSnapshot) {
+                                            public void onEvent(DataSnapshot dataSnapshot) {
                                                 Common.log(LOG, "Users validation for group:", group);
 
                                                 ArrayList<Map<String, Serializable>> users = null;

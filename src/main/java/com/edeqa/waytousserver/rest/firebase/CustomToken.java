@@ -15,23 +15,25 @@ import java.util.Map;
 
 @SuppressWarnings("unused")
 /*
- * This method requests and returns accessToken for Firebase. Depending on current installation type
+ * This method requests and returns custom token for Firebase. Depending on current installation type
  * it defines the properly request and performs it. Installation type can be defined in gradle.build.
  */
-public class CustomToken extends AbstractAction<CustomToken, String> {
+public class CustomToken extends AbstractFirebaseAction<CustomToken, String> {
 
-    private final int MAXIMUM_CACHED_TOKENS = 1000;
+    public static final String TYPE = "/rest/firebase/token/custom";
+
+    private static final int MAXIMUM_CACHED_TOKENS = 1000;
 
     private Long timeCreated = 0L;
     private Map<String,String> tokens = new HashMap<>();
 
     @Override
-    public String getName() {
-        return "firebase/token/custom";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, String uid) throws Exception {
+    public boolean onEvent(JSONObject json, String uid) throws Exception {
         Misc.log("CustomToken", "is performing for uid:", uid);
 
         if(tokens.size() > MAXIMUM_CACHED_TOKENS) {
@@ -62,12 +64,13 @@ public class CustomToken extends AbstractAction<CustomToken, String> {
         }
         json.put(STATUS, STATUS_SUCCESS);
         json.put(MESSAGE, tokens.get(uid));
+        return true;
     }
 
     public String fetchToken(String uid) {
         JSONObject json = new JSONObject();
         try {
-            call(json, uid);
+            onEvent(json, uid);
             return json.getString(MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();

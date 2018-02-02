@@ -3,6 +3,7 @@ package com.edeqa.waytousserver.servers;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytousserver.helpers.CheckReq;
+import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
@@ -90,13 +91,13 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
 
                             if(ipToUser.containsKey(entry.getKey())) ipToUser.remove(entry.getKey());
                             if(ipToToken.containsKey(entry.getKey())) ipToToken.remove(entry.getKey());
-                            if(ipToCheck.containsKey(entry.getKey())) ipToCheck.remove(entry.getKey());
+//                            if(ipToCheck.containsKey(entry.getKey())) ipToCheck.remove(entry.getKey());
                             user.connection.close();
                         }
 
                     } else {
                         if (ipToToken.containsKey(entry.getKey())) ipToToken.remove(entry.getKey());
-                        if (ipToCheck.containsKey(entry.getKey())) ipToCheck.remove(entry.getKey());
+//                        if (ipToCheck.containsKey(entry.getKey())) ipToCheck.remove(entry.getKey());
                         ipToUser.remove(entry.getKey());
                     }
                 }
@@ -168,7 +169,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
 
         }
         if(ipToUser.containsKey(ip)) ipToUser.remove(ip);
-        if(ipToCheck.containsKey(ip)) ipToCheck.remove(ip);
+//        if(ipToCheck.containsKey(ip)) ipToCheck.remove(ip);
 
     }
 
@@ -263,7 +264,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
 
                                 response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
                                 response.put(RESPONSE_CONTROL, check.getControl());
-                                ipToCheck.put(ip, check);
+//                                ipToCheck.put(ip, check);
                             } else {
 
                                 user = new MyUser(conn, request.getString(REQUEST_UID));
@@ -301,7 +302,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
 
                             response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
                             response.put(RESPONSE_CONTROL, check.getControl());
-                            ipToCheck.put(ip, check);
+//                            ipToCheck.put(ip, check);
                         }
                     } else {
                         response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
@@ -320,7 +321,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                 if (request.has(REQUEST_HASH)) {
                     String hash = request.getString((REQUEST_HASH));
                     System.out.println(("CHECK:requested device: [hash=" + hash + "]"));
-                    if (ipToCheck.containsKey(ip)) {
+/*                    if (ipToCheck.containsKey(ip)) {
                         CheckReq check = ipToCheck.get(ip);
 
                         System.out.println("CHECK:found token: [name=" + check.getName() + ", token=" + check.getToken().getId() + ", control=" + check.getControl() + "]");
@@ -375,7 +376,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                         response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
                         response.put(RESPONSE_MESSAGE, "Cannot join to group (user not authorized).");
                         disconnect = true;
-                    }
+                    }*/
                 } else {
                     response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
                     response.put(RESPONSE_MESSAGE, "Cannot join to group (hash not defined).");
@@ -432,7 +433,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }
 
     @Override
-    public void createGroup(MyGroup group, Runnable1 onsuccess, Runnable1 onerror) {
+    public void createGroup(GroupRequest groupRequest, Runnable1 onsuccess, Runnable1 onerror) {
         // TODO
     }
 

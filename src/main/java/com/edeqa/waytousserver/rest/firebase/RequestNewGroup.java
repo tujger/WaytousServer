@@ -5,7 +5,9 @@ import com.google.firebase.database.Transaction;
 import org.json.JSONObject;
 
 @SuppressWarnings("unused")
-public class RequestNewGroup extends AbstractAction<RequestNewGroup, Object> {
+public class RequestNewGroup extends AbstractFirebaseAction<RequestNewGroup, Object> {
+
+    public static final String TYPE = "/rest/firebase/join/new";
 
     private String accountAction;
     private AccessToken firebaseAccessToken;
@@ -18,12 +20,12 @@ public class RequestNewGroup extends AbstractAction<RequestNewGroup, Object> {
     private Transaction.Handler incrementValue;
 
     @Override
-    public String getName() {
-        return "firebase/join/new";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, Object request) {
+    public boolean onEvent(JSONObject json, Object request) {
 
 //        if (uid != null) {
 //            final MyGroup group = new MyGroup();
@@ -37,16 +39,16 @@ public class RequestNewGroup extends AbstractAction<RequestNewGroup, Object> {
 //                    final Runnable1<JSONObject>[] onresult = new Runnable1[2];
 //                    onresult[0] = new Runnable1<JSONObject>() {
 //                        @Override
-//                        public void call(JSONObject json) {
+//                        public void onEvent(JSONObject json) {
 //                            registerUser(group.getId(), user, REQUEST_NEW_GROUP, new Runnable1<JSONObject>() {
 //                                @Override
-//                                public void call(JSONObject json) {
+//                                public void onEvent(JSONObject json) {
 //                                    user.connection.send(json.toString());
 //                                    user.connection.close();
 //                                }
 //                            }, new Runnable1<JSONObject>() {
 //                                @Override
-//                                public void call(JSONObject json) {
+//                                public void onEvent(JSONObject json) {
 //                                    user.connection.send(json.toString());
 //                                    user.connection.close();
 //                                }
@@ -55,7 +57,7 @@ public class RequestNewGroup extends AbstractAction<RequestNewGroup, Object> {
 //                    };
 //                    onresult[1] = new Runnable1<JSONObject>() {
 //                        @Override
-//                        public void call(JSONObject json) {
+//                        public void onEvent(JSONObject json) {
 //                            group.fetchNewId();
 //                            createGroup(group, onresult[0], onresult[1]);
 //                            putStaticticsAccount(user.getUid(), AbstractDataProcessor.GroupAction.GROUP_CREATED_TEMPORARY.toString(), "group", group.getId(), null);
@@ -67,7 +69,7 @@ public class RequestNewGroup extends AbstractAction<RequestNewGroup, Object> {
 //                }
 //            }, new Runnable1<Throwable>() {
 //                @Override
-//                public void call(Throwable error) {
+//                public void onEvent(Throwable error) {
 //                    Misc.err(LOG, "onMessage:newGroup:",user, error);
 //                    rejectUser(response, user.connection, null, null, "Cannot create group (code 16).");
 //                }
@@ -77,6 +79,7 @@ public class RequestNewGroup extends AbstractAction<RequestNewGroup, Object> {
 //            Misc.err(LOG, "onMessage:newGroup:", response);
 //        }
 
+        return true;
     }
 
     public AccessToken getFirebaseAccessToken() {

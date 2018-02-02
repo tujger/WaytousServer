@@ -1,9 +1,11 @@
 package com.edeqa.waytousserver.rest.firebase;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
+import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.firebase.tasks.Task;
 import com.google.firebase.tasks.Tasks;
@@ -13,19 +15,20 @@ import org.json.JSONObject;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("unused")
-public class DeleteGroup extends AbstractAction<DeleteGroup, String> {
+public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
+
+    public static final String TYPE = "/rest/firebase/delete/group";
 
     private Runnable1<JSONObject> onSuccess;
     private Runnable1<JSONObject> onError;
-    private StatisticsGroup statisticsGroup;
 
     @Override
-    public String getName() {
-        return "firebase/delete/group";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, final String groupId) {
+    public boolean onEvent(JSONObject json, final String groupId) {
         json = new JSONObject();
 
         json.put(Rest.GROUP_ID, groupId);
@@ -37,7 +40,9 @@ public class DeleteGroup extends AbstractAction<DeleteGroup, String> {
             Misc.log("DeleteGroup", groupId);
             getOnSuccess().call(json);
 
-            getStatisticsGroup().setGroupId(groupId).setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED).call(null, null);
+            ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
+                    .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
+                    .onEvent(null, new GroupRequest(groupId));
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             json.put(STATUS, STATUS_ERROR);
@@ -45,6 +50,7 @@ public class DeleteGroup extends AbstractAction<DeleteGroup, String> {
             Misc.err("DeleteGroup", groupId, "not deleted, error:" + e.getMessage());
             getOnError().call(json);
         }
+        return true;
     }
 
     public Runnable1<JSONObject> getOnSuccess() {
@@ -65,12 +71,4 @@ public class DeleteGroup extends AbstractAction<DeleteGroup, String> {
         return this;
     }
 
-    public StatisticsGroup getStatisticsGroup() {
-        return statisticsGroup;
-    }
-
-    public DeleteGroup setStatisticsGroup(StatisticsGroup statisticsGroup) {
-        this.statisticsGroup = statisticsGroup;
-        return this;
-    }
 }

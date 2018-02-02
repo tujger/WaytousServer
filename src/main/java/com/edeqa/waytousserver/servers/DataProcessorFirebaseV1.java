@@ -1,9 +1,11 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.edequate.abstracts.AbstractAction;
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
-import com.edeqa.waytousserver.helpers.MyGroup;
+import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.helpers.UserRequest;
@@ -30,11 +32,8 @@ import com.edeqa.waytousserver.rest.firebase.ValidateGroups;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.tasks.Task;
 import com.google.firebase.tasks.Tasks;
 
@@ -85,15 +84,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
     public static final String VERSION = "v1";
     private static String LOG = "DPF1";
-    private final StatisticsGroup statisticsGroup;
-    private final StatisticsAccount statisticsAccount;
-    private final AccessToken accessToken;
-    private final StatisticsUser statisticsUser;
-    private final CustomToken customToken;
-    private final CreateAccount createAccount;
-    private final RegisterUser registerUserCall;
-    private final CreateGroup createGroupCall;
-    private final RejectUser rejectUser;
     private DatabaseReference refGroups;
     private DatabaseReference refRoot;
 
@@ -137,39 +127,17 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             e.printStackTrace();
         }
 
-        Transaction.Handler incrementValue = new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Integer value = mutableData.getValue(Integer.class);
-                if (value == null) {
-                    value = 0;
-                }
-                value++;
-                mutableData.setValue(value);
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                // Transaction completed
-                if (databaseError != null) {
-                    Misc.err(LOG, "incrementValue:onComplete:" + databaseError);
-                }
-            }
-        };
-
-        accessToken = new AccessToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile());
-        customToken = new CustomToken();
-
-        StatisticsMessage statisticsMessage = new StatisticsMessage().setFirebaseReference(refRoot);
-        statisticsGroup = new StatisticsGroup().setFirebaseReference(refRoot).setIncrementValue(incrementValue).setStatisticsMessage(statisticsMessage);
-        statisticsAccount = new StatisticsAccount().setFirebaseReference(refRoot).setIncrementValue(incrementValue).setStatisticsMessage(statisticsMessage).setFirebaseAccessToken(accessToken);
-        statisticsUser = new StatisticsUser().setFirebaseReference(refRoot).setIncrementValue(incrementValue).setStatisticsMessage(statisticsMessage).setStatisticsAccount(statisticsAccount);
-
-        createAccount = new CreateAccount().setFirebaseReference(refRoot).setStatisticsAccount(statisticsAccount);
-        registerUserCall = new RegisterUser().setFirebaseReference(refRoot).setCustomToken(customToken).setStatisticsUser(statisticsUser).setRequestHolders(requestHolders);
-        rejectUser = new RejectUser().setStatisticsUser(statisticsUser);
-        createGroupCall = new CreateGroup().setFirebaseReference(refRoot).setStatisticsGroup(statisticsGroup);
+        EventBus<AbstractAction> fireBus = (EventBus<AbstractAction>) EventBus.getOrCreateEventBus();
+        fireBus.register(new AccessToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile()));
+        fireBus.register(new CreateAccount().setFirebaseReference(refRoot));
+        fireBus.register(new CreateGroup().setFirebaseReference(refRoot));
+        fireBus.register(new CustomToken());
+        fireBus.register(new RegisterUser().setFirebaseReference(refRoot).setRequestHolders(requestHolders));
+        fireBus.register(new RejectUser());
+        fireBus.register(new StatisticsAccount().setFirebaseReference(refRoot));
+        fireBus.register(new StatisticsGroup().setFirebaseReference(refRoot));
+        fireBus.register(new StatisticsMessage().setFirebaseReference(refRoot));
+        fireBus.register(new StatisticsUser().setFirebaseReference(refRoot));
     }
 
     /**
@@ -260,13 +228,15 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     @Override
     public void onMessage(final DataProcessorConnection conn, String message) {
         try {
-            final String ip = conn.getRemoteSocketAddress().toString();
             final JSONObject request, response = new JSONObject();
-
             try {
                 request = new JSONObject(message);
             } catch (JSONException e) {
                 Misc.err(LOG, "onMessage:request" + e.getMessage());
+                response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
+                response.put(RESPONSE_MESSAGE, "Wrong request");
+                conn.send(response.toString());
+                conn.close();
                 return;
             }
             if (!request.has(REQUEST) || !request.has(REQUEST_TIMESTAMP)) {
@@ -284,7 +254,10 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                     response.put(RESPONSE_MESSAGE, "Wrong UID");
                     conn.send(response.toString());
                     conn.close();
-                    statisticsUser.setUserId(uid).setAction(UserAction.USER_REJECTED).setMessage(message).call(null, null);
+                    ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
+                            .setAction(UserAction.USER_REJECTED)
+                            .setMessage(message)
+                            .onEvent(null, uid);
                     return;
                 }
             } else {
@@ -292,12 +265,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             }
 
             String req = request.getString(REQUEST);
-            /*if (REQUEST_TRACKING.equals(req)) {
-                response.put(RESPONSE_STATUS, RESPONSE_STATUS_UPDATED);
-                conn.send(response.toString());
-                conn.close();
-                Common.log(LOG,"onMessage:updateCoords:fake",response);
-            } else*/
             if ("test".equals(req)) {
                 Misc.log(LOG, "onMessage:testMessage:" + conn.getRemoteSocketAddress(), message);
                 response.put(RESPONSE_STATUS, RESPONSE_STATUS_UPDATED);
@@ -306,11 +273,13 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 conn.close();
             } else if (REQUEST_NEW_GROUP.equals(req)) {
                 if (uid != null) {
-                    final MyGroup group = new MyGroup();
+                    final GroupRequest groupRequest = new GroupRequest();
+//                    final MyGroup group = new MyGroup();
                     final MyUser user = new MyUser(conn, request);
                     Misc.log(LOG, "onMessage:requestNew:" + conn.getRemoteSocketAddress(), "{ uid:" + uid + " }");
 
-                    createAccount.setOnSuccess(new Runnable() {
+                    ((CreateAccount) EventBus.getOrCreateEventBus().getHolder(CreateAccount.TYPE))
+                            .setOnSuccess(new Runnable() {
                         @Override
                         public void run() {
                             //noinspection unchecked
@@ -318,8 +287,8 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             onresult[0] = new Runnable1<JSONObject>() {
                                 @Override
                                 public void call(JSONObject json) {
-                                    registerUserCall
-                                            .setGroupId(group.getId())
+                                    ((RegisterUser) EventBus.getOrCreateEventBus().getHolder(RegisterUser.TYPE))
+                                            .setGroupId(groupRequest.getId())
                                             .setUser(user)
                                             .setAction(REQUEST_NEW_GROUP)
                                             .setOnSuccess(new Runnable1<JSONObject>() {
@@ -336,26 +305,28 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                     user.connection.close();
                                                 }
                                             })
-                                            .call(null, null);
+                                            .onEvent(null, null);
                                 }
                             };
                             onresult[1] = new Runnable1<JSONObject>() {
                                 @Override
                                 public void call(JSONObject json) {
-                                    group.fetchNewId();
+                                    groupRequest.fetchNewId();
                                     onresult[2].call(json);
                                 }
                             };
                             onresult[2] = new Runnable1<JSONObject>() {
                                 @Override
                                 public void call(JSONObject arg) {
-                                    createGroupCall.setOnSuccess(onresult[0]).setOnError(onresult[1]).call(arg, group);
-                                    statisticsAccount
-                                            .setAccountId(user.getUid())
+                                    ((CreateGroup) EventBus.getOrCreateEventBus().getHolder(CreateGroup.TYPE))
+                                            .setOnSuccess(onresult[0])
+                                            .setOnError(onresult[1])
+                                            .onEvent(arg, groupRequest);
+                                    ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
                                             .setAction(GroupAction.GROUP_CREATED_TEMPORARY.toString())
                                             .setKey("group")
-                                            .setValue(group.getId())
-                                            .call(null, null);
+                                            .setValue(groupRequest.getId())
+                                            .onEvent(null, user.getUid());
                                 }
                             };
                             onresult[2].call(new JSONObject());
@@ -364,14 +335,16 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                             .setOnError(new Runnable1<Throwable>() {
                                 @Override
                                 public void call(Throwable error) {
-                                    Misc.err(LOG, "onMessage:newGroup:",user, error);
-                                    rejectUser.setDataProcessorConnection(user.connection).call(response,"Cannot create group (code 16).");
+                                    ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                            .setUserRequest(new UserRequest(user.connection))
+                                            .onEvent(response,"Cannot create group (code 16).");
                                 }
                             })
-                            .call(null, user);
+                            .onEvent(null, user);
                 } else {
-                    rejectUser.setDataProcessorConnection(conn).call(response,"Cannot create group (code 15).");
-                    Misc.err(LOG, "onMessage:newGroup:", response);
+                    ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                            .setUserRequest(new UserRequest(conn))
+                            .onEvent(response,"Cannot create group (code 15).");
                 }
             } else if (REQUEST_JOIN_GROUP.equals(req)) {
                 if (request.has(REQUEST_TOKEN)) {
@@ -379,11 +352,11 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                     final String groupId = request.getString(REQUEST_TOKEN);
                     final DatabaseReference refGroup = refGroups.child(groupId);
 
-                    final UserRequest userRequest = new UserRequest(conn);
-                    userRequest.setGroupId(groupId);
-                    userRequest.setUid(uid);
+                    final UserRequest userRequest = new UserRequest(conn)
+                            .setGroupId(groupId)
+                            .setUid(uid)
+                            .setGroupReference(refGroup);
                     userRequest.parse(request);
-                    userRequest.setGroupReference(refGroup);
 
                     getUserRequests().add(userRequest);
 
@@ -413,28 +386,27 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                 ++count;
                             }
                             if (found) {
-//                                Common.log(LOG, "onMessage:newGroup:", "user found:", user.getUid());
                                 userRequest.setNumber(count);
                                 final MyUser user = userRequest.fetchUser();
-                                createAccount.setOnSuccess(new Runnable() {
+                                ((CreateAccount) EventBus.getOrCreateEventBus().getHolder(CreateAccount.TYPE))
+                                        .setOnSuccess(new Runnable() {
                                     @Override
                                     public void run() {
-                                        registerUserCall
+                                        ((RegisterUser) EventBus.getOrCreateEventBus().getHolder(RegisterUser.TYPE))
                                                 .setGroupId(userRequest.getGroupId())
                                                 .setUser(user)
                                                 .setAction(REQUEST_JOIN_GROUP)
-                                                .call(null, null);
+                                                .onEvent(null, null);
                                     }
                                 }).setOnError(new Runnable1<Throwable>() {
                                     @Override
                                     public void call(Throwable error) {
-                                        Misc.err(LOG, "onMessage:newGroup:", user, error);
-                                        rejectUser.setUserRequest(userRequest).call(response,"Cannot create group (code 17).");
+                                        ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                                .setUserRequest(userRequest)
+                                                .onEvent(response,"Cannot create group (code 17).");
                                     }
-                                }).call(null, user);
+                                }).onEvent(null, user);
                             } else {
-//                                Common.log(LOG, "onMessage:newGroup:", "user not found adding:", user.getUid());
-//                                refGroups.child(Firebase.SECTION_GROUPS).child(groupId).setValue(user.getUid());
                                 DatabaseReference nodeNumber = refGroups.child(userRequest.getGroupId()).child(Firebase.USERS).child(Firebase.QUEUE).push();
                                 nodeNumber.setValue(userRequest.getUid());
                                 requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
@@ -471,7 +443,9 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                     if (dataSnapshot.getValue() != null) {
                                         numberForKeyTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.KEYS).child(userRequest.getUid())).start();
                                     } else {
-                                        rejectUser.setUserRequest(userRequest).call(response,"This group is expired. (001)");
+                                        ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                                .setUserRequest(userRequest)
+                                                .onEvent(response,"This group is expired. (001)");
                                     }
                                 }
                             });
@@ -483,11 +457,12 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                         response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
                         response.put(RESPONSE_CONTROL, userRequest.getControl());
                         Misc.log(LOG, "onMessage:requestReconnect:" + userRequest.toString());
-                        conn.send(response.toString());
+                        userRequest.send(response.toString());
                     }
                 } else {
-                    rejectUser.setDataProcessorConnection(conn).call(response,"Wrong request (group not defined).");
-                    System.out.println("JOIN:response:" + response);
+                    ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                            .setUserRequest(new UserRequest(conn))
+                            .onEvent(response,"Wrong request (group not defined).");
                 }
             } else if (REQUEST_CHECK_USER.equals(req)) {
                 if (request.has(REQUEST_HASH)) {
@@ -521,7 +496,8 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                     update.put(USER_NAME, userRequest.getName());
                                                 }
 
-                                                createAccount.setOnSuccess(new Runnable() {
+                                                ((CreateAccount) EventBus.getOrCreateEventBus().getHolder(CreateAccount.TYPE))
+                                                        .setOnSuccess(new Runnable() {
                                                     @Override
                                                     public void run() {
                                                         Task<Void> updateUserTask = refGroup.child(Firebase.USERS).child(Firebase.PUBLIC).child("" + userRequest.getNumber()).updateChildren(update);
@@ -535,7 +511,10 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
                                                             Misc.log(LOG, "onMessage:joined:" + userRequest.getAddress(), "signToken: [provided]"/*+customToken*/);
 
-                                                            statisticsUser.setGroupId(userRequest.getGroupId()).setUserId(userRequest.getUid()).setAction(UserAction.USER_RECONNECTED).call(null,null);
+                                                            ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
+                                                                    .setGroupId(userRequest.getGroupId())
+                                                                    .setAction(UserAction.USER_RECONNECTED)
+                                                                    .onEvent(null,userRequest.getUid());
                                                         } catch (Exception e) {
                                                             e.printStackTrace();
                                                         }
@@ -543,41 +522,46 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                 }).setOnError(new Runnable1<Throwable>() {
                                                     @Override
                                                     public void call(Throwable error) {
-                                                        Misc.err(LOG, "onMessage:joinNotAuthenticated:", userRequest.toString(), error);
-                                                        rejectUser.setUserRequest(userRequest).call(response,"Cannot join to group (code 19).");
+                                                        ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                                                .setUserRequest(userRequest)
+                                                                .onEvent(response,"Cannot join to group (not authenticated).");
                                                     }
-                                                }).call(null, userRequest.fetchUser());
+                                                }).onEvent(null, userRequest.fetchUser());
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
                                         } else {
-                                            Misc.err(LOG, "onMessage:joinNotAuthenticated:", userRequest.toString(), "hash not equals");
-                                            rejectUser.setUserRequest(userRequest).call(response,"Cannot join to group (user not authenticated).");
+                                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                                    .setUserRequest(userRequest)
+                                                    .onEvent(response,"Cannot join to group (hash incorrect).");
                                         }
 
                                     } catch (Exception e) {
-                                        Misc.err(LOG, "onMessage:joinHashFailed:", userRequest.toString());
-                                        rejectUser.setUserRequest(userRequest).call(response,"Cannot join to group (user not authenticated).");
+                                        ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                                .setUserRequest(userRequest)
+                                                .onEvent(response,"Cannot join to group (hash failed).");
                                         e.printStackTrace();
                                     }
 
                                 } else { // join as new member
-                                    createAccount.setOnSuccess(new Runnable() {
+                                    ((CreateAccount) EventBus.getOrCreateEventBus().getHolder(CreateAccount.TYPE))
+                                            .setOnSuccess(new Runnable() {
                                         @Override
                                         public void run() {
-                                            registerUserCall
+                                            ((RegisterUser) EventBus.getOrCreateEventBus().getHolder(RegisterUser.TYPE))
                                                     .setGroupId(userRequest.getGroupId())
                                                     .setUser(userRequest.fetchUser())
                                                     .setAction(REQUEST_CHECK_USER)
-                                                    .call(null, null);
+                                                    .onEvent(null, null);
                                         }
                                     }).setOnError(new Runnable1<Throwable>() {
                                         @Override
                                         public void call(Throwable error) {
-                                            Misc.err(LOG, "onMessage:joinAsNew:",userRequest.toString(), error);
-                                            rejectUser.setUserRequest(userRequest).call(response,"Cannot join to group (code 18).");
+                                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                                    .setUserRequest(userRequest)
+                                                    .onEvent(response,"Cannot join to group (code 18). " + error.getMessage());
                                         }
-                                    }).call(null, userRequest.fetchUser());
+                                    }).onEvent(null, userRequest.fetchUser());
                                 }
                             }
                         });
@@ -593,8 +577,9 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                             userCheckTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE).child(dataSnapshot.getValue().toString())).start();
 
                                         } else {
-                                            Misc.err(LOG, "onMessage:joinNumberNotFound:" + userRequest.getAddress());
-                                            rejectUser.setUserRequest(userRequest).call(response,"This group is expired. (005)");
+                                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                                    .setUserRequest(userRequest)
+                                                    .onEvent(response,"This group is expired (number not found).");
                                         }
                                     }
                                 });
@@ -613,11 +598,13 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                                     }
                                                 }
                                             }
-                                            Misc.err(LOG, "onMessage:joinUserNotFound:", userRequest.getAddress());
-                                            rejectUser.setUserRequest(userRequest).call(response,"This group is expired. (004)");
+                                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                                    .setUserRequest(userRequest)
+                                                    .onEvent(response,"This group is expired (user not found).");
                                         } else {
-                                            Misc.err(LOG, "onMessage:joinEmptyGroup:", userRequest.getAddress());
-                                            rejectUser.setUserRequest(userRequest).call(response,"This group is expired. (003)");
+                                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                                    .setUserRequest(userRequest)
+                                                    .onEvent(response,"This group is expired (or empty).");
                                         }
                                     }
                                 });
@@ -630,23 +617,25 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                                             if (dataSnapshot.getValue() != null) {
                                                 userCheckTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE).child("" + userRequest.getNumber())).start();
                                             } else {
-                                                Misc.err(LOG, "onMessage:joinUserNotExists:" + userRequest.getAddress());
-                                                rejectUser.setUserRequest(userRequest).call(response,"This group is expired. (002)");
+                                                ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                                        .setUserRequest(userRequest)
+                                                        .onEvent(response,"This group is expired (user not exists).");
                                             }
                                         } else {
                                             userSearchTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE)).start();
                                         }
                                     }
                                 });
-
                         groupOptionsTask.setRef(refGroup.child(Firebase.OPTIONS)).start();
                     } else {
-                        Misc.err(LOG, "onMessage:joinNotAuthorized:" + conn.getRemoteSocketAddress());
-                        rejectUser.setDataProcessorConnection(conn).call(response,"Cannot join to group (user not authorized).");
+                        ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                .setUserRequest(new UserRequest(conn))
+                                .onEvent(response,"Cannot join to group (user not authorized).");
                     }
                 } else {
-                    Misc.err(LOG, "onMessage:joinNotDefined:" + conn.getRemoteSocketAddress());
-                    rejectUser.setDataProcessorConnection(conn).call(response,"Cannot join to group (hash not defined).");
+                    ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                            .setUserRequest(new UserRequest(conn))
+                            .onEvent(response,"Cannot join to group (hash not defined).");
                 }
             }
         } catch (Exception e) {
@@ -657,11 +646,11 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     }
 
     @Override
-    public void createGroup(final MyGroup group, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
-        createGroupCall
+    public void createGroup(final GroupRequest groupRequest, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+        ((CreateGroup) EventBus.getOrCreateEventBus().getHolder(CreateGroup.TYPE))
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
-                .call(new JSONObject(), group);
+                .onEvent(new JSONObject(), groupRequest);
     }
 
     @Override
@@ -670,13 +659,11 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 .setFirebaseReference(refRoot)
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
-                .setStatisticsGroup(statisticsGroup)
-                .call(null, groupId);
+                .onEvent(null, groupId);
     }
 
     @Override
     public void switchPropertyInGroup(final String groupId, final String property, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
-
         new GroupProperty()
                 .setFirebaseReference(refRoot)
                 .setGroupId(groupId)
@@ -684,12 +671,11 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 .performSwitchBoolean()
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
-                .call(null, null);
+                .onEvent(null, null);
     }
 
     @Override
     public void modifyPropertyInGroup(final String groupId, final String property, final Serializable value, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
-
         new GroupProperty()
                 .setFirebaseReference(refRoot)
                 .setGroupId(groupId)
@@ -697,18 +683,18 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 .setValue(value)
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
-                .call(null, null);
+                .onEvent(null, null);
     }
 
     @Override
     public void registerUser(String groupId, MyUser user, String action, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
-        registerUserCall
+        ((RegisterUser) EventBus.getOrCreateEventBus().getHolder(RegisterUser.TYPE))
                 .setGroupId(groupId)
                 .setUser(user)
                 .setAction(action)
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
-                .call(null, null);
+                .onEvent(null, null);
     }
 
 //    @Override
@@ -742,18 +728,16 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
                 .setRequestHolders(requestHolders)
-                .setStatisticsUser(statisticsUser)
-                .call(null, null);
+                .onEvent(null, null);
     }
 
     @Override
     public void deleteAccount(final String accountId, Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
         new DeleteAccount()
                 .setFirebaseReference(refRoot)
-                .setStatisticsAccount(statisticsAccount)
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
-                .call(null, accountId);
+                .onEvent(null, accountId);
     }
 
     @Override
@@ -767,15 +751,13 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 .performSwitchBoolean()
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
-                .call(null, null);
+                .onEvent(null, null);
     }
 
     public void validateGroups() {
         new ValidateGroups()
                 .setFirebaseReference(refRoot)
-                .setFirebaseAccessToken(accessToken)
-                .setStatisticsGroup(statisticsGroup)
-                .call(null, null);
+                .onEvent(null, null);
     }
 
     @Override
@@ -787,15 +769,12 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     public void validateAccounts() {
         new ValidateAccounts()
                 .setFirebaseReference(refRoot)
-                .setFirebaseAccessToken(accessToken)
-                .setStatisticsAccount(statisticsAccount)
-                .call(null,null);
+                .onEvent(null,null);
     }
 
     @Override
     public String createCustomToken(String uid) {
-        System.out.println("TOKENNN" + customToken.getName());
-        return customToken.fetchToken(uid);
+        return ((CustomToken) EventBus.getOrCreateEventBus().getHolder(CustomToken.TYPE)).fetchToken(uid);
     }
 
     @Override
@@ -804,7 +783,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
                 .setFirebaseReference(refRoot)
-                .call(null, null);
+                .onEvent(null, null);
     }
 
 }

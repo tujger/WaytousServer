@@ -14,19 +14,21 @@ import java.util.Calendar;
  * This method requests and returns accessToken for Firebase. Depending on current installation type
  * it defines the properly request and performs it. Installation type can be defined in gradle.build.
  */
-public class AccessToken extends AbstractAction<AccessToken, Object> {
+public class AccessToken extends AbstractFirebaseAction<AccessToken, Object> {
+
+    public static final String TYPE = "/rest/firebase/token/access";
 
     private String firebasePrivateKeyFile;
     private Long timeCreated = 0L;
     private String token;
 
     @Override
-    public String getName() {
-        return "firebase/token/access";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, Object request) throws Exception {
+    public boolean onEvent(JSONObject json, Object request) throws Exception {
         Misc.log("AccessToken", "is performing");
 
         Calendar cal = Calendar.getInstance();
@@ -49,12 +51,13 @@ public class AccessToken extends AbstractAction<AccessToken, Object> {
 
         json.put(STATUS, STATUS_SUCCESS);
         json.put(MESSAGE, token);
+        return true;
     }
 
     public String fetchToken() {
         JSONObject json = new JSONObject();
         try {
-            call(json, null);
+            onEvent(json, null);
             return json.getString(MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +65,7 @@ public class AccessToken extends AbstractAction<AccessToken, Object> {
         return null;
     }
 
-    public String getFirebasePrivateKeyFile() {
+    private String getFirebasePrivateKeyFile() {
         return firebasePrivateKeyFile;
     }
 

@@ -16,7 +16,9 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 @SuppressWarnings("unused")
-public class UserProperty extends AbstractAction<UserProperty, Object> {
+public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
+
+    public static final String TYPE = "/rest/firebase/user/property";
 
     private String groupId;
     private Long userNumber;
@@ -27,12 +29,12 @@ public class UserProperty extends AbstractAction<UserProperty, Object> {
     private boolean switchBoolean;
 
     @Override
-    public String getName() {
-        return "firebase/user/property";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, Object request) {
+    public boolean onEvent(JSONObject json, Object request) {
 
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
@@ -76,6 +78,7 @@ public class UserProperty extends AbstractAction<UserProperty, Object> {
                         }
                     }
                 }).start();
+        return true;
     }
 
     public String getGroupId() {

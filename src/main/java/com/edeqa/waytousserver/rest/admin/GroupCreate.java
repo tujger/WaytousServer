@@ -1,14 +1,14 @@
 package com.edeqa.waytousserver.rest.admin;
 
+import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
-import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytous.SignProvider;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.helpers.MyGroup;
+import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyUser;
 
 import org.json.JSONObject;
@@ -17,15 +17,17 @@ import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.REQUEST_NEW_GROUP;
 
 @SuppressWarnings("unused")
-public class GroupCreate implements NamedCall<RequestWrapper> {
+public class GroupCreate extends AbstractAction<RequestWrapper> {
+
+    public static final String TYPE = "/admin/rest/group/create";
 
     @Override
-    public String getName() {
-        return "group/create";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, final RequestWrapper request) {
+    public boolean onEvent(JSONObject json, final RequestWrapper request) {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, CODE_DELAYED);
         request.processBody(new Runnable1<StringBuilder>() {
@@ -39,25 +41,26 @@ public class GroupCreate implements NamedCall<RequestWrapper> {
 
                 JSONObject json = new JSONObject(options);
 
-                final MyGroup group = new MyGroup();
-                if(json.has(Rest.GROUP_ID)) group.setId(json.getString(Rest.GROUP_ID));
-                if(json.has(Firebase.REQUIRES_PASSWORD)) group.setRequiresPassword(json.getBoolean(Firebase.REQUIRES_PASSWORD));
-                if(json.has("password")) group.setPassword(json.get("password").toString());
-                if(json.has(Firebase.WELCOME_MESSAGE)) group.setWelcomeMessage(json.getString(Firebase.WELCOME_MESSAGE));
-                if(json.has(Firebase.PERSISTENT)) group.setPersistent(json.getBoolean(Firebase.PERSISTENT));
+//                final MyGroup group = new MyGroup();
+                final GroupRequest groupRequest = new GroupRequest();
+                if(json.has(Rest.GROUP_ID)) groupRequest.setId(json.getString(Rest.GROUP_ID));
+                if(json.has(Firebase.REQUIRES_PASSWORD)) groupRequest.setRequiresPassword(json.getBoolean(Firebase.REQUIRES_PASSWORD));
+                if(json.has("password")) groupRequest.setPassword(json.get("password").toString());
+                if(json.has(Firebase.WELCOME_MESSAGE)) groupRequest.setWelcomeMessage(json.getString(Firebase.WELCOME_MESSAGE));
+                if(json.has(Firebase.PERSISTENT)) groupRequest.setPersistent(json.getBoolean(Firebase.PERSISTENT));
                 if(json.has(Firebase.TIME_TO_LIVE_IF_EMPTY)) {
                     try {
-                        group.setTimeToLiveIfEmpty(Integer.parseInt(json.getString(Firebase.TIME_TO_LIVE_IF_EMPTY)));
+                        groupRequest.setTimeToLiveIfEmpty(Integer.parseInt(json.getString(Firebase.TIME_TO_LIVE_IF_EMPTY)));
                     } catch (Exception e) {
-                        group.setTimeToLiveIfEmpty(15);
+                        groupRequest.setTimeToLiveIfEmpty(15);
                     }
                 }
-                if(json.has(Firebase.DISMISS_INACTIVE)) group.setDismissInactive(json.getBoolean(Firebase.DISMISS_INACTIVE));
+                if(json.has(Firebase.DISMISS_INACTIVE)) groupRequest.setDismissInactive(json.getBoolean(Firebase.DISMISS_INACTIVE));
                 if(json.has(Firebase.DELAY_TO_DISMISS)) {
                     try {
-                        group.setDelayToDismiss(Integer.parseInt(json.getString(Firebase.DELAY_TO_DISMISS)));
+                        groupRequest.setDelayToDismiss(Integer.parseInt(json.getString(Firebase.DELAY_TO_DISMISS)));
                     } catch(Exception e){
-                        group.setDelayToDismiss(300);
+                        groupRequest.setDelayToDismiss(300);
                     }
                 }
 
@@ -65,7 +68,7 @@ public class GroupCreate implements NamedCall<RequestWrapper> {
             /*final Runnable1<JSONObject>[] onresult = new Runnable1[2];
             onresult[0] = new Runnable1<JSONObject>() {
                 @Override
-                public void call(JSONObject json) {
+                public void onEvent(JSONObject json) {
                     ref.child(Constants.DATABASE.SECTION_GROUPS).child(group.getId()).setValue(user.getUid());
                     DatabaseReference nodeNumber = ref.child(group.getId()).child(Constants.DATABASE.USERS_ORDER).push();
                     nodeNumber.setValue(user.getUid());
@@ -75,13 +78,13 @@ public class GroupCreate implements NamedCall<RequestWrapper> {
             };
             onresult[1] = new Runnable1<JSONObject>() {
                 @Override
-                public void call(JSONObject json) {
+                public void onEvent(JSONObject json) {
                     group.fetchNewId();
                     createGroup(group, onresult[0], onresult[1]);
                 }
             };*/
 
-                Common.getInstance().getDataProcessor("v1").createGroup(group,
+                Common.getInstance().getDataProcessor("v1").createGroup(groupRequest,
                         new Runnable1<JSONObject>() {
                             @Override
                             public void call(JSONObject json) {
@@ -91,7 +94,7 @@ public class GroupCreate implements NamedCall<RequestWrapper> {
                                 user.setOs(System.getProperty("os.name"));
                                 user.setModel(OPTIONS.getAppName() + " 1." + Common.SERVER_BUILD);
 
-                                Common.getInstance().getDataProcessor("v1").registerUser(group.getId(), user, REQUEST_NEW_GROUP, new Runnable1<JSONObject>() {
+                                Common.getInstance().getDataProcessor("v1").registerUser(groupRequest.getId(), user, REQUEST_NEW_GROUP, new Runnable1<JSONObject>() {
                                     @Override
                                     public void call(JSONObject json) {
                                         request.sendResult(json);
@@ -123,5 +126,6 @@ public class GroupCreate implements NamedCall<RequestWrapper> {
                 request.sendError(400, json);
             }
         });
+        return true;
     }
 }

@@ -47,7 +47,6 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
 
     public AdminServletHandler(){
         super();
-        setWebPrefix("/admin/rest/");
 
         registerAction(new AccountDelete());
         registerAction(new AccountsClean());
@@ -75,7 +74,7 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
 
     @Override
     public void perform(final RequestWrapper requestWrapper) throws IOException {
-        if(requestWrapper.getRequestURI().getPath().startsWith(getWebPrefix())) {
+        if(requestWrapper.getRequestURI().getPath().startsWith("/admin/rest/")) {
             super.perform(requestWrapper);
         } else if (requestWrapper.getRequestURI().getPath().startsWith("/admin")) {
 

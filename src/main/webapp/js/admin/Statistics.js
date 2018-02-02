@@ -164,24 +164,6 @@ function Statistics() {
         var usersChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
         var accountsChartNode = u.create(HTML.DIV, {className: "statistics-chart"}, div);
 
-        /*
-                // Instantiate and draw our chart, passing in some options.
-                groupsChart = new google.visualization.LineChart(groupsChartNode);
-                //groupsChart = new google.charts.Line(groupsChartNode);
-                google.visualization.events.addOneTimeListener(groupsChart, "ready", function(){
-                    groupsStat.removeRow(0);
-                    usersChart = new google.visualization.LineChart(groupsChartNode);
-                    //usersChart = new google.charts.Line(usersChartNode);
-                    google.visualization.events.addOneTimeListener(usersChart, "ready", function(){
-                        usersStat.removeRow(0);
-                        updateData();
-                    });
-                    usersChart.draw(usersStat, usersChartOptions);
-                });
-                groupsChart.draw(groupsStat, groupsChartOptions);
-        */
-
-
         var node = u.create(HTML.H2, null, div);
         u.create(HTML.SPAN, "Messages (", node);
         messagesCounterNode = u.create(HTML.SPAN, "0", node);

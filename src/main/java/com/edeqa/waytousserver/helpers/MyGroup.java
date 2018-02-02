@@ -42,7 +42,7 @@ public class MyGroup {
     private String welcomeMessage;
     private int count;
 
-    private boolean requirePassword;
+    private boolean requiresPassword;
     private String password;
     private boolean persistent;
     private int timeToLiveIfEmpty;
@@ -54,7 +54,7 @@ public class MyGroup {
         fetchNewId();
         created = new Date().getTime();
 
-        requirePassword = false;
+        requiresPassword = false;
         password = null;
         persistent = false;
         timeToLiveIfEmpty = 24 * 60;
@@ -345,12 +345,12 @@ public class MyGroup {
         id = Misc.getUnique();
     }
 
-    public boolean isRequirePassword() {
-        return requirePassword;
+    public boolean isRequiresPassword() {
+        return requiresPassword;
     }
 
-    public void setRequiresPassword(boolean requirePassword) {
-        this.requirePassword = requirePassword;
+    public void setRequiresPassword(boolean requiresPassword) {
+        this.requiresPassword = requiresPassword;
     }
 
     public String getPassword() {

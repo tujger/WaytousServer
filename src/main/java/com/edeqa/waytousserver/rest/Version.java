@@ -1,23 +1,26 @@
 package com.edeqa.waytousserver.rest;
 
+import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
-import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.waytousserver.helpers.Common;
 
 import org.json.JSONObject;
 
 @SuppressWarnings("unused")
-public class Version implements NamedCall<RequestWrapper> {
+public class Version extends AbstractAction<RequestWrapper> {
+
+    public static final String TYPE = "/rest/version";
 
     @Override
-    public String getName() {
-        return "version";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, RequestWrapper request) {
+    public boolean onEvent(JSONObject json, RequestWrapper request) {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, 1);
         json.put(MESSAGE, Common.SERVER_BUILD);
+        return true;
     }
 }

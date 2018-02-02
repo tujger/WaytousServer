@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.rest.firebase;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -13,19 +14,20 @@ import org.json.JSONObject;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("unused")
-public class DeleteAccount extends AbstractAction<DeleteAccount, String> {
+public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String> {
+
+    public static final String TYPE = "/rest/firebase/delete/account";
 
     private Runnable1<JSONObject> onSuccess;
     private Runnable1<JSONObject> onError;
-    private StatisticsAccount statisticsAccount;
 
     @Override
-    public String getName() {
-        return "firebase/delete/account";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, final String accountId) {
+    public boolean onEvent(JSONObject json, final String accountId) {
         json = new JSONObject();
         json.put(Rest.UID, accountId);
 
@@ -37,11 +39,10 @@ public class DeleteAccount extends AbstractAction<DeleteAccount, String> {
             Misc.log("DeleteAccount", accountId, "deleted");
             getOnSuccess().call(json);
 
-            getStatisticsAccount()
-                    .setAccountId(accountId)
+            ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
                     .setAction(AbstractDataProcessor.AccountAction.ACCOUNT_DELETED.toString())
                     .setMessage(accountId + " deleted.")
-                    .call(null, null);
+                    .onEvent(null, accountId);
 
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
@@ -50,6 +51,7 @@ public class DeleteAccount extends AbstractAction<DeleteAccount, String> {
             Misc.err("DeleteAccount", accountId, "not deleted, error:" + e.getMessage());
             getOnError().call(json);
         }
+        return true;
     }
 
     public Runnable1<JSONObject> getOnSuccess() {
@@ -70,12 +72,4 @@ public class DeleteAccount extends AbstractAction<DeleteAccount, String> {
         return this;
     }
 
-    public StatisticsAccount getStatisticsAccount() {
-        return statisticsAccount;
-    }
-
-    public DeleteAccount setStatisticsAccount(StatisticsAccount statisticsAccount) {
-        this.statisticsAccount = statisticsAccount;
-        return this;
-    }
 }

@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.admin;
 
+import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
-import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Rest;
@@ -10,15 +10,17 @@ import com.edeqa.waytousserver.helpers.Common;
 import org.json.JSONObject;
 
 @SuppressWarnings("unused")
-public class GroupSwitch implements NamedCall<RequestWrapper> {
+public class GroupSwitch extends AbstractAction<RequestWrapper> {
+
+    public static final String TYPE = "/admin/rest/group/switch";
 
     @Override
-    public String getName() {
-        return "group/switch";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, final RequestWrapper request) {
+    public boolean onEvent(JSONObject json, final RequestWrapper request) {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, CODE_DELAYED);
         request.processBody(new Runnable1<StringBuilder>() {
@@ -58,5 +60,6 @@ public class GroupSwitch implements NamedCall<RequestWrapper> {
                 request.sendError(400, json);
             }
         });
+        return true;
     }
 }

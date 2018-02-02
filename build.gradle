@@ -76,6 +76,7 @@ dependencies {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'javax.servlet', module: 'javax.servlet-api'
     }
+    compile project(':EventBus')
 
 // gae servlet rows
     if (installationType.compareTo('google-appengine') == 0) {

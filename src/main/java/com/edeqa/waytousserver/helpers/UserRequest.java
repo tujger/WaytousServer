@@ -54,114 +54,125 @@ public class UserRequest {
         return control;
     }
 
-    public void setControl(String control) {
+    public UserRequest setControl(String control) {
         this.control = control;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public UserRequest setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getUid() {
         return uid;
     }
 
-    public void setUid(String uid) {
+    public UserRequest setUid(String uid) {
         this.uid = uid;
+        return this;
     }
 
     public int getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public UserRequest setNumber(int number) {
         this.number = number;
         if(user != null) user.setNumber(number);
+        return this;
     }
 
     public DataProcessorConnection getDataProcessorConnection() {
         return dataProcessorConnection;
     }
 
-    public void setDataProcessorConnection(DataProcessorConnection dataProcessorConnection) {
+    public UserRequest setDataProcessorConnection(DataProcessorConnection dataProcessorConnection) {
         this.dataProcessorConnection = dataProcessorConnection;
+        return this;
     }
 
     public String getAddress() {
-        return getDataProcessorConnection().getRemoteSocketAddress().toString();
+        try {
+            return getDataProcessorConnection().getRemoteSocketAddress().toString();
+        } catch(Exception e) {
+            e.printStackTrace();
+            return String.valueOf(getDataProcessorConnection().getRemoteSocketAddress());
+        }
     }
 
     public String getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(String groupId) {
+    public UserRequest setGroupId(String groupId) {
         this.groupId = groupId;
+        return this;
     }
 
     public void parse(JSONObject json) {
-
         if (json.has(REQUEST_MANUFACTURER)) setManufacturer(json.getString(REQUEST_MANUFACTURER));
         if (json.has(REQUEST_MODEL)) setModel(json.getString(REQUEST_MODEL));
         if (json.has(REQUEST_OS)) setOs(json.getString(REQUEST_OS));
         if (json.has(REQUEST_SIGN_PROVIDER)) setSignProvider(SignProvider.parse(json.getString(REQUEST_SIGN_PROVIDER)));
         if (json.has(USER_NAME)) setName(json.getString(USER_NAME));
-
     }
 
     public MyUser fetchUser() {
         if(user != null) return user;
-
         user = new MyUser(getDataProcessorConnection(), getUid());
         user.setManufacturer(getManufacturer());
         user.setModel(getModel());
         user.setOs(getOs());
         user.setName(getName());
         user.setSignProvider(getSignProvider());
-
         user.setNumber(getNumber());
-
         return user;
     }
 
-    public void setManufacturer(String manufacturer) {
+    public UserRequest setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
+        return this;
     }
 
     public String getManufacturer() {
         return manufacturer;
     }
 
-    public void setModel(String model) {
+    public UserRequest setModel(String model) {
         this.model = model;
+        return this;
     }
 
     public String getModel() {
         return model;
     }
 
-    public void setOs(String os) {
+    public UserRequest setOs(String os) {
         this.os = os;
+        return this;
     }
 
     public String getOs() {
         return os;
     }
 
-    public void setSignProvider(SignProvider signProvider) {
+    public UserRequest setSignProvider(SignProvider signProvider) {
         this.signProvider = signProvider;
+        return this;
     }
 
     public SignProvider getSignProvider() {
         return signProvider;
     }
 
-    public void setGroupReference(DatabaseReference groupReference) {
+    public UserRequest setGroupReference(DatabaseReference groupReference) {
         this.groupReference = groupReference;
+        return this;
     }
 
     public DatabaseReference getGroupReference() {

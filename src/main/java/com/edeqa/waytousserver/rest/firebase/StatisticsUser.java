@@ -1,10 +1,10 @@
 package com.edeqa.waytousserver.rest.firebase;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.UserRequest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Transaction;
 
 import org.json.JSONObject;
 
@@ -13,35 +13,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class StatisticsUser extends AbstractAction<StatisticsUser, Object> {
+public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, String> {
+
+    public static final String TYPE = "/rest/firebase/statistics/user";
 
     private AbstractDataProcessor.UserAction action;
     private String groupId;
-    private String userId;
     private String message;
-    private StatisticsMessage statisticsMessage;
-    private StatisticsAccount statisticsAccount;
-    private Transaction.Handler incrementValue;
     private UserRequest userRequest;
 
     @Override
-    public String getName() {
-        return "firebase/statistics/user";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, Object request) {
-        getStatisticsAccount().clear()
-                .setAccountId(getUserId())
+    public boolean onEvent(JSONObject json, String userId) {
+        ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
                 .setKey("group")
                 .setAction(getAction().toString())
                 .setValue(getGroupId())
                 .setMessage(getMessage())
-                .call(null, null);
+                .onEvent(null, userId);
 
         if(getUserRequest() != null) {
             setGroupId(getUserRequest().getGroupId());
-            setUserId(getUserRequest().getUid());
+            userId = getUserRequest().getUid();
         }
 
         Calendar cal = Calendar.getInstance();
@@ -70,23 +67,25 @@ public class StatisticsUser extends AbstractAction<StatisticsUser, Object> {
                 break;
         }
 
-        refToday.runTransaction(getIncrementValue());
-        refTotal.runTransaction(getIncrementValue());
+        refToday.runTransaction(incrementValue);
+        refTotal.runTransaction(incrementValue);
 
         if(getMessage() != null && getMessage().length() > 0) {
             Map<String, String> map = new HashMap<>();
             map.put("group", getGroupId());
-            map.put("user", getUserId());
+            map.put("user", userId);
             map.put("action", getAction().toString());
-            getStatisticsMessage().setMessage(getMessage()).call(null, map);
+            ((StatisticsMessage) EventBus.getOrCreateEventBus().getHolder(StatisticsMessage.TYPE))
+                    .setMessage(getMessage())
+                    .onEvent(null, map);
         }
 
         clear();
+        return true;
     }
 
     public StatisticsUser clear() {
         setAction(null);
-        setUserId(null);
         setGroupId(null);
         setMessage(null);
         return this;
@@ -116,42 +115,6 @@ public class StatisticsUser extends AbstractAction<StatisticsUser, Object> {
 
     public StatisticsUser setMessage(String message) {
         this.message = message;
-        return this;
-    }
-
-    public StatisticsMessage getStatisticsMessage() {
-        return statisticsMessage;
-    }
-
-    public StatisticsUser setStatisticsMessage(StatisticsMessage statisticsMessage) {
-        this.statisticsMessage = statisticsMessage;
-        return this;
-    }
-
-    public Transaction.Handler getIncrementValue() {
-        return incrementValue;
-    }
-
-    public StatisticsUser setIncrementValue(Transaction.Handler incrementValue) {
-        this.incrementValue = incrementValue;
-        return this;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public StatisticsUser setUserId(String userId) {
-        this.userId = userId;
-        return this;
-    }
-
-    public StatisticsAccount getStatisticsAccount() {
-        return statisticsAccount;
-    }
-
-    public StatisticsUser setStatisticsAccount(StatisticsAccount statisticsAccount) {
-        this.statisticsAccount = statisticsAccount;
         return this;
     }
 

@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.rest.firebase;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -22,25 +23,26 @@ import static com.edeqa.waytous.Constants.REQUEST_SIGN_PROVIDER;
 import static com.edeqa.waytousserver.servers.AbstractDataProcessor.AccountAction.ACCOUNT_CREATED;
 
 @SuppressWarnings("unused")
-public class CreateAccount extends AbstractAction<CreateAccount, MyUser> {
+public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser> {
+
+    public static final String TYPE = "/rest/firebase/create/account";
 
     private Runnable onSuccess;
     private Runnable1<Throwable> onError;
-    private StatisticsAccount statisticsAccount;
 
     @Override
-    public String getName() {
-        return "firebase/create/group";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(final JSONObject json, final MyUser user) {
+    public boolean onEvent(final JSONObject json, final MyUser user) {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         if(!user.isAccountAllowed()) {
             Misc.log("CreateAccount", "skipped for uid:", user.getUid(), "[" + user.getSignProvider() +"]");
             getOnSuccess().run();
-            return;
+            return true;
         }
 
         final DatabaseReference refAccounts = getFirebaseReference().child(Firebase.SECTION_USERS);
@@ -66,7 +68,9 @@ public class CreateAccount extends AbstractAction<CreateAccount, MyUser> {
                             accountPrivateData.put(Firebase.CREATED, ServerValue.TIMESTAMP);
                             Misc.log("CreateAccount", "created for uid:", user.getUid(), accountPrivateData);
 
-                            getStatisticsAccount().setAccountId(user.getUid()).setAction(ACCOUNT_CREATED.toString()).call(null, null);
+                            ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
+                                    .setAction(ACCOUNT_CREATED.toString())
+                                    .onEvent(null, user.getUid());
                         } else {
                             Misc.log("CreateAccount", "updated for uid:", user.getUid(), accountPrivateData);
                         }
@@ -90,6 +94,7 @@ public class CreateAccount extends AbstractAction<CreateAccount, MyUser> {
                     }
                 });
         createAccountTask.start();
+        return true;
     }
 
     public Runnable getOnSuccess() {
@@ -107,15 +112,6 @@ public class CreateAccount extends AbstractAction<CreateAccount, MyUser> {
 
     public CreateAccount setOnError(Runnable1<Throwable> onError) {
         this.onError = onError;
-        return this;
-    }
-
-    public StatisticsAccount getStatisticsAccount() {
-        return statisticsAccount;
-    }
-
-    public CreateAccount setStatisticsAccount(StatisticsAccount statisticsAccount) {
-        this.statisticsAccount = statisticsAccount;
         return this;
     }
 

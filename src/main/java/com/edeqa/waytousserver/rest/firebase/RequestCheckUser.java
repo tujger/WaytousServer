@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.rest.firebase;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -29,32 +30,27 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ACCEPTED;
 import static com.edeqa.waytous.Constants.USER_NAME;
 
 @SuppressWarnings("unused")
-public class RequestCheckUser extends AbstractAction<RequestCheckUser, Object> {
+public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, Object> {
+
+    public static final String TYPE = "/rest/firebase/check/user";
 
     private String accountAction;
-    private AccessToken firebaseAccessToken;
     private String accountId;
     private String message;
     private Boolean persistent;
-    private StatisticsMessage statisticsMessage;
     private String key;
     private Object value;
     private Transaction.Handler incrementValue;
     private String hash;
-    private CustomToken customToken;
-    private CreateAccount createAccount;
-    private StatisticsUser statisticsUser;
-    private RejectUser rejectUser;
-    private RegisterUser registerUser;
     private UserRequest userRequest;
 
     @Override
-    public String getName() {
-        return "firebase/check/user";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(final JSONObject json, Object request) {
+    public boolean onEvent(final JSONObject json, Object request) {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         if (getUserRequest() != null) {
@@ -71,7 +67,7 @@ public class RequestCheckUser extends AbstractAction<RequestCheckUser, Object> {
                                 Misc.log("RequestCheckUser", "onMessage:joinAsExisting:", getUserRequest().toString());
 
                                 try {
-                                    final String customToken = getCustomToken().fetchToken(getUserRequest().getUid());
+                                    final String customToken = ((CustomToken) EventBus.getOrCreateEventBus().getHolder(CustomToken.TYPE)).fetchToken(getUserRequest().getUid());
 
                                     final Map<String, Object> update = new HashMap<>();
                                     update.put(Firebase.ACTIVE, true);
@@ -81,7 +77,8 @@ public class RequestCheckUser extends AbstractAction<RequestCheckUser, Object> {
                                         update.put(USER_NAME, getUserRequest().getName());
                                     }
 
-                                    getCreateAccount().setOnSuccess(new Runnable() {
+                                    ((CreateAccount) EventBus.getOrCreateEventBus().getHolder(CreateAccount.TYPE))
+                                            .setOnSuccess(new Runnable() {
                                         @Override
                                         public void run() {
                                             Task<Void> updateUserTask = refGroup.child(Firebase.USERS).child(Firebase.PUBLIC).child("" + getUserRequest().getNumber()).updateChildren(update);
@@ -95,7 +92,10 @@ public class RequestCheckUser extends AbstractAction<RequestCheckUser, Object> {
 
                                                 Misc.log("RequestCheckUser", "onMessage:joined:" + getUserRequest().getAddress(), "signToken: [provided]"/*+customToken*/);
 
-                                                getStatisticsUser().setGroupId(getUserRequest().getGroupId()).setUserId(getUserRequest().getUid()).setAction(AbstractDataProcessor.UserAction.USER_RECONNECTED).call(null, null);
+                                                ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
+                                                        .setGroupId(getUserRequest().getGroupId())
+                                                        .setAction(AbstractDataProcessor.UserAction.USER_RECONNECTED)
+                                                        .onEvent(null, getUserRequest().getUid());
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
@@ -104,41 +104,50 @@ public class RequestCheckUser extends AbstractAction<RequestCheckUser, Object> {
                                         @Override
                                         public void call(Throwable error) {
                                             Misc.err("RequestCheckUser", "onMessage:joinNotAuthenticated:", getUserRequest().toString(), error);
-                                            getRejectUser().setUserRequest(getUserRequest()).call(json, "Cannot join to group (code 19).");
+                                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                                    .setUserRequest(getUserRequest())
+                                                    .onEvent(json, "Cannot join to group (code 19).");
                                         }
-                                    }).call(null, getUserRequest().fetchUser());
+                                    }).onEvent(null, getUserRequest().fetchUser());
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             } else {
                                 Misc.err("RequestCheckUser", "onMessage:joinNotAuthenticated:", getUserRequest().toString(), "hash not equals");
-                                rejectUser.setUserRequest(getUserRequest()).call(json, "Cannot join to group (user not authenticated).");
+                                ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                        .setUserRequest(getUserRequest())
+                                        .onEvent(json, "Cannot join to group (user not authenticated).");
                             }
 
                         } catch (Exception e) {
                             Misc.err("RequestCheckUser", "onMessage:joinHashFailed:", getUserRequest().toString());
-                            rejectUser.setUserRequest(getUserRequest()).call(json, "Cannot join to group (user not authenticated).");
+                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                    .setUserRequest(getUserRequest())
+                                    .onEvent(json, "Cannot join to group (user not authenticated).");
                             e.printStackTrace();
                         }
 
                     } else { // join as new member
-                        createAccount.setOnSuccess(new Runnable() {
+                        ((CreateAccount) EventBus.getOrCreateEventBus().getHolder(CreateAccount.TYPE))
+                        .setOnSuccess(new Runnable() {
                             @Override
                             public void run() {
-                                getRegisterUser()
+                                ((RegisterUser) EventBus.getOrCreateEventBus().getHolder(RegisterUser.TYPE))
                                         .setGroupId(getUserRequest().getGroupId())
                                         .setUser(getUserRequest().fetchUser())
                                         .setAction(REQUEST_CHECK_USER)
-                                        .call(null, null);
+                                        .onEvent(null, null);
                                 Misc.log("RequestCheckUser", "onMessage:joinAsNew:" + getUserRequest().getAddress());
                             }
                         }).setOnError(new Runnable1<Throwable>() {
                             @Override
                             public void call(Throwable error) {
                                 Misc.err("RequestCheckUser", "onMessage:joinAsNew:", getUserRequest().toString(), error);
-                                getRejectUser().setUserRequest(getUserRequest()).call(json, "Cannot join to group (code 18).");
+                                ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                        .setUserRequest(getUserRequest())
+                                        .onEvent(json, "Cannot join to group (code 18).");
                             }
-                        }).call(null, getUserRequest().fetchUser());
+                        }).onEvent(null, getUserRequest().fetchUser());
                     }
                 }
             });
@@ -155,7 +164,9 @@ public class RequestCheckUser extends AbstractAction<RequestCheckUser, Object> {
 
                             } else {
                                 Misc.err("RequestCheckUser", "onMessage:joinNumberNotFound:" + getUserRequest().getAddress());
-                                getRejectUser().setUserRequest(getUserRequest()).call(json, "This group is expired. (005)");
+                                ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                        .setUserRequest(getUserRequest())
+                                        .onEvent(json, "This group is expired. (005)");
                             }
                         }
                     });
@@ -175,10 +186,14 @@ public class RequestCheckUser extends AbstractAction<RequestCheckUser, Object> {
                                     }
                                 }
                                 Misc.err("RequestCheckUser", "onMessage:joinUserNotFound:", getUserRequest().getAddress());
-                                getRejectUser().setUserRequest(getUserRequest()).call(json, "This group is expired. (004)");
+                                ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                        .setUserRequest(getUserRequest())
+                                        .onEvent(json, "This group is expired. (004)");
                             } else {
                                 Misc.err("RequestCheckUser", "onMessage:joinEmptyGroup:", getUserRequest().getAddress());
-                                getRejectUser().setUserRequest(getUserRequest()).call(json, "This group is expired. (003)");
+                                ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                        .setUserRequest(getUserRequest())
+                                        .onEvent(json, "This group is expired. (003)");
                             }
                         }
                     });
@@ -192,7 +207,9 @@ public class RequestCheckUser extends AbstractAction<RequestCheckUser, Object> {
                                     userCheckTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE).child("" + getUserRequest().getNumber())).start();
                                 } else {
                                     Misc.err("RequestCheckUser", "onMessage:joinUserNotExists:" + getUserRequest().getAddress());
-                                    getRejectUser().setUserRequest(getUserRequest()).call(json, "This group is expired. (002)");
+                                    ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                                            .setUserRequest(getUserRequest())
+                                            .onEvent(json, "This group is expired. (002)");
                                 }
                             } else {
                                 userSearchTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE)).start();
@@ -202,15 +219,7 @@ public class RequestCheckUser extends AbstractAction<RequestCheckUser, Object> {
 
             groupOptionsTask.setRef(refGroup.child(Firebase.OPTIONS)).start();
         }
-    }
-
-    public AccessToken getFirebaseAccessToken() {
-        return firebaseAccessToken;
-    }
-
-    public RequestCheckUser setFirebaseAccessToken(AccessToken firebaseAccessToken) {
-        this.firebaseAccessToken = firebaseAccessToken;
-        return this;
+        return true;
     }
 
     public String getAccountAction() {
@@ -241,15 +250,6 @@ public class RequestCheckUser extends AbstractAction<RequestCheckUser, Object> {
 
     public RequestCheckUser setPersistent(Boolean persistent) {
         this.persistent = persistent;
-        return this;
-    }
-
-    public StatisticsMessage getStatisticsMessage() {
-        return statisticsMessage;
-    }
-
-    public RequestCheckUser setStatisticsMessage(StatisticsMessage statisticsMessage) {
-        this.statisticsMessage = statisticsMessage;
         return this;
     }
 
@@ -293,23 +293,4 @@ public class RequestCheckUser extends AbstractAction<RequestCheckUser, Object> {
         return hash;
     }
 
-    public CustomToken getCustomToken() {
-        return customToken;
-    }
-
-    public CreateAccount getCreateAccount() {
-        return createAccount;
-    }
-
-    public StatisticsUser getStatisticsUser() {
-        return statisticsUser;
-    }
-
-    public RejectUser getRejectUser() {
-        return rejectUser;
-    }
-
-    public RegisterUser getRegisterUser() {
-        return registerUser;
-    }
 }

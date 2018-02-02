@@ -10,18 +10,20 @@ import com.google.firebase.tasks.OnSuccessListener;
 import org.json.JSONObject;
 
 @SuppressWarnings("unused")
-public class CleanStatistics extends AbstractAction<CleanStatistics, Object> {
+public class CleanStatistics extends AbstractFirebaseAction<CleanStatistics, Object> {
+
+    public static final String TYPE = "/rest/firebase/clean/statistics";
 
     private Runnable1<JSONObject> onSuccess;
     private Runnable1<JSONObject> onError;
 
     @Override
-    public String getName() {
-        return "firebase/clean/statistics";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, Object object) {
+    public boolean onEvent(JSONObject json, Object object) {
         final JSONObject res = new JSONObject();
 
         getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MESSAGES).setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -40,6 +42,7 @@ public class CleanStatistics extends AbstractAction<CleanStatistics, Object> {
                 getOnError().call(res);
             }
         });
+        return true;
     }
 
     public Runnable1<JSONObject> getOnSuccess() {

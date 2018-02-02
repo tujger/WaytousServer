@@ -1,9 +1,11 @@
 package com.edeqa.waytousserver.rest.firebase;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
+import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
@@ -17,19 +19,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class CreateGroup extends AbstractAction<CreateGroup, MyGroup> {
+public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupRequest> {
+
+    public static final String TYPE = "/rest/firebase/create/group";
 
     private Runnable1<JSONObject> onSuccess;
     private Runnable1<JSONObject> onError;
-    private StatisticsGroup statisticsGroup;
 
     @Override
-    public String getName() {
-        return "firebase/create/group";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(final JSONObject json, final MyGroup group) {
+    public boolean onEvent(final JSONObject json, final GroupRequest group) {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         Misc.log("CreateGroup", "creating:", group.getId());
@@ -43,7 +46,7 @@ public class CreateGroup extends AbstractAction<CreateGroup, MyGroup> {
                             childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.WELCOME_MESSAGE, group.getWelcomeMessage());
                             childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.REQUIRES_PASSWORD, group.isRequirePassword());
+                                    + Firebase.REQUIRES_PASSWORD, group.isRequiresPassword());
                             childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.TIME_TO_LIVE_IF_EMPTY, group.getTimeToLiveIfEmpty());
                             childUpdates.put(Firebase.OPTIONS + "/"
@@ -57,27 +60,29 @@ public class CreateGroup extends AbstractAction<CreateGroup, MyGroup> {
                             childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.CHANGED, ServerValue.TIMESTAMP);
                             refGroups.child(group.getId()).updateChildren(childUpdates);
-//                            refGroups.child(Firebase.SECTION_GROUPS).child(group.getId()).setValue(0);
 
                             json.put(STATUS, STATUS_SUCCESS);
                             json.put(Rest.GROUP_ID, group.getId());
 
-                            Misc.log("CreateGroup", group.getId(), "created");
-
                             getOnSuccess().call(json);
 
-                            getStatisticsGroup().setGroupId(group.getId()).setPersistentGroup(group.isPersistent()).setAction(group.isPersistent() ? AbstractDataProcessor.GroupAction.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.GroupAction.GROUP_CREATED_TEMPORARY).call(null, null);
+                            ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
+                                    .setAction(group.isPersistent() ? AbstractDataProcessor.GroupAction.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.GroupAction.GROUP_CREATED_TEMPORARY)
+                                    .onEvent(null, group);
                         } else {
                             json.put(STATUS, STATUS_ERROR);
                             json.put(Rest.GROUP_ID, group.getId());
                             json.put(MESSAGE, "Group " + group.getId() + " already exists.");
                             Misc.err("CreateGroup", group.getId(), "not created, already exists");
                             if (getOnError() != null) getOnError().call(json);
-                            getStatisticsGroup().setGroupId(group.getId()).setPersistentGroup(group.isPersistent()).setAction(AbstractDataProcessor.GroupAction.GROUP_REJECTED).setMessage("already exists").call(null, null);
+                            ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
+                                    .setAction(AbstractDataProcessor.GroupAction.GROUP_REJECTED)
+                                    .setMessage("already exists")
+                                    .onEvent(null, group);
                         }
                     }
                 }).start();
-
+        return true;
     }
 
     public Runnable1<JSONObject> getOnSuccess() {
@@ -95,15 +100,6 @@ public class CreateGroup extends AbstractAction<CreateGroup, MyGroup> {
 
     public CreateGroup setOnError(Runnable1<JSONObject> onError) {
         this.onError = onError;
-        return this;
-    }
-
-    public StatisticsGroup getStatisticsGroup() {
-        return statisticsGroup;
-    }
-
-    public CreateGroup setStatisticsGroup(StatisticsGroup statisticsGroup) {
-        this.statisticsGroup = statisticsGroup;
         return this;
     }
 }

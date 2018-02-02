@@ -10,18 +10,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class StatisticsMessage extends AbstractAction<StatisticsMessage, Map<String,String>> {
+public class StatisticsMessage extends AbstractFirebaseAction<StatisticsMessage, Map<String,String>> {
+
+    public static final String TYPE = "/rest/firebase/statistics/message";
 
     private DatabaseReference firebaseReference;
     private String message;
 
     @Override
-    public String getName() {
-        return "firebase/statistics/message";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, Map<String,String> payload) {
+    public boolean onEvent(JSONObject json, Map<String,String> payload) {
         Calendar cal = Calendar.getInstance();
         String today = String.format("%04d-%02d-%02d %02d-%02d-%02d-%03d", cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH),cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND), cal.get(Calendar.MILLISECOND));
 
@@ -31,6 +33,7 @@ public class StatisticsMessage extends AbstractAction<StatisticsMessage, Map<Str
         payload.put(MESSAGE, getMessage());
         getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MESSAGES).child(today).setValue(payload);
         clear();
+        return true;
     }
 
     public StatisticsMessage clear() {

@@ -43,21 +43,21 @@ public class Utils {
 
     /*public static final Runnable2<RequestWrapper,JSONObject> sendResultJson = new Runnable2<RequestWrapper,JSONObject>() {
         @Override
-        public void call(RequestWrapper requestWrapper, JSONObject json) {
-            sendResult.call(requestWrapper, 200, Mime.APPLICATION_JSON, json.toString().getBytes());
+        public void onEvent(RequestWrapper requestWrapper, JSONObject json) {
+            sendResult.onEvent(requestWrapper, 200, Mime.APPLICATION_JSON, json.toString().getBytes());
         }
     };
 
     public static final Runnable3<RequestWrapper,Integer,JSONObject> sendError = new Runnable3<RequestWrapper,Integer,JSONObject>() {
         @Override
-        public void call(RequestWrapper requestWrapper, Integer code, JSONObject json) {
-            sendResult.call(requestWrapper, code, Mime.APPLICATION_JSON, json.toString().getBytes());
+        public void onEvent(RequestWrapper requestWrapper, Integer code, JSONObject json) {
+            sendResult.onEvent(requestWrapper, code, Mime.APPLICATION_JSON, json.toString().getBytes());
         }
     };
 
     public static final Runnable4<RequestWrapper,Integer,String,byte[]> sendResult = new Runnable4<RequestWrapper,Integer,String,byte[]>() {
         @Override
-        public void call(RequestWrapper requestWrapper, Integer code, String contentType, byte[] bytes) {
+        public void onEvent(RequestWrapper requestWrapper, Integer code, String contentType, byte[] bytes) {
             try {
                 requestWrapper.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
                 if(contentType != null) requestWrapper.setHeader(HttpHeaders.CONTENT_TYPE, contentType);

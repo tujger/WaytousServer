@@ -16,7 +16,9 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 @SuppressWarnings("unused")
-public class GroupProperty extends AbstractAction<GroupProperty, Object> {
+public class GroupProperty extends AbstractFirebaseAction<GroupProperty, Object> {
+
+    public static final String TYPE = "/rest/firebase/group/property";
 
     private String groupId;
     private String key;
@@ -26,12 +28,12 @@ public class GroupProperty extends AbstractAction<GroupProperty, Object> {
     private boolean switchBoolean;
 
     @Override
-    public String getName() {
-        return "firebase/group/property";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, Object request) {
+    public boolean onEvent(JSONObject json, Object request) {
 
         final JSONObject res = new JSONObject();
         res.put(Rest.PROPERTY, getKey());
@@ -84,14 +86,14 @@ public class GroupProperty extends AbstractAction<GroupProperty, Object> {
 //                res.put(STATUS, STATUS_ERROR);
 //                res.put(MESSAGE, e.getMessage());
 //                Misc.log(LOG, "switchPropertyInGroup:", property, e.getMessage());
-//                onerror.call(res);
+//                onerror.onEvent(res);
 //            }
 //        };
 //
 //        new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(getGroupId()).child(Firebase.OPTIONS).child(getKey()))
 //                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
 //                    @Override
-//                    public void call(DataSnapshot dataSnapshot) {
+//                    public void onEvent(DataSnapshot dataSnapshot) {
 //                        Boolean value = (Boolean) dataSnapshot.getValue();
 //                        if (value != null) {
 //                            res.put(Rest.OLD_VALUE, value);
@@ -100,7 +102,7 @@ public class GroupProperty extends AbstractAction<GroupProperty, Object> {
 //                                @Override
 //                                public void onSuccess(Void aVoid) {
 //                                    res.put(STATUS, STATUS_SUCCESS);
-//                                    onsuccess.call(res);
+//                                    onsuccess.onEvent(res);
 //                                }
 //                            }).addOnFailureListener(onFailureListener);
 //                        } else {
@@ -109,6 +111,7 @@ public class GroupProperty extends AbstractAction<GroupProperty, Object> {
 //                    }
 //                }).start();
 
+        return true;
     }
 
     public String getGroupId() {

@@ -1,25 +1,25 @@
 package com.edeqa.waytousserver.rest;
 
+import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
-import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.HttpDPConnection;
 
 import org.json.JSONObject;
 
-import static com.edeqa.waytous.Constants.REQUEST_TOKEN;
-
 @SuppressWarnings("unused")
-public class Join implements NamedCall<RequestWrapper> {
+public class Join extends AbstractAction<RequestWrapper> {
+
+    public static final String TYPE = "/rest/join";
 
     @Override
-    public String getName() {
-        return "join";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, RequestWrapper request) {
+    public boolean onEvent(JSONObject json, RequestWrapper request) {
         String body = request.getBody();
         JSONObject options = new JSONObject(body);
 
@@ -31,5 +31,6 @@ public class Join implements NamedCall<RequestWrapper> {
         } catch(Exception e) {
             e.printStackTrace();
         }
+        return true;
     }
 }

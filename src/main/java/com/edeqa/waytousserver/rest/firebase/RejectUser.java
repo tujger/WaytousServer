@@ -1,8 +1,8 @@
 package com.edeqa.waytousserver.rest.firebase;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.UserRequest;
-import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 
 import org.json.JSONObject;
@@ -12,84 +12,46 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ERROR;
 
 @SuppressWarnings("unused")
-public class RejectUser extends AbstractAction<RejectUser, String> {
+public class RejectUser extends AbstractFirebaseAction<RejectUser, String> {
 
-    private StatisticsUser statisticsUser;
+    public static final String TYPE = "/rest/firebase/reject/user";
+
     private UserRequest userRequest;
-    private String groupId;
-    private String userId;
-    private DataProcessorConnection dataProcessorConnection;
 
     @Override
-    public String getName() {
-        return "firebase/reject/user";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject response, String message) {
+    public boolean onEvent(JSONObject response, String message) {
 
-        Misc.err("RejectUser", "for uid:", getUserId(), "in group:" + groupId, "reason:" + message, "response:" + response);
+        Misc.err("RejectUser", "for", userRequest, "[" + message + "]");
+
         response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
         response.put(RESPONSE_MESSAGE, message);
 
-        if(getUserRequest() != null) {
-            setDataProcessorConnection(userRequest.getDataProcessorConnection());
-        }
-        getDataProcessorConnection().send(response.toString());
-        getDataProcessorConnection().close();
+        getUserRequest().send(response.toString());
 
-        getStatisticsUser().setUserRequest(getUserRequest()).setGroupId(getGroupId()).setUserId(getUserId()).setAction(AbstractDataProcessor.UserAction.USER_REJECTED).setMessage(message).call(null,null);
+        ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
+                .setUserRequest(getUserRequest())
+                .setAction(AbstractDataProcessor.UserAction.USER_REJECTED)
+                .setMessage(message)
+                .onEvent(null, userRequest.getUid());
 
         response.put(STATUS, STATUS_SUCCESS);
         response.put(CODE, CODE_DELAYED);
 
         clear();
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public RejectUser setGroupId(String groupId) {
-        this.groupId = groupId;
-        return this;
+        return true;
     }
 
     public RejectUser clear() {
-        setUserId(null);
-        setDataProcessorConnection(null);
-        setGroupId(null);
+        setUserRequest(null);
         return this;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public RejectUser setUserId(String userId) {
-        this.userId = userId;
-        return this;
-    }
-
-    public StatisticsUser getStatisticsUser() {
-        return statisticsUser;
-    }
-
-    public RejectUser setStatisticsUser(StatisticsUser statisticsUser) {
-        this.statisticsUser = statisticsUser;
-        return this;
-    }
-
-    public DataProcessorConnection getDataProcessorConnection() {
-        return dataProcessorConnection;
-    }
-
-    public RejectUser setDataProcessorConnection(DataProcessorConnection dataProcessorConnection) {
-        this.dataProcessorConnection = dataProcessorConnection;
-        return this;
-    }
-
-    public UserRequest getUserRequest() {
+    private UserRequest getUserRequest() {
         return userRequest;
     }
 

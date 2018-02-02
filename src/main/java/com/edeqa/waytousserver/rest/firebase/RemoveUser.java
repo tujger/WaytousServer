@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.rest.firebase;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -21,23 +22,24 @@ import java.util.Map;
 import static com.edeqa.waytous.Constants.REQUEST_UID;
 
 @SuppressWarnings("unused")
-public class RemoveUser extends AbstractAction<RemoveUser, Object> {
+public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
+
+    public static final String TYPE = "/rest/firebase/remove/user";
 
     private Runnable1<JSONObject> onSuccess;
     private Runnable1<JSONObject> onError;
-    private StatisticsUser statisticsUser;
     private String groupId;
     private Long userNumber;
     private String action;
     private HashMap<String, RequestHolder> requestHolders;
 
     @Override
-    public String getName() {
-        return "firebase/remove/user";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(final JSONObject json, Object object) {
+    public boolean onEvent(final JSONObject json, Object object) {
 
         final JSONObject res = new JSONObject();
 
@@ -88,7 +90,10 @@ public class RemoveUser extends AbstractAction<RemoveUser, Object> {
                                                             res.put(STATUS, STATUS_SUCCESS);
                                                             Misc.log("RemoveUser", getUserNumber(), "[" + value.toString() + "]", "removed from group", getGroupId());
                                                             getOnSuccess().call(res);
-                                                            getStatisticsUser().setGroupId(getGroupId()).setUserId(value.toString()).setAction(AbstractDataProcessor.UserAction.USER_REMOVED).call(null, null);
+                                                            ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
+                                                                    .setGroupId(getGroupId())
+                                                                    .setAction(AbstractDataProcessor.UserAction.USER_REMOVED)
+                                                                    .onEvent(null, value.toString());
                                                         }
                                                     }).addOnFailureListener(onFailureListener);
                                                 }
@@ -100,6 +105,7 @@ public class RemoveUser extends AbstractAction<RemoveUser, Object> {
                         }
                     }
                 }).start();
+        return true;
     }
 
     public Runnable1<JSONObject> getOnSuccess() {
@@ -144,15 +150,6 @@ public class RemoveUser extends AbstractAction<RemoveUser, Object> {
 
     public RemoveUser setAction(String action) {
         this.action = action;
-        return this;
-    }
-
-    public StatisticsUser getStatisticsUser() {
-        return statisticsUser;
-    }
-
-    public RemoveUser setStatisticsUser(StatisticsUser statisticsUser) {
-        this.statisticsUser = statisticsUser;
         return this;
     }
 

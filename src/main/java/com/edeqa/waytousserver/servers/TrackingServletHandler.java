@@ -68,7 +68,7 @@ public class TrackingServletHandler extends AbstractServletHandler {
         } catch(Exception e){
         }
 
-        Misc.log("Tracking",requestWrapper.getRemoteAddress(),host + uri.getPath() + (referer != null ? ", referer: " + referer : ""));
+        Misc.log("Tracking", "[" + requestWrapper.getRemoteAddress() + "]", host + uri.getPath() + (referer != null ? ", referer: " + referer : ""));
 
         ArrayList<String> parts = new ArrayList<>();
         parts.addAll(Arrays.asList(uri.getPath().split("/")));

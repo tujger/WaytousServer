@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.admin;
 
+import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
-import com.edeqa.edequate.interfaces.NamedCall;
 import com.edeqa.helpers.Mime;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
@@ -19,15 +19,17 @@ import java.io.PrintWriter;
 import static com.edeqa.waytous.Constants.OPTIONS;
 
 @SuppressWarnings("unused")
-public class LogsLog implements NamedCall<RequestWrapper> {
+public class LogsLog extends AbstractAction<RequestWrapper> {
+
+    public static final String TYPE = "/admin/rest/logs/log";
 
     @Override
-    public String getName() {
-        return "logs/log";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, final RequestWrapper request) throws IOException {
+    public boolean onEvent(JSONObject json, final RequestWrapper request) throws IOException {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, CODE_DELAYED);
 
@@ -48,7 +50,7 @@ public class LogsLog implements NamedCall<RequestWrapper> {
             OutputStream os = request.getResponseBody();
             os.write(bytes);
             os.close();
-            return;
+            return true;
         }
 
         boolean gzip = true;
@@ -98,5 +100,6 @@ public class LogsLog implements NamedCall<RequestWrapper> {
                 }
             }
         }).start();
+        return true;
     }
 }

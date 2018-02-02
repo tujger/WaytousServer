@@ -3,6 +3,7 @@ package com.edeqa.waytousserver.servers;
 import com.edeqa.edequate.rest.Content;
 import com.edeqa.edequate.rest.Files;
 import com.edeqa.edequate.rest.Locales;
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.rest.Join;
 import com.edeqa.waytousserver.rest.TosAgreement;
@@ -26,10 +27,10 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
     public RestServletHandler() {
         super();
         useDefault();
-        registerAction(new Content().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("content"));
-        registerAction(new Content().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources"));
+        registerAction(new Content().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("content").setActionName("/rest/content"));
+        registerAction(new Content().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources").setActionName("/rest/resources"));
         registerAction(new Join());
-        registerAction(new Locales().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources"));
+        registerAction(new Locales().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources").setActionName("/rest/locales"));
         registerAction(new TosAgreement());
         registerAction(new Version());
 
@@ -51,13 +52,16 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
             public boolean accept(File dir, String name) {
                 return name.contains("Holder");
             }
-        }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("js/main").setActionName("main"));
+        }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("js/main").setActionName("/rest/main"));
         registerAction(new Files().setFilenameFilter(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.contains("Holder");
             }
-        }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("js/tracking").setActionName("tracking"));
+        }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("js/tracking").setActionName("/rest/tracking"));
+
+
+        System.out.println(EventBus.getOrCreateEventBus("rest").getHolders().values());
 
     }
 

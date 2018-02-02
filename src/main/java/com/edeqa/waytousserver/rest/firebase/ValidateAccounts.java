@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.rest.firebase;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -18,18 +19,17 @@ import java.util.Map;
 import static com.edeqa.waytous.Constants.REQUEST_SIGN_PROVIDER;
 
 @SuppressWarnings("unused")
-public class ValidateAccounts extends AbstractAction<ValidateAccounts, Object> {
+public class ValidateAccounts extends AbstractFirebaseAction<ValidateAccounts, Object> {
 
-    private AccessToken firebaseAccessToken;
-    private StatisticsAccount statisticsAccount;
+    public static final String TYPE = "/rest/firebase/validate/accounts";
 
     @Override
-    public String getName() {
-        return "firebase/validate/accounts";
+    public String getType() {
+        return TYPE;
     }
 
     @Override
-    public void call(JSONObject json, Object request) {
+    public boolean onEvent(JSONObject json, Object request) {
 
         final DatabaseReference refAccounts = getFirebaseReference().child(Firebase.SECTION_USERS);
 
@@ -37,7 +37,9 @@ public class ValidateAccounts extends AbstractAction<ValidateAccounts, Object> {
 
         Misc.log("ValidateAccounts", "is performing, checking online users");
 
-        new TaskSingleValueEventFor<JSONObject>(refAccounts).setFirebaseRest(getFirebaseAccessToken().fetchToken()).addOnCompleteListener(new Runnable1<JSONObject>() {
+        new TaskSingleValueEventFor<JSONObject>(refAccounts)
+                .setFirebaseRest(((AccessToken) EventBus.getOrCreateEventBus().getHolder(AccessToken.TYPE)).fetchToken())
+                .addOnCompleteListener(new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject accounts) {
                 try {
@@ -70,7 +72,12 @@ public class ValidateAccounts extends AbstractAction<ValidateAccounts, Object> {
                                                 Misc.log("ValidateAccounts", "removes:", uid, "expired for:", message);
 
                                                 refAccounts.child(uid).setValue(null);
-                                                getStatisticsAccount().setAccountId(uid).setAction(AbstractDataProcessor.AccountAction.ACCOUNT_DELETED.toString()).setKey(null).setValue(null).setMessage("Expired for " + message).call(null, null);
+                                                ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
+                                                        .setAction(AbstractDataProcessor.AccountAction.ACCOUNT_DELETED.toString())
+                                                        .setKey(null)
+                                                        .setValue(null)
+                                                        .setMessage("Expired for " + message)
+                                                        .onEvent(null, uid);
                                             }
                                         } catch(Exception e) {
                                             Misc.err("ValidateAccounts", "failed:", uid, "error:", e.getMessage());
@@ -85,24 +92,7 @@ public class ValidateAccounts extends AbstractAction<ValidateAccounts, Object> {
             }
         }).start();
 //        json.put(STATUS, STATUS_SUCCESS);
-    }
-
-    public AccessToken getFirebaseAccessToken() {
-        return firebaseAccessToken;
-    }
-
-    public ValidateAccounts setFirebaseAccessToken(AccessToken firebaseAccessToken) {
-        this.firebaseAccessToken = firebaseAccessToken;
-        return this;
-    }
-
-    public StatisticsAccount getStatisticsAccount() {
-        return statisticsAccount;
-    }
-
-    public ValidateAccounts setStatisticsAccount(StatisticsAccount statisticsAccount) {
-        this.statisticsAccount = statisticsAccount;
-        return this;
+        return true;
     }
 
 }
