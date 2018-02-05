@@ -50,7 +50,7 @@ public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, O
     }
 
     @Override
-    public boolean call(final JSONObject json, Object request) {
+    public void call(final JSONObject json, Object request) {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         if (getUserRequest() != null) {
@@ -219,7 +219,6 @@ public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, O
 
             groupOptionsTask.setRef(refGroup.child(Firebase.OPTIONS)).start();
         }
-        return true;
     }
 
     public String getAccountAction() {

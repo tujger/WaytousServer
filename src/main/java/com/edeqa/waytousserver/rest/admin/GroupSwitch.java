@@ -20,7 +20,7 @@ public class GroupSwitch extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean call(JSONObject json, final RequestWrapper request) {
+    public void call(JSONObject json, final RequestWrapper request) {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, CODE_DELAYED);
         request.processBody(new Runnable1<StringBuilder>() {
@@ -60,6 +60,5 @@ public class GroupSwitch extends AbstractAction<RequestWrapper> {
                 request.sendError(400, json);
             }
         });
-        return true;
     }
 }

@@ -28,7 +28,7 @@ public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
     }
 
     @Override
-    public boolean call(JSONObject json, final String groupId) {
+    public void call(JSONObject json, final String groupId) {
         json = new JSONObject();
 
         json.put(Rest.GROUP_ID, groupId);
@@ -50,7 +50,6 @@ public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
             Misc.err("DeleteGroup", groupId, "not deleted, error:" + e.getMessage());
             getOnError().call(json);
         }
-        return true;
     }
 
     public Runnable1<JSONObject> getOnSuccess() {

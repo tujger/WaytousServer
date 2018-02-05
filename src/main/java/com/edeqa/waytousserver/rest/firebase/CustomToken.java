@@ -34,7 +34,7 @@ public class CustomToken extends AbstractFirebaseAction<CustomToken, String> {
     }
 
     @Override
-    public boolean call(JSONObject json, String uid) throws Exception {
+    public void call(JSONObject json, String uid) throws Exception {
         Misc.log("CustomToken", "is performing for uid:", uid);
 
         if(tokens.size() > MAXIMUM_CACHED_TOKENS) {
@@ -70,7 +70,6 @@ public class CustomToken extends AbstractFirebaseAction<CustomToken, String> {
         }
         json.put(STATUS, STATUS_SUCCESS);
         json.put(MESSAGE, tokens.get(uid).get("token"));
-        return true;
     }
 
     public String fetchToken(String uid) {

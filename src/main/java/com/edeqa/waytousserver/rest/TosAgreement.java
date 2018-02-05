@@ -19,13 +19,12 @@ public class TosAgreement extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean call(JSONObject json, RequestWrapper request) {
+    public void call(JSONObject json, RequestWrapper request) {
         String body = request.getBody();
         Misc.log("TosAgreement", request.getRemoteAddress(), "tosAgreement:", body);
 
         Common.getInstance().getDataProcessor(request.getRequestURI().getPath().split("/")[3]).onMessage(new HttpDPConnection(request), body);
 
         json.put(STATUS, STATUS_SUCCESS);
-        return true;
     }
 }

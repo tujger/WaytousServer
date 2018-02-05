@@ -28,7 +28,7 @@ public class AccessToken extends AbstractFirebaseAction<AccessToken, Object> {
     }
 
     @Override
-    public boolean call(JSONObject json, Object request) throws Exception {
+    public void call(JSONObject json, Object request) throws Exception {
         Misc.log("AccessToken", "is performing");
 
         Calendar cal = Calendar.getInstance();
@@ -51,7 +51,6 @@ public class AccessToken extends AbstractFirebaseAction<AccessToken, Object> {
 
         json.put(STATUS, STATUS_SUCCESS);
         json.put(MESSAGE, token);
-        return true;
     }
 
     public String fetchToken() {

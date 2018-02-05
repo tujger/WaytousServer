@@ -29,7 +29,7 @@ public class ValidateAccounts extends AbstractFirebaseAction<ValidateAccounts, O
     }
 
     @Override
-    public boolean call(JSONObject json, Object request) {
+    public void call(JSONObject json, Object request) {
 
         final DatabaseReference refAccounts = getFirebaseReference().child(Firebase.SECTION_USERS);
 
@@ -92,7 +92,5 @@ public class ValidateAccounts extends AbstractFirebaseAction<ValidateAccounts, O
             }
         }).start();
 //        json.put(STATUS, STATUS_SUCCESS);
-        return true;
     }
-
 }

@@ -19,7 +19,7 @@ public class StatClean extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean call(JSONObject json, final RequestWrapper request) {
+    public void call(JSONObject json, final RequestWrapper request) {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, CODE_DELAYED);
 
@@ -40,6 +40,5 @@ public class StatClean extends AbstractAction<RequestWrapper> {
                 request.sendError(500, json);
             }
         });
-        return true;
     }
 }

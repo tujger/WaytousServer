@@ -17,12 +17,11 @@ public class AccountsClean extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean call(JSONObject json, final RequestWrapper request) {
+    public void call(JSONObject json, final RequestWrapper request) {
         //noinspection HardCodedStringLiteral
         Common.getInstance().getDataProcessor("v1").validateAccounts();
 
         json.put(STATUS, STATUS_SUCCESS);
         json.put(MESSAGE, "Clean started.");
-        return true;
     }
 }

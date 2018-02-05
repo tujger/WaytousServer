@@ -19,7 +19,7 @@ public class Join extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean call(JSONObject json, RequestWrapper request) {
+    public void call(JSONObject json, RequestWrapper request) {
         String body = request.getBody();
         JSONObject options = new JSONObject(body);
 
@@ -31,6 +31,5 @@ public class Join extends AbstractAction<RequestWrapper> {
         } catch(Exception e) {
             e.printStackTrace();
         }
-        return true;
     }
 }

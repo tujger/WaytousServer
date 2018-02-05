@@ -32,7 +32,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
     }
 
     @Override
-    public boolean call(JSONObject json, final String accountId) {
+    public void call(JSONObject json, final String accountId) {
 
         Calendar cal = Calendar.getInstance();
         String today = String.format("%04d-%02d-%02d", cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH));
@@ -104,7 +104,6 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
             clear();
         }
 //        json.put(STATUS, STATUS_SUCCESS);
-        return true;
     }
 
     public StatisticsAccount clear() {

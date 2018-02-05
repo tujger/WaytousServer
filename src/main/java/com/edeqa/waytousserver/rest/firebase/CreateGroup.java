@@ -31,7 +31,7 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
     }
 
     @Override
-    public boolean call(final JSONObject json, final GroupRequest group) {
+    public void call(final JSONObject json, final GroupRequest group) {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         Misc.log("CreateGroup", "creating:", group.getId());
@@ -81,7 +81,6 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
                         }
                     }
                 }).start();
-        return true;
     }
 
     public Runnable1<JSONObject> getOnSuccess() {

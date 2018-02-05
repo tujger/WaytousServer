@@ -48,7 +48,7 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, Object> {
     }
 
     @Override
-    public boolean call(final JSONObject json, Object object) {
+    public void call(final JSONObject json, Object object) {
 
         final JSONObject response = new JSONObject();
 
@@ -140,7 +140,6 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, Object> {
                     .call(null, getUser().getUid());
         }
         clear();
-        return true;
     }
 
     public void clear() {

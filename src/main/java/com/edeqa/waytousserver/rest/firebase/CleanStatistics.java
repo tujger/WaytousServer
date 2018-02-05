@@ -23,7 +23,7 @@ public class CleanStatistics extends AbstractFirebaseAction<CleanStatistics, Obj
     }
 
     @Override
-    public boolean call(JSONObject json, Object object) {
+    public void call(JSONObject json, Object object) {
         final JSONObject res = new JSONObject();
 
         getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MESSAGES).setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -42,7 +42,6 @@ public class CleanStatistics extends AbstractFirebaseAction<CleanStatistics, Obj
                 getOnError().call(res);
             }
         });
-        return true;
     }
 
     public Runnable1<JSONObject> getOnSuccess() {

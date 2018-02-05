@@ -25,7 +25,7 @@ public class RequestNewGroup extends AbstractFirebaseAction<RequestNewGroup, Obj
     }
 
     @Override
-    public boolean call(JSONObject json, Object request) {
+    public void call(JSONObject json, Object request) {
 
 //        if (uid != null) {
 //            final MyGroup group = new MyGroup();
@@ -79,7 +79,6 @@ public class RequestNewGroup extends AbstractFirebaseAction<RequestNewGroup, Obj
 //            Misc.err(LOG, "onMessage:newGroup:", response);
 //        }
 
-        return true;
     }
 
     public AccessToken getFirebaseAccessToken() {

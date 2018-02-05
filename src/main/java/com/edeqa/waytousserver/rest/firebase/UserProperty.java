@@ -34,7 +34,7 @@ public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
     }
 
     @Override
-    public boolean call(JSONObject json, Object request) {
+    public void call(JSONObject json, Object request) {
 
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
@@ -78,7 +78,6 @@ public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
                         }
                     }
                 }).start();
-        return true;
     }
 
     public String getGroupId() {

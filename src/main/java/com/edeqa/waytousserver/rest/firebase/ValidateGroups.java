@@ -27,7 +27,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
     }
 
     @Override
-    public boolean call(JSONObject json, Object request) {
+    public void call(JSONObject json, Object request) {
 
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
@@ -218,7 +218,5 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
         }*/
 
 //        json.put(STATUS, STATUS_SUCCESS);
-        return true;
     }
-
 }

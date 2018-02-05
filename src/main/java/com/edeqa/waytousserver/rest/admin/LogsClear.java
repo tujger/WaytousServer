@@ -22,7 +22,7 @@ public class LogsClear extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean call(JSONObject json, final RequestWrapper request) throws Exception {
+    public void call(JSONObject json, final RequestWrapper request) throws Exception {
 
         File file = new File(OPTIONS.getLogFile());
         Misc.log(this.getClass().getSimpleName(), file.getCanonicalPath());
@@ -31,6 +31,5 @@ public class LogsClear extends AbstractAction<RequestWrapper> {
         writer.close();
 
         json.put(STATUS, STATUS_SUCCESS);
-        return true;
     }
 }

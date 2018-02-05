@@ -28,7 +28,7 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
     }
 
     @Override
-    public boolean call(JSONObject json, final GroupRequest groupRequest) {
+    public void call(JSONObject json, final GroupRequest groupRequest) {
 
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
@@ -98,8 +98,5 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
                         }
                     }
                 }).start();
-
-        return true;
     }
-
 }

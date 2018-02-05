@@ -28,7 +28,7 @@ public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, Strin
     }
 
     @Override
-    public boolean call(JSONObject json, String userId) {
+    public void call(JSONObject json, String userId) {
         ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
                 .setKey("group")
                 .setAction(getAction().toString())
@@ -81,7 +81,6 @@ public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, Strin
         }
 
         clear();
-        return true;
     }
 
     public StatisticsUser clear() {

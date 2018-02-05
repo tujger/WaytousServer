@@ -39,7 +39,7 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
     }
 
     @Override
-    public boolean call(final JSONObject json, Object object) {
+    public void call(final JSONObject json, Object object) {
 
         final JSONObject res = new JSONObject();
 
@@ -105,7 +105,6 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
                         }
                     }
                 }).start();
-        return true;
     }
 
     public Runnable1<JSONObject> getOnSuccess() {

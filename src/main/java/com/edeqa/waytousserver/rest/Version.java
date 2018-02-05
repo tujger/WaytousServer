@@ -17,10 +17,9 @@ public class Version extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean call(JSONObject json, RequestWrapper request) {
+    public void call(JSONObject json, RequestWrapper request) {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, 1);
         json.put(MESSAGE, Common.SERVER_BUILD);
-        return true;
     }
 }

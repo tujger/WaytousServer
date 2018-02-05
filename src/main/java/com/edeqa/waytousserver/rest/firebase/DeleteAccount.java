@@ -27,7 +27,7 @@ public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String>
     }
 
     @Override
-    public boolean call(JSONObject json, final String accountId) {
+    public void call(JSONObject json, final String accountId) {
         json = new JSONObject();
         json.put(Rest.UID, accountId);
 
@@ -51,7 +51,6 @@ public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String>
             Misc.err("DeleteAccount", accountId, "not deleted, error:" + e.getMessage());
             getOnError().call(json);
         }
-        return true;
     }
 
     public Runnable1<JSONObject> getOnSuccess() {

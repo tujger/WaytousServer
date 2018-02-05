@@ -24,7 +24,7 @@ public class RejectUser extends AbstractFirebaseAction<RejectUser, String> {
     }
 
     @Override
-    public boolean call(JSONObject response, String message) {
+    public void call(JSONObject response, String message) {
 
         Misc.err("RejectUser", "for", userRequest, "[" + message + "]");
 
@@ -44,7 +44,6 @@ public class RejectUser extends AbstractFirebaseAction<RejectUser, String> {
         response.put(CODE, CODE_DELAYED);
 
         clear();
-        return true;
     }
 
     public RejectUser clear() {

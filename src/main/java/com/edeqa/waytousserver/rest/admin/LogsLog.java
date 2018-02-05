@@ -29,7 +29,7 @@ public class LogsLog extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean call(JSONObject json, final RequestWrapper request) throws IOException {
+    public void call(JSONObject json, final RequestWrapper request) throws IOException {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, CODE_DELAYED);
 
@@ -50,7 +50,7 @@ public class LogsLog extends AbstractAction<RequestWrapper> {
             OutputStream os = request.getResponseBody();
             os.write(bytes);
             os.close();
-            return true;
+            return;
         }
 
         boolean gzip = true;
@@ -100,6 +100,5 @@ public class LogsLog extends AbstractAction<RequestWrapper> {
                 }
             }
         }).start();
-        return true;
     }
 }

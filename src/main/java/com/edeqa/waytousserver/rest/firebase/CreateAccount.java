@@ -36,13 +36,13 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
     }
 
     @Override
-    public boolean call(final JSONObject json, final MyUser user) {
+    public void call(final JSONObject json, final MyUser user) {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         if(!user.isAccountAllowed()) {
             Misc.log("CreateAccount", "skipped for uid:", user.getUid(), "[" + user.getSignProvider() +"]");
             getOnSuccess().run();
-            return true;
+            return;
         }
 
         final DatabaseReference refAccounts = getFirebaseReference().child(Firebase.SECTION_USERS);
@@ -94,7 +94,6 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
                     }
                 });
         createAccountTask.start();
-        return true;
     }
 
     public void clear() {

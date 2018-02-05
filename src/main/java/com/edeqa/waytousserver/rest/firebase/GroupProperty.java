@@ -33,7 +33,7 @@ public class GroupProperty extends AbstractFirebaseAction<GroupProperty, Object>
     }
 
     @Override
-    public boolean call(JSONObject json, Object request) {
+    public void call(JSONObject json, Object request) {
 
         final JSONObject res = new JSONObject();
         res.put(Rest.PROPERTY, getKey());
@@ -111,7 +111,6 @@ public class GroupProperty extends AbstractFirebaseAction<GroupProperty, Object>
 //                    }
 //                }).start();
 
-        return true;
     }
 
     public String getGroupId() {
