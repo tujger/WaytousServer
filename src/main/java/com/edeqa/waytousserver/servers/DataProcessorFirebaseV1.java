@@ -1,17 +1,15 @@
 package com.edeqa.waytousserver.servers;
 
-import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
-import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyUser;
-import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.helpers.UserRequest;
-import com.edeqa.waytousserver.helpers.Utils;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
-import com.edeqa.waytousserver.rest.firebase.AccessToken;
+import com.edeqa.waytousserver.rest.firebase.AbstractFirebaseAction;
+import com.edeqa.waytousserver.rest.firebase.AdminToken;
+import com.edeqa.waytousserver.rest.firebase.CheckUser;
 import com.edeqa.waytousserver.rest.firebase.CleanStatistics;
 import com.edeqa.waytousserver.rest.firebase.CreateAccount;
 import com.edeqa.waytousserver.rest.firebase.CreateGroup;
@@ -19,9 +17,11 @@ import com.edeqa.waytousserver.rest.firebase.CustomToken;
 import com.edeqa.waytousserver.rest.firebase.DeleteAccount;
 import com.edeqa.waytousserver.rest.firebase.DeleteGroup;
 import com.edeqa.waytousserver.rest.firebase.GroupProperty;
+import com.edeqa.waytousserver.rest.firebase.JoinGroup;
 import com.edeqa.waytousserver.rest.firebase.RegisterUser;
 import com.edeqa.waytousserver.rest.firebase.RejectUser;
 import com.edeqa.waytousserver.rest.firebase.RemoveUser;
+import com.edeqa.waytousserver.rest.firebase.NewGroup;
 import com.edeqa.waytousserver.rest.firebase.StatisticsAccount;
 import com.edeqa.waytousserver.rest.firebase.StatisticsGroup;
 import com.edeqa.waytousserver.rest.firebase.StatisticsMessage;
@@ -29,13 +29,17 @@ import com.edeqa.waytousserver.rest.firebase.StatisticsUser;
 import com.edeqa.waytousserver.rest.firebase.UserProperty;
 import com.edeqa.waytousserver.rest.firebase.ValidateAccounts;
 import com.edeqa.waytousserver.rest.firebase.ValidateGroups;
+import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
+import com.edeqa.waytousserver.rest.tracking.ChangeName;
+import com.edeqa.waytousserver.rest.tracking.Leave;
+import com.edeqa.waytousserver.rest.tracking.Message;
+import com.edeqa.waytousserver.rest.tracking.SavedLocation;
+import com.edeqa.waytousserver.rest.tracking.Tracking;
+import com.edeqa.waytousserver.rest.tracking.WelcomeMessage;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.tasks.Task;
-import com.google.firebase.tasks.Tasks;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,12 +52,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.REQUEST;
@@ -64,16 +63,9 @@ import static com.edeqa.waytous.Constants.REQUEST_NEW_GROUP;
 import static com.edeqa.waytous.Constants.REQUEST_TIMESTAMP;
 import static com.edeqa.waytous.Constants.REQUEST_TOKEN;
 import static com.edeqa.waytous.Constants.REQUEST_UID;
-import static com.edeqa.waytous.Constants.RESPONSE_CONTROL;
 import static com.edeqa.waytous.Constants.RESPONSE_MESSAGE;
-import static com.edeqa.waytous.Constants.RESPONSE_NUMBER;
-import static com.edeqa.waytous.Constants.RESPONSE_SIGN;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS;
-import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ACCEPTED;
-import static com.edeqa.waytous.Constants.RESPONSE_STATUS_CHECK;
-import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ERROR;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_UPDATED;
-import static com.edeqa.waytous.Constants.USER_NAME;
 
 /**
  * Created 10/5/16.
@@ -84,7 +76,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
     public static final String VERSION = "v1";
     private static String LOG = "DPF1";
-    private DatabaseReference refGroups;
     private DatabaseReference refRoot;
 
     public DataProcessorFirebaseV1() throws IOException {
@@ -99,7 +90,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         }
 
         FirebaseOptions options = createFirebaseOptions();
-
         FirebaseApp defaultApp = FirebaseApp.initializeApp(options);
 
         /*try {
@@ -122,22 +112,33 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
         try {
             refRoot = FirebaseDatabase.getInstance(defaultApp).getReference();
-            refGroups = refRoot.child(Firebase.SECTION_GROUPS);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        EventBus<AbstractAction> fireBus = (EventBus<AbstractAction>) EventBus.getOrCreateEventBus();
-        fireBus.register(new AccessToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile()));
+        EventBus<AbstractFirebaseAction> fireBus = getFireBus();
+        fireBus.register(new AdminToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile()));
         fireBus.register(new CreateAccount().setFirebaseReference(refRoot));
         fireBus.register(new CreateGroup().setFirebaseReference(refRoot));
         fireBus.register(new CustomToken());
-        fireBus.register(new RegisterUser().setFirebaseReference(refRoot).setRequestHolders(requestHolders));
+        fireBus.register(new RegisterUser().setFirebaseReference(refRoot));
         fireBus.register(new RejectUser());
+        fireBus.register(new JoinGroup().setFirebaseReference(refRoot));
+        fireBus.register(new CheckUser().setFirebaseReference(refRoot));
+        fireBus.register(new NewGroup().setFirebaseReference(refRoot));
         fireBus.register(new StatisticsAccount().setFirebaseReference(refRoot));
         fireBus.register(new StatisticsGroup().setFirebaseReference(refRoot));
         fireBus.register(new StatisticsMessage().setFirebaseReference(refRoot));
         fireBus.register(new StatisticsUser().setFirebaseReference(refRoot));
+
+        EventBus<AbstractTrackingAction> trackingBus = getTrackingBus();
+//        trackingBus.register(new Admin());
+        trackingBus.register(new ChangeName());
+        trackingBus.register(new Leave());
+        trackingBus.register(new Message());
+        trackingBus.register(new SavedLocation());
+        trackingBus.register(new Tracking());
+        trackingBus.register(new WelcomeMessage());
     }
 
     /**
@@ -201,18 +202,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     }
 
     @Override
-    public LinkedList<String> getRequestHoldersList() {
-        LinkedList<String> classes = new LinkedList<>();
-        classes.add("TrackingRequestHolder");
-        classes.add("MessageRequestHolder");
-        classes.add("ChangeNameRequestHolder");
-        classes.add("WelcomeMessageRequestHolder");
-        classes.add("LeaveRequestHolder");
-        classes.add("SavedLocationRequestHolder");
-        return classes;
-    }
-
-    @Override
     public LinkedList<String> getFlagsHoldersList() {
         return null;
     }
@@ -233,31 +222,24 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 request = new JSONObject(message);
             } catch (JSONException e) {
                 Misc.err(LOG, "onMessage:request" + e.getMessage());
-                response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
-                response.put(RESPONSE_MESSAGE, "Wrong request");
-                conn.send(response.toString());
-                conn.close();
+                ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                        .setUserRequest(new UserRequest(conn))
+                        .call(response,"Wrong request");
                 return;
             }
             if (!request.has(REQUEST) || !request.has(REQUEST_TIMESTAMP)) {
-                response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
-                response.put(RESPONSE_MESSAGE, "Wrong request");
-                conn.send(response.toString());
-                conn.close();
+                ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                        .setUserRequest(new UserRequest(conn))
+                        .call(response,"Wrong request");
                 return;
             }
             final String uid;
             if(request.has(REQUEST_UID)) {
                 uid = request.getString(REQUEST_UID);
                 if(uid.startsWith("Administrator") || uid.startsWith("Viewer")) {
-                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
-                    response.put(RESPONSE_MESSAGE, "Wrong UID");
-                    conn.send(response.toString());
-                    conn.close();
-                    ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
-                            .setAction(UserAction.USER_REJECTED)
-                            .setMessage(message)
-                            .call(null, uid);
+                    ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                            .setUserRequest(new UserRequest(conn))
+                            .call(response,"Wrong UID");
                     return;
                 }
             } else {
@@ -274,193 +256,29 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             } else if (REQUEST_NEW_GROUP.equals(req)) {
                 if (uid != null) {
                     final GroupRequest groupRequest = new GroupRequest();
-//                    final MyGroup group = new MyGroup();
-                    final MyUser user = new MyUser(conn, request);
-                    Misc.log(LOG, "onMessage:requestNew:" + conn.getRemoteSocketAddress(), "{ uid:" + uid + " }");
-
-                    ((CreateAccount) EventBus.getOrCreateEventBus().getHolder(CreateAccount.TYPE))
-                            .setOnSuccess(new Runnable() {
-                        @Override
-                        public void run() {
-                            //noinspection unchecked
-                            final Runnable1<JSONObject>[] onresult = new Runnable1[3];
-                            onresult[0] = new Runnable1<JSONObject>() {
-                                @Override
-                                public void call(JSONObject json) {
-                                    ((RegisterUser) EventBus.getOrCreateEventBus().getHolder(RegisterUser.TYPE))
-                                            .setGroupId(groupRequest.getId())
-                                            .setUser(user)
-                                            .setAction(REQUEST_NEW_GROUP)
-                                            .setOnSuccess(new Runnable1<JSONObject>() {
-                                                @Override
-                                                public void call(JSONObject json) {
-                                                    user.connection.send(json.toString());
-                                                    user.connection.close();
-                                                }
-                                            })
-                                            .setOnError(new Runnable1<JSONObject>() {
-                                                @Override
-                                                public void call(JSONObject json) {
-                                                    user.connection.send(json.toString());
-                                                    user.connection.close();
-                                                }
-                                            })
-                                            .call(null, null);
-                                }
-                            };
-                            onresult[1] = new Runnable1<JSONObject>() {
-                                @Override
-                                public void call(JSONObject json) {
-                                    groupRequest.fetchNewId();
-                                    onresult[2].call(json);
-                                }
-                            };
-                            onresult[2] = new Runnable1<JSONObject>() {
-                                @Override
-                                public void call(JSONObject arg) {
-                                    ((CreateGroup) EventBus.getOrCreateEventBus().getHolder(CreateGroup.TYPE))
-                                            .setOnSuccess(onresult[0])
-                                            .setOnError(onresult[1])
-                                            .call(arg, groupRequest);
-                                    ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
-                                            .setAction(GroupAction.GROUP_CREATED_TEMPORARY.toString())
-                                            .setKey("group")
-                                            .setValue(groupRequest.getId())
-                                            .call(null, user.getUid());
-                                }
-                            };
-                            onresult[2].call(new JSONObject());
-                        }
-                    })
-                            .setOnError(new Runnable1<Throwable>() {
-                                @Override
-                                public void call(Throwable error) {
-                                    ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
-                                            .setUserRequest(new UserRequest(user.connection))
-                                            .call(response,"Cannot create group (code 16).");
-                                }
-                            })
-                            .call(null, user);
+                    final UserRequest userRequest = new UserRequest(conn);
+                    userRequest.parse(request);
+                    ((NewGroup) getFireBus().getHolder(NewGroup.TYPE))
+                            .setUserRequest(userRequest)
+                            .call(response, groupRequest);
                 } else {
-                    ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                    ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                             .setUserRequest(new UserRequest(conn))
                             .call(response,"Cannot create group (code 15).");
                 }
             } else if (REQUEST_JOIN_GROUP.equals(req)) {
                 if (request.has(REQUEST_TOKEN)) {
-
                     final String groupId = request.getString(REQUEST_TOKEN);
-                    final DatabaseReference refGroup = refGroups.child(groupId);
-
                     final UserRequest userRequest = new UserRequest(conn)
                             .setGroupId(groupId)
-                            .setUid(uid)
-                            .setGroupReference(refGroup);
+                            .setUid(uid);
                     userRequest.parse(request);
-
                     getUserRequests().add(userRequest);
 
-                    final TaskSingleValueEventFor[] requestDataPrivateTask = new TaskSingleValueEventFor[1];
-                    requestDataPrivateTask[0] = new TaskSingleValueEventFor<DataSnapshot>().addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                        @Override
-                        public void call(DataSnapshot dataSnapshot) {
-
-                            int count = 1;
-                            boolean found = false;
-                            Object value = dataSnapshot.getValue();
-
-                            if (value == null) {
-                                dataSnapshot.getRef().push().setValue(userRequest.getUid());
-                                requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
-                                return;
-                            }
-
-                            //noinspection unchecked
-                            TreeMap<String, String> map = new TreeMap<>((HashMap<String, String>) dataSnapshot.getValue());
-
-                            for (Map.Entry<String, String> x : map.entrySet()) {
-                                if (userRequest.getUid().equals(x.getValue())) {
-                                    found = true;
-                                    break;
-                                }
-                                ++count;
-                            }
-                            if (found) {
-                                userRequest.setNumber(count);
-                                final MyUser user = userRequest.fetchUser();
-                                ((CreateAccount) EventBus.getOrCreateEventBus().getHolder(CreateAccount.TYPE))
-                                        .setOnSuccess(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ((RegisterUser) EventBus.getOrCreateEventBus().getHolder(RegisterUser.TYPE))
-                                                .setGroupId(userRequest.getGroupId())
-                                                .setUser(user)
-                                                .setAction(REQUEST_JOIN_GROUP)
-                                                .call(null, null);
-                                    }
-                                }).setOnError(new Runnable1<Throwable>() {
-                                    @Override
-                                    public void call(Throwable error) {
-                                        ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
-                                                .setUserRequest(userRequest)
-                                                .call(response,"Cannot create group (code 17).");
-                                    }
-                                }).call(null, user);
-                            } else {
-                                DatabaseReference nodeNumber = refGroups.child(userRequest.getGroupId()).child(Firebase.USERS).child(Firebase.QUEUE).push();
-                                nodeNumber.setValue(userRequest.getUid());
-                                requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
-                            }
-                        }
-                    });
-
-                    final TaskSingleValueEventFor numberForKeyTask = new TaskSingleValueEventFor<DataSnapshot>()
-                            .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                                @Override
-                                public void call(DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.getValue() != null) { //join as existing member, go to check
-                                        userRequest.setNumber(Integer.parseInt(dataSnapshot.getValue().toString()));
-
-                                        Misc.log(LOG, "onMessage:checkRequest:", userRequest.toString());
-
-                                        response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
-                                        response.put(RESPONSE_CONTROL, userRequest.getControl());
-                                        try {
-                                            userRequest.send(response.toString());
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    } else { // join as new member
-                                        requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
-                                    }
-                                }
-                            });
-
-                    TaskSingleValueEventFor groupOptionsTask = new TaskSingleValueEventFor<DataSnapshot>()
-                            .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                                @Override
-                                public void call(DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.getValue() != null) {
-                                        numberForKeyTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.KEYS).child(userRequest.getUid())).start();
-                                    } else {
-                                        ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
-                                                .setUserRequest(userRequest)
-                                                .call(response,"This group is expired. (001)");
-                                    }
-                                }
-                            });
-
-                    if (uid != null) {
-                        Misc.log(LOG, "onMessage:requestJoin:" + userRequest.toString());
-                        groupOptionsTask.setRef(refGroup.child(Firebase.OPTIONS)).start();
-                    } else {
-                        response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
-                        response.put(RESPONSE_CONTROL, userRequest.getControl());
-                        Misc.log(LOG, "onMessage:requestReconnect:" + userRequest.toString());
-                        userRequest.send(response.toString());
-                    }
+                    ((JoinGroup) getFireBus().getHolder(JoinGroup.TYPE))
+                            .call(response, userRequest);
                 } else {
-                    ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                    ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                             .setUserRequest(new UserRequest(conn))
                             .call(response,"Wrong request (group not defined).");
                 }
@@ -471,171 +289,17 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                     Misc.log(LOG, "onMessage:checkResponse:" + conn.getRemoteSocketAddress(), "hash:" + hash);
                     final UserRequest userRequest = getUserRequests().findByConnection(conn);
                     if (userRequest != null) {
-
                         userRequest.setDataProcessorConnection(conn);
-
-                        Misc.log(LOG, "onMessage:checkFound:", userRequest.toString());
-
-                        final DatabaseReference refGroup = refGroups.child(userRequest.getGroupId());
-
-                        final TaskSingleValueEventFor userCheckTask = new TaskSingleValueEventFor<DataSnapshot>().addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                            @Override
-                            public void call(DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.getValue() != null) { //join as existing member
-                                    try {
-                                        if (userRequest.checkControl((String) ((HashMap) dataSnapshot.getValue()).get(REQUEST_UID), hash)) {
-                                            Misc.log(LOG, "onMessage:joinAsExisting:", userRequest.toString());
-
-                                            try {
-                                                final String customToken = createCustomToken(userRequest.getUid());
-
-                                                final Map<String, Object> update = new HashMap<>();
-                                                update.put(Firebase.ACTIVE, true);
-                                                update.put(Firebase.COLOR, Utils.selectColor(userRequest.getNumber()));
-                                                update.put(Firebase.CHANGED, new Date().getTime());
-                                                if (!Misc.isEmpty(userRequest.getName())) {
-                                                    update.put(USER_NAME, userRequest.getName());
-                                                }
-
-                                                ((CreateAccount) EventBus.getOrCreateEventBus().getHolder(CreateAccount.TYPE))
-                                                        .setOnSuccess(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        Task<Void> updateUserTask = refGroup.child(Firebase.USERS).child(Firebase.PUBLIC).child("" + userRequest.getNumber()).updateChildren(update);
-                                                        try {
-                                                            Tasks.await(updateUserTask);
-                                                            response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
-                                                            response.put(RESPONSE_NUMBER, userRequest.getNumber());
-                                                            response.put(RESPONSE_SIGN, customToken);
-
-                                                            userRequest.send(response.toString());
-                                                            userRequest.close();
-
-                                                            Misc.log(LOG, "onMessage:joined:" + userRequest.getAddress(), "signToken: [provided]"/*+customToken*/);
-
-                                                            ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
-                                                                    .setGroupId(userRequest.getGroupId())
-                                                                    .setAction(UserAction.USER_RECONNECTED)
-                                                                    .call(null,userRequest.getUid());
-                                                        } catch (Exception e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                }).setOnError(new Runnable1<Throwable>() {
-                                                    @Override
-                                                    public void call(Throwable error) {
-                                                        ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
-                                                                .setUserRequest(userRequest)
-                                                                .call(response,"Cannot join to group (not authenticated).");
-                                                    }
-                                                }).call(null, userRequest.fetchUser());
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        } else {
-                                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
-                                                    .setUserRequest(userRequest)
-                                                    .call(response,"Cannot join to group (hash incorrect).");
-                                        }
-
-                                    } catch (Exception e) {
-                                        ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
-                                                .setUserRequest(userRequest)
-                                                .call(response,"Cannot join to group (hash failed).");
-                                        e.printStackTrace();
-                                    }
-
-                                } else { // join as new member
-                                    ((CreateAccount) EventBus.getOrCreateEventBus().getHolder(CreateAccount.TYPE))
-                                            .setOnSuccess(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ((RegisterUser) EventBus.getOrCreateEventBus().getHolder(RegisterUser.TYPE))
-                                                    .setGroupId(userRequest.getGroupId())
-                                                    .setUser(userRequest.fetchUser())
-                                                    .setAction(REQUEST_CHECK_USER)
-                                                    .call(null, null);
-                                        }
-                                    }).setOnError(new Runnable1<Throwable>() {
-                                        @Override
-                                        public void call(Throwable error) {
-                                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
-                                                    .setUserRequest(userRequest)
-                                                    .call(response,"Cannot join to group (code 18). " + error.getMessage());
-                                        }
-                                    }).call(null, userRequest.fetchUser());
-                                }
-                            }
-                        });
-
-                        final TaskSingleValueEventFor userGetNumberTask = new TaskSingleValueEventFor<DataSnapshot>()
-                                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                                    @Override
-                                    public void call(DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.getValue() != null) {
-                                            Misc.log(LOG, "onMessage:joinNumberFound:" + userRequest.getAddress(), "number:", dataSnapshot.getValue().toString());
-//                                            check.setNumber(Long.parseLong(dataSnapshot.getValue().toString()));
-                                            userRequest.setNumber(Integer.parseInt(dataSnapshot.getValue().toString()));
-                                            userCheckTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE).child(dataSnapshot.getValue().toString())).start();
-
-                                        } else {
-                                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
-                                                    .setUserRequest(userRequest)
-                                                    .call(response,"This group is expired (number not found).");
-                                        }
-                                    }
-                                });
-
-                        final TaskSingleValueEventFor userSearchTask = new TaskSingleValueEventFor<DataSnapshot>()
-                                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                                    @Override
-                                    public void call(DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.getValue() != null) {
-                                            ArrayList<HashMap<String, Object>> users = (ArrayList<HashMap<String, Object>>) dataSnapshot.getValue();
-                                            for (HashMap<String, Object> user : users) {
-                                                if (user != null && user.containsKey(REQUEST_UID)) {
-                                                    if (userRequest.checkControl(user.get(REQUEST_UID).toString(), hash)) {
-                                                        userGetNumberTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.KEYS).child(userRequest.getUid())).start();
-                                                        return;
-                                                    }
-                                                }
-                                            }
-                                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
-                                                    .setUserRequest(userRequest)
-                                                    .call(response,"This group is expired (user not found).");
-                                        } else {
-                                            ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
-                                                    .setUserRequest(userRequest)
-                                                    .call(response,"This group is expired (or empty).");
-                                        }
-                                    }
-                                });
-
-                        TaskSingleValueEventFor groupOptionsTask = new TaskSingleValueEventFor<DataSnapshot>()
-                                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                                    @Override
-                                    public void call(DataSnapshot dataSnapshot) {
-                                        if (userRequest.getUid() != null) {
-                                            if (dataSnapshot.getValue() != null) {
-                                                userCheckTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE).child("" + userRequest.getNumber())).start();
-                                            } else {
-                                                ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
-                                                        .setUserRequest(userRequest)
-                                                        .call(response,"This group is expired (user not exists).");
-                                            }
-                                        } else {
-                                            userSearchTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE)).start();
-                                        }
-                                    }
-                                });
-                        groupOptionsTask.setRef(refGroup.child(Firebase.OPTIONS)).start();
+                        ((CheckUser) getFireBus().getHolder(CheckUser.TYPE))
+                                .setHash(hash)
+                                .call(response, userRequest);
                     } else {
-                        ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                        ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                                 .setUserRequest(new UserRequest(conn))
                                 .call(response,"Cannot join to group (user not authorized).");
                     }
                 } else {
-                    ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
+                    ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                             .setUserRequest(new UserRequest(conn))
                             .call(response,"Cannot join to group (hash not defined).");
                 }
@@ -649,7 +313,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
     @Override
     public void createGroup(final GroupRequest groupRequest, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
-        ((CreateGroup) EventBus.getOrCreateEventBus().getHolder(CreateGroup.TYPE))
+        ((CreateGroup) getFireBus().getHolder(CreateGroup.TYPE))
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
                 .call(new JSONObject(), groupRequest);
@@ -690,13 +354,12 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
     @Override
     public void registerUser(String groupId, MyUser user, String action, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
-        ((RegisterUser) EventBus.getOrCreateEventBus().getHolder(RegisterUser.TYPE))
+        ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
                 .setGroupId(groupId)
-                .setUser(user)
                 .setAction(action)
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
-                .call(null, null);
+                .call(null, user);
     }
 
 //    @Override
@@ -729,7 +392,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 .setUserNumber(userNumber)
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
-                .setRequestHolders(requestHolders)
                 .call(null, null);
     }
 
@@ -776,7 +438,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
     @Override
     public String createCustomToken(String uid) {
-        return ((CustomToken) EventBus.getOrCreateEventBus().getHolder(CustomToken.TYPE)).fetchToken(uid);
+        return ((CustomToken) getFireBus().getHolder(CustomToken.TYPE)).fetchToken(uid);
     }
 
     @Override
@@ -788,4 +450,11 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 .call(null, null);
     }
 
+    private EventBus<AbstractFirebaseAction> getFireBus() {
+        return (EventBus<AbstractFirebaseAction>) EventBus.getOrCreate(AbstractFirebaseAction.EVENTBUS);
+    }
+
+    private EventBus<AbstractTrackingAction> getTrackingBus() {
+        return (EventBus<AbstractTrackingAction>) EventBus.getOrCreate(AbstractTrackingAction.EVENTBUS);
+    }
 }

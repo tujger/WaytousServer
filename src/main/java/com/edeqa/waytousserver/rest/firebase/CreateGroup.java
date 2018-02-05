@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -17,6 +16,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Creates group based on given {@link GroupRequest}
+ */
 @SuppressWarnings("unused")
 public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupRequest> {
 
@@ -65,7 +67,7 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
 
                             getOnSuccess().call(json);
 
-                            ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
+                            ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(group.isPersistent() ? AbstractDataProcessor.GroupAction.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.GroupAction.GROUP_CREATED_TEMPORARY)
                                     .call(null, group);
                         } else {
@@ -74,7 +76,7 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
                             json.put(MESSAGE, "Group " + group.getId() + " already exists.");
                             Misc.err("CreateGroup", group.getId(), "not created, already exists");
                             if (getOnError() != null) getOnError().call(json);
-                            ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
+                            ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(AbstractDataProcessor.GroupAction.GROUP_REJECTED)
                                     .setMessage("already exists")
                                     .call(null, group);

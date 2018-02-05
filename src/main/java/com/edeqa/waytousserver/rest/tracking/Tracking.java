@@ -1,8 +1,9 @@
-package com.edeqa.waytousserver.holders.request;
+package com.edeqa.waytousserver.rest.tracking;
 
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.interfaces.RequestHolder;
+import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 
 import org.json.JSONObject;
@@ -16,14 +17,9 @@ import static com.edeqa.waytous.Constants.REQUEST_TRACKING;
  * Created 1/16/17.
  */
 
-public class TrackingRequestHolder implements RequestHolder {
+public class Tracking extends AbstractTrackingAction {
 
     public static final String TYPE = REQUEST_TRACKING;
-
-    public TrackingRequestHolder(AbstractDataProcessor context) {
-
-    }
-
 
     @Override
     public String getType() {
@@ -40,7 +36,6 @@ public class TrackingRequestHolder implements RequestHolder {
             String key = (String) iter.next();
             result.put(key, o.get(key));
         }
-
         return true;
     }
 
@@ -48,11 +43,5 @@ public class TrackingRequestHolder implements RequestHolder {
     public boolean isSaveable() {
         return true;
     }
-
-    @Override
-    public boolean isPrivate() {
-        return false;
-    }
-
 
 }

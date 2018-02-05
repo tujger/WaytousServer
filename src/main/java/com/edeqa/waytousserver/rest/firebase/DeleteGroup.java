@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -40,7 +39,7 @@ public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
             Misc.log("DeleteGroup", groupId);
             getOnSuccess().call(json);
 
-            ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
+            ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
                     .call(null, new GroupRequest(groupId));
         } catch (ExecutionException | InterruptedException e) {

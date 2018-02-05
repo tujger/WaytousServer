@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -61,14 +60,14 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
             Map<String, String> map = new HashMap<>();
             map.put("account", accountId);
             map.put("action", getAccountAction());
-            ((StatisticsMessage) EventBus.getOrCreateEventBus().getHolder(StatisticsMessage.TYPE))
+            ((StatisticsMessage) getFireBus().getHolder(StatisticsMessage.TYPE))
                     .setMessage(getMessage())
                     .call(null, map);
         }
 
         if(getKey() != null && accountId != null && accountId.length() > 0) {
             new TaskSingleValueEventFor<JSONObject>(refAccounts.child(accountId))
-                    .setFirebaseRest(((AccessToken) EventBus.getOrCreateEventBus().getHolder(AccessToken.TYPE)).fetchToken())
+                    .setFirebaseRest(((AdminToken) getFireBus().getHolder(AdminToken.TYPE)).fetchToken())
                     .addOnCompleteListener(new Runnable1<JSONObject>() {
                 @Override
                 public void call(JSONObject json) {

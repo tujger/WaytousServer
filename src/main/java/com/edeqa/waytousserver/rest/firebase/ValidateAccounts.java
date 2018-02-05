@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -38,7 +37,7 @@ public class ValidateAccounts extends AbstractFirebaseAction<ValidateAccounts, O
         Misc.log("ValidateAccounts", "is performing, checking online users");
 
         new TaskSingleValueEventFor<JSONObject>(refAccounts)
-                .setFirebaseRest(((AccessToken) EventBus.getOrCreateEventBus().getHolder(AccessToken.TYPE)).fetchToken())
+                .setFirebaseRest(((AdminToken) getFireBus().getHolder(AdminToken.TYPE)).fetchToken())
                 .addOnCompleteListener(new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject accounts) {
@@ -72,7 +71,7 @@ public class ValidateAccounts extends AbstractFirebaseAction<ValidateAccounts, O
                                                 Misc.log("ValidateAccounts", "removes:", uid, "expired for:", message);
 
                                                 refAccounts.child(uid).setValue(null);
-                                                ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
+                                                ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
                                                         .setAction(AbstractDataProcessor.AccountAction.ACCOUNT_DELETED.toString())
                                                         .setKey(null)
                                                         .setValue(null)

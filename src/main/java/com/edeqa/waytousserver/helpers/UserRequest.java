@@ -13,6 +13,7 @@ import static com.edeqa.waytous.Constants.REQUEST_MANUFACTURER;
 import static com.edeqa.waytous.Constants.REQUEST_MODEL;
 import static com.edeqa.waytous.Constants.REQUEST_OS;
 import static com.edeqa.waytous.Constants.REQUEST_SIGN_PROVIDER;
+import static com.edeqa.waytous.Constants.REQUEST_UID;
 import static com.edeqa.waytous.Constants.USER_NAME;
 
 /**
@@ -31,7 +32,6 @@ public class UserRequest {
     private String model;
     private String os;
     private SignProvider signProvider;
-    private DatabaseReference groupReference;
     private MyUser user;
 
 
@@ -118,6 +118,7 @@ public class UserRequest {
     }
 
     public void parse(JSONObject json) {
+        if (json.has(REQUEST_UID)) setUid(json.getString(REQUEST_UID));
         if (json.has(REQUEST_MANUFACTURER)) setManufacturer(json.getString(REQUEST_MANUFACTURER));
         if (json.has(REQUEST_MODEL)) setModel(json.getString(REQUEST_MODEL));
         if (json.has(REQUEST_OS)) setOs(json.getString(REQUEST_OS));
@@ -171,15 +172,6 @@ public class UserRequest {
 
     public SignProvider getSignProvider() {
         return signProvider;
-    }
-
-    public UserRequest setGroupReference(DatabaseReference groupReference) {
-        this.groupReference = groupReference;
-        return this;
-    }
-
-    public DatabaseReference getGroupReference() {
-        return groupReference;
     }
 
     public boolean checkControl(String uid, String compareHash) {

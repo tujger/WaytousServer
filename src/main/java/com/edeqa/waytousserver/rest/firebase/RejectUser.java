@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.UserRequest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
@@ -34,12 +33,13 @@ public class RejectUser extends AbstractFirebaseAction<RejectUser, String> {
         getUserRequest().send(response.toString());
         getUserRequest().close();
 
-        ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
-                .setUserRequest(getUserRequest())
-                .setAction(AbstractDataProcessor.UserAction.USER_REJECTED)
-                .setMessage(message)
-                .call(null, userRequest.getUid());
-
+        if(userRequest.getUid() != null) {
+            ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
+                    .setUserRequest(getUserRequest())
+                    .setAction(AbstractDataProcessor.UserAction.USER_REJECTED)
+                    .setMessage(message)
+                    .call(null, userRequest.getUid());
+        }
         response.put(STATUS, STATUS_SUCCESS);
         response.put(CODE, CODE_DELAYED);
 

@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -35,7 +34,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
 
         Misc.log("ValidateGroups", "is performing");
         new TaskSingleValueEventFor<JSONObject>(refGroups.child("/"))
-                .setFirebaseRest(((AccessToken) EventBus.getOrCreateEventBus().getHolder(AccessToken.TYPE)).fetchToken())
+                .setFirebaseRest(((AdminToken) getFireBus().getHolder(AdminToken.TYPE)).fetchToken())
                 .addOnCompleteListener(new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject groups) {
@@ -63,7 +62,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
                                         if (value == null) {
                                             Misc.log("ValidateGroups", "removes lost group");
                                             refGroups.child(group).removeValue();
-                                            ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
+                                            ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                                                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
                                                     .setMessage("lost group removing: " + group)
                                                     .call(null, groupRequest);

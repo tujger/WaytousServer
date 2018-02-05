@@ -1,8 +1,9 @@
-package com.edeqa.waytousserver.holders.request;
+package com.edeqa.waytousserver.rest.tracking;
 
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.interfaces.RequestHolder;
+import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 
 import org.json.JSONObject;
@@ -16,17 +17,16 @@ import static com.edeqa.waytous.Constants.REQUEST_LEAVE;
  * Created 1/16/17.
  */
 
-public class AdminRequestHolder implements RequestHolder {
+public class Admin extends AbstractTrackingAction {
 
     public static final String TYPE = REQUEST_LEAVE;
 
     private final HashMap<String,MyUser> admins;
 
 
-    public AdminRequestHolder(AbstractDataProcessor context) {
+    public Admin() {
         admins = new HashMap<>();
     }
-
 
     @Override
     public String getType() {
@@ -43,16 +43,5 @@ public class AdminRequestHolder implements RequestHolder {
 
         return false;
     }
-
-    @Override
-    public boolean isSaveable() {
-        return false;
-    }
-
-    @Override
-    public boolean isPrivate() {
-        return false;
-    }
-
 
 }

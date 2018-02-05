@@ -1,7 +1,9 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.edequate.abstracts.AbstractAction;
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
+import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -12,6 +14,9 @@ import org.json.JSONObject;
 
 @SuppressWarnings("unused")
 abstract public class AbstractFirebaseAction<U extends AbstractAction, T> extends AbstractAction<T> {
+
+    public static final String EVENTBUS = "firebase";
+
 
     private DatabaseReference firebaseReference;
 
@@ -45,4 +50,11 @@ abstract public class AbstractFirebaseAction<U extends AbstractAction, T> extend
         }
     };
 
+    protected EventBus<AbstractFirebaseAction> getFireBus() {
+        return (EventBus<AbstractFirebaseAction>) EventBus.getOrCreate(AbstractFirebaseAction.EVENTBUS);
+    }
+
+    protected EventBus<AbstractTrackingAction> getTrackingBus() {
+        return (EventBus<AbstractTrackingAction>) EventBus.getOrCreate(AbstractTrackingAction.EVENTBUS);
+    }
 }

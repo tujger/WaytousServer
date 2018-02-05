@@ -1,5 +1,7 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.eventbus.EntityHolder;
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytousserver.helpers.CheckReq;
@@ -7,6 +9,7 @@ import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
+import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,6 +18,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -115,18 +119,6 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     @Override
     public void validateAccounts() {
 
-    }
-
-    @Override
-    public LinkedList<String> getRequestHoldersList() {
-        LinkedList<String> classes = new LinkedList<>();
-        classes.add("TrackingRequestHolder");
-        classes.add("MessageRequestHolder");
-        classes.add("ChangeNameRequestHolder");
-        classes.add("WelcomeMessageRequestHolder");
-        classes.add("LeaveRequestHolder");
-        classes.add("SavedLocationRequestHolder");
-        return classes;
     }
 
     @Override
@@ -392,7 +384,9 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                     MyUser user = ipToUser.get(ip);
                     user.setChanged();
 
-                    if (requestHolders.containsKey(req)) {
+                    Map<String, AbstractTrackingAction> requestHolders = (Map<String, AbstractTrackingAction>) EventBus.getOrCreate(AbstractTrackingAction.EVENTBUS).getHolders();
+
+                        if (requestHolders.containsKey(req)) {
                         JSONObject o = new JSONObject();
                         o.put(RESPONSE_STATUS, req);
 

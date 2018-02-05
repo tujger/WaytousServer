@@ -6,7 +6,7 @@ import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
-import com.edeqa.waytousserver.interfaces.RequestHolder;
+import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -17,6 +17,7 @@ import com.google.firebase.tasks.OnSuccessListener;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.edeqa.waytous.Constants.REQUEST_UID;
@@ -31,7 +32,6 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
     private String groupId;
     private Long userNumber;
     private String action;
-    private HashMap<String, RequestHolder> requestHolders;
 
     @Override
     public String getType() {
@@ -78,7 +78,7 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
                                                     updates.put(Firebase.USERS + "/" + Firebase.PRIVATE + "/" + getUserNumber(), null);
                                                     updates.put(Firebase.USERS + "/" + Firebase.KEYS + "/" + value.toString(), null);
 
-                                                    for (Map.Entry<String, RequestHolder> entry : getRequestHolders().entrySet()) {
+                                                    for (Map.Entry<String,AbstractTrackingAction> entry : getTrackingBus().getHolders().entrySet()) {
                                                         if (entry.getValue().isSaveable()) {
                                                             updates.put(Firebase.PUBLIC + "/" + entry.getKey() + "/" + getUserNumber(), null);
                                                         }
@@ -90,7 +90,7 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
                                                             res.put(STATUS, STATUS_SUCCESS);
                                                             Misc.log("RemoveUser", getUserNumber(), "[" + value.toString() + "]", "removed from group", getGroupId());
                                                             getOnSuccess().call(res);
-                                                            ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
+                                                            ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
                                                                     .setGroupId(getGroupId())
                                                                     .setAction(AbstractDataProcessor.UserAction.USER_REMOVED)
                                                                     .call(null, value.toString());
@@ -150,14 +150,5 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
     public RemoveUser setAction(String action) {
         this.action = action;
         return this;
-    }
-
-    public RemoveUser setRequestHolders(HashMap<String, RequestHolder> requestHolders) {
-        this.requestHolders = requestHolders;
-        return this;
-    }
-
-    public HashMap<String, RequestHolder> getRequestHolders() {
-        return requestHolders;
     }
 }

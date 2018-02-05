@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -68,7 +67,7 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
                             accountPrivateData.put(Firebase.CREATED, ServerValue.TIMESTAMP);
                             Misc.log("CreateAccount", "created for uid:", user.getUid(), accountPrivateData);
 
-                            ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
+                            ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
                                     .setAction(ACCOUNT_CREATED.toString())
                                     .call(null, user.getUid());
                         } else {

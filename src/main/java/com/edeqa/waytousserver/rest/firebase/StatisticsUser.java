@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.UserRequest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
@@ -29,7 +28,7 @@ public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, Strin
 
     @Override
     public void call(JSONObject json, String userId) {
-        ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
+        ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
                 .setKey("group")
                 .setAction(getAction().toString())
                 .setValue(getGroupId())
@@ -75,7 +74,7 @@ public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, Strin
             map.put("group", getGroupId());
             map.put("user", userId);
             map.put("action", getAction().toString());
-            ((StatisticsMessage) EventBus.getOrCreateEventBus().getHolder(StatisticsMessage.TYPE))
+            ((StatisticsMessage) getFireBus().getHolder(StatisticsMessage.TYPE))
                     .setMessage(getMessage())
                     .call(null, map);
         }

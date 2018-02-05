@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
@@ -62,7 +61,7 @@ public class StatisticsGroup extends AbstractFirebaseAction<StatisticsGroup, Gro
             Map<String, String> map = new HashMap<>();
             map.put("group", groupRequest.getId());
             map.put("action", getAction().toString());
-        ((StatisticsMessage) EventBus.getOrCreateEventBus().getHolder(StatisticsMessage.TYPE))
+        ((StatisticsMessage) getFireBus().getHolder(StatisticsMessage.TYPE))
                     .setMessage(getMessage())
                     .call(null, map);
 //        }

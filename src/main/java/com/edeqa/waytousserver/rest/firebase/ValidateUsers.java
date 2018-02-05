@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -47,7 +46,7 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
                         if (users == null) {
                             Misc.log("ValidateUsers", "corrupted group found, removing:", groupRequest.getId());
                             refGroups.child(groupRequest.getId()).removeValue();
-                            ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
+                            ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
                                     .setMessage("corrupted group removing: " + groupRequest.getId())
                                     .call(null, groupRequest);
@@ -91,7 +90,7 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
                             String info = groupRequest.getId() + " expired for " + ((new Date().getTime() - groupChanged - groupRequest.getTimeToLiveIfEmpty() * 60 * 1000) / 1000 / 60) + " minutes";
                             Misc.log("ValidateUsers", "removes group", info);
                             refGroups.child(groupRequest.getId()).removeValue();
-                            ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
+                            ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
                                     .setMessage(info)
                                     .call(null, groupRequest);

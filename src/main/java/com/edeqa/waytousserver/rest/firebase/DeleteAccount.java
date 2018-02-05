@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -39,7 +38,7 @@ public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String>
             Misc.log("DeleteAccount", accountId, "deleted");
             getOnSuccess().call(json);
 
-            ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
+            ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
                     .setAction(AbstractDataProcessor.AccountAction.ACCOUNT_DELETED.toString())
                     .setMessage(accountId + " deleted.")
                     .call(null, accountId);

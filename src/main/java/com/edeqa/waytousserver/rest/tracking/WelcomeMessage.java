@@ -1,8 +1,9 @@
-package com.edeqa.waytousserver.holders.request;
+package com.edeqa.waytousserver.rest.tracking;
 
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.interfaces.RequestHolder;
+import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 
 import org.json.JSONObject;
@@ -14,14 +15,9 @@ import static com.edeqa.waytous.Constants.REQUEST_WELCOME_MESSAGE;
  * Created 1/16/17.
  */
 
-public class WelcomeMessageRequestHolder implements RequestHolder {
+public class WelcomeMessage extends AbstractTrackingAction {
 
     public static final String TYPE = REQUEST_WELCOME_MESSAGE;
-
-    public WelcomeMessageRequestHolder(AbstractDataProcessor context) {
-
-    }
-
 
     @Override
     public String getType() {
@@ -39,16 +35,4 @@ public class WelcomeMessageRequestHolder implements RequestHolder {
 
         return false;
     }
-
-    @Override
-    public boolean isSaveable() {
-        return false;
-    }
-
-    @Override
-    public boolean isPrivate() {
-        return false;
-    }
-
-
 }

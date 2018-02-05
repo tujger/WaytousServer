@@ -1,5 +1,6 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -13,6 +14,7 @@ import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.helpers.Utils;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 import com.edeqa.waytousserver.interfaces.RequestHolder;
+import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -48,6 +50,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
@@ -203,18 +206,6 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
 //                .build();
 
         return builder.setDatabaseUrl(OPTIONS.getFirebaseDatabaseUrl()).build();
-    }
-
-    @Override
-    public LinkedList<String> getRequestHoldersList() {
-        LinkedList<String> classes = new LinkedList<>();
-        classes.add("TrackingRequestHolder");
-        classes.add("MessageRequestHolder");
-        classes.add("ChangeNameRequestHolder");
-        classes.add("WelcomeMessageRequestHolder");
-        classes.add("LeaveRequestHolder");
-        classes.add("SavedLocationRequestHolder");
-        return classes;
     }
 
     @Override
@@ -854,9 +845,9 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
 
         childUpdates.put(Firebase.USERS + "/" + Firebase.PUBLIC + "/" + user.getNumber(), userPublicData);
 
-        for (Map.Entry<String, RequestHolder> entry : requestHolders.entrySet()) {
-            if (entry.getValue().isSaveable()) {
-                childUpdates.put(Firebase.PUBLIC + "/" + entry.getKey() + "/" + user.getNumber(), "{}");
+        for (AbstractTrackingAction actionHolder : ((List<AbstractTrackingAction>) EventBus.getOrCreate(AbstractTrackingAction.EVENTBUS).getHoldersList())) {
+            if (actionHolder.isSaveable()) {
+                childUpdates.put(Firebase.PUBLIC + "/" + actionHolder.getType() + "/" + user.getNumber(), "{}");
             }
         }
 
@@ -976,9 +967,9 @@ public class DataProcessorFirebaseOld extends AbstractDataProcessor {
                                                     updates.put(Firebase.USERS + "/" + Firebase.PRIVATE + "/" + userNumber, null);
                                                     updates.put(Firebase.USERS + "/" + Firebase.KEYS + "/" + value.toString(), null);
 
-                                                    for (Map.Entry<String, RequestHolder> entry : requestHolders.entrySet()) {
-                                                        if (entry.getValue().isSaveable()) {
-                                                            updates.put(Firebase.PUBLIC + "/" + entry.getKey() + "/" + userNumber, null);
+                                                    for (AbstractTrackingAction actionHolder : ((List<AbstractTrackingAction>) EventBus.getOrCreate(AbstractTrackingAction.EVENTBUS).getHoldersList())) {
+                                                        if (actionHolder.isSaveable()) {
+                                                            updates.put(Firebase.PUBLIC + "/" + actionHolder.getType() + "/" + userNumber, null);
                                                         }
                                                     }
 

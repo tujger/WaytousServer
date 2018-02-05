@@ -33,7 +33,6 @@ abstract public class AbstractDataProcessor {
     ConcurrentHashMap<String, MyUser> ipToUser;
 //    ConcurrentHashMap<String, CheckReq> ipToCheck;
     final UserRequests userRequests;
-    final HashMap<String, RequestHolder> requestHolders;
     protected final HashMap<String, FlagHolder> flagHolders;
     private boolean serverMode = false;
 
@@ -83,22 +82,7 @@ abstract public class AbstractDataProcessor {
 //        ipToCheck = new ConcurrentHashMap<>();
         userRequests = new UserRequests();
 
-        requestHolders = new LinkedHashMap<>();
-
-        LinkedList<String> classes = getRequestHoldersList();
-
-        if (classes != null) {
-            for (String s : classes) {
-                try {
-                    Class<RequestHolder> _tempClass = (Class<RequestHolder>) Class.forName("com.edeqa.waytousserver.holders.request." + s);
-                    Constructor<RequestHolder> ctor = _tempClass.getDeclaredConstructor(AbstractDataProcessor.class);
-                    registerRequestHolder(ctor.newInstance(this));
-                } catch (Exception e) {
-                    System.err.println("Trying to instantiate " + s);
-                    e.printStackTrace();
-                }
-            }
-        }
+        LinkedList<String> classes;
 
         flagHolders = new LinkedHashMap<>();
         classes = getFlagsHoldersList();
@@ -116,14 +100,7 @@ abstract public class AbstractDataProcessor {
         }
     }
 
-    abstract public LinkedList<String> getRequestHoldersList();
-
     abstract public LinkedList<String> getFlagsHoldersList();
-
-    public void registerRequestHolder(RequestHolder holder) {
-        if (holder.getType() == null) return;
-        requestHolders.put(holder.getType(), holder);
-    }
 
     public void registerFlagHolder(FlagHolder holder) {
         if (holder.getType() == null) return;

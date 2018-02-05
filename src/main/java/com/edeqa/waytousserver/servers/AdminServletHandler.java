@@ -17,7 +17,7 @@ import com.edeqa.waytousserver.rest.admin.LogsLog;
 import com.edeqa.waytousserver.rest.admin.StatClean;
 import com.edeqa.waytousserver.rest.admin.UserRemove;
 import com.edeqa.waytousserver.rest.admin.UserSwitch;
-import com.edeqa.waytousserver.rest.firebase.AccessToken;
+import com.edeqa.waytousserver.rest.firebase.AdminToken;
 import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;
@@ -43,7 +43,7 @@ import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
 
 //    private final LinkedHashMap<String, PageHolder> holders;
-    private AccessToken accessToken;
+    private AdminToken adminToken;
 
     public AdminServletHandler(){
         super();
@@ -83,8 +83,8 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
 
             try {
                 String customToken = Common.getInstance().getDataProcessor("v1").createCustomToken("Viewer");
-                if(accessToken == null) {
-                    accessToken = new AccessToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile());
+                if(adminToken == null) {
+                    adminToken = new AdminToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile());
                 }
 
                 final JSONObject o = new JSONObject();
@@ -97,7 +97,7 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
                 o.put("WSS_PORT", OPTIONS.getWssPortDedicated());
                 o.put("firebase_config", OPTIONS.getFirebaseConfig());
                 o.put("sign", customToken);
-                o.put("access", accessToken.fetchToken());
+                o.put("access", adminToken.fetchToken());
 
                 HtmlGenerator html = new HtmlGenerator();
                 html.getHead().add(TITLE).with("Admin");
