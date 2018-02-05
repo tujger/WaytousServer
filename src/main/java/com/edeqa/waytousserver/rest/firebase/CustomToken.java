@@ -8,6 +8,7 @@ import com.google.firebase.tasks.Tasks;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class CustomToken extends AbstractFirebaseAction<CustomToken, String> {
     private static final int MAXIMUM_CACHED_TOKENS = 1000;
 
     private Long timeCreated = 0L;
-    private Map<String,String> tokens = new HashMap<>();
+    private Map<String,Map<String,Serializable>> tokens = new HashMap<>();
 
     @Override
     public String getType() {
@@ -33,7 +34,7 @@ public class CustomToken extends AbstractFirebaseAction<CustomToken, String> {
     }
 
     @Override
-    public boolean onEvent(JSONObject json, String uid) throws Exception {
+    public boolean call(JSONObject json, String uid) throws Exception {
         Misc.log("CustomToken", "is performing for uid:", uid);
 
         if(tokens.size() > MAXIMUM_CACHED_TOKENS) {
@@ -43,7 +44,7 @@ public class CustomToken extends AbstractFirebaseAction<CustomToken, String> {
 
         Calendar cal = Calendar.getInstance();
         Long now = cal.getTime().getTime();
-        if(!tokens.containsKey(uid) || tokens.get(uid) == null || timeCreated < now - 30*60*1000) {
+        if(!tokens.containsKey(uid) || tokens.get(uid) == null || ((long)tokens.get(uid).get("timestamp")) < now - 10*60*1000) {
             if (Common.getInstance().getDataProcessor("v1").isServerMode()) {
                 try {
                     Class tempClass = Class.forName("com.google.firebase.auth.FirebaseAuth");
@@ -52,25 +53,30 @@ public class CustomToken extends AbstractFirebaseAction<CustomToken, String> {
                     //noinspection unchecked
                     Task<String> taskCreateToken = (Task<String>) method.invoke(FirebaseAuth.getInstance(), uid);
                     Tasks.await(taskCreateToken);
-                    tokens.put(uid, taskCreateToken.getResult());
+                    HashMap<String, Serializable> token = new HashMap<>();
+                    token.put("token", taskCreateToken.getResult());
+                    token.put("timestamp", now);
+                    tokens.put(uid, token);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
-                tokens.put(uid, String.valueOf(FirebaseAuth.getInstance().createCustomToken(uid)));
+                HashMap<String, Serializable> token = new HashMap<>();
+                token.put("token", String.valueOf(FirebaseAuth.getInstance().createCustomToken(uid)));
+                token.put("timestamp", now);
+                tokens.put(uid, token);
             }
-            Misc.log("CustomToken", "generated", "[" + tokens.get(uid).length() + " byte(s)]");
-            timeCreated = now;
+            Misc.log("CustomToken", "generated", "[" + ((String)tokens.get(uid).get("token")).length() + " byte(s)]");
         }
         json.put(STATUS, STATUS_SUCCESS);
-        json.put(MESSAGE, tokens.get(uid));
+        json.put(MESSAGE, tokens.get(uid).get("token"));
         return true;
     }
 
     public String fetchToken(String uid) {
         JSONObject json = new JSONObject();
         try {
-            onEvent(json, uid);
+            call(json, uid);
             return json.getString(MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();

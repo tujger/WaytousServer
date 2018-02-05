@@ -28,13 +28,13 @@ public class AccessToken extends AbstractFirebaseAction<AccessToken, Object> {
     }
 
     @Override
-    public boolean onEvent(JSONObject json, Object request) throws Exception {
+    public boolean call(JSONObject json, Object request) throws Exception {
         Misc.log("AccessToken", "is performing");
 
         Calendar cal = Calendar.getInstance();
         Long now = cal.getTime().getTime();
 
-        if(token == null || timeCreated < now - 30*60*1000) {
+        if(token == null || timeCreated < now - 10*60*1000) {
             FileInputStream serviceAccount = new FileInputStream(getFirebasePrivateKeyFile());
             GoogleCredential googleCred = GoogleCredential.fromStream(serviceAccount);
             GoogleCredential scoped = googleCred.createScoped(
@@ -57,7 +57,7 @@ public class AccessToken extends AbstractFirebaseAction<AccessToken, Object> {
     public String fetchToken() {
         JSONObject json = new JSONObject();
         try {
-            onEvent(json, null);
+            call(json, null);
             return json.getString(MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();

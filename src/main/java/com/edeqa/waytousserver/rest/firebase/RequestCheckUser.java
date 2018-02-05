@@ -50,7 +50,7 @@ public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, O
     }
 
     @Override
-    public boolean onEvent(final JSONObject json, Object request) {
+    public boolean call(final JSONObject json, Object request) {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         if (getUserRequest() != null) {
@@ -95,7 +95,7 @@ public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, O
                                                 ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
                                                         .setGroupId(getUserRequest().getGroupId())
                                                         .setAction(AbstractDataProcessor.UserAction.USER_RECONNECTED)
-                                                        .onEvent(null, getUserRequest().getUid());
+                                                        .call(null, getUserRequest().getUid());
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
@@ -106,9 +106,9 @@ public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, O
                                             Misc.err("RequestCheckUser", "onMessage:joinNotAuthenticated:", getUserRequest().toString(), error);
                                             ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
                                                     .setUserRequest(getUserRequest())
-                                                    .onEvent(json, "Cannot join to group (code 19).");
+                                                    .call(json, "Cannot join to group (code 19).");
                                         }
-                                    }).onEvent(null, getUserRequest().fetchUser());
+                                    }).call(null, getUserRequest().fetchUser());
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -116,14 +116,14 @@ public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, O
                                 Misc.err("RequestCheckUser", "onMessage:joinNotAuthenticated:", getUserRequest().toString(), "hash not equals");
                                 ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
                                         .setUserRequest(getUserRequest())
-                                        .onEvent(json, "Cannot join to group (user not authenticated).");
+                                        .call(json, "Cannot join to group (user not authenticated).");
                             }
 
                         } catch (Exception e) {
                             Misc.err("RequestCheckUser", "onMessage:joinHashFailed:", getUserRequest().toString());
                             ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
                                     .setUserRequest(getUserRequest())
-                                    .onEvent(json, "Cannot join to group (user not authenticated).");
+                                    .call(json, "Cannot join to group (user not authenticated).");
                             e.printStackTrace();
                         }
 
@@ -136,7 +136,7 @@ public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, O
                                         .setGroupId(getUserRequest().getGroupId())
                                         .setUser(getUserRequest().fetchUser())
                                         .setAction(REQUEST_CHECK_USER)
-                                        .onEvent(null, null);
+                                        .call(null, null);
                                 Misc.log("RequestCheckUser", "onMessage:joinAsNew:" + getUserRequest().getAddress());
                             }
                         }).setOnError(new Runnable1<Throwable>() {
@@ -145,9 +145,9 @@ public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, O
                                 Misc.err("RequestCheckUser", "onMessage:joinAsNew:", getUserRequest().toString(), error);
                                 ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
                                         .setUserRequest(getUserRequest())
-                                        .onEvent(json, "Cannot join to group (code 18).");
+                                        .call(json, "Cannot join to group (code 18).");
                             }
-                        }).onEvent(null, getUserRequest().fetchUser());
+                        }).call(null, getUserRequest().fetchUser());
                     }
                 }
             });
@@ -166,7 +166,7 @@ public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, O
                                 Misc.err("RequestCheckUser", "onMessage:joinNumberNotFound:" + getUserRequest().getAddress());
                                 ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
                                         .setUserRequest(getUserRequest())
-                                        .onEvent(json, "This group is expired. (005)");
+                                        .call(json, "This group is expired. (005)");
                             }
                         }
                     });
@@ -188,12 +188,12 @@ public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, O
                                 Misc.err("RequestCheckUser", "onMessage:joinUserNotFound:", getUserRequest().getAddress());
                                 ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
                                         .setUserRequest(getUserRequest())
-                                        .onEvent(json, "This group is expired. (004)");
+                                        .call(json, "This group is expired. (004)");
                             } else {
                                 Misc.err("RequestCheckUser", "onMessage:joinEmptyGroup:", getUserRequest().getAddress());
                                 ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
                                         .setUserRequest(getUserRequest())
-                                        .onEvent(json, "This group is expired. (003)");
+                                        .call(json, "This group is expired. (003)");
                             }
                         }
                     });
@@ -209,7 +209,7 @@ public class RequestCheckUser extends AbstractFirebaseAction<RequestCheckUser, O
                                     Misc.err("RequestCheckUser", "onMessage:joinUserNotExists:" + getUserRequest().getAddress());
                                     ((RejectUser) EventBus.getOrCreateEventBus().getHolder(RejectUser.TYPE))
                                             .setUserRequest(getUserRequest())
-                                            .onEvent(json, "This group is expired. (002)");
+                                            .call(json, "This group is expired. (002)");
                                 }
                             } else {
                                 userSearchTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE)).start();

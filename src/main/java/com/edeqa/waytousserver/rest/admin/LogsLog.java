@@ -29,7 +29,7 @@ public class LogsLog extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean onEvent(JSONObject json, final RequestWrapper request) throws IOException {
+    public boolean call(JSONObject json, final RequestWrapper request) throws IOException {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, CODE_DELAYED);
 

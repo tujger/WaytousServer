@@ -27,7 +27,7 @@ public class GroupCreate extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean onEvent(JSONObject json, final RequestWrapper request) {
+    public boolean call(JSONObject json, final RequestWrapper request) {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, CODE_DELAYED);
         request.processBody(new Runnable1<StringBuilder>() {

@@ -17,7 +17,7 @@ public class GroupsClean extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean onEvent(JSONObject json, final RequestWrapper request) {
+    public boolean call(JSONObject json, final RequestWrapper request) {
         //noinspection HardCodedStringLiteral
         Common.getInstance().getDataProcessor("v1").validateGroups();
 

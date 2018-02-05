@@ -48,7 +48,7 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, Object> {
     }
 
     @Override
-    public boolean onEvent(final JSONObject json, Object object) {
+    public boolean call(final JSONObject json, Object object) {
 
         final JSONObject response = new JSONObject();
 
@@ -80,6 +80,7 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, Object> {
         for (Map.Entry<String, RequestHolder> entry : getRequestHolders().entrySet()) {
             if (entry.getValue().isSaveable()) {
                 childUpdates.put(Firebase.PUBLIC + "/" + entry.getKey() + "/" + getUser().getNumber(), "{}");
+                childUpdates.put(Firebase.PRIVATE + "/" + entry.getKey() + "/" + getUser().getNumber(), "{}");
             }
         }
 
@@ -96,7 +97,7 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, Object> {
         try {
             Tasks.await(updateUserTask);
 
-            Misc.log("RegisterUser", "with number", getUser().getNumber(), "uid:", getUser().getUid(), "[" + getGroupId() + "]");
+            Misc.log("RegisterUser", getAction(), "with number", getUser().getNumber(), "uid:", getUser().getUid(), "[" + getGroupId() + "]");
 
             if(getAction() != null) {
                 String customToken = ((CustomToken) EventBus.getOrCreateEventBus().getHolder(CustomToken.TYPE)).fetchToken(getUser().getUid());
@@ -118,7 +119,7 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, Object> {
             ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
                     .setGroupId(getGroupId())
                     .setAction(AbstractDataProcessor.UserAction.USER_JOINED)
-                    .onEvent(null, getUser().getUid());
+                    .call(null, getUser().getUid());
         } catch (Exception e) {
             e.printStackTrace();
             if(getOnError() != null) getOnError().call(response);
@@ -136,10 +137,18 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, Object> {
                     .setGroupId(getGroupId())
                     .setAction(AbstractDataProcessor.UserAction.USER_REJECTED)
                     .setMessage(e.getMessage())
-                    .onEvent(null, getUser().getUid());
+                    .call(null, getUser().getUid());
         }
-
+        clear();
         return true;
+    }
+
+    public void clear() {
+        setOnSuccess(null);
+        setOnError(null);
+        setAction(null);
+        setUser(null);
+        setGroupId(null);
     }
 
     public Runnable1<JSONObject> getOnSuccess() {

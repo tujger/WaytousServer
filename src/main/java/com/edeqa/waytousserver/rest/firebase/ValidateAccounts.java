@@ -29,7 +29,7 @@ public class ValidateAccounts extends AbstractFirebaseAction<ValidateAccounts, O
     }
 
     @Override
-    public boolean onEvent(JSONObject json, Object request) {
+    public boolean call(JSONObject json, Object request) {
 
         final DatabaseReference refAccounts = getFirebaseReference().child(Firebase.SECTION_USERS);
 
@@ -77,7 +77,7 @@ public class ValidateAccounts extends AbstractFirebaseAction<ValidateAccounts, O
                                                         .setKey(null)
                                                         .setValue(null)
                                                         .setMessage("Expired for " + message)
-                                                        .onEvent(null, uid);
+                                                        .call(null, uid);
                                             }
                                         } catch(Exception e) {
                                             Misc.err("ValidateAccounts", "failed:", uid, "error:", e.getMessage());

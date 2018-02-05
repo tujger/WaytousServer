@@ -80,7 +80,6 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS_CHECK;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_ERROR;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_UPDATED;
 import static com.edeqa.waytous.Constants.RESPONSE_TOKEN;
-import static com.edeqa.waytous.Constants.USER_NAME;
 import static com.edeqa.waytousserver.servers.AbstractDataProcessor.AccountAction.ACCOUNT_CREATED;
 
 /**

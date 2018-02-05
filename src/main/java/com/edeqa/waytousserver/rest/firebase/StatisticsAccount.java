@@ -5,11 +5,7 @@ import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 
 import org.json.JSONObject;
 
@@ -36,7 +32,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
     }
 
     @Override
-    public boolean onEvent(JSONObject json, final String accountId) {
+    public boolean call(JSONObject json, final String accountId) {
 
         Calendar cal = Calendar.getInstance();
         String today = String.format("%04d-%02d-%02d", cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH));
@@ -67,7 +63,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
             map.put("action", getAccountAction());
             ((StatisticsMessage) EventBus.getOrCreateEventBus().getHolder(StatisticsMessage.TYPE))
                     .setMessage(getMessage())
-                    .onEvent(null, map);
+                    .call(null, map);
         }
 
         if(getKey() != null && accountId != null && accountId.length() > 0) {

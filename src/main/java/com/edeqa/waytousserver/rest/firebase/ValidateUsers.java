@@ -9,14 +9,12 @@ import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ServerValue;
 
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -30,7 +28,7 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
     }
 
     @Override
-    public boolean onEvent(JSONObject json, final GroupRequest groupRequest) {
+    public boolean call(JSONObject json, final GroupRequest groupRequest) {
 
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
@@ -52,7 +50,7 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
                             ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
                                     .setMessage("corrupted group removing: " + groupRequest.getId())
-                                    .onEvent(null, groupRequest);
+                                    .call(null, groupRequest);
                             return;
                         }
                         Misc.log("ValidateUsers", "is checking for group", groupRequest.getId(), "[" + users.size() + "]");
@@ -96,7 +94,7 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
                             ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
                                     .setMessage(info)
-                                    .onEvent(null, groupRequest);
+                                    .call(null, groupRequest);
                         }
                     }
                 }).start();

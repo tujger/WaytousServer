@@ -19,7 +19,7 @@ public class StatClean extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean onEvent(JSONObject json, final RequestWrapper request) {
+    public boolean call(JSONObject json, final RequestWrapper request) {
         json.put(STATUS, STATUS_SUCCESS);
         json.put(CODE, CODE_DELAYED);
 

@@ -23,7 +23,7 @@ public class StatisticsMessage extends AbstractFirebaseAction<StatisticsMessage,
     }
 
     @Override
-    public boolean onEvent(JSONObject json, Map<String,String> payload) {
+    public boolean call(JSONObject json, Map<String,String> payload) {
         Calendar cal = Calendar.getInstance();
         String today = String.format("%04d-%02d-%02d %02d-%02d-%02d-%03d", cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH),cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND), cal.get(Calendar.MILLISECOND));
 

@@ -6,7 +6,6 @@ import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.GroupRequest;
-import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +31,7 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
     }
 
     @Override
-    public boolean onEvent(final JSONObject json, final GroupRequest group) {
+    public boolean call(final JSONObject json, final GroupRequest group) {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         Misc.log("CreateGroup", "creating:", group.getId());
@@ -68,7 +67,7 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
 
                             ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(group.isPersistent() ? AbstractDataProcessor.GroupAction.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.GroupAction.GROUP_CREATED_TEMPORARY)
-                                    .onEvent(null, group);
+                                    .call(null, group);
                         } else {
                             json.put(STATUS, STATUS_ERROR);
                             json.put(Rest.GROUP_ID, group.getId());
@@ -78,7 +77,7 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
                             ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(AbstractDataProcessor.GroupAction.GROUP_REJECTED)
                                     .setMessage("already exists")
-                                    .onEvent(null, group);
+                                    .call(null, group);
                         }
                     }
                 }).start();

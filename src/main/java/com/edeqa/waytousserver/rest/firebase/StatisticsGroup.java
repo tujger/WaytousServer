@@ -26,7 +26,7 @@ public class StatisticsGroup extends AbstractFirebaseAction<StatisticsGroup, Gro
     }
 
     @Override
-    public boolean onEvent(JSONObject json, GroupRequest groupRequest) {
+    public boolean call(JSONObject json, GroupRequest groupRequest) {
 
         Calendar cal = Calendar.getInstance();
         String today = String.format("%04d-%02d-%02d", cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH));
@@ -64,7 +64,7 @@ public class StatisticsGroup extends AbstractFirebaseAction<StatisticsGroup, Gro
             map.put("action", getAction().toString());
         ((StatisticsMessage) EventBus.getOrCreateEventBus().getHolder(StatisticsMessage.TYPE))
                     .setMessage(getMessage())
-                    .onEvent(null, map);
+                    .call(null, map);
 //        }
         clear();
 

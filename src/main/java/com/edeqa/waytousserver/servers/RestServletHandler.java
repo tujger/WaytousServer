@@ -3,7 +3,6 @@ package com.edeqa.waytousserver.servers;
 import com.edeqa.edequate.rest.Content;
 import com.edeqa.edequate.rest.Files;
 import com.edeqa.edequate.rest.Locales;
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.rest.Join;
 import com.edeqa.waytousserver.rest.TosAgreement;
@@ -59,9 +58,6 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
                 return name.contains("Holder");
             }
         }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("js/tracking").setActionName("/rest/tracking"));
-
-
-        System.out.println(EventBus.getOrCreateEventBus("rest").getHolders().values());
 
     }
 

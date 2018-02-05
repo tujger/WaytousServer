@@ -28,13 +28,13 @@ public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, Strin
     }
 
     @Override
-    public boolean onEvent(JSONObject json, String userId) {
+    public boolean call(JSONObject json, String userId) {
         ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
                 .setKey("group")
                 .setAction(getAction().toString())
                 .setValue(getGroupId())
                 .setMessage(getMessage())
-                .onEvent(null, userId);
+                .call(null, userId);
 
         if(getUserRequest() != null) {
             setGroupId(getUserRequest().getGroupId());
@@ -77,7 +77,7 @@ public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, Strin
             map.put("action", getAction().toString());
             ((StatisticsMessage) EventBus.getOrCreateEventBus().getHolder(StatisticsMessage.TYPE))
                     .setMessage(getMessage())
-                    .onEvent(null, map);
+                    .call(null, map);
         }
 
         clear();

@@ -27,7 +27,7 @@ public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String>
     }
 
     @Override
-    public boolean onEvent(JSONObject json, final String accountId) {
+    public boolean call(JSONObject json, final String accountId) {
         json = new JSONObject();
         json.put(Rest.UID, accountId);
 
@@ -42,7 +42,7 @@ public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String>
             ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
                     .setAction(AbstractDataProcessor.AccountAction.ACCOUNT_DELETED.toString())
                     .setMessage(accountId + " deleted.")
-                    .onEvent(null, accountId);
+                    .call(null, accountId);
 
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();

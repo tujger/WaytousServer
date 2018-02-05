@@ -22,7 +22,7 @@ public class LogsClear extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean onEvent(JSONObject json, final RequestWrapper request) throws Exception {
+    public boolean call(JSONObject json, final RequestWrapper request) throws Exception {
 
         File file = new File(OPTIONS.getLogFile());
         Misc.log(this.getClass().getSimpleName(), file.getCanonicalPath());

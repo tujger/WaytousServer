@@ -2,15 +2,11 @@ package com.edeqa.waytousserver.helpers;
 
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
-import com.google.api.core.ApiFuture;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.internal.NonNull;
-import com.google.firebase.tasks.OnFailureListener;
-import com.google.firebase.tasks.OnSuccessListener;
 import com.google.firebase.tasks.Task;
 import com.google.firebase.tasks.TaskCompletionSource;
 import com.google.firebase.tasks.Tasks;
@@ -141,7 +137,7 @@ public class TaskSingleValueEventFor<T> {
     private void restRequest() {
         try {
             String url = "" + ref.getDatabase().getReference() + ref.getPath() + ".json?shallow=true&access_token=" + customToken;
-            Misc.log(LOG, "restRequest:" + url);
+//            Misc.log(LOG, "restRequest:" + url);
             String res = Misc.getUrl(url, "UTF-8");
             if(res == null || res.length() == 0 || res.startsWith("null")) {
                 return;

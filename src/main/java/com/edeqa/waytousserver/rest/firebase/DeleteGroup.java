@@ -28,7 +28,7 @@ public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
     }
 
     @Override
-    public boolean onEvent(JSONObject json, final String groupId) {
+    public boolean call(JSONObject json, final String groupId) {
         json = new JSONObject();
 
         json.put(Rest.GROUP_ID, groupId);
@@ -42,7 +42,7 @@ public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
 
             ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
-                    .onEvent(null, new GroupRequest(groupId));
+                    .call(null, new GroupRequest(groupId));
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             json.put(STATUS, STATUS_ERROR);

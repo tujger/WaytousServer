@@ -24,7 +24,7 @@ public class RejectUser extends AbstractFirebaseAction<RejectUser, String> {
     }
 
     @Override
-    public boolean onEvent(JSONObject response, String message) {
+    public boolean call(JSONObject response, String message) {
 
         Misc.err("RejectUser", "for", userRequest, "[" + message + "]");
 
@@ -32,12 +32,13 @@ public class RejectUser extends AbstractFirebaseAction<RejectUser, String> {
         response.put(RESPONSE_MESSAGE, message);
 
         getUserRequest().send(response.toString());
+        getUserRequest().close();
 
         ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
                 .setUserRequest(getUserRequest())
                 .setAction(AbstractDataProcessor.UserAction.USER_REJECTED)
                 .setMessage(message)
-                .onEvent(null, userRequest.getUid());
+                .call(null, userRequest.getUid());
 
         response.put(STATUS, STATUS_SUCCESS);
         response.put(CODE, CODE_DELAYED);

@@ -39,7 +39,7 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
     }
 
     @Override
-    public boolean onEvent(final JSONObject json, Object object) {
+    public boolean call(final JSONObject json, Object object) {
 
         final JSONObject res = new JSONObject();
 
@@ -93,7 +93,7 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
                                                             ((StatisticsUser) EventBus.getOrCreateEventBus().getHolder(StatisticsUser.TYPE))
                                                                     .setGroupId(getGroupId())
                                                                     .setAction(AbstractDataProcessor.UserAction.USER_REMOVED)
-                                                                    .onEvent(null, value.toString());
+                                                                    .call(null, value.toString());
                                                         }
                                                     }).addOnFailureListener(onFailureListener);
                                                 }

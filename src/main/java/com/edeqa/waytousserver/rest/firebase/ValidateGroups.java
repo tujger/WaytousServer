@@ -27,7 +27,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
     }
 
     @Override
-    public boolean onEvent(JSONObject json, Object request) {
+    public boolean call(JSONObject json, Object request) {
 
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
@@ -66,7 +66,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
                                             ((StatisticsGroup) EventBus.getOrCreateEventBus().getHolder(StatisticsGroup.TYPE))
                                                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
                                                     .setMessage("lost group removing: " + group)
-                                                    .onEvent(null, groupRequest);
+                                                    .call(null, groupRequest);
                                             return;
                                         }
 
@@ -87,7 +87,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
 
                                         new ValidateUsers()
                                                 .setFirebaseReference(getFirebaseReference())
-                                                .onEvent(null, groupRequest);
+                                                .call(null, groupRequest);
                                     }
                                 }).start();
                     }

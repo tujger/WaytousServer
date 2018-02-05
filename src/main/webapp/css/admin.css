@@ -301,8 +301,8 @@ div.question {
     }
     .layout {
         padding: 0px;
-        position: fixed;
-        top: 50px;
+        /*position: fixed;
+        top: 50px;*/
         bottom: 0px;
         min-height: unset;
         height: auto;

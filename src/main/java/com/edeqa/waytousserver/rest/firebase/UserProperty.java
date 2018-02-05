@@ -34,7 +34,7 @@ public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
     }
 
     @Override
-    public boolean onEvent(JSONObject json, Object request) {
+    public boolean call(JSONObject json, Object request) {
 
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 

@@ -36,7 +36,7 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
     }
 
     @Override
-    public boolean onEvent(final JSONObject json, final MyUser user) {
+    public boolean call(final JSONObject json, final MyUser user) {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         if(!user.isAccountAllowed()) {
@@ -70,7 +70,7 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
 
                             ((StatisticsAccount) EventBus.getOrCreateEventBus().getHolder(StatisticsAccount.TYPE))
                                     .setAction(ACCOUNT_CREATED.toString())
-                                    .onEvent(null, user.getUid());
+                                    .call(null, user.getUid());
                         } else {
                             Misc.log("CreateAccount", "updated for uid:", user.getUid(), accountPrivateData);
                         }
@@ -95,6 +95,11 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
                 });
         createAccountTask.start();
         return true;
+    }
+
+    public void clear() {
+        setOnSuccess(null);
+
     }
 
     public Runnable getOnSuccess() {

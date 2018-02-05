@@ -25,7 +25,7 @@ public class RequestNewGroup extends AbstractFirebaseAction<RequestNewGroup, Obj
     }
 
     @Override
-    public boolean onEvent(JSONObject json, Object request) {
+    public boolean call(JSONObject json, Object request) {
 
 //        if (uid != null) {
 //            final MyGroup group = new MyGroup();

@@ -43,6 +43,9 @@ public class UserRequest {
 
     public void send(String string) {
         getDataProcessorConnection().send(string);
+    }
+
+    public void close() {
         getDataProcessorConnection().close();
     }
 

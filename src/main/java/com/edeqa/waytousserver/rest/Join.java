@@ -19,7 +19,7 @@ public class Join extends AbstractAction<RequestWrapper> {
     }
 
     @Override
-    public boolean onEvent(JSONObject json, RequestWrapper request) {
+    public boolean call(JSONObject json, RequestWrapper request) {
         String body = request.getBody();
         JSONObject options = new JSONObject(body);
 
