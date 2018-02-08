@@ -34,8 +34,11 @@ public class RedirectHandler implements HttpHandler {
             String host, referer = null;
             try {
                 host = exchange.getRequestHeaders().get(HttpHeaders.HOST).get(0);
-                host = host.split(":")[0];
-                referer = exchange.getRequestHeaders().get(HttpHeaders.REFERER).get(0);
+                if(host != null) {
+                    host = host.split(":")[0];
+                } else {
+                    host = InetAddress.getLocalHost().getHostAddress();
+                }
             } catch(Exception e){
                 e.printStackTrace();
                 host = InetAddress.getLocalHost().getHostAddress();

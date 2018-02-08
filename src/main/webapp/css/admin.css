@@ -4,7 +4,7 @@
 
 h2 {
     margin-top: 20px;
-    margin-bottom: -10px;
+    margin-bottom: 0;
     padding-left: 10px;
     flex: 0 0 auto;
     width: 90%;
@@ -96,44 +96,36 @@ div.question {
 .table {
     margin-bottom: 5px;
 }
-.table-logs {
-    white-space: pre-wrap;
+.logs {
     display: flex;
     flex-direction: column;
     height: 100%;
     margin-bottom: 5px;
+    flex: 1 1 auto;
+    max-width: 100%;
 }
 .table-placeholder {
     /*border: none;*/
 }
-.table-logs-caption {
-    display: block;
-}
-.table-logs-caption-cell {
-    display: flex;
+.logs-caption {
+    flex: 0 0 auto;
     justify-content: center;
-    border-top: none;
-    border-left: none;
-    border-right: none;
+    display: flex;
+    background: #ffffdd;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 1px solid black;
+    font-weight: bold;
+    cursor: default;
 }
-.table-logs-body {
+.logs-body {
     display: block;
     overflow-y: auto;
     overflow-x: hidden;
     height: 100%;
-}
-.table-logs-row {
-    display: block;
-    width: 100%;
-}
-.table-logs-row-cell {
-    overflow: auto;
-    display: block;
-    width: 100%;
-    user-select: initial;
-    -moz-user-select: initial;
-    -webkit-user-select: initial;
-    border: none;
+    white-space: pre-wrap;
+    font-size: 12px;
+    font-family: monospace;
 }
 .buttons {
     display: inline-flex;
@@ -330,13 +322,6 @@ div.question {
         padding-top: 5px;
         padding-bottom: 5px;
         background-color: antiquewhite;
-    }
-    .table-logs-body {
-        font-size: 12px;
-    }
-    .table-logs-row-cell {
-        padding-top: 3px;
-        padding-bottom: 3px;
     }
     .two-divs {
         flex-direction: column;

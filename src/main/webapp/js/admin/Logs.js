@@ -8,6 +8,8 @@ function Logs() {
 
     var title = "Logs";
     var task;
+    var logBody;
+    var logCaption;
 
     var renderInterface = function() {
 
@@ -20,20 +22,13 @@ function Logs() {
         //buttons = u.create("div", {className:"buttons"}, logsTitleNode);
         renderButtons(logsTitleNode);
 
-        table = u.table({
-            id: "logs",
-            caption: {
-                className: "table-logs-caption",
-                items: [
-                    { className: "table-logs-caption-cell", label: "Logs" }
-                ]
-            },
-            className: "table-logs",
-            bodyClassName: "table-logs-body",
-            placeholder: "Loading..."
-        }, div);
-        table.addEventListener("DOMNodeRemovedFromDocument", function(e) {
-            if(e && e.srcElement === table && task && task.readyState === task.OPEN) {
+        var logView = u.create(HTML.DIV, {className: "logs"}, div);
+
+        logCaption = u.create(HTML.DIV, {className: "logs-caption", innerHTML: "Logs"}, logView);
+        logBody = u.create(HTML.DIV, {className: "logs-body", innerHTML: "Loading..."}, logView);
+
+        logBody.addEventListener("DOMNodeRemovedFromDocument", function(e) {
+            if(e && e.srcElement === logBody && task && task.readyState === task.OPEN) {
                 task.close();
             }
         }, {passive: true});
@@ -42,7 +37,7 @@ function Logs() {
 
     function updateData(){
         // var scroll = table.body.scrollTop;
-        table.placeholder.show("Loading...");
+        u.clear(logBody);
 
         try {
             if(task) task.close();
@@ -50,24 +45,18 @@ function Logs() {
             console.error(e);
         }
 
-        table.rows.clear();
         task = new EventSource("/admin/rest/logs/log");
         task.onmessage = function(e) {
-            setTimeout(function(){
-                table.head.cells[0].lastChild.innerHTML = "Logs (updated "+(new Date().toLocaleString())+")";
-                table.add({
-                    className: "table-logs-row",
-                    cells: [
-                        { className: "table-logs-row-cell", innerHTML: this }
-                    ]
-                });
+//            setTimeout(function(){
+//                logCaption.innerHTML = "Logs (updated "+(new Date().toLocaleString())+")";
+                logBody.textContent += e.data + "\n";
                 //table.body.scrollTop = scroll
-            }.bind(e.data), 0);
+//            }.bind(e.data), 0);
         };
         task.onerror = function(error) {
             console.error(error);
-            table.rows.clear();
-            table.placeholder.show("Loading...");
+          u.clear(logBody);
+          logBody.textContent = "Loading...";
         };
     }
 
