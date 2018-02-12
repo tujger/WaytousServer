@@ -135,7 +135,7 @@ public class JoinGroup extends AbstractFirebaseAction<JoinGroup, UserRequest> {
                 userRequest.send(json.toString());
             }
         } else {
-            Misc.err("JoinGroup", "failing request:", userRequest);
+            Misc.err("JoinGroup", "failed: userRequest is null");
         }
     }
 }

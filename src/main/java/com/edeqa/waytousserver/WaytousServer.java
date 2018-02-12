@@ -45,7 +45,7 @@ import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 @SuppressWarnings("HardCodedStringLiteral")
 public class WaytousServer {
 
-    private static final String LOG = "Server";
+    private static final String LOG = "WaytousServer";
     private static MyWsServer wsServer;
     private static MyWsServer wssServer;
 
@@ -150,7 +150,7 @@ public class WaytousServer {
                     params.setSSLParameters(defaultSSLParameters);
 
                 } catch (Exception ex) {
-                    Misc.log(LOG,"Failed to configure SSL server");
+                    Misc.log(LOG, "Failed to configure SSL server");
                 }
             }
         });

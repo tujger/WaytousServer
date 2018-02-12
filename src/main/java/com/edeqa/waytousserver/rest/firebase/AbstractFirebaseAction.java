@@ -18,15 +18,15 @@ abstract public class AbstractFirebaseAction<U extends AbstractAction, T> extend
     public static final String EVENTBUS = "firebase";
 
 
-    private DatabaseReference firebaseReference;
+    private static DatabaseReference firebaseReference;
 
-    public DatabaseReference getFirebaseReference() {
+    public static DatabaseReference getFirebaseReference() {
         return firebaseReference;
     }
 
-    public U setFirebaseReference(DatabaseReference firebaseReference) {
-        this.firebaseReference = firebaseReference;
-        return (U) this;
+    public static void setFirebaseReference(DatabaseReference firebaseReference) {
+        AbstractFirebaseAction.firebaseReference = firebaseReference;
+//        return (U) this;
     }
 
     protected Transaction.Handler incrementValue = new Transaction.Handler() {

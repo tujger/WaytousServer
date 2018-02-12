@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.beans.Transient;
 import java.util.Date;
+import java.util.Random;
 
 import static com.edeqa.waytous.Constants.REQUEST_MANUFACTURER;
 import static com.edeqa.waytous.Constants.REQUEST_MODEL;
@@ -30,7 +31,6 @@ import static com.edeqa.waytous.Constants.USER_SPEED;
  * Created 10/9/16.
  */
 
-@IgnoreExtraProperties
 public class MyUser {
     transient public DataProcessorConnection connection;
     public String name;
@@ -66,6 +66,26 @@ public class MyUser {
         if (request.has(REQUEST_SIGN_PROVIDER)) setSignProvider(SignProvider.parse(request.getString(REQUEST_SIGN_PROVIDER)));
         if (request.has(USER_NAME)) setName(request.getString(USER_NAME));
 
+    }
+
+    public static int selectColor(int number) {
+        Random randomGenerator = new Random();
+        int red = randomGenerator.nextInt(256);
+        int green = randomGenerator.nextInt(256);
+        int blue = randomGenerator.nextInt(256);
+
+        return getRGB(red,green,blue);
+
+//        int color = colors.get(number).getRGB();
+//        return color;
+    }
+
+    public static int getRGB(int red, int green, int blue) {
+        red = (red << 16) & 0x00FF0000; //Shift red 16-bits and mask out other stuff
+        green = (green << 8) & 0x0000FF00; //Shift Green 8-bits and mask out other stuff
+        blue = blue & 0x000000FF; //Mask out anything not blue.
+
+        return 0xFF000000 | red | green | blue; //0xFF000000 for 100% Alpha. Bitwise OR everything together.
     }
 
     public String calculateHash() {

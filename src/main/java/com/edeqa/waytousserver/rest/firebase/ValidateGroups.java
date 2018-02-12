@@ -85,7 +85,6 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
                                         groupRequest.setTimeToLiveIfEmpty(object != null ? Long.parseLong("0" + object.toString()) : 0);
 
                                         new ValidateUsers()
-                                                .setFirebaseReference(getFirebaseReference())
                                                 .call(null, groupRequest);
                                     }
                                 }).start();

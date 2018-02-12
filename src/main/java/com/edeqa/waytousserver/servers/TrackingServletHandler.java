@@ -127,7 +127,7 @@ public class TrackingServletHandler extends AbstractServletHandler {
 
                 json = new JSONObject(Misc.getUrl("https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=" + URLEncoder.encode( OPTIONS.getFirebaseApiKey(), "UTF-8" ), json.toString(), "UTF-8"));
                 redirectLink = json.getString("shortLink");
-                Misc.log("Tracking", "dynamic link payload", json);
+                Misc.log("Tracking", "dynamic link payload:", json);
             }catch (Exception e) {
                 e.printStackTrace();
                 redirectLink = "https://" + OPTIONS.getFirebaseDynamicLinkHost() + "/?"

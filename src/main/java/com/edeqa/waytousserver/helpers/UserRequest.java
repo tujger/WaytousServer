@@ -3,7 +3,6 @@ package com.edeqa.waytousserver.helpers;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytous.SignProvider;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
-import com.google.firebase.database.DatabaseReference;
 
 import org.json.JSONObject;
 
@@ -19,21 +18,21 @@ import static com.edeqa.waytous.Constants.USER_NAME;
 /**
  * Created 1/28/18.
  */
+@SuppressWarnings("WeakerAccess")
 public class UserRequest {
 
     private DataProcessorConnection dataProcessorConnection;
-    private long timestamp;
+    private SignProvider signProvider;
+    private MyUser user;
     private String control;
     private String name;
     private String uid;
-    private int number;
     private String groupId;
     private String manufacturer;
     private String model;
     private String os;
-    private SignProvider signProvider;
-    private MyUser user;
-
+    private long timestamp;
+    private int number;
 
     public UserRequest(DataProcessorConnection dataProcessorConnection) {
         this.dataProcessorConnection = dataProcessorConnection;
@@ -184,15 +183,15 @@ public class UserRequest {
         return "UserRequest {" +
                 "address=" + getAddress() +
                 ", timestamp=" + timestamp +
-                ", control='" + control + '\'' +
+//                ", control='" + control + '\'' +
                 (name != null ? ", name='" + name + '\'' : "") +
                 ", uid='" + uid + '\'' +
                 ", number=" + number +
                 ", groupId='" + groupId + '\'' +
-                ", manufacturer='" + manufacturer + '\'' +
-                ", model='" + model + '\'' +
-                ", os='" + os + '\'' +
+//                ", manufacturer='" + manufacturer + '\'' +
+//                ", model='" + model + '\'' +
+//                ", os='" + os + '\'' +
                 ", signProvider=" + signProvider +
-                '}';
+                ", ...}";
     }
 }

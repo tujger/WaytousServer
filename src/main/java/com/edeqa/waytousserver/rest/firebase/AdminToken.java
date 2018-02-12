@@ -11,7 +11,7 @@ import java.util.Calendar;
 
 @SuppressWarnings("unused")
 /*
- * This method requests and returns accessToken for Firebase. Depending on current installation type
+ * This class requests and returns accessToken for Firebase. Depending on current installation type
  * it defines the properly request and performs it. Installation type can be defined in gradle.build.
  */
 public class AdminToken extends AbstractFirebaseAction<AdminToken, Object> {
@@ -45,7 +45,7 @@ public class AdminToken extends AbstractFirebaseAction<AdminToken, Object> {
             );
             scoped.refreshToken();
             token = scoped.getAccessToken();
-            Misc.log("AdminToken", "generated", token);
+            Misc.log("AdminToken", "generated", "[" + token + "]");
             timeCreated = now;
         }
 

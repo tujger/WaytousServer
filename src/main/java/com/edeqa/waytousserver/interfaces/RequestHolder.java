@@ -15,6 +15,4 @@ public interface RequestHolder extends EntityHolder {
     boolean perform(MyGroup token, MyUser user, JSONObject request, JSONObject result);
 
     boolean isSaveable();
-
-    boolean isPrivate();
 }

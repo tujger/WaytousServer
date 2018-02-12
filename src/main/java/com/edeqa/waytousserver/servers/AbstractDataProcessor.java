@@ -7,18 +7,12 @@ import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.UserRequests;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
-import com.edeqa.waytousserver.interfaces.FlagHolder;
-import com.edeqa.waytousserver.interfaces.RequestHolder;
 
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,11 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 abstract public class AbstractDataProcessor {
 
     final ConcurrentHashMap<String, MyGroup> groups;
-    ConcurrentHashMap<String, MyGroup> ipToToken;
-    ConcurrentHashMap<String, MyUser> ipToUser;
-//    ConcurrentHashMap<String, CheckReq> ipToCheck;
-    final UserRequests userRequests;
-    protected final HashMap<String, FlagHolder> flagHolders;
+    private final UserRequests userRequests;
     private boolean serverMode = false;
 
     abstract public void validateGroups();
@@ -77,34 +67,20 @@ abstract public class AbstractDataProcessor {
 
     public AbstractDataProcessor() {
         groups = new ConcurrentHashMap<>();
-//        ipToToken = new ConcurrentHashMap<>();
-//        ipToUser = new ConcurrentHashMap<>();
-//        ipToCheck = new ConcurrentHashMap<>();
         userRequests = new UserRequests();
 
-        LinkedList<String> classes;
-
-        flagHolders = new LinkedHashMap<>();
-        classes = getFlagsHoldersList();
-        if (classes != null) {
-            for (String s : classes) {
-                try {
-                    Class<FlagHolder> _tempClass = (Class<FlagHolder>) Class.forName("com.edeqa.waytousserver.holders.flag." + s);
-                    Constructor<FlagHolder> ctor = _tempClass.getDeclaredConstructor(AbstractDataProcessor.class);
-                    registerFlagHolder(ctor.newInstance(this));
-                } catch (Exception e) {
-                    System.out.println("Trying to instantiate " + s);
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    abstract public LinkedList<String> getFlagsHoldersList();
-
-    public void registerFlagHolder(FlagHolder holder) {
-        if (holder.getType() == null) return;
-        flagHolders.put(holder.getType(), holder);
+//        if (classes != null) {
+//            for (String s : classes) {
+//                try {
+//                    Class<FlagHolder> _tempClass = (Class<FlagHolder>) Class.forName("com.edeqa.waytousserver.holders.flag." + s);
+//                    Constructor<FlagHolder> ctor = _tempClass.getDeclaredConstructor(AbstractDataProcessor.class);
+//                    registerFlagHolder(ctor.newInstance(this));
+//                } catch (Exception e) {
+//                    System.out.println("Trying to instantiate " + s);
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
     }
 
     final public void onOpen(DataProcessorConnection conn, ClientHandshake handshake) {
@@ -117,25 +93,15 @@ abstract public class AbstractDataProcessor {
 
     public void onClose(DataProcessorConnection conn, int code, String reason, boolean remote) {
 //        System.out.println("WSS:on close:" + conn.getRemoteSocketAddress() + " disconnected:by client:"+remote+":"+code+":"+reason);
-//        this.sendToAll( conn + " has left the room!" );
-//        String ip = conn.getRemoteSocketAddress().toString();
         getUserRequests().remove(conn);
-//        if (ipToCheck.containsKey(ip)) ipToCheck.remove(ip);
-
     }
 
     abstract public void onMessage(final DataProcessorConnection conn, String message);
 
     final public void onError(DataProcessorConnection conn, Exception ex) {
         ex.printStackTrace();
-        if (conn != null && conn.getRemoteSocketAddress() != null) {
-            getUserRequests().remove(conn);
-//            String ip = conn.getRemoteSocketAddress().toString();
-//            if (ipToToken.containsKey(ip)) ipToToken.remove(ip);
-//            if (ipToUser.containsKey(ip)) ipToUser.remove(ip);
-//            if (ipToCheck.containsKey(ip)) ipToCheck.remove(ip);
-            // some errors like port binding failed may not be assignable to a specific websocket
-        }
+        getUserRequests().remove(conn);
+        // some errors like port binding failed may not be assignable to a specific websocket
     }
 
     public void onWebSocketPing(DataProcessorConnection conn, Framedata f) {
@@ -171,18 +137,6 @@ abstract public class AbstractDataProcessor {
     public ConcurrentHashMap<String, MyGroup> getGroups() {
         return groups;
     }
-
-//    public ConcurrentHashMap<String, MyGroup> getIpToToken() {
-//        return ipToToken;
-//    }
-//
-//    public ConcurrentHashMap<String, MyUser> getIpToUser() {
-//        return ipToUser;
-//    }
-//
-//    public ConcurrentHashMap<String, CheckReq> getIpToCheck() {
-//        return ipToCheck;
-//    }
 
     public boolean isServerMode() {
         return serverMode;

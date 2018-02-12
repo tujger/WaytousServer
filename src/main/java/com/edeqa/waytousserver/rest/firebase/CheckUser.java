@@ -3,9 +3,9 @@ package com.edeqa.waytousserver.rest.firebase;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
+import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.helpers.UserRequest;
-import com.edeqa.waytousserver.helpers.Utils;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +44,7 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         if (userRequest != null) {
-            Misc.log("CheckUser", "onMessage:checkFound:", userRequest.toString());
+            Misc.log("CheckUser", "has found:", userRequest);
 
             final DatabaseReference refGroup = refGroups.child(userRequest.getGroupId());
 
@@ -54,14 +54,14 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
                     if (dataSnapshot.getValue() != null) { //join as existing member
                         try {
                             if (userRequest.checkControl((String) ((HashMap) dataSnapshot.getValue()).get(REQUEST_UID), getHash())) {
-                                Misc.log("CheckUser", "onMessage:joinAsExisting:", userRequest.toString());
+                                Misc.log("CheckUser", "as existing:", userRequest);
 
                                 try {
                                     final String customToken = ((CustomToken) getFireBus().getHolder(CustomToken.TYPE)).fetchToken(userRequest.getUid());
 
                                     final Map<String, Object> update = new HashMap<>();
                                     update.put(Firebase.ACTIVE, true);
-                                    update.put(Firebase.COLOR, Utils.selectColor((int) userRequest.getNumber()));
+                                    update.put(Firebase.COLOR, MyUser.selectColor((int) userRequest.getNumber()));
                                     update.put(Firebase.CHANGED, new Date().getTime());
                                     if (userRequest.getName() != null && userRequest.getName().length() > 0) {
                                         update.put(USER_NAME, userRequest.getName());
@@ -80,7 +80,7 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
 
                                                 userRequest.send(json.toString());
 
-                                                Misc.log("CheckUser", "onMessage:joined:" + userRequest.getAddress(), "signToken: [provided]"/*+customToken*/);
+                                                Misc.log("CheckUser", "joined:", userRequest, "signToken: [provided]"/*+customToken*/);
 
                                                 ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
                                                         .setGroupId(userRequest.getGroupId())
@@ -93,27 +93,26 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
                                     }).setOnError(new Runnable1<Throwable>() {
                                         @Override
                                         public void call(Throwable error) {
-                                            Misc.err("CheckUser", "onMessage:joinNotAuthenticated:", userRequest.toString(), error);
+                                            Misc.err("CheckUser", "failed:", userRequest, "[" + error + "]");
                                             ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                                                     .setUserRequest(userRequest)
-                                                    .call(json, "Cannot join to group (code 19).");
+                                                    .call(json, "Cannot join group (code 19).");
                                         }
                                     }).call(null, userRequest.fetchUser());
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             } else {
-                                Misc.err("CheckUser", "onMessage:joinNotAuthenticated:", userRequest.toString(), "hash not equals");
+                                Misc.err("CheckUser", "hashes not equal:", userRequest);
                                 ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                                         .setUserRequest(userRequest)
-                                        .call(json, "Cannot join to group (user not authenticated).");
+                                        .call(json, "Cannot join group (user not authenticated).");
                             }
-
                         } catch (Exception e) {
-                            Misc.err("CheckUser", "onMessage:joinHashFailed:", userRequest.toString());
+                            Misc.err("CheckUser", "hash failed:", userRequest);
                             ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                                     .setUserRequest(userRequest)
-                                    .call(json, "Cannot join to group (user not authenticated).");
+                                    .call(json, "Cannot join group (user not authenticated).");
                             e.printStackTrace();
                         }
 
@@ -122,19 +121,19 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
                         .setOnSuccess(new Runnable() {
                             @Override
                             public void run() {
+                                Misc.log("CheckUser", "as new:", userRequest);
                                 ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
                                         .setGroupId(userRequest.getGroupId())
                                         .setAction(REQUEST_CHECK_USER)
                                         .call(null, userRequest.fetchUser());
-                                Misc.log("CheckUser", "onMessage:joinAsNew:" + userRequest.getAddress());
                             }
                         }).setOnError(new Runnable1<Throwable>() {
                             @Override
                             public void call(Throwable error) {
-                                Misc.err("CheckUser", "onMessage:joinAsNew:", userRequest.toString(), error);
+                                Misc.err("CheckUser", "failed:", userRequest, "[" + error + "]");
                                 ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                                         .setUserRequest(userRequest)
-                                        .call(json, "Cannot join to group (code 18).");
+                                        .call(json, "Cannot join group (code 18).");
                             }
                         }).call(null, userRequest.fetchUser());
                     }
@@ -146,13 +145,12 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
                         @Override
                         public void call(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.getValue() != null) {
-                                Misc.log("CheckUser", "onMessage:joinNumberFound:" + userRequest.getAddress(), "number:", dataSnapshot.getValue().toString());
-//                                            check.setNumber(Long.parseLong(dataSnapshot.getValue().toString()));
+                                Misc.log("CheckUser", "found number:", userRequest, "number:", dataSnapshot.getValue().toString());
                                 userRequest.setNumber(Integer.parseInt(dataSnapshot.getValue().toString()));
                                 userCheckTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE).child(dataSnapshot.getValue().toString())).start();
 
                             } else {
-                                Misc.err("CheckUser", "onMessage:joinNumberNotFound:" + userRequest.getAddress());
+                                Misc.err("CheckUser", "number not found:", userRequest);
                                 ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                                         .setUserRequest(userRequest)
                                         .call(json, "This group is expired. (005)");
@@ -174,12 +172,12 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
                                         }
                                     }
                                 }
-                                Misc.err("CheckUser", "onMessage:joinUserNotFound:", userRequest.getAddress());
+                                Misc.err("CheckUser", "user not found:", userRequest);
                                 ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                                         .setUserRequest(userRequest)
                                         .call(json, "This group is expired. (004)");
                             } else {
-                                Misc.err("CheckUser", "onMessage:joinEmptyGroup:", userRequest.getAddress());
+                                Misc.err("CheckUser", "empty group requested:", userRequest);
                                 ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                                         .setUserRequest(userRequest)
                                         .call(json, "This group is expired. (003)");
@@ -195,7 +193,7 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
                                 if (dataSnapshot.getValue() != null) {
                                     userCheckTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE).child("" + userRequest.getNumber())).start();
                                 } else {
-                                    Misc.err("CheckUser", "onMessage:joinUserNotExists:" + userRequest.getAddress());
+                                    Misc.err("CheckUser", "user not exists:", userRequest);
                                     ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                                             .setUserRequest(userRequest)
                                             .call(json, "This group is expired. (002)");

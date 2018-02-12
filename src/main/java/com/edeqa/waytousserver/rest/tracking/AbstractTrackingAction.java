@@ -16,11 +16,6 @@ public abstract class AbstractTrackingAction extends AbstractEntityHolder implem
     }
 
     @Override
-    public boolean isPrivate() {
-        return false;
-    }
-
-    @Override
     public List<String> events() {
         return null;
     }
@@ -42,7 +37,6 @@ public abstract class AbstractTrackingAction extends AbstractEntityHolder implem
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
                 "type=" + getType() +
-                ", private=" + isPrivate() +
                 ", saveable=" + isSaveable() +
                 '}';
     }

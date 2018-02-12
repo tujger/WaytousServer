@@ -1,13 +1,12 @@
 package com.edeqa.waytousserver.servers;
 
-import com.edeqa.eventbus.EntityHolder;
 import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
-import com.edeqa.waytousserver.helpers.CheckReq;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
+import com.edeqa.waytousserver.helpers.UserRequest;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 
@@ -16,11 +15,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -60,7 +55,8 @@ import static com.edeqa.waytous.Constants.USER_NAME;
 public class DataProcessorDedicated extends AbstractDataProcessor {
 
     public static final String VERSION = "v1";
-//    private HashMap<String,FlagHolder> flagHolders;
+    private Map<String, MyUser> ipToUser;
+    private Map<String, MyGroup> ipToToken;
 
     public DataProcessorDedicated() {
         super();
@@ -119,15 +115,6 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     @Override
     public void validateAccounts() {
 
-    }
-
-    @Override
-    public LinkedList<String> getFlagsHoldersList() {
-        LinkedList<String> classes = new LinkedList<>();
-        classes.add("PushFlagHolder");
-        classes.add("DeliveryFlagHolder");
-        classes.add("ProviderFlagHolder");
-        return classes;
     }
 
     @Override
@@ -248,17 +235,15 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                             }
                             if (user != null) {
                                 user.setChanged();
-                                CheckReq check = new CheckReq();
-                                check.setControl(Misc.getUnique());
-                                check.setToken(token);
-                                if (request.has(USER_NAME))
-                                    check.setName(request.getString(USER_NAME));
-
+                                UserRequest userRequest = new UserRequest(conn);
+                                userRequest.setGroupId(token.getId());
+                                if (request.has(USER_NAME)) {
+                                    userRequest.setName(request.getString(USER_NAME));
+                                }
                                 response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
-                                response.put(RESPONSE_CONTROL, check.getControl());
+                                response.put(RESPONSE_CONTROL, userRequest.getControl());
 //                                ipToCheck.put(ip, check);
                             } else {
-
                                 user = new MyUser(conn, request.getString(REQUEST_UID));
                                 user.setManufacturer(request.getString(REQUEST_MANUFACTURER));
                                 user.setModel(request.getString(REQUEST_MODEL));
@@ -288,12 +273,11 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                             }
 
                         } else {
-                            CheckReq check = new CheckReq();
-                            check.setControl(Misc.getUnique());
-                            check.setToken(token);
+                            UserRequest userRequest = new UserRequest(conn);
+                            userRequest.setGroupId(token.getId());
 
                             response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
-                            response.put(RESPONSE_CONTROL, check.getControl());
+                            response.put(RESPONSE_CONTROL, userRequest.getControl());
 //                            ipToCheck.put(ip, check);
                         }
                     } else {
@@ -392,13 +376,6 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
 
                         if(requestHolders.get(req).perform(token, user, request, o)) {
                             token.updateChanged();
-
-                            Set<String> keys = new LinkedHashSet<>(request.keySet());
-                            keys.retainAll(flagHolders.keySet());
-                            for(String flag: keys){
-                                flagHolders.get(flag).perform(token, user, request, o);
-                            }
-
 
                             if (request.has(RESPONSE_PRIVATE)) {
                                 o.put(RESPONSE_PRIVATE, request.getInt(RESPONSE_PRIVATE));

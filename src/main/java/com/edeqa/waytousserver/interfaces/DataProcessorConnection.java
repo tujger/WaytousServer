@@ -5,7 +5,6 @@ import java.net.InetSocketAddress;
 /**
  * Created 5/24/2017.
  */
-
 public interface DataProcessorConnection {
     boolean isOpen();
 

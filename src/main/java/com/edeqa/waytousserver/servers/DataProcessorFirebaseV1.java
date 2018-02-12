@@ -18,10 +18,10 @@ import com.edeqa.waytousserver.rest.firebase.DeleteAccount;
 import com.edeqa.waytousserver.rest.firebase.DeleteGroup;
 import com.edeqa.waytousserver.rest.firebase.GroupProperty;
 import com.edeqa.waytousserver.rest.firebase.JoinGroup;
+import com.edeqa.waytousserver.rest.firebase.NewGroup;
 import com.edeqa.waytousserver.rest.firebase.RegisterUser;
 import com.edeqa.waytousserver.rest.firebase.RejectUser;
 import com.edeqa.waytousserver.rest.firebase.RemoveUser;
-import com.edeqa.waytousserver.rest.firebase.NewGroup;
 import com.edeqa.waytousserver.rest.firebase.StatisticsAccount;
 import com.edeqa.waytousserver.rest.firebase.StatisticsGroup;
 import com.edeqa.waytousserver.rest.firebase.StatisticsMessage;
@@ -30,12 +30,9 @@ import com.edeqa.waytousserver.rest.firebase.UserProperty;
 import com.edeqa.waytousserver.rest.firebase.ValidateAccounts;
 import com.edeqa.waytousserver.rest.firebase.ValidateGroups;
 import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
-import com.edeqa.waytousserver.rest.tracking.ChangeName;
-import com.edeqa.waytousserver.rest.tracking.Leave;
 import com.edeqa.waytousserver.rest.tracking.Message;
 import com.edeqa.waytousserver.rest.tracking.SavedLocation;
 import com.edeqa.waytousserver.rest.tracking.Tracking;
-import com.edeqa.waytousserver.rest.tracking.WelcomeMessage;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.DatabaseReference;
@@ -52,7 +49,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 
 import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytous.Constants.REQUEST;
@@ -70,7 +66,6 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS_UPDATED;
 /**
  * Created 10/5/16.
  */
-
 @SuppressWarnings("HardCodedStringLiteral")
 public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
@@ -116,29 +111,26 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
             e.printStackTrace();
         }
 
+        AbstractFirebaseAction.setFirebaseReference(refRoot);
         EventBus<AbstractFirebaseAction> fireBus = getFireBus();
         fireBus.register(new AdminToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile()));
-        fireBus.register(new CreateAccount().setFirebaseReference(refRoot));
-        fireBus.register(new CreateGroup().setFirebaseReference(refRoot));
+        fireBus.register(new CreateAccount());
+        fireBus.register(new CreateGroup());
         fireBus.register(new CustomToken());
-        fireBus.register(new RegisterUser().setFirebaseReference(refRoot));
+        fireBus.register(new RegisterUser());
         fireBus.register(new RejectUser());
-        fireBus.register(new JoinGroup().setFirebaseReference(refRoot));
-        fireBus.register(new CheckUser().setFirebaseReference(refRoot));
-        fireBus.register(new NewGroup().setFirebaseReference(refRoot));
-        fireBus.register(new StatisticsAccount().setFirebaseReference(refRoot));
-        fireBus.register(new StatisticsGroup().setFirebaseReference(refRoot));
-        fireBus.register(new StatisticsMessage().setFirebaseReference(refRoot));
-        fireBus.register(new StatisticsUser().setFirebaseReference(refRoot));
+        fireBus.register(new JoinGroup());
+        fireBus.register(new CheckUser());
+        fireBus.register(new NewGroup());
+        fireBus.register(new StatisticsAccount());
+        fireBus.register(new StatisticsGroup());
+        fireBus.register(new StatisticsMessage());
+        fireBus.register(new StatisticsUser());
 
         EventBus<AbstractTrackingAction> trackingBus = getTrackingBus();
-//        trackingBus.register(new Admin());
-        trackingBus.register(new ChangeName());
-        trackingBus.register(new Leave());
         trackingBus.register(new Message());
         trackingBus.register(new SavedLocation());
         trackingBus.register(new Tracking());
-        trackingBus.register(new WelcomeMessage());
     }
 
     /**
@@ -202,19 +194,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     }
 
     @Override
-    public LinkedList<String> getFlagsHoldersList() {
-        return null;
-    }
-
-    /*   @Override
-        public ServerHandshakeBuilder onWebsocketHandshakeReceivedAsServer(WebSocket conn, Draft draft, ClientHandshake request) throws InvalidDataException {
-            Common.log("Main","HANDSHAKE:"+conn+":"+draft+":"+request);
-
-            return super.onWebsocketHandshakeReceivedAsServer(conn, draft, request);
-        }
-    */
-
-    @Override
     public void onMessage(final DataProcessorConnection conn, String message) {
         try {
             final JSONObject request, response = new JSONObject();
@@ -264,7 +243,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
                 } else {
                     ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                             .setUserRequest(new UserRequest(conn))
-                            .call(response,"Cannot create group (code 15).");
+                            .call(response,"Cannot create group (uid not defined).");
                 }
             } else if (REQUEST_JOIN_GROUP.equals(req)) {
                 if (request.has(REQUEST_TOKEN)) {
@@ -322,7 +301,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     @Override
     public void deleteGroup(final String groupId, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
         new DeleteGroup()
-                .setFirebaseReference(refRoot)
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
                 .call(null, groupId);
@@ -331,7 +309,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     @Override
     public void switchPropertyInGroup(final String groupId, final String property, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
         new GroupProperty()
-                .setFirebaseReference(refRoot)
                 .setGroupId(groupId)
                 .setKey(property)
                 .performSwitchBoolean()
@@ -343,7 +320,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     @Override
     public void modifyPropertyInGroup(final String groupId, final String property, final Serializable value, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
         new GroupProperty()
-                .setFirebaseReference(refRoot)
                 .setGroupId(groupId)
                 .setKey(property)
                 .setValue(value)
@@ -371,23 +347,12 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 //    @Override
 //    public void onWebsocketPing(WebSocket conn, Framedata f) {
 //        super.onWebsocketPing(conn, f);
-//
-//        try {
-//            String ip = conn.getRemoteSocketAddress().toString();
-//            if (ipToUser.containsKey(ip)) {
-//                ipToUser.get(ip).updateChanged();
-//            }
-////            System.out.println("PING:" + conn.getRemoteSocketAddress() + ":" + f);
-//        } catch ( Exception e) {
-//            e.printStackTrace();
-//        }
+//        System.out.println("PING:" + conn.getRemoteSocketAddress() + ":" + f);
 //    }
-
 
     @Override
     public void removeUserFromGroup(final String groupId, final Long userNumber, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
         new RemoveUser()
-                .setFirebaseReference(refRoot)
                 .setGroupId(groupId)
                 .setUserNumber(userNumber)
                 .setOnSuccess(onsuccess)
@@ -398,7 +363,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     @Override
     public void deleteAccount(final String accountId, Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
         new DeleteAccount()
-                .setFirebaseReference(refRoot)
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
                 .call(null, accountId);
@@ -406,9 +370,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
     @Override
     public void switchPropertyForUser(final String groupId, final Long userNumber, final String property, final Boolean value, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
-
         new UserProperty()
-                .setFirebaseReference(refRoot)
                 .setGroupId(groupId)
                 .setUserNumber(userNumber)
                 .setKey(property)
@@ -420,19 +382,16 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
     public void validateGroups() {
         new ValidateGroups()
-                .setFirebaseReference(refRoot)
                 .call(null, null);
     }
 
     @Override
     public void validateUsers() {
-
     }
 
     @Override
     public void validateAccounts() {
         new ValidateAccounts()
-                .setFirebaseReference(refRoot)
                 .call(null,null);
     }
 
@@ -446,7 +405,6 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         new CleanStatistics()
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
-                .setFirebaseReference(refRoot)
                 .call(null, null);
     }
 

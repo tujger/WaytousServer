@@ -5,9 +5,12 @@ import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Created 1/28/18.
+ */
 public class UserRequests {
 
-    Map<String, UserRequest> map;
+    private Map<String, UserRequest> map;
 
     public UserRequests() {
         map = new HashMap<>();
@@ -29,7 +32,8 @@ public class UserRequests {
     }
 
     public void remove(DataProcessorConnection dataProcessorConnection) {
-        if(map.containsKey(dataProcessorConnection.getRemoteSocketAddress().toString())) map.remove(dataProcessorConnection.getRemoteSocketAddress().toString());
-
+        if(dataProcessorConnection != null && map.containsKey(dataProcessorConnection.getRemoteSocketAddress().toString())) {
+            map.remove(dataProcessorConnection.getRemoteSocketAddress().toString());
+        }
     }
 }

@@ -95,7 +95,7 @@ public class NewGroup extends AbstractFirebaseAction<NewGroup, GroupRequest> {
                 .call(null, getUserRequest().fetchUser());
     }
 
-    public UserRequest getUserRequest() {
+    private UserRequest getUserRequest() {
         return userRequest;
     }
 

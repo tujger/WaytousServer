@@ -1,11 +1,9 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.MyUser;
-import com.edeqa.waytousserver.helpers.Utils;
 import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.firebase.database.DatabaseReference;
@@ -64,7 +62,7 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
             nodeNumber.setValue(user.getUid());
         }
 
-        user.setColor(Utils.selectColor(user.getNumber()));
+        user.setColor(MyUser.selectColor(user.getNumber()));
 
         final Map<String, Object> childUpdates = new HashMap<>();
 

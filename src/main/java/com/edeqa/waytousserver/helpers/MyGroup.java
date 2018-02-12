@@ -80,7 +80,7 @@ public class MyGroup {
         if(owner == null) setOwner(user.getUid());
 
         if(user.getColor() == 0){
-            user.setColor(Utils.selectColor(user.getNumber()));
+            user.setColor(MyUser.selectColor(user.getNumber()));
         }
 
         updateChanged();

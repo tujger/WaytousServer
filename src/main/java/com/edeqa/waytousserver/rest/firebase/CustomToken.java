@@ -16,7 +16,7 @@ import java.util.Map;
 
 @SuppressWarnings("unused")
 /*
- * This method requests and returns custom token for Firebase. Depending on current installation type
+ * This class requests and returns custom token for Firebase. Depending on current installation type
  * it defines the properly request and performs it. Installation type can be defined in gradle.build.
  */
 public class CustomToken extends AbstractFirebaseAction<CustomToken, String> {
