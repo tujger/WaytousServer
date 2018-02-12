@@ -1,13 +1,17 @@
 /**
- * Part of Waytous <http://waytous.net>
+ * Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
- *
- * Version 1.${SERVER_BUILD}
  */
 {
-  "title": "Waytous",
+  "about": "About",
+  "about_body": "\nAbout is coming soon.",
+  "api": "API",
+  "api_body": "\nOur API is coming soon.",
+  "close": "Close",
+  "contact": "Contact",
   "copyright": "Waytous &copy;2017-18 Edeqa",
-
+  "default": "Default",
+  "docs": "Docs",
   "drawer_primary": "Main",
   "drawer_summary": "Summary",
   "drawer_main": "Main",
@@ -18,16 +22,8 @@
   "drawer_settings": "Settings",
   "drawer_help": "Help",
   "drawer_last": "Information",
-
-  "about": "About",
-  "about_body": "\nAbout is coming soon.",
-  "api": "API",
-  "api_body": "\nOur API is coming soon.",
-  "close": "Close",
-  "contact": "Contact",
-  "default": "Default",
-  "docs": "Docs",
   "english": "English",
+  "error": "Error",
   "feedback": "Feedback",
   "feedback_body": "\nFeedback is coming soon.",
   "help": "Help",
@@ -37,6 +33,7 @@
   "legal_information": "Legal information",
   "loading": "Loading...",
   "ok": "OK",
+  "page_not_found": "Page not found",
   "privacy": "Privacy",
   "privacy_policy": "Privacy policy",
   "russian": "Russian",
@@ -47,5 +44,6 @@
   "support_body": "\nSupport is coming soon.",
   "terms": "Terms",
   "terms_of_service": "Terms of Service",
+  "title": "Waytous",
   "track": "Track"
 }

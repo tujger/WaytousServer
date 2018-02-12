@@ -1,11 +1,13 @@
 /**
- * Part of Waytous <http://waytous.net>
+ * Waytous <http://waytous.net>
  * Copyright (C) Edeqa LLC <http://www.edeqa.com>
  *
- * Version 1.${SERVER_BUILD}
  * Created 1/20/17.
  */
 {
+  "about": "О сайте",
+  "contact": "Контакт",
+  "docs": "Документация",
   "drawer_primary": "Главная",
   "drawer_summary": "Сводка",
   "drawer_main": "Главная",
@@ -16,16 +18,14 @@
   "drawer_settings": "Параметры",
   "drawer_help": "Справка",
   "drawer_last": "Информация",
-
-  "about": "О сайте",
-  "contact": "Контакт",
-  "docs": "Документация",
+  "error": "Ошибка",
   "feedback": "Обратная связь",
   "help": "Справка",
   "home": "Главная",
   "info": "Информация",
   "legal_information": "Информация",
   "loading": "Загружается...",
+  "page_not_found": "Страница не найдена",
   "privacy": "Конфиденциальность",
   "privacy_policy": "Политика конфиденциальности",
   "signing_in": "Подключаемся...",
