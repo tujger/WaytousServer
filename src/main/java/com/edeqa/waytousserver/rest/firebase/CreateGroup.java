@@ -7,6 +7,9 @@ import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutureCallback;
+import com.google.api.core.ApiFutures;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
@@ -60,7 +63,34 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
                                     + Firebase.CREATED, ServerValue.TIMESTAMP);
                             childUpdates.put(Firebase.OPTIONS + "/"
                                     + Firebase.CHANGED, ServerValue.TIMESTAMP);
-                            refGroups.child(group.getId()).updateChildren(childUpdates);
+
+                            ApiFuture<Void> task = refGroups.child(group.getId()).updateChildrenAsync(childUpdates);
+                            ApiFutures.addCallback(task, new ApiFutureCallback<Void>() {
+                                @Override
+                                public void onFailure(Throwable t) {
+                                    json.put(STATUS, STATUS_ERROR);
+                                    json.put(Rest.GROUP_ID, group.getId());
+                                    json.put(MESSAGE, "Group " + group.getId() + " already exists.");
+                                    Misc.err("CreateGroup", group.getId(), t.getMessage());
+                                    if (getOnError() != null) getOnError().call(json);
+                                    ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
+                                            .setAction(AbstractDataProcessor.GroupAction.GROUP_REJECTED)
+                                            .setMessage(t.getMessage())
+                                            .call(null, group);
+                                }
+
+                                @Override
+                                public void onSuccess(Void result) {
+                                    json.put(STATUS, STATUS_SUCCESS);
+                                    json.put(Rest.GROUP_ID, group.getId());
+                                    getOnSuccess().call(json);
+                                    ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
+                                            .setAction(group.isPersistent() ? AbstractDataProcessor.GroupAction.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.GroupAction.GROUP_CREATED_TEMPORARY)
+                                            .call(null, group);
+                                }
+                            });
+
+                            /*refGroups.child(group.getId()).updateChildren(childUpdates);
 
                             json.put(STATUS, STATUS_SUCCESS);
                             json.put(Rest.GROUP_ID, group.getId());
@@ -69,7 +99,7 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
 
                             ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(group.isPersistent() ? AbstractDataProcessor.GroupAction.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.GroupAction.GROUP_CREATED_TEMPORARY)
-                                    .call(null, group);
+                                    .call(null, group);*/
                         } else {
                             json.put(STATUS, STATUS_ERROR);
                             json.put(Rest.GROUP_ID, group.getId());

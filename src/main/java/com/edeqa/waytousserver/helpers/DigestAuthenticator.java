@@ -1,8 +1,5 @@
 package com.edeqa.waytousserver.helpers;
 
-/**
- * Created 5/16/2017.
- */
 
 import com.edeqa.helpers.Misc;
 import com.google.common.net.HttpHeaders;
@@ -21,13 +18,15 @@ import java.util.Set;
 
 import static com.edeqa.waytous.Constants.OPTIONS;
 
-
+/*
+ * Created 5/16/2017.
+ */
 @SuppressWarnings("restriction")
 public class DigestAuthenticator extends Authenticator {
 
     private static final byte COL = ':';
 
-    private final Set<String> givenNonces = new HashSet<String>();
+    private final Set<String> givenNonces = new HashSet<>();
     private final String realm;
 
     private final SecureRandom random = new SecureRandom();
@@ -43,7 +42,7 @@ public class DigestAuthenticator extends Authenticator {
             String auth = httpExchange.getRequestHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
             if(auth == null || "Digest logout".equals(auth)) {
-                Misc.log("DA", httpExchange.getRemoteAddress(), "Logout/" + context.getPrincipal().getName());
+                Misc.log("DigestAuthenticator", "[" + httpExchange.getRemoteAddress().getAddress().getHostAddress() + "]", "Logout/" + context.getPrincipal().getName());
 
                 httpExchange.setAttribute("digest-context", null);
                 Headers responseHeaders = httpExchange.getResponseHeaders();
@@ -84,7 +83,7 @@ public class DigestAuthenticator extends Authenticator {
         }
         if (useNonce(challengeParameters.get("nonce"))) {
             context.principal = principal;
-            Misc.log("DA", httpExchange.getRemoteAddress(), "Login/" + principal.getName());
+            Misc.log("DigestAuthenticator", "[" + httpExchange.getRemoteAddress().getAddress().getHostAddress() + "]", "Login/" + principal.getName());
             return new Authenticator.Success(principal);
         }
         Headers responseHeaders = httpExchange.getResponseHeaders();
@@ -150,14 +149,14 @@ public class DigestAuthenticator extends Authenticator {
         StringBuilder buf = new StringBuilder();
         buf.append("realm=\"").append(realm).append("\",");
         buf.append("nonce=\"").append(createNonce()).append("\"");
-        if (stale == true) {
+        if (stale) {
             buf.append(",stale=true");
         }
         return buf.toString();
     }
 
     private Map<String, String> parseDigestChallenge(String challenge) {
-        Map<String, String> ret = new HashMap<String, String>();
+        Map<String, String> ret = new HashMap<>();
         HeaderParser parser = new HeaderParser(challenge);
         while (parser.hasNext()) {
             HeaderParser.Parameter next = parser.next();
@@ -165,7 +164,6 @@ public class DigestAuthenticator extends Authenticator {
         }
         return ret;
     }
-
 
     private class HeaderParser {
 
@@ -185,7 +183,7 @@ public class DigestAuthenticator extends Authenticator {
         }
 
         boolean hasNext() {
-            if (seenNext == true) {
+            if (seenNext) {
                 return true;
             }
             if (pos >= length) {
@@ -195,7 +193,6 @@ public class DigestAuthenticator extends Authenticator {
             if (nextEquals < 0 || nextEquals >= length - 1) {
                 return false;
             }
-
             seenNext = true;
             return true;
         }
@@ -294,14 +291,13 @@ public class DigestAuthenticator extends Authenticator {
         }
     }
 
-
     static final byte[] HEX_BYTES = new byte[]
             {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     public static String toHexString(byte[] digest) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < digest.length; ++i) {
-            sb.append(Integer.toHexString((digest[i] & 0xFF) | 0x100).substring(1,3));
+        StringBuilder sb = new StringBuilder();
+        for (byte aDigest : digest) {
+            sb.append(Integer.toHexString((aDigest & 0xFF) | 0x100).substring(1, 3));
         }
         return sb.toString();
     }
@@ -310,15 +306,12 @@ public class DigestAuthenticator extends Authenticator {
         if (toBeConverted == null) {
             throw new NullPointerException("Parameter to be converted can not be null");
         }
-
         byte[] converted = new byte[toBeConverted.length * 2];
         for (int i = 0; i < toBeConverted.length; i++) {
             byte b = toBeConverted[i];
             converted[i * 2] = HEX_BYTES[b >> 4 & 0x0F];
             converted[i * 2 + 1] = HEX_BYTES[b & 0x0F];
         }
-
         return converted;
     }
-
 }

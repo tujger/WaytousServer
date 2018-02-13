@@ -1,6 +1,5 @@
 package com.edeqa.waytousserver.rest.firebase;
 
-import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
@@ -17,7 +16,6 @@ import com.google.firebase.tasks.OnSuccessListener;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.edeqa.waytous.Constants.REQUEST_UID;

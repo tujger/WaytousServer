@@ -2,9 +2,8 @@ package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
+import com.google.api.core.ApiFuture;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.tasks.Task;
-import com.google.firebase.tasks.Tasks;
 
 import org.json.JSONObject;
 
@@ -49,12 +48,17 @@ public class CustomToken extends AbstractFirebaseAction<CustomToken, String> {
                 try {
                     Class tempClass = Class.forName("com.google.firebase.auth.FirebaseAuth");
                     //noinspection unchecked
-                    Method method = tempClass.getDeclaredMethod("createCustomToken", String.class);
+//                    Method method = tempClass.getDeclaredMethod("createCustomToken", String.class);
                     //noinspection unchecked
-                    Task<String> taskCreateToken = (Task<String>) method.invoke(FirebaseAuth.getInstance(), uid);
-                    Tasks.await(taskCreateToken);
+//                    Task<String> taskCreateToken = (Task<String>) method.invoke(FirebaseAuth.getInstance(), uid);
+//                    Tasks.await(taskCreateToken);
+
+                    //noinspection unchecked
+                    Method method2 = tempClass.getDeclaredMethod("createCustomTokenAsync", String.class);
+                    //noinspection unchecked
+                    ApiFuture<String> api = (ApiFuture<String>) method2.invoke(FirebaseAuth.getInstance(), uid);
                     HashMap<String, Serializable> token = new HashMap<>();
-                    token.put("token", taskCreateToken.getResult());
+                    token.put("token", api.get() /*taskCreateToken.getResult()*/);
                     token.put("timestamp", now);
                     tokens.put(uid, token);
                 } catch (Exception e) {

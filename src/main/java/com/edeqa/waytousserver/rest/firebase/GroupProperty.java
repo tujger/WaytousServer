@@ -5,6 +5,9 @@ import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutureCallback;
+import com.google.api.core.ApiFutures;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.internal.NonNull;
@@ -14,6 +17,7 @@ import com.google.firebase.tasks.OnSuccessListener;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("unused")
 public class GroupProperty extends AbstractFirebaseAction<GroupProperty, Object> {
@@ -50,6 +54,7 @@ public class GroupProperty extends AbstractFirebaseAction<GroupProperty, Object>
                 getOnError().call(res);
             }
         };
+
         new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(getGroupId()).child(Firebase.OPTIONS).child(getKey()))
                 .addOnCompleteListener(new Runnable1<DataSnapshot>() {
                     @Override
@@ -64,52 +69,20 @@ public class GroupProperty extends AbstractFirebaseAction<GroupProperty, Object>
                                 setValue(!(Boolean)oldValue);
                             }
 
-                            refGroups.child(getGroupId()).child(Firebase.OPTIONS).child(getKey()).setValue(getValue()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    res.put(STATUS, STATUS_SUCCESS);
-                                    getOnSuccess().call(res);
-                                }
-                            }).addOnFailureListener(onFailureListener);;
+                            ApiFuture<Void> task = refGroups.child(getGroupId()).child(Firebase.OPTIONS).child(getKey()).setValueAsync(getValue());
+                            try {
+                                task.get();
+                                res.put(STATUS, STATUS_SUCCESS);
+                                getOnSuccess().call(res);
+                            } catch (Exception e) {
+                                onFailureListener.onFailure(e);
+                            }
                         } else {
                             onFailureListener.onFailure(new Exception("value not defined"));
                         }
                     }
                 }).start();
 
-//        final JSONObject res = new JSONObject();
-//        res.put(Rest.PROPERTY, property);
-//
-//        final OnFailureListener onFailureListener = new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                res.put(STATUS, STATUS_ERROR);
-//                res.put(MESSAGE, e.getMessage());
-//                Misc.log(LOG, "switchPropertyInGroup:", property, e.getMessage());
-//                onerror.onEvent(res);
-//            }
-//        };
-//
-//        new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(getGroupId()).child(Firebase.OPTIONS).child(getKey()))
-//                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-//                    @Override
-//                    public void onEvent(DataSnapshot dataSnapshot) {
-//                        Boolean value = (Boolean) dataSnapshot.getValue();
-//                        if (value != null) {
-//                            res.put(Rest.OLD_VALUE, value);
-//                            value = !value;
-//                            refGroups.child(groupId).child(Firebase.OPTIONS).child(property).setValue(value).addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                @Override
-//                                public void onSuccess(Void aVoid) {
-//                                    res.put(STATUS, STATUS_SUCCESS);
-//                                    onsuccess.onEvent(res);
-//                                }
-//                            }).addOnFailureListener(onFailureListener);
-//                        } else {
-//                            onFailureListener.onFailure(new Exception("Null value."));
-//                        }
-//                    }
-//                }).start();
 
     }
 

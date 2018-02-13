@@ -1,10 +1,13 @@
 package com.edeqa.waytousserver.servers;
 
 import com.edeqa.edequate.helpers.RequestWrapper;
+import com.edeqa.edequate.rest.Content;
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Mime;
+import com.edeqa.helpers.MimeType;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
+import com.edeqa.waytousserver.rest.InitialData;
 import com.edeqa.waytousserver.rest.admin.AccountDelete;
 import com.edeqa.waytousserver.rest.admin.AccountsClean;
 import com.edeqa.waytousserver.rest.admin.GroupCreate;
@@ -82,22 +85,13 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
             Misc.log("Admin", "[" + ipRemote + "]", requestWrapper.getRequestURI().getPath());
 
             try {
-                String customToken = Common.getInstance().getDataProcessor("v1").createCustomToken("Viewer");
-                if(adminToken == null) {
-                    adminToken = new AdminToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile());
-                }
+//                String customToken = Common.getInstance().getDataProcessor("v1").createCustomToken("Viewer");
+//                if(adminToken == null) {
+//                    adminToken = new AdminToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile());
+//                }
 
                 final JSONObject o = new JSONObject();
-                o.put("version", SERVER_BUILD);
-                o.put("HTTP_PORT", OPTIONS.getHttpPortMasked());
-                o.put("HTTPS_PORT", OPTIONS.getHttpsPortMasked());
-                o.put("WS_FB_PORT", OPTIONS.getWsPortFirebase());
-                o.put("WSS_FB_PORT", OPTIONS.getWssPortFirebase());
-                o.put("WS_PORT", OPTIONS.getWsPortDedicated());
-                o.put("WSS_PORT", OPTIONS.getWssPortDedicated());
-                o.put("firebase_config", OPTIONS.getFirebaseConfig());
-                o.put("sign", customToken);
-                o.put("access", adminToken.fetchToken());
+                new InitialData().setAdmin(true).call(o, requestWrapper);
 
                 HtmlGenerator html = new HtmlGenerator();
                 html.getHead().add(TITLE).with("Admin");
@@ -107,7 +101,11 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
                 html.getHead().add(SCRIPT).with("firebase.initializeApp(data.firebase_config);");
                 html.getHead().add(SCRIPT).with(SRC, "/js/admin/Main.js");
 
-                requestWrapper.sendResult(200, Mime.TEXT_HTML, html.build().getBytes());
+                new Content()
+                        .setMimeType(new MimeType().setMime(Mime.TEXT_HTML).setText(true).setGzip(true))
+                        .setContent(html.build())
+                        .setResultCode(200)
+                        .call(null, requestWrapper);
 
             } catch (Exception e) {
                 e.printStackTrace();

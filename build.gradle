@@ -40,7 +40,7 @@ apply plugin: 'js'
 apply plugin: 'java'
 apply plugin: 'war'
 
-if (installationType.compareTo('google-appengine') == 0) {
+if (installationType == 'google-appengine') {
     apply plugin: 'org.akhikhl.gretty'
     apply plugin: 'com.google.cloud.tools.appengine-standard'
 //    apply plugin: 'appengine'
@@ -79,7 +79,7 @@ dependencies {
     compile project(':EventBus')
 
 // gae servlet rows
-    if (installationType.compareTo('google-appengine') == 0) {
+    if (installationType == 'google-appengine') {
 //        appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.54'
         compile 'com.google.appengine:appengine-api-1.0-sdk:1.9.60'
         compile 'com.google.firebase:firebase-server-sdk:3.0.3'
@@ -151,7 +151,7 @@ war {
     print "Final stage...\n"
 }
 
-if (installationType.compareTo('google-appengine') == 0) {
+if (installationType == 'google-appengine') {
     appengine {
 //        downloadSdk = true
 //        appcfg {

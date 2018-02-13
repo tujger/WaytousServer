@@ -1,9 +1,7 @@
 package com.edeqa.waytousserver.helpers;
 
-import com.edeqa.helpers.Misc;
 import com.edeqa.waytous.SignProvider;
 import com.edeqa.waytousserver.interfaces.DataProcessorConnection;
-import com.google.firebase.database.IgnoreExtraProperties;
 
 import org.json.JSONObject;
 
@@ -11,18 +9,12 @@ import java.beans.Transient;
 import java.util.Date;
 import java.util.Random;
 
-import static com.edeqa.waytous.Constants.REQUEST_MANUFACTURER;
-import static com.edeqa.waytous.Constants.REQUEST_MODEL;
-import static com.edeqa.waytous.Constants.REQUEST_OS;
-import static com.edeqa.waytous.Constants.REQUEST_SIGN_PROVIDER;
 import static com.edeqa.waytous.Constants.REQUEST_TIMESTAMP;
-import static com.edeqa.waytous.Constants.REQUEST_UID;
 import static com.edeqa.waytous.Constants.USER_ACCURACY;
 import static com.edeqa.waytous.Constants.USER_ALTITUDE;
 import static com.edeqa.waytous.Constants.USER_BEARING;
 import static com.edeqa.waytous.Constants.USER_LATITUDE;
 import static com.edeqa.waytous.Constants.USER_LONGITUDE;
-import static com.edeqa.waytous.Constants.USER_NAME;
 import static com.edeqa.waytous.Constants.USER_PROVIDER;
 import static com.edeqa.waytous.Constants.USER_SPEED;
 
@@ -34,7 +26,7 @@ import static com.edeqa.waytous.Constants.USER_SPEED;
 public class MyUser {
     transient public DataProcessorConnection connection;
     public String name;
-    public long created;
+    public final long created;
     public long changed;
     public int color;
     public int number;
@@ -53,11 +45,11 @@ public class MyUser {
         created = new Date().getTime();
         setChanged();
 
-        newControl();
-        calculateHash();
+//        newControl();
+//        calculateHash();
     }
 
-    public MyUser(DataProcessorConnection conn, JSONObject request) {
+    /*public MyUser(DataProcessorConnection conn, JSONObject request) {
         this(conn, request.getString(REQUEST_UID));
 
         if (request.has(REQUEST_MANUFACTURER)) setManufacturer(request.getString(REQUEST_MANUFACTURER));
@@ -66,7 +58,7 @@ public class MyUser {
         if (request.has(REQUEST_SIGN_PROVIDER)) setSignProvider(SignProvider.parse(request.getString(REQUEST_SIGN_PROVIDER)));
         if (request.has(USER_NAME)) setName(request.getString(USER_NAME));
 
-    }
+    }*/
 
     public static int selectColor(int number) {
         Random randomGenerator = new Random();
@@ -88,22 +80,21 @@ public class MyUser {
         return 0xFF000000 | red | green | blue; //0xFF000000 for 100% Alpha. Bitwise OR everything together.
     }
 
-    public String calculateHash() {
-        return calculateHash(control);
-    }
-
-    public String calculateHash(String control) {
-        return Misc.getEncryptedHash(getControl() + ":" + getUid());
-    }
-
-    public String getControl() {
-        return control;
-    }
-
-    public String newControl() {
-        control = Misc.getUnique();
-        return control;
-    }
+//    public String calculateHash() {
+//        return calculateHash(getControl());
+//    }
+//
+//    public String calculateHash(String control) {
+//        return Misc.getEncryptedHash(control + ":" + getUid());
+//    }
+//
+//    public String getControl() {
+//        return control;
+//    }
+//
+//    public void newControl() {
+//        control = Misc.getUnique();
+//    }
 
     public String getModel() {
         return model;
@@ -123,9 +114,9 @@ public class MyUser {
         return connection.getRemoteSocketAddress().toString();
     }
 
-    public void setConnection(DataProcessorConnection connection) {
-        this.connection = connection;
-    }
+//    public void setConnection(DataProcessorConnection connection) {
+//        this.connection = connection;
+//    }
 
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
@@ -147,7 +138,7 @@ public class MyUser {
         res += ", address:" + connection.getRemoteSocketAddress();
         res += ", created:" + getCreated() + "/" + new Date(getCreated()).toString();
         res += ", changed:" + getChanged() + "/" + new Date(getChanged()).toString();
-        res += ", control:" + getControl();
+//        res += ", control:" + getControl();
         if (name != null) res += ", name:" + name;
         if (model != null) res += ", model:" + model;
         if (manufacturer != null) res += ", manufacturer:" + manufacturer;
@@ -165,16 +156,12 @@ public class MyUser {
         this.name = name;
     }
 
-    public void send(JSONObject o) {
-        send(o.toString());
-    }
+//    public void send(JSONObject o) {
+//        send(o.toString());
+//    }
 
     public void send(String text) {
         connection.send(text);
-    }
-
-    public void disconnect() {
-        connection.close();
     }
 
     public void addPosition(JSONObject message) {
@@ -228,10 +215,6 @@ public class MyUser {
 
     public Long getChanged() {
         return changed;
-    }
-
-    public void setChanged(Long changed) {
-        this.changed = changed;
     }
 
     public void setChanged() {

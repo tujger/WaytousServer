@@ -5,29 +5,26 @@
     <title>Waytous</title>
     <link rel="icon" href="/icons/favicon.ico">
     <style>
-        @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
         @import url("/css/edequate.css");
-        @import url("/css/edequate-horizontal.css");
+        @import url("/css/tracking.css");
     </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="icon" type="image/png" sizes="192x192" href="/icons/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="194x194" href="/icons/favicon-194x194.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=no">
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
     <script async src="/js/Edequate.js"
             data-variable="u"
-            data-callback="u.require('/js/main/Main', u).then(function(main){main.start({type:'main'})})"
+            data-callback="
+                u.getJSON('/rest/initial').then(function(json){
+                    data = json;
+                    (function checkVersion(){var l=localStorage;if(l){var w='waytous:version';var d=data.version;var i=parseInt(l[w]||0);if(i<d){l[w]=d;console.warn('Forced reloading because of version '+d+' is newer than '+i);window.location.reload(true);}}})();
+
+                    firebase.initializeApp(data.firebase_config);
+                    u.require('/js/tracking/Main', u).then(function(main){
+                        main.start({type:'tracking'});
+                    });
+                });
+            "
             data-export-constants="true">
     </script>
-    <script async src="https://www.google-analytics.com/analytics.js"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments)};
-        gtag('js', new Date());
-        gtag('config', 'UA-104070698-1');
-    </script>
-    <script src="https://www.googletagmanager.com/gtag/js?id=UA-104070698-1"></script>
-
 </head>
 <body>
 <div id="loading-dialog" class="modal shadow progress-dialog" tabindex="-1">

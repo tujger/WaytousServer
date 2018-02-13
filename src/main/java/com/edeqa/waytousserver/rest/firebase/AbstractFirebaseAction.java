@@ -10,8 +10,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
-import org.json.JSONObject;
-
 @SuppressWarnings("unused")
 abstract public class AbstractFirebaseAction<U extends AbstractAction, T> extends AbstractAction<T> {
 

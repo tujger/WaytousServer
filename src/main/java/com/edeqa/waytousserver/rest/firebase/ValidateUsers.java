@@ -45,7 +45,7 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
                         }
                         if (users == null) {
                             Misc.log("ValidateUsers", "corrupted group found, removing:", groupRequest.getId());
-                            refGroups.child(groupRequest.getId()).removeValue();
+                            refGroups.child(groupRequest.getId()).removeValueAsync();
                             ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
                                     .setMessage("corrupted group removing: " + groupRequest.getId())
@@ -75,12 +75,12 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
                                 Long current = new Date().getTime();
                                 if (changed == null) {
                                     Misc.log("ValidateUsers", "--- user", i, "is NULL", (name != null ? "[" + name + "]" : ""));
-                                    dataSnapshot.getRef().child("" + i).child(Firebase.ACTIVE).setValue(false);
+                                    dataSnapshot.getRef().child("" + i).child(Firebase.ACTIVE).setValueAsync(false);
                                 } else if (current - groupRequest.getDelayToDismiss() * 1000 > changed) {
                                     Misc.log("ValidateUsers", "--- user", i, "is EXPIRED for", ((current - groupRequest.getDelayToDismiss() * 1000 - changed) / 1000), "seconds", (name != null ? "[" + name + "]" : ""));
-                                    dataSnapshot.getRef().child("" + i).child(Firebase.ACTIVE).setValue(false);
+                                    dataSnapshot.getRef().child("" + i).child(Firebase.ACTIVE).setValueAsync(false);
                                 } else {
-                                    dataSnapshot.getRef().getParent().getParent().child(Firebase.OPTIONS).child(Firebase.CHANGED).setValue(changed);
+                                    dataSnapshot.getRef().getParent().getParent().child(Firebase.OPTIONS).child(Firebase.CHANGED).setValueAsync(changed);
                                     Misc.log("ValidateUsers", "--- user", i, "is OK", (name != null ? "[" + name + "]" : ""));
                                 }
                             }
@@ -89,7 +89,7 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
                         if (!groupRequest.isPersistent() && groupRequest.getTimeToLiveIfEmpty() > 0 && new Date().getTime() - groupChanged > groupRequest.getTimeToLiveIfEmpty() * 60 * 1000) {
                             String info = groupRequest.getId() + " expired for " + ((new Date().getTime() - groupChanged - groupRequest.getTimeToLiveIfEmpty() * 60 * 1000) / 1000 / 60) + " minutes";
                             Misc.log("ValidateUsers", "removes group", info);
-                            refGroups.child(groupRequest.getId()).removeValue();
+                            refGroups.child(groupRequest.getId()).removeValueAsync();
                             ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
                                     .setMessage(info)

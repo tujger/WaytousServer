@@ -2,9 +2,6 @@ package com.edeqa.waytousserver.rest.tracking;
 
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
-import com.edeqa.waytousserver.interfaces.RequestHolder;
-import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
-import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 
 import org.json.JSONObject;
 

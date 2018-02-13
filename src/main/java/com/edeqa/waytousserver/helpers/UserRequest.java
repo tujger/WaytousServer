@@ -191,7 +191,7 @@ public class UserRequest {
 //                ", manufacturer='" + manufacturer + '\'' +
 //                ", model='" + model + '\'' +
 //                ", os='" + os + '\'' +
-                ", signProvider=" + signProvider +
+                ((signProvider != null && !SignProvider.NONE.equals(signProvider)) ? ", signProvider=" + signProvider : "")+
                 ", ...}";
     }
 }

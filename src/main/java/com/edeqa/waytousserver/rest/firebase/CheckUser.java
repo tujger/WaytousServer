@@ -61,7 +61,7 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
 
                                     final Map<String, Object> update = new HashMap<>();
                                     update.put(Firebase.ACTIVE, true);
-                                    update.put(Firebase.COLOR, MyUser.selectColor((int) userRequest.getNumber()));
+                                    update.put(Firebase.COLOR, MyUser.selectColor(userRequest.getNumber()));
                                     update.put(Firebase.CHANGED, new Date().getTime());
                                     if (userRequest.getName() != null && userRequest.getName().length() > 0) {
                                         update.put(USER_NAME, userRequest.getName());

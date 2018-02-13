@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class UserRequests {
 
-    private Map<String, UserRequest> map;
+    private final Map<String, UserRequest> map;
 
     public UserRequests() {
         map = new HashMap<>();

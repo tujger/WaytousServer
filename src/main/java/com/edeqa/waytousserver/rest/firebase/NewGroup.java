@@ -40,6 +40,7 @@ public class NewGroup extends AbstractFirebaseAction<NewGroup, GroupRequest> {
                         onresult[0] = new Runnable1<JSONObject>() {
                             @Override
                             public void call(JSONObject json) {
+
                                 ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
                                         .setGroupId(groupRequest.getId())
                                         .setAction(REQUEST_NEW_GROUP)
@@ -87,6 +88,7 @@ public class NewGroup extends AbstractFirebaseAction<NewGroup, GroupRequest> {
                 .setOnError(new Runnable1<Throwable>() {
                     @Override
                     public void call(Throwable error) {
+                        System.out.println("FAULT");
                         ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                                 .setUserRequest(getUserRequest())
                                 .call(json,"Cannot create group (code 16).");

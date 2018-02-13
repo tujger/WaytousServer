@@ -41,7 +41,6 @@ import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 /**
  * Created 10/2/16.
  */
-
 @SuppressWarnings("HardCodedStringLiteral")
 public class WaytousServer {
 
@@ -73,9 +72,6 @@ public class WaytousServer {
         }
         keyStore.load(new FileInputStream(kf), storePassword.toCharArray());
 
-        Misc.log(LOG, "Server \t\t\t\t| Port \t| Path");
-        Misc.log(LOG, "----------------------------------------------");
-
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509"/*KeyManagerFactory.getDefaultAlgorithm()*/);
         kmf.init(keyStore, storePassword.toCharArray());
         TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509"/*KeyManagerFactory.getDefaultAlgorithm()*/);
@@ -88,14 +84,11 @@ public class WaytousServer {
         try {
             server.bind(new InetSocketAddress(OPTIONS.getHttpPort()), 0);
         } catch(BindException e) {
-            Misc.err(LOG, "Port in use: " + OPTIONS.getHttpPort() + ", server exits.");
+            Misc.err(LOG, "detects port in use: " + OPTIONS.getHttpPort() + ", server exits.");
             System.exit(1);
         }
 
         RedirectHandler redirectServer = new RedirectHandler();
-        Misc.log(LOG, "Redirect HTTP\t\t| " + OPTIONS.getHttpPort() + "\t| " + "/" + (OPTIONS.getHttpPort() == OPTIONS.getHttpPortMasked() ? " (masked by "+ OPTIONS.getHttpPortMasked() +")" : ""));
-        server.createContext("/", redirectServer);
-
         MainServletHandler mainServer = new MainServletHandler();
         RestServletHandler restServer = new RestServletHandler();
         TrackingServletHandler trackingServer = new TrackingServletHandler();
@@ -105,14 +98,14 @@ public class WaytousServer {
         try {
             sslServer.bind(new InetSocketAddress(OPTIONS.getHttpsPort()), 0);
         } catch(BindException e) {
-            Misc.err(LOG, "Secured port in use: " + OPTIONS.getHttpsPort() + ", server exits.");
+            Misc.err(LOG, "detects secured port in use:", OPTIONS.getHttpsPort() + ", server exits.");
             System.exit(1);
         }
         HttpsServer sslAdminServer = HttpsServer.create();
         try {
             sslAdminServer.bind(new InetSocketAddress(OPTIONS.getHttpsAdminPort()), 0);
         } catch(BindException e) {
-            Misc.err(LOG, "Admin port in use: " + OPTIONS.getHttpsAdminPort() + ", server exits.");
+            Misc.err(LOG, "detects admin port in use:", OPTIONS.getHttpsAdminPort() + ", server exits.");
             System.exit(1);
         }
 
@@ -150,7 +143,7 @@ public class WaytousServer {
                     params.setSSLParameters(defaultSSLParameters);
 
                 } catch (Exception ex) {
-                    Misc.log(LOG, "Failed to configure SSL server");
+                    Misc.log(LOG, "is failing to configure SSL server");
                 }
             }
         });
@@ -170,30 +163,29 @@ public class WaytousServer {
                     params.setSSLParameters(defaultSSLParameters);
 
                 } catch (Exception ex) {
-                    Misc.log(LOG,"Failed to configure admin SSL server");
+                    Misc.log(LOG, "is failing to configure admin SSL server");
                 }
             }
         });
 
+        server.createContext("/", redirectServer);
+        Misc.log(LOG, "starting", RedirectHandler.class.getSimpleName(), "on HTTP:", OPTIONS.getHttpPort(), (OPTIONS.getHttpPort() == OPTIONS.getHttpPortMasked() ? "(masked by "+ OPTIONS.getHttpPortMasked() +")" : ""), "[/]");
+
         sslServer.createContext("/", mainServer);
-        Misc.log(LOG, "Main HTTPS\t\t\t| " + OPTIONS.getHttpsPort() + "\t| /, /*" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
+        Misc.log(LOG, "starting", MainServletHandler.class.getSimpleName(), "on HTTPS:", OPTIONS.getHttpsPort(), (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? "(masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""), "[/, /*]");
 
         sslServer.createContext("/track/", trackingServer);
-        Misc.log(LOG, "Tracking HTTPS\t\t| " + OPTIONS.getHttpsPort() + "\t| /track/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
-
+        sslServer.createContext("/track2/", trackingServer);
         sslServer.createContext("/group/", trackingServer);
-        Misc.log(LOG, "Tracking HTTPS\t\t| " + OPTIONS.getHttpsPort() + "\t| /group/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
+        Misc.log(LOG, "starting", TrackingServletHandler.class.getSimpleName(), "on HTTPS:", OPTIONS.getHttpsPort(), (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? "(masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""), "[/track/, /group/]");
 
         sslServer.createContext("/rest/", restServer);
-        Misc.log(LOG, "Rest HTTPS\t\t\t| " + OPTIONS.getHttpsPort() + "\t| /rest/" + (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? " (masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""));
+        Misc.log(LOG, "starting", RestServletHandler.class.getSimpleName(), "on HTTPS:", OPTIONS.getHttpsPort(), (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? "(masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""), "[/rest/]");
 
         sslAdminServer.createContext("/rest/", restServer);
         sslAdminServer.createContext("/", adminServer).setAuthenticator(new DigestAuthenticator("waytous"));
         sslAdminServer.createContext("/admin/logout", adminServer);
-        Misc.log(LOG, "Admin HTTPS\t\t\t| " + OPTIONS.getHttpsAdminPort() + "\t| " + "/");
-
-//        sslAdminServer.createContext("/", mainServer);
-//        Common.log(LOG, "Main HTTPS\t\t\t| " + OPTIONS.getHttpsAdminPort() + "\t| /, /*");
+        Misc.log(LOG, "starting", AdminServletHandler.class.getSimpleName(), "on HTTPS:", OPTIONS.getHttpsAdminPort(), "[/]");
 
         ExecutorService executor = Executors.newCachedThreadPool();
         server.setExecutor(executor);
@@ -204,6 +196,9 @@ public class WaytousServer {
         sslServer.start();
         sslAdminServer.start();
 
+        Misc.log(LOG, "handles web link", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort());
+        Misc.log(LOG, "handles track link", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort() + "/track/");
+        Misc.log(LOG, "handles admin link", "https://" + InetAddress.getLocalHost().getHostAddress() + ":" + OPTIONS.getHttpsAdminPort() + "/admin/");
 
         /*
          * Websocket part
@@ -219,9 +214,9 @@ public class WaytousServer {
             public void run() {
                 try {
                     WebSocketImpl.DEBUG = false;
-                    Misc.log(LOG, "WS FB\t\t\t\t| " + OPTIONS.getWsPortFirebase() + "\t|");
+                    Misc.log(LOG, "starting", MyWsServer.class.getSimpleName(), "with", DataProcessorFirebaseV1.class.getSimpleName(), "on port", OPTIONS.getWsPortFirebase());
                     wsServer.start();
-                    Misc.log(LOG, "WSS FB\t\t\t\t| " + OPTIONS.getWssPortFirebase() + "\t|");
+                    Misc.log(LOG, "starting", MyWsServer.class.getSimpleName(), "with", DataProcessorFirebaseV1.class.getSimpleName(), "on secured port", OPTIONS.getWssPortFirebase());
                     wssServer.start();
 
                         /*BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
@@ -240,36 +235,5 @@ public class WaytousServer {
                 }
             }
         }.start();
-
-        Misc.log("Web\t\t", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort());
-        Misc.log("Track\t", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort() + "/track/");
-        Misc.log("Admin\t", "https://" + InetAddress.getLocalHost().getHostAddress() + ":" + OPTIONS.getHttpsAdminPort() + "/admin/");
-
     }
-
-
-    static class User {
-
-        public String username;
-        public String email;
-
-        public User() {
-            // Default constructor required for calls to DataSnapshot.getValue(User.class)
-        }
-
-        public User(String username, String email) {
-            this.username = username;
-            this.email = email;
-        }
-
-
-        @Override
-        public String toString() {
-            return "User{" +
-                    "username='" + username + '\'' +
-                    ", email='" + email + '\'' +
-                    '}';
-        }
-    }
-
 }

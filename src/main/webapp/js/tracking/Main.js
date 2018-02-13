@@ -6,7 +6,7 @@
  */
 
 function Main() {
-    var firebaseVersion = "4.6.2";
+    var firebaseVersion = "4.9.0";
     var users;
     var me;
     var main = window.Waytous = this;
@@ -54,19 +54,13 @@ function Main() {
 
         window.addEventListener("load", function() { window. scrollTo(0, 0); });
 //        document.addEventListener("touchmove", function(e) { e.preventDefault() });
-
-        //addConsoleLayer(main.right);
-
     };
 
     function initializeHeader() {
 
         document.head
             .place(HTML.META, {name:"viewport", content:"width=device-width, initial-scale=1, maximum-scale=5, user-scalable=no"})
-            .place(HTML.STYLE, {innerHTML: "@import url('/css/edequate.css');@import url('/css/tracking.css');@import url('https://fonts.googleapis.com/icon?family=Material+Icons');"})
-//            .place(HTML.LINK, {rel:HTML.STYLESHEET, href:"/css/edequate.css"})
-//            .place(HTML.LINK, {rel:HTML.STYLESHEET, href:"/css/tracking.css"})
-//            .place(HTML.LINK, {rel:HTML.STYLESHEET, href:"https://fonts.googleapis.com/icon?family=Material+Icons"})
+            .place(HTML.STYLE, {innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/edequate.css');@import url('/css/tracking.css');"})
             .place(HTML.LINK, {rel:"apple-touch-icon", href:"/icons/apple-touch-icon.png"})
             .place(HTML.LINK, {rel:"apple-touch-icon", sizes:"60x60", href:"/icons/apple-touch-icon-60x60.png"})
             .place(HTML.LINK, {rel:"apple-touch-icon", sizes:"76x76", href:"/icons/apple-touch-icon-76x76.png"})

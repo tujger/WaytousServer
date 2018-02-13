@@ -32,7 +32,6 @@ import static com.edeqa.helpers.HtmlGenerator.TYPE;
 import static com.edeqa.helpers.HtmlGenerator.WIDTH;
 import static com.edeqa.waytous.Constants.OPTIONS;
 
-
 /**
  * Created 1/23/2017.
  */

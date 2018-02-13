@@ -6,10 +6,11 @@ import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutureCallback;
+import com.google.api.core.ApiFutures;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.tasks.Task;
-import com.google.firebase.tasks.Tasks;
 
 import org.json.JSONObject;
 
@@ -46,8 +47,7 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
     }
 
     @Override
-    public void call(final JSONObject json, MyUser user) {
-
+    public void call(final JSONObject json, final MyUser user) {
         if(getGroupId() == null && getAction() == null) {
             Misc.err("RegisterUser", new Exception("Not enough data"));
         }
@@ -78,7 +78,7 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
 
         childUpdates.put(Firebase.USERS + "/" + Firebase.PUBLIC + "/" + user.getNumber(), userPublicData);
 
-        List<String> records = new ArrayList<>();
+        final List<String> records = new ArrayList<>();
         for (Map.Entry<String,AbstractTrackingAction> entry : getTrackingBus().getHolders().entrySet()) {
             if (entry.getValue().isSaveable()) {
                 childUpdates.put(Firebase.PUBLIC + "/" + entry.getKey() + "/" + user.getNumber(), "{}");
@@ -96,51 +96,56 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
 
         childUpdates.put(Firebase.USERS + "/" + Firebase.PRIVATE + "/" + user.getNumber(), userPrivateData);
 
-        final Task<Void> updateUserTask = refGroup.updateChildren(childUpdates);
-        try {
-            Tasks.await(updateUserTask);
+        ApiFuture<Void> updateUserTask = refGroup.updateChildrenAsync(childUpdates);
+        ApiFutures.addCallback(updateUserTask, new ApiFutureCallback<Void>() {
+            @Override
+            public void onFailure(Throwable e) {
+                e.printStackTrace();
+                if(getOnError() != null) getOnError().call(response);
 
-            Misc.log("RegisterUser", getAction(), "with number", user.getNumber(), "[" + user.getUid() + "]", "in group", getGroupId(), records);
-
-            if(getAction() != null) {
-                String customToken = ((CustomToken) getFireBus().getHolder(CustomToken.TYPE)).fetchToken(user.getUid());
-                response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
-                if (!REQUEST_JOIN_GROUP.equals(getAction()) && !REQUEST_CHECK_USER.equals(action)) {
-                    response.put(RESPONSE_TOKEN, getGroupId());
+                response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
+                response.put(RESPONSE_MESSAGE, "Cannot register (code 18).");
+                Misc.err("RegisterUser", user, "not registered in group:", getGroupId(), "error:", e);
+                if (getOnError() != null) {
+                    getOnError().call(response);
+                } else {
+                    user.connection.send(response.toString());
+                    user.connection.close();
                 }
-                response.put(RESPONSE_NUMBER, user.getNumber());
-                response.put(RESPONSE_SIGN, customToken);
+                ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
+                        .setGroupId(getGroupId())
+                        .setAction(AbstractDataProcessor.UserAction.USER_REJECTED)
+                        .setMessage(e.getMessage())
+                        .call(null, user.getUid());
+                clear();
             }
-            if(getOnSuccess() != null) {
-                getOnSuccess().call(response);
-            } else {
-                user.connection.send(response.toString());
-                user.connection.close();
-            }
-            ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
-                    .setGroupId(getGroupId())
-                    .setAction(AbstractDataProcessor.UserAction.USER_JOINED)
-                    .call(null, user.getUid());
-        } catch (Exception e) {
-            e.printStackTrace();
-            if(getOnError() != null) getOnError().call(response);
 
-            response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
-            response.put(RESPONSE_MESSAGE, "Cannot register (code 18).");
-            Misc.err("RegisterUser", user, "not registered in group:", getGroupId(), "error:", e);
-            if (getOnError() != null) {
-                getOnError().call(response);
-            } else {
-                user.connection.send(response.toString());
-                user.connection.close();
+            @Override
+            public void onSuccess(Void result) {
+                Misc.log("RegisterUser", getAction(), "with number", user.getNumber(), "[" + user.getUid() + "]", "in group", getGroupId(), records);
+
+                if(getAction() != null) {
+                    String customToken = ((CustomToken) getFireBus().getHolder(CustomToken.TYPE)).fetchToken(user.getUid());
+                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
+                    if (!REQUEST_JOIN_GROUP.equals(getAction()) && !REQUEST_CHECK_USER.equals(action)) {
+                        response.put(RESPONSE_TOKEN, getGroupId());
+                    }
+                    response.put(RESPONSE_NUMBER, user.getNumber());
+                    response.put(RESPONSE_SIGN, customToken);
+                }
+                if(getOnSuccess() != null) {
+                    getOnSuccess().call(response);
+                } else {
+                    user.connection.send(response.toString());
+                    user.connection.close();
+                }
+                ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
+                        .setGroupId(getGroupId())
+                        .setAction(AbstractDataProcessor.UserAction.USER_JOINED)
+                        .call(null, user.getUid());
+                clear();
             }
-            ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
-                    .setGroupId(getGroupId())
-                    .setAction(AbstractDataProcessor.UserAction.USER_REJECTED)
-                    .setMessage(e.getMessage())
-                    .call(null, user.getUid());
-        }
-        clear();
+        });
     }
 
     public void clear() {

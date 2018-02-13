@@ -2,8 +2,6 @@ package com.edeqa.waytousserver.helpers;
 
 import com.edeqa.helpers.Misc;
 
-import java.util.Date;
-
 public class GroupRequest {
 
     private String id;
@@ -118,5 +116,19 @@ public class GroupRequest {
     public GroupRequest setWelcomeMessage(String welcomeMessage) {
         this.welcomeMessage = welcomeMessage;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupRequest{" +
+                "id='" + id + '\'' +
+                ", requiresPassword=" + requiresPassword +
+                (requiresPassword ? ", password='" + password + '\'' : "") +
+                (welcomeMessage != null ? ", welcomeMessage='" + welcomeMessage + '\'' : "") +
+                ", persistent=" + persistent +
+                (persistent ? ", timeToLiveIfEmpty=" + timeToLiveIfEmpty : "") +
+                ", dismissInactive=" + dismissInactive +
+                (dismissInactive ? ", delayToDismiss=" + delayToDismiss : "") +
+                '}';
     }
 }

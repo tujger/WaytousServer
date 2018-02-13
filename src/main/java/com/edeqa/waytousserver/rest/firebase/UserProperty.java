@@ -5,6 +5,7 @@ import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
+import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.internal.NonNull;
@@ -14,6 +15,7 @@ import com.google.firebase.tasks.OnSuccessListener;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("unused")
 public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
@@ -66,13 +68,14 @@ public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
                                 setValue(!(Boolean)oldValue);
                             }
 
-                            refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.PUBLIC).child(String.valueOf(getUserNumber())).child(getKey()).setValue(getValue()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    res.put(STATUS, STATUS_SUCCESS);
-                                    getOnSuccess().call(res);
-                                }
-                            }).addOnFailureListener(onFailureListener);
+                            ApiFuture<Void> task = refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.PUBLIC).child(String.valueOf(getUserNumber())).child(getKey()).setValueAsync(getValue());
+                            try {
+                                task.get();
+                                res.put(STATUS, STATUS_SUCCESS);
+                                getOnSuccess().call(res);
+                            } catch (Exception e) {
+                                onFailureListener.onFailure(e);
+                            }
                         } else {
                             onFailureListener.onFailure(new Exception("Invalid property."));
                         }

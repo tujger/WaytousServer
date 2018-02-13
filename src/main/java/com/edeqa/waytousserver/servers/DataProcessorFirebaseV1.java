@@ -43,7 +43,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -70,7 +69,7 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS_UPDATED;
 public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
 
     public static final String VERSION = "v1";
-    private static String LOG = "DPF1";
+    private static final String LOG = "DPF1";
     private DatabaseReference refRoot;
 
     public DataProcessorFirebaseV1() throws IOException {
@@ -143,7 +142,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
      * <p>
      * Stand-alone server mode extends com.sun.net.httpserver.HttpServer.
      */
-    private FirebaseOptions createFirebaseOptions() throws FileNotFoundException {
+    private FirebaseOptions createFirebaseOptions() {
 
         FirebaseOptions.Builder builder = new FirebaseOptions.Builder();
 

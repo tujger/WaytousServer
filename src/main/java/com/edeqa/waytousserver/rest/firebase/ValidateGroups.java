@@ -30,7 +30,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
 
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
-        getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_GROUPS_CLEANED).setValue(ServerValue.TIMESTAMP);
+        getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_GROUPS_CLEANED).setValueAsync(ServerValue.TIMESTAMP);
 
         Misc.log("ValidateGroups", "is performing");
         new TaskSingleValueEventFor<JSONObject>(refGroups.child("/"))
@@ -61,7 +61,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
 
                                         if (value == null) {
                                             Misc.log("ValidateGroups", "removes lost group");
-                                            refGroups.child(group).removeValue();
+                                            refGroups.child(group).removeValueAsync();
                                             ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                                                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
                                                     .setMessage("lost group removing: " + group)

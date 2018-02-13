@@ -70,7 +70,7 @@ public class LogsLog extends AbstractAction<RequestWrapper> {
             @Override
             public void run() {
                 try {
-                    String currentLine = null;
+                    String currentLine;
                     long counter = 0;
 
                     pw.println();

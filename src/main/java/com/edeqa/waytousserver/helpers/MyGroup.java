@@ -108,17 +108,15 @@ public class MyGroup {
         this.owner = owner;
     }
 
-    public String toString(){
-//        String res = "";
-        StringBuffer buf = new StringBuffer();
-        buf.append("{ Group id:"+id+", owner:"+owner+", created:"+new Date(created));
 
-        for (Map.Entry<String,MyUser> x: users.entrySet()) {
-            buf.append(", \n\tuser: ["+x.getValue().toString()+"]");
-        }
-        buf.append("}");
-
-        return buf.toString();
+    @Override
+    public String toString() {
+        return "MyGroup{" +
+                "users=" + users +
+                ", created=" + created +
+                ", id='" + id + '\'' +
+                ", owner='" + owner + '\'' +
+                '}';
     }
 
     public Long getChanged() {
@@ -231,14 +229,14 @@ public class MyGroup {
                 notificationSection.put("title", json.getString("title"));
 
 //                String body = "";
-                StringBuffer buf = new StringBuffer();
+                StringBuilder buf = new StringBuilder();
                 if(json.has("body")) {
                     try{
                         LinkedHashMap<String,String> map = (LinkedHashMap<String, String>) json.get("body");
                         if(map != null && map.size()>0) {
                             for(Map.Entry<String,String> entry: map.entrySet()){
                                 String value = entry.getValue().replace("[\\r\\n]+", "\\n");
-                                buf.append(entry.getKey() +": "+ value);
+                                buf.append(entry.getKey()).append(": ").append(value);
                             }
                         }
                     } catch(Exception e){
@@ -261,7 +259,7 @@ public class MyGroup {
             URL url = new URL("https://android.googleapis.com/gcm/send");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Resource-Type", "application/json");
             conn.setRequestProperty("Authorization", "key=" + OPTIONS.getFirebaseApiKey());
             conn.setRequestMethod("POST");
 

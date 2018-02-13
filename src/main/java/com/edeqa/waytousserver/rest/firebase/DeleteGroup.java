@@ -6,6 +6,7 @@ import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
+import com.google.api.core.ApiFuture;
 import com.google.firebase.tasks.Task;
 import com.google.firebase.tasks.Tasks;
 
@@ -31,10 +32,9 @@ public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
         json = new JSONObject();
 
         json.put(Rest.GROUP_ID, groupId);
-
-        Task<Void> deleteGroupTask = getFirebaseReference().child(Firebase.SECTION_GROUPS).child(groupId).removeValue();
+        ApiFuture<Void> deleteGroupTask = getFirebaseReference().child(Firebase.SECTION_GROUPS).child(groupId).removeValueAsync();
         try {
-            Tasks.await(deleteGroupTask);
+            deleteGroupTask.get();
             json.put(STATUS, STATUS_SUCCESS);
             Misc.log("DeleteGroup", groupId);
             getOnSuccess().call(json);
@@ -42,7 +42,7 @@ public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
             ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                     .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
                     .call(null, new GroupRequest(groupId));
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             json.put(STATUS, STATUS_ERROR);
             json.put(MESSAGE, e.getMessage());

@@ -1,9 +1,10 @@
 package com.edeqa.waytousserver.servers;
 
-import com.edeqa.edequate.rest.Content;
+import com.edeqa.edequate.rest.Resource;
 import com.edeqa.edequate.rest.Files;
 import com.edeqa.edequate.rest.Locales;
 import com.edeqa.waytousserver.helpers.Common;
+import com.edeqa.waytousserver.rest.InitialData;
 import com.edeqa.waytousserver.rest.Join;
 import com.edeqa.waytousserver.rest.TosAgreement;
 import com.edeqa.waytousserver.rest.Version;
@@ -26,8 +27,9 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
     public RestServletHandler() {
         super();
         useDefault();
-        registerAction(new Content().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("content").setActionName("/rest/content"));
-        registerAction(new Content().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources").setActionName("/rest/resources"));
+        registerAction(new Resource().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("content").setActionName("/rest/content"));
+        registerAction(new Resource().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources").setActionName("/rest/resources"));
+        registerAction(new InitialData());
         registerAction(new Join());
         registerAction(new Locales().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources").setActionName("/rest/locales"));
         registerAction(new TosAgreement());

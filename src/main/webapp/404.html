@@ -1,3 +1,4 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,8 +9,10 @@
         @import url("/css/edequate-horizontal.css");
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=no">
-    <script async src="/js/Edequate.js" variable="u"
-            callback="u.require('/js/main/Main', u).then(function(main){main.start({info:'Page not found.'})})" exportConstants="true"></script>
+    <script async src="/js/Edequate.js"
+            data-variable="u"
+            data-callback="u.require('/js/main/Main', u).then(function(main){main.start({info:'Page not found.'})})"
+            data-export-constants="true"></script>
 </head>
 <body>
 <div id="loading-dialog" class="modal shadow progress-dialog" tabindex="-1">
