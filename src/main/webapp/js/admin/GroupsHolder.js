@@ -4,16 +4,26 @@
  *
  * Created 1/19/17.
  */
-function Groups() {
+function GroupsHolder(main) {
 
-    var title = "Groups";
+    this.category = DRAWER.SECTION_PRIMARY;
+    this.type = "groups";
+    this.title = "Groups";
+    this.menu = "Groups";
+    this.icon = "group";
 
     var tableSummary;
     var tableGroups;
     var div;
     var ref;
+    var database;
+    var utils = main.startOptions.utils;
 
-    var renderInterface = function() {
+    this.start = function() {
+        database = firebase.database();
+    }
+
+    this.resume = function() {
 
         div = document.getElementsByClassName("layout")[0];
         u.clear(div);
@@ -118,8 +128,8 @@ function Groups() {
         }, div);
 
         u.create("br", null, div);
+        updateData();
     };
-
 
     function updateData(){
 
@@ -139,12 +149,12 @@ function Groups() {
 
                 var groupId = x;
                 resign = false;
-
                 tableGroups.groups[groupId] = tableGroups.add({
                     id: groupId,
                     className: "highlight",
                     onclick: function(){
-                        WTU.switchTo("/admin/group/"+this.id);
+           main;
+             WTU.switchTo("/admin/group/"+this.id);
                         return false;
                     },
                     cells: [
@@ -294,17 +304,4 @@ function Groups() {
 
     }
 
-    return {
-        start: function() {
-            renderInterface();
-            updateData();
-        },
-        page: "groups",
-        icon: "group",
-        title: title,
-        menu: title,
-        move:true
-    }
 }
-
-

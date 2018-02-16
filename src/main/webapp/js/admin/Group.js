@@ -136,7 +136,7 @@ function Group() {
                     ],
                     positive: {
                         label: u.create(HTML.SPAN, "OK"),
-                        dismiss: false,
+//                        dismiss: false,
                         onclick: function(items) {
                             var newValue = items[1].value;
                             if(tableSummary.timeToLiveNode.lastChild.innerHTML !== newValue) {

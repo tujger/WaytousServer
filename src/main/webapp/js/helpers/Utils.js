@@ -1294,7 +1294,6 @@ function Utils(main) {
         return (new Date().getTime() - timestamp) / 1000 <= 120;
     }
 
-
     return {
         showAlert: showAlert,
         brightness: brightness,

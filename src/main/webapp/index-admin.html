@@ -1,0 +1,65 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Waytous</title>
+    <link rel="icon" href="/icons/favicon.ico">
+    <style>
+        @import url("/css/edequate.css");
+        @import url("/css/admin.css");
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=no">
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+    <script async src="/js/Edequate.js"
+            data-callback="
+                u.getJSON('/admin/rest/initial').then(function(json){
+                    data = json;
+                    (function checkVersion(){var l=localStorage;if(l){var w='waytous:version';var d=data.version;var i=parseInt(l[w]||0);if(i<d){l[w]=d;console.warn('Forced reloading because of version '+d+' is newer than '+i);window.location.reload(true);}}})();
+
+                    firebase.initializeApp(data.firebase_config);
+                    u.require2(['/js/main/Main','/js/helpers/Utils','/js/helpers/Constants'], u).then(function(main, utils){
+                        main.start({type:'admin', utils:utils});
+                    });
+                });
+            "
+            data-variable="u"
+            data-export-constants="true">
+    </script>
+    <!--
+                    u.getJSON('/admin/rest/initial').then(function(json){
+                        data = json;
+                        (function checkVersion(){var l=localStorage;if(l){var w='waytous:version';var d=data.version;var i=parseInt(l[w]||0);if(i<d){l[w]=d;console.warn('Forced reloading because of version '+d+' is newer than '+i);window.location.reload(true);}}})();
+
+                        firebase.initializeApp(data.firebase_config);
+                        u.require('/js/helpers/Constants').then(function(){
+                            u.require('/js/main/Main', u).then(function(main){
+                                main.start({type:'admin'});
+                            });
+                        });
+                    });
+    -->
+</head>
+<body>
+<div id="loading-dialog" class="modal shadow progress-dialog" tabindex="-1">
+    <div class="dialog-items">
+        <div class="dialog-item progress-dialog-circle"></div>
+        <div class="dialog-item progress-dialog-title">Loading...</div>
+        <div id="loading-dialog-progress" class="dialog-item progress-dialog-title"></div>
+    </div>
+</div>
+<noscript>
+    <link type="text/css" rel="stylesheet" href="/css/noscript.css">
+    <div class="header">
+        <img src="/images/logo.svg" width="24" height="24">
+        Waytous
+    </div>
+    <div class="text">
+        This site requires to allow Javascript. Please enable Javascript in your browser and try again or use
+        other browser that supports Javascript.
+    </div>
+    <div class="copyright">
+        <a href="http://www.waytous.net" class="link">Waytous</a> &copy;2017-18 <a href="http://www.edeqa.com" class="link">Edeqa</a>
+    </div>
+</noscript>
+</body>
+</html>

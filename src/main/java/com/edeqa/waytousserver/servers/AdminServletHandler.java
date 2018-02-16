@@ -1,13 +1,14 @@
 package com.edeqa.waytousserver.servers;
 
 import com.edeqa.edequate.helpers.RequestWrapper;
+import com.edeqa.edequate.helpers.WebPath;
 import com.edeqa.edequate.rest.Content;
+import com.edeqa.edequate.rest.Files;
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Mime;
 import com.edeqa.helpers.MimeType;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.rest.InitialData;
 import com.edeqa.waytousserver.rest.admin.AccountDelete;
 import com.edeqa.waytousserver.rest.admin.AccountsClean;
 import com.edeqa.waytousserver.rest.admin.GroupCreate;
@@ -15,6 +16,7 @@ import com.edeqa.waytousserver.rest.admin.GroupDelete;
 import com.edeqa.waytousserver.rest.admin.GroupModify;
 import com.edeqa.waytousserver.rest.admin.GroupSwitch;
 import com.edeqa.waytousserver.rest.admin.GroupsClean;
+import com.edeqa.waytousserver.rest.admin.InitialData;
 import com.edeqa.waytousserver.rest.admin.LogsClear;
 import com.edeqa.waytousserver.rest.admin.LogsLog;
 import com.edeqa.waytousserver.rest.admin.StatClean;
@@ -25,6 +27,8 @@ import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
@@ -63,6 +67,13 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
         registerAction(new StatClean());
         registerAction(new UserRemove());
         registerAction(new UserSwitch());
+        registerAction(new InitialData());
+        registerAction(new Files().setFilenameFilter(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.contains("Holder");
+            }
+        }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("js/admin").setActionName("/rest/admin"));
     }
 
     /**
@@ -79,6 +90,9 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
     public void perform(final RequestWrapper requestWrapper) throws IOException {
         if(requestWrapper.getRequestURI().getPath().startsWith("/admin/rest/")) {
             super.perform(requestWrapper);
+        } else if(requestWrapper.getRequestURI().getPath().startsWith("/admin/")) {
+            new Content().setMimeType(new MimeType().setMime(Mime.TEXT_HTML).setText(true)).setWebPath(new WebPath(OPTIONS.getWebRootDirectory(), "index-admin.html")).setResultCode(200).call(null, requestWrapper);
+            return;
         } else if (requestWrapper.getRequestURI().getPath().startsWith("/admin")) {
 
             String ipRemote = requestWrapper.getRemoteAddress().getAddress().getHostAddress();
