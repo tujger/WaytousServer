@@ -4,16 +4,26 @@
  *
  * Created 4/20/17.
  */
-function Chat() {
+function ChatHolder(main) {
 
-    var title = "Chat";
+    this.category = DRAWER.SECTION_EXPLORE;
+    this.type = "chat";
+    this.title = "Chat";
+    this.menu = "Chat";
+    this.icon = "chat";
+    this.preventState = true;
+
     var dialogChat;
     var ref;
     var ons = [];
     var bound;
     var maximumMessagesLoad = 1000;
 
-    function start() {
+    this.start = function() {
+        database = firebase.database();
+    }
+
+    this.resume = function() {
         dialogChat = dialogChat || u.dialog({
             title: {
                 label: "Mixed chat",
@@ -87,13 +97,6 @@ function Chat() {
         }
     }
 
-    return {
-        start: start,
-        page: "chat",
-        icon: "chat",
-        title: title,
-        menu: title
-    }
 }
 
 

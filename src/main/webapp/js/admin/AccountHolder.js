@@ -4,15 +4,17 @@
  *
  * Created 10/12/17.
  */
-function Account() {
+function AccountHolder(main) {
 
-    var title = "Account";
+     this.type = "account";
+     this.title = "Account";
 
     var div;
     var buttons;
     var accountId;
     var tableSummary;
     var tableHistory;
+    var utils = main.arguments.utils;
 
     var modes = {
         ra: "Add remote value",
@@ -40,7 +42,16 @@ function Account() {
         "group": "Group"
     };
 
-    var renderInterface = function() {
+    this.start = function() {
+         database = firebase.database();
+         div = document.getElementsByClassName("layout")[0];
+     }
+
+    this.resume = function(account_id) {
+        accountId = account_id;
+        window.history.pushState({}, null, "/admin/account/" + accountId);
+
+         u.clear(div);
 
         u.create(HTML.H2, "Summary", div);
         u.create(HTML.H4, "No real-time updating", div);
@@ -137,7 +148,7 @@ function Account() {
 
     function updateSummary() {
         if(!accountId) {
-            WTU.switchTo("/admin/accounts/");
+            main.turn("accounts");
             return;
         }
 
@@ -232,7 +243,7 @@ function Account() {
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
             u.post("/admin/rest/account/delete", JSON.stringify({uid:accountId}))
                 .then(function(){
-                    WTU.switchTo("/admin/accounts");
+                    main.turn("accounts");
                     u.toast.show("Account " + accountId + " was deleted.");
                 }).catch(function(code,xhr){
                     console.warn("Resign because of",code,xhr);
@@ -247,24 +258,4 @@ function Account() {
         }}, buttons);
     }
 
-    return {
-        start: function(request) {
-            if(request) {
-                this.page = request[2] + "/" + request[3];
-                accountId = request[3];
-            } else {
-                var parts = window.location.pathname.split("/");
-                this.page = parts[2] + "/" + parts[3];
-                accountId = parts[3];
-            }
-            div = document.getElementsByClassName("layout")[0];
-            u.clear(div);
-
-            renderInterface();
-        },
-        page: "account",
-        icon: "person",
-        title: title,
-        move:true
-    }
 }

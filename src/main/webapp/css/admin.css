@@ -103,6 +103,7 @@ div.question {
     margin-bottom: 5px;
     flex: 1 1 auto;
     max-width: 100%;
+    width: 100%;
 }
 .table-placeholder {
     /*border: none;*/
@@ -119,12 +120,12 @@ div.question {
     cursor: default;
 }
 .logs-body {
-    display: block;
+    height: 100%;
+    /*display: block;
     overflow-y: auto;
     overflow-x: hidden;
-    height: 100%;
     white-space: pre-wrap;
-    font-size: 12px;
+    font-size: 12px;*/
     font-family: monospace;
 }
 .buttons {
@@ -246,7 +247,9 @@ div.question {
 .admin-splash-subtitle {
 
 }
-
+.actionbar-select-lang {
+    display: none;
+}
 
 @media screen and (max-width: 1000px) {
     .buttons {
@@ -278,8 +281,6 @@ div.question {
         justify-content: center;
     }
     .actionbar-label {
-        filter: drop-shadow(1px 1px gray);
-        mix-blend-mode: difference;
         bottom: auto;
         padding-left: 50px;
     }

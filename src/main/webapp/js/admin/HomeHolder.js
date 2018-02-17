@@ -4,25 +4,25 @@
  *
  * Created 1/19/17.
  */
-function Home() {
+function HomeHolder() {
 
-    var title = "Home";
+    this.category = DRAWER.SECTION_PRIMARY;
+    this.type = "home";
+    this.title = "Home";
+    this.menu = "Home";
+    this.icon = "home";
 
-    var start = function() {
+    this.start = function() {
         div = document.getElementsByClassName("layout")[0];
+    };
+
+    this.resume = function() {
         u.clear(div);
 
         u.create(HTML.H2, "Waytous admin", div);
 
         u.create(HTML.DIV, "Here you may view and change groups and users in Waytous service.", div);
-    };
 
-    return {
-        start: start,
-        page: "home",
-        icon: "home",
-        title: title,
-        menu: title,
-        move:true
     }
+
 }

@@ -4,7 +4,7 @@
  *
  * Created 1/23/17.
  */
-function User() {
+function UserHolder(main) {
 
     var positions;
     var div;
@@ -20,7 +20,45 @@ function User() {
     var limit = 1000;
     var marker;
 
-    var renderInterface = function() {
+//     this.category = DRAWER.SECTION_PRIMARY;
+     this.type = "user";
+     this.title = "User";
+
+     var tableSummary;
+     var tableGroups;
+     var div;
+     var ref;
+     var database;
+     var utils = main.arguments.utils;
+
+     this.start = function() {
+         database = firebase.database();
+
+         div = document.getElementsByClassName("layout")[0];
+
+//         if(request) {
+//             groupId = request[3];
+//             userNumber = request[4];
+//         } else {
+//             var parts = window.location.pathname.split("/");
+//             groupId = parts[3];
+//             userNumber = parts[4];
+//         }
+//         this.page = "user" + "/" + groupId + "/" + userNumber;
+//         div = document.getElementsByClassName("layout")[0];
+//         u.clear(div);
+//
+//         renderInterface();
+     }
+
+    this.resume = function(group_id, user_number) {
+
+        groupId = group_id;
+        userNumber = user_number;
+
+        window.history.pushState({}, null, "/admin/user/" + groupId + "/" + userNumber);
+
+        u.clear(div);
 
         u.create(HTML.H2, "Summary", div);
 
@@ -49,7 +87,7 @@ function User() {
 
         tableSummary.add({
             onclick: function(){
-                WTU.switchTo("/admin/group/"+groupId);
+                main.turn("group", groupId);
                 return false;
             },
             cells: [
@@ -61,7 +99,7 @@ function User() {
         tableSummary.userUidNode = tableSummary.add({
             onclick: function(){
                 if(tableSummary.userUidNode.cells[1].innerHTML && tableSummary.userUidNode.cells[1].innerHTML !== "[invalid]") {
-                    WTU.switchTo("/admin/account/"+tableSummary.userUidNode.cells[1].innerHTML);
+                    main.turn("account", tableSummary.userUidNode.cells[1].innerHTML);
                 }
                 return false;
             },
@@ -328,14 +366,14 @@ function User() {
                 u.progress.hide();
                 if(!active) {
                     u.toast.show("User #"+userNumber+" is offline.");
-                    WTU.switchTo("/admin/group/" + groupId);
+                    main.turn("group", groupId);
                 } else {
                     u.toast.show("User #"+userNumber+" is online.");
                 }
             }).catch(function(code,xhr){
             u.progress.hide();
             console.warn("Resign because of",code,xhr);
-            WTU.resign(updateSummary);
+            updateSummary();
             var res = JSON.parse(xhr.responseText) || {};
             u.toast.show(res.message || xhr.statusText);
             renderButtons(buttons);
@@ -352,7 +390,7 @@ function User() {
                 .then(function(){
                     u.progress.hide();
                     u.toast.show("User #"+userNumber+" was removed.");
-                    WTU.switchTo("/admin/group/" + groupId);
+                    main.turn("group", groupId);
                 }).catch(function(code,xhr){
                 u.progress.hide();
                 console.warn("Resign because of",code,xhr);
@@ -402,27 +440,5 @@ function User() {
         }, divMap);
 
         updateAll();
-    }
-
-    return {
-        start: function(request) {
-            if(request) {
-                groupId = request[3];
-                userNumber = request[4];
-            } else {
-                var parts = window.location.pathname.split("/");
-                groupId = parts[3];
-                userNumber = parts[4];
-            }
-            this.page = "user" + "/" + groupId + "/" + userNumber;
-            div = document.getElementsByClassName("layout")[0];
-            u.clear(div);
-
-            renderInterface();
-        },
-        page: "user",
-        icon: "navigation",
-        title: "User",
-        move:true
     }
 }

@@ -4,17 +4,25 @@
  *
  * Created 1/19/17.
  */
-function Create() {
+function CreateHolder(main) {
 
-    var title = "Create group";
     var dialog;
     var div;
 
+    this.category = DRAWER.SECTION_EXPLORE;
+    this.type = "create";
+    this.title = "Create group";
+    this.menu = "Create group";
+    this.icon = "group_add";
+    this.preventState = true;
+
     var inputId,inputRequiresPassword,inputPassword,inputWelcomeMessage,inputPersistent,inputTtl,inputDismissInactive,inputDelay;
 
-    var start = function() {
-
+    this.start = function() {
         div = document.getElementsByClassName("layout")[0];
+    }
+
+    this.resume = function() {
         dialog = dialog || u.dialog({
             title: "Create group",
             className: "create-dialog",
@@ -112,28 +120,15 @@ function Create() {
         u.post("/admin/rest/group/create", JSON.stringify(options))
             .then(function(){
                 u.toast.show("Group "+inputId.value+" has created.");
-                WTU.switchTo("/admin/groups");
+                main.turn("group", inputId.value);
             }).catch(function(code,xhr){
             console.error(code,xhr);
             var res = JSON.parse(xhr.responseText) || {};
             u.toast.show(res.message || xhr.statusText);
         });
 
-//        window.location.href = "/admin/groups";
-
-//        if(window.name == "content") {
-//            window.parent.history.pushState({}, null, "/admin/create");
-//        }
-
         return false;
     };
 
 
-    return {
-        start: start,
-        page: "create",
-        icon: "group_add",
-        title: title,
-        menu: title
-    }
 }

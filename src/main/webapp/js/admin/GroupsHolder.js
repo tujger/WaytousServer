@@ -6,7 +6,7 @@
  */
 function GroupsHolder(main) {
 
-    this.category = DRAWER.SECTION_PRIMARY;
+    this.category = DRAWER.SECTION_MAIN;
     this.type = "groups";
     this.title = "Groups";
     this.menu = "Groups";
@@ -17,15 +17,17 @@ function GroupsHolder(main) {
     var div;
     var ref;
     var database;
-    var utils = main.startOptions.utils;
+    var active;
+
+    var utils = main.arguments.utils;
 
     this.start = function() {
         database = firebase.database();
+        div = document.getElementsByClassName("layout")[0];
     }
 
     this.resume = function() {
 
-        div = document.getElementsByClassName("layout")[0];
         u.clear(div);
 //        u.create("div", {className:"summary"}, div);
 //        u.create("h2", "Groups", div);
@@ -105,6 +107,12 @@ function GroupsHolder(main) {
                 { className:"option", innerHTML: "never" }
             ]
         });
+        active = true;
+        tableSummary.addEventListener("DOMNodeRemovedFromDocument", function(e) {
+            if(e && e.srcElement === tableSummary) {
+                active = false;
+            }
+        }, {passive: true});
 
         var groupsTitleNode = u.create(HTML.H2, "Groups", div);
         renderButtons(groupsTitleNode);
@@ -153,8 +161,7 @@ function GroupsHolder(main) {
                     id: groupId,
                     className: "highlight",
                     onclick: function(){
-           main;
-             WTU.switchTo("/admin/group/"+this.id);
+                        main.turn("group", this.id);
                         return false;
                     },
                     cells: [
@@ -169,9 +176,11 @@ function GroupsHolder(main) {
                     ]
                 });
 
+                if(!active) return;
                 setTimeout(function(){
                     var groupId = this.toString();
                     ref.child(DATABASE.SECTION_GROUPS).child(groupId).child(DATABASE.OPTIONS).once("value").then(function(snapshot) {
+                        if(!active) return;
                         if(!snapshot || !snapshot.val()) return;
 
                         var groupId = snapshot.getRef().getParent().key;
@@ -181,7 +190,6 @@ function GroupsHolder(main) {
                         row.cells[2].innerHTML = snapshot.val()[DATABASE.PERSISTENT] ? "Yes" : "No";
                         row.cells[3].innerHTML = snapshot.val()[DATABASE.PERSISTENT] ? "&#150;" : u.clear(snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY]);
                         row.cells[4].innerHTML = snapshot.val()[DATABASE.DISMISS_INACTIVE] ? u.clear(snapshot.val()[DATABASE.DELAY_TO_DISMISS]) : "&#150;";
-//                        row.cells[5].innerHTML = ;
                         row.cells[6].sort = snapshot.val()[DATABASE.CREATED];
                         row.cells[6].innerHTML = snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;";
                         row.cells[7].innerHTML = snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No";
@@ -191,6 +199,7 @@ function GroupsHolder(main) {
                         updateTableSummary();
 
                         ref.child(DATABASE.SECTION_GROUPS).child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("value", function(snapshot){
+                            if(!active) return;
                             if(!snapshot.val()) return;
 
                             var changed = 0, active = 0, total = 0;
@@ -226,6 +235,7 @@ function GroupsHolder(main) {
                     //     WTU.resign(updateData);
                     // });
                     ref.child(DATABASE.SECTION_GROUPS).on("child_removed", function(data) {
+                        if(!active) return;
                         for(var i in tableGroups.rows) {
                             if(tableGroups.rows[i].id === data.key) {
                                 tableGroups.body.removeChild(tableGroups.rows[i]);

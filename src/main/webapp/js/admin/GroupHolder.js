@@ -4,11 +4,25 @@
  *
  * Created 1/19/17.
  */
-function Group() {
+function GroupHolder(main) {
 
-    var title = "Group";
+//     this.category = DRAWER.SECTION_PRIMARY;
+     this.type = "group";
+     this.title = "Group";
+     this.icon = "group";
 
-    var div;
+     var tableSummary;
+     var tableGroups;
+     var div;
+     var ref;
+     var database;
+     var utils = main.arguments.utils;
+
+     this.start = function() {
+         database = firebase.database();
+         div = document.getElementsByClassName("layout")[0];
+     }
+
     var groupId;
     var buttons;
     var tableSummary;
@@ -18,7 +32,10 @@ function Group() {
     var positions;
     var markers;
 
-    var renderInterface = function() {
+    this.resume = function(group_id) {
+        groupId = group_id;
+
+        window.history.pushState({}, null, "/admin/group/" + groupId);
 
         var ref = database.ref().child(DATABASE.SECTION_GROUPS);
         u.clear(div);
@@ -288,6 +305,7 @@ function Group() {
             } else {
                 initMap();
             }
+            updateSummary();
         } else {
             updateAll();
         }
@@ -296,7 +314,7 @@ function Group() {
 
     function updateSummary() {
         if(!groupId) {
-            WTU.switchTo("/admin/groups/");
+            u.eventBus.holders.groups.resume();
             return;
         }
 
@@ -328,6 +346,8 @@ function Group() {
 //                tableSummary.changedNode.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CHANGED]).toLocaleString();
 
             });
+//            updateData();
+
         }).catch(function(error){
             console.warn("Resign because of",error);
             WTU.resign(updateAll);
@@ -370,7 +390,7 @@ function Group() {
                 var row = tableUsers.add({
                     className: "highlight inactive disabled",
                     onclick: function(){
-                        WTU.switchTo("/admin/user/"+groupId+"/"+userNumber);
+                        main.turn("user", [groupId, userNumber]);
                         return false;
                     },
                     cells: [
@@ -535,7 +555,8 @@ function Group() {
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
             u.post("/admin/rest/group/delete", JSON.stringify({group_id:groupId}))
                 .then(function(){
-                    WTU.switchTo("/admin/groups");
+                    main.turn("groups");
+//                    WTU.switchTo("/admin/groups");
                     u.toast.show("Group "+groupId+" was deleted.");
                 }).catch(function(code,xhr){
                     console.warn("Resign because of",code,xhr);
@@ -585,25 +606,6 @@ function Group() {
         updateAll();
     }
 
-    return {
-        start: function(request) {
-            if(request) {
-                this.page = request[2] + "/" + request[3];
-                groupId = request[3];
-            } else {
-                var parts = window.location.pathname.split("/");
-                this.page = parts[2] + "/" + parts[3];
-                groupId = parts[3];
-            }
-            div = document.getElementsByClassName("layout")[0];
-            u.clear(div);
-
-            renderInterface();
-        },
-        page: "group",
-        title: title,
-        move:true
-    }
 }
 
 

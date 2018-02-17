@@ -4,9 +4,17 @@
  *
  * Created 9/11/17.
  */
-function Statistics() {
+function StatisticsHolder(main) {
 
-    var title = "Statistics";
+    this.category = DRAWER.SECTION_MISCELLANEOUS;
+    this.type = "statistics";
+    this.title = "Statistics";
+    this.menu = "Statistics";
+    this.icon = "trending_up";
+
+    var task;
+    var logBody;
+    var logCaption;
 
     var tableSummaryGroups;
     var tableSummaryUsers;
@@ -24,6 +32,7 @@ function Statistics() {
     var groupsChartOptions;
     var usersChartOptions;
     var accountsChartOptions;
+    var active;
 
     var actions = {};
     actions[DATABASE.STAT_GROUPS_CREATED_PERSISTENT] = "Group created (persistent)";
@@ -36,7 +45,13 @@ function Statistics() {
     actions[DATABASE.STAT_ACCOUNTS_CREATED] = "Account created";
     actions[DATABASE.STAT_ACCOUNTS_DELETED] = "Account deleted";
 
-    var initInterface = function() {
+    this.start = function() {
+        div = document.getElementsByClassName("layout")[0];
+        database = firebase.database();
+    };
+
+    this.resume = function() {
+        var self = this;
         u.require("https://www.google.com/jsapi")
             .then(function () {
                 google.load("visualization", "1.1", { "callback": renderInterface, "packages": ["corechart", "line"] });
@@ -131,6 +146,13 @@ function Statistics() {
                 { className:"option", innerHTML: "0" }
             ]
         });
+
+        active = true;
+        tableSummaryUsers.addEventListener("DOMNodeRemovedFromDocument", function(e) {
+            if(e && e.srcElement === tableSummaryUsers) {
+                active = false;
+            }
+        }, {passive: true});
 
         u.create(HTML.DIV, "&nbsp;&nbsp;&nbsp;", columns);
         tableSummaryAccounts = u.table({
@@ -291,6 +313,7 @@ function Statistics() {
 
         var addValueToChart = function(data) {
             setTimeout(function(){
+                if(!active) return;
                 var data = this;
 
                 resign = false;
@@ -300,6 +323,8 @@ function Statistics() {
                 date = "%04d-%02d-%02d".sprintf(date.getFullYear(), date.getMonth()+1, date.getDate());
 
                 setTimeout(function(){
+                    if(!active) return;
+
                     var data = this;
                     var json = data.val();
 
@@ -335,6 +360,8 @@ function Statistics() {
                 }.bind(data), 0);
 
                 setTimeout(function(){
+                    if(!active) return;
+
                     var data = this;
                     var json = data.val();
 
@@ -368,6 +395,8 @@ function Statistics() {
 
 
                 setTimeout(function(){
+                    if(!active) return;
+
                     var data = this;
                     var json = data.val();
 
@@ -425,6 +454,8 @@ function Statistics() {
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MESSAGES).off();
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MESSAGES).on("child_added", function(data) {
             setTimeout(function() {
+                if(!active) return;
+
                 var data = this;
                 var json = data.val();
                 tableMessages.add({
@@ -493,17 +524,6 @@ function Statistics() {
         }}, div);
     }
 
-    return {
-        start: function() {
-            initInterface();
-//            updateData();
-        },
-        page: "statistics",
-        icon: "trending_up",
-        title: title,
-        menu: title,
-        move: true
-    }
 }
 
 

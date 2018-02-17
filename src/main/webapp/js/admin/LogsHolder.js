@@ -4,28 +4,34 @@
  *
  * Created 4/20/17.
  */
-function Logs() {
+function LogsHolder() {
 
-    var title = "Logs";
+    this.category = DRAWER.SECTION_MISCELLANEOUS;
+    this.type = "logs";
+    this.title = "Logs";
+    this.menu = "Logs";
+    this.icon = "receipt";
+
     var task;
     var logBody;
     var logCaption;
 
-    var renderInterface = function() {
+    this.start = function() {
+        div = document.getElementsByClassName("layout")[0];
+    };
+
+    this.resume = function() {
 
         div = document.getElementsByClassName("layout")[0];
         u.clear(div);
-//        u.create("div", {className:"summary"}, div);
-//        u.create("h2", "Groups", div);
 
         var logsTitleNode = u.create(HTML.H2, null, div).place(HTML.SPAN, "Logs");
-        //buttons = u.create("div", {className:"buttons"}, logsTitleNode);
         renderButtons(logsTitleNode);
 
         var logView = u.create(HTML.DIV, {className: "logs"}, div);
 
         logCaption = u.create(HTML.DIV, {className: "logs-caption", innerHTML: "Logs"}, logView);
-        logBody = u.create(HTML.DIV, {className: "logs-body", innerHTML: "Loading..."}, logView);
+        logBody = u.create(HTML.TEXTAREA, {className: "logs-body", value: "Loading...", readOnly: true}, logView);
 
         logBody.addEventListener("DOMNodeRemovedFromDocument", function(e) {
             if(e && e.srcElement === logBody && task && task.readyState === task.OPEN) {
@@ -33,12 +39,11 @@ function Logs() {
             }
         }, {passive: true});
 
+        updateData();
     };
 
     function updateData(){
-        // var scroll = table.body.scrollTop;
         u.clear(logBody);
-
         try {
             if(task) task.close();
         } catch(e) {
@@ -46,17 +51,19 @@ function Logs() {
         }
 
         task = new EventSource("/admin/rest/logs/log");
+        var timestamp = new Date().getTime();
         task.onmessage = function(e) {
-//            setTimeout(function(){
-//                logCaption.innerHTML = "Logs (updated "+(new Date().toLocaleString())+")";
-                logBody.textContent += e.data + "\n";
-                //table.body.scrollTop = scroll
-//            }.bind(e.data), 0);
+            newTimestamp = new Date().getTime();
+            if(newTimestamp - timestamp > 1000) {
+                timestamp = newTimestamp;
+                logCaption.innerHTML = "Logs (updated "+(new Date().toLocaleString())+")";
+            }
+            logBody.value += e.data + "\n";
         };
         task.onerror = function(error) {
             console.error(error);
           u.clear(logBody);
-          logBody.textContent = "Loading...";
+          logBody.value = "Loading...";
         };
     }
 
@@ -88,17 +95,6 @@ function Logs() {
         }}, div);
     }
 
-    return {
-        start: function() {
-            renderInterface();
-            updateData();
-        },
-        page: "logs",
-        icon: "receipt",
-        title: title,
-        menu: title,
-        move:true
-    }
 }
 
 

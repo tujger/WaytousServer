@@ -4,9 +4,7 @@
  *
  * Created 10/12/17.
  */
-function Accounts() {
-
-    var title = "Accounts";
+function AccountsHolder(main) {
 
     var div;
     var groupId;
@@ -14,8 +12,29 @@ function Accounts() {
     var tableSummary;
     var tableAccounts;
 
-    var renderInterface = function() {
+    this.category = DRAWER.SECTION_MAIN;
+    this.type = "accounts";
+    this.title = "Accounts";
+    this.menu = "Accounts";
+    this.icon = "person";
 
+    var tableSummary;
+    var tableGroups;
+    var div;
+    var ref;
+    var database;
+    var active;
+    var utils = main.arguments.utils;
+
+    this.start = function() {
+        database = firebase.database();
+        div = document.getElementsByClassName("layout")[0];
+    }
+
+
+    this.resume = function() {
+
+        u.clear(div);
         u.create(HTML.H2, "Summary", div);
 
         tableSummary = u.table({
@@ -103,7 +122,7 @@ function Accounts() {
             title: "Click to open last registered account",
             onclick: function(){
                 if(tableSummary.lastRegisteredItem.uid) {
-                    WTU.switchTo("/admin/account/"+tableSummary.lastRegisteredItem.uid);
+                    main.turn("account", tableSummary.lastRegisteredItem.uid);
                 }
             }
         });
@@ -119,6 +138,13 @@ function Accounts() {
                 { className:"option", innerHTML: "..." }
             ]
         });
+
+        active = true;
+        tableSummary.addEventListener("DOMNodeRemovedFromDocument", function(e) {
+            if(e && e.srcElement === tableSummary) {
+                active = false;
+            }
+        }, {passive: true});
 
         var accountsTitleNode = u.create(HTML.H2, "Accounts", div);
         renderButtons(accountsTitleNode);
@@ -165,8 +191,8 @@ function Accounts() {
 
         ref.child(DATABASE.SECTION_USERS).off();
         ref.child(DATABASE.SECTION_USERS).on("child_added", function(snapshot) {
-
             setTimeout(function(){
+                if(!active) return;
                 var snapshot = this;
 
                 if(!snapshot || !snapshot.val()){
@@ -202,7 +228,7 @@ function Accounts() {
                 var row = tableAccounts.add({
                     className: "accounts-row highlight inactive",
                     onclick: function(){
-                        WTU.switchTo("/admin/account/"+snapshot.key);
+                        main.turn("account", snapshot.key);
                         return false;
                     },
                     cells: [
@@ -262,26 +288,4 @@ function Accounts() {
         }}, div);
     }
 
-    return {
-        start: function(request) {
-            if(request) {
-                groupId = request[3];
-                userNumber = request[4];
-            } else {
-                var parts = window.location.pathname.split("/");
-                groupId = parts[3];
-                userNumber = parts[4];
-            }
-            this.page = "accounts";
-            div = document.getElementsByClassName("layout")[0];
-            u.clear(div);
-
-            renderInterface();
-        },
-        page: "accounts",
-        icon: "person",
-        title: title,
-        menu: title,
-        move:true
-    }
 }
