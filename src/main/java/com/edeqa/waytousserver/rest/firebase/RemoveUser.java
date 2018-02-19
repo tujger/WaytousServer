@@ -90,7 +90,7 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
                                                             getOnSuccess().call(res);
                                                             ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
                                                                     .setGroupId(getGroupId())
-                                                                    .setAction(AbstractDataProcessor.UserAction.USER_REMOVED)
+                                                                    .setAction(AbstractDataProcessor.Action.USER_REMOVED)
                                                                     .call(null, value.toString());
                                                         }
                                                     }).addOnFailureListener(onFailureListener);

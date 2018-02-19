@@ -76,7 +76,7 @@ public class NewGroup extends AbstractFirebaseAction<NewGroup, GroupRequest> {
                                         .setOnError(onresult[1])
                                         .call(arg, groupRequest);
                                 ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
-                                        .setAction(AbstractDataProcessor.GroupAction.GROUP_CREATED_TEMPORARY.toString())
+                                        .setAction(AbstractDataProcessor.Action.GROUP_CREATED_TEMPORARY)
                                         .setKey("group")
                                         .setValue(groupRequest.getId())
                                         .call(null, getUserRequest().getUid());

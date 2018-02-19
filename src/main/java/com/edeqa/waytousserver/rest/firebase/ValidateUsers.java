@@ -47,7 +47,7 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
                             Misc.log("ValidateUsers", "corrupted group found, removing:", groupRequest.getId());
                             refGroups.child(groupRequest.getId()).removeValueAsync();
                             ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                                    .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
+                                    .setAction(AbstractDataProcessor.Action.GROUP_DELETED)
                                     .setMessage("corrupted group removing: " + groupRequest.getId())
                                     .call(null, groupRequest);
                             return;
@@ -91,7 +91,7 @@ public class ValidateUsers extends AbstractFirebaseAction<ValidateUsers, GroupRe
                             Misc.log("ValidateUsers", "removes group", info);
                             refGroups.child(groupRequest.getId()).removeValueAsync();
                             ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                                    .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
+                                    .setAction(AbstractDataProcessor.Action.GROUP_DELETED)
                                     .setMessage(info)
                                     .call(null, groupRequest);
                         }

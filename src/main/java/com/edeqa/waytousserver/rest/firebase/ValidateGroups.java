@@ -63,7 +63,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
                                             Misc.log("ValidateGroups", "removes lost group");
                                             refGroups.child(group).removeValueAsync();
                                             ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                                                    .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
+                                                    .setAction(AbstractDataProcessor.Action.GROUP_DELETED)
                                                     .setMessage("lost group removing: " + group)
                                                     .call(null, groupRequest);
                                             return;

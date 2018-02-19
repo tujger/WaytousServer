@@ -16,7 +16,7 @@ public class StatisticsGroup extends AbstractFirebaseAction<StatisticsGroup, Gro
 
     public static final String TYPE = "/rest/firebase/statistics/group";
 
-    private AbstractDataProcessor.GroupAction action;
+    private AbstractDataProcessor.Action action;
     private String message;
 
     @Override
@@ -76,11 +76,11 @@ public class StatisticsGroup extends AbstractFirebaseAction<StatisticsGroup, Gro
         return this;
     }
 
-    public AbstractDataProcessor.GroupAction getAction() {
+    public AbstractDataProcessor.Action getAction() {
         return action;
     }
 
-    public StatisticsGroup setAction(AbstractDataProcessor.GroupAction action) {
+    public StatisticsGroup setAction(AbstractDataProcessor.Action action) {
         this.action = action;
         return this;
     }

@@ -114,7 +114,7 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
                 }
                 ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
                         .setGroupId(getGroupId())
-                        .setAction(AbstractDataProcessor.UserAction.USER_REJECTED)
+                        .setAction(AbstractDataProcessor.Action.USER_REJECTED)
                         .setMessage(e.getMessage())
                         .call(null, user.getUid());
                 clear();
@@ -141,7 +141,7 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
                 }
                 ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
                         .setGroupId(getGroupId())
-                        .setAction(AbstractDataProcessor.UserAction.USER_JOINED)
+                        .setAction(AbstractDataProcessor.Action.USER_JOINED)
                         .call(null, user.getUid());
                 clear();
             }

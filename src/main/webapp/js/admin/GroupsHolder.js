@@ -202,14 +202,14 @@ function GroupsHolder(main) {
                             if(!active) return;
                             if(!snapshot.val()) return;
 
-                            var changed = 0, active = 0, total = 0;
+                            var changed = 0, activeUser = 0, total = 0;
                             for(var i in snapshot.val()) {
                                 total++;
                                 var c = parseInt(snapshot.val()[i][DATABASE.CREATED]);
                                 if(c > changed) changed = c;
-                                if(snapshot.val()[i][DATABASE.ACTIVE]) active ++;
+                                if(snapshot.val()[i][DATABASE.ACTIVE]) activeUser ++;
                             }
-                            usersNode.innerHTML = active + " / " + total;
+                            usersNode.innerHTML = activeUser + " / " + total;
 
                             changed = 0;
                             for(i in snapshot.val()) {
@@ -258,6 +258,7 @@ function GroupsHolder(main) {
             }
         }).catch(function(error) {
             console.error("FAILED",error);
+            window.location = window.location.href;
         });
     }
 

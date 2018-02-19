@@ -36,7 +36,7 @@ public class RejectUser extends AbstractFirebaseAction<RejectUser, String> {
         if(userRequest.getUid() != null) {
             ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
                     .setUserRequest(getUserRequest())
-                    .setAction(AbstractDataProcessor.UserAction.USER_REJECTED)
+                    .setAction(AbstractDataProcessor.Action.USER_REJECTED)
                     .setMessage(message)
                     .call(null, userRequest.getUid());
         }

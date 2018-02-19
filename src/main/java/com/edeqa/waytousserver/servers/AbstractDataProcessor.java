@@ -32,32 +32,13 @@ abstract public class AbstractDataProcessor {
 
     public abstract void validateAccounts();
 
-    public enum GroupAction {
-        GROUP_CREATED_PERSISTENT(Firebase.STAT_GROUPS_CREATED_PERSISTENT), GROUP_CREATED_TEMPORARY(Firebase.STAT_GROUPS_CREATED_TEMPORARY), GROUP_DELETED(Firebase.STAT_GROUPS_DELETED), GROUP_REJECTED(Firebase.STAT_GROUPS_REJECTED);
-        private String id;
-        GroupAction(String id) {
-            this.id = id;
-        }
-        public String toString() {
-            return this.id;
-        }
-    }
-
-    public enum UserAction {
-        USER_JOINED(Firebase.STAT_USERS_JOINED), USER_RECONNECTED(Firebase.STAT_USERS_RECONNECTED), USER_REJECTED(Firebase.STAT_USERS_REJECTED), USER_REMOVED(Firebase.STAT_USERS_REMOVED);
-        private String id;
-        UserAction(String id) {
-            this.id = id;
-        }
-        public String toString() {
-            return this.id;
-        }
-    }
-
-    public enum AccountAction {
+    public enum Action {
+        GROUP_CREATED_PERSISTENT(Firebase.STAT_GROUPS_CREATED_PERSISTENT), GROUP_CREATED_TEMPORARY(Firebase.STAT_GROUPS_CREATED_TEMPORARY), GROUP_DELETED(Firebase.STAT_GROUPS_DELETED), GROUP_REJECTED(Firebase.STAT_GROUPS_REJECTED),
+        USER_JOINED(Firebase.STAT_USERS_JOINED), USER_RECONNECTED(Firebase.STAT_USERS_RECONNECTED), USER_REJECTED(Firebase.STAT_USERS_REJECTED), USER_REMOVED(Firebase.STAT_USERS_REMOVED),
         ACCOUNT_CREATED(Firebase.STAT_ACCOUNTS_CREATED), ACCOUNT_DELETED(Firebase.STAT_ACCOUNTS_DELETED);
+        ;
         private String id;
-        AccountAction(String id) {
+        Action(String id) {
             this.id = id;
         }
         public String toString() {

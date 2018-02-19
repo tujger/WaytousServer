@@ -7,12 +7,8 @@ import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.api.core.ApiFuture;
-import com.google.firebase.tasks.Task;
-import com.google.firebase.tasks.Tasks;
 
 import org.json.JSONObject;
-
-import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("unused")
 public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
@@ -40,7 +36,7 @@ public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
             getOnSuccess().call(json);
 
             ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                    .setAction(AbstractDataProcessor.GroupAction.GROUP_DELETED)
+                    .setAction(AbstractDataProcessor.Action.GROUP_DELETED)
                     .call(null, new GroupRequest(groupId));
         } catch (Exception e) {
             e.printStackTrace();

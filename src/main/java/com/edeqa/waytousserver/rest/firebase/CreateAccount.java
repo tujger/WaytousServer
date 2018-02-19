@@ -19,7 +19,7 @@ import java.util.Map;
 import static com.edeqa.waytous.Constants.REQUEST_MODEL;
 import static com.edeqa.waytous.Constants.REQUEST_OS;
 import static com.edeqa.waytous.Constants.REQUEST_SIGN_PROVIDER;
-import static com.edeqa.waytousserver.servers.AbstractDataProcessor.AccountAction.ACCOUNT_CREATED;
+import static com.edeqa.waytousserver.servers.AbstractDataProcessor.Action.ACCOUNT_CREATED;
 
 @SuppressWarnings("unused")
 public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser> {
@@ -68,7 +68,7 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
                             Misc.log("CreateAccount", "created for uid:", user.getUid(), accountPrivateData);
 
                             ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
-                                    .setAction(ACCOUNT_CREATED.toString())
+                                    .setAction(ACCOUNT_CREATED)
                                     .call(null, user.getUid());
                         } else {
                             Misc.log("CreateAccount", "updated for uid:", user.getUid(), accountPrivateData);

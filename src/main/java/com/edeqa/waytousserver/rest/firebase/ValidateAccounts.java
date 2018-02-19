@@ -72,7 +72,7 @@ public class ValidateAccounts extends AbstractFirebaseAction<ValidateAccounts, O
 
                                                 refAccounts.child(uid).setValueAsync(null);
                                                 ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
-                                                        .setAction(AbstractDataProcessor.AccountAction.ACCOUNT_DELETED.toString())
+                                                        .setAction(AbstractDataProcessor.Action.ACCOUNT_DELETED)
                                                         .setKey(null)
                                                         .setValue(null)
                                                         .setMessage("Expired for " + message)

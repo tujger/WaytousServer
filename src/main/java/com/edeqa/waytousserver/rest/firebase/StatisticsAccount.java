@@ -4,6 +4,7 @@ import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
+import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.firebase.database.DatabaseReference;
 
 import org.json.JSONObject;
@@ -19,9 +20,8 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
 
     public static final String TYPE = "/rest/firebase/statistics/account";
 
-    private String accountAction;
+    private AbstractDataProcessor.Action accountAction;
     private String message;
-    private Boolean persistent;
     private String key;
     private Object value;
 
@@ -42,13 +42,13 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
         DatabaseReference refToday = getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_BY_DATE).child(today);
 
         switch(getAccountAction()) {
-            case Firebase.STAT_ACCOUNTS_CREATED:
+            case ACCOUNT_CREATED:
                 refTotal = refTotal.child(Firebase.STAT_ACCOUNTS_CREATED);
                 refToday = refToday.child(Firebase.STAT_ACCOUNTS_CREATED);
                 refToday.runTransaction(incrementValue);
                 refTotal.runTransaction(incrementValue);
                 break;
-            case Firebase.STAT_ACCOUNTS_DELETED:
+            case ACCOUNT_DELETED:
                 refTotal = refTotal.child(Firebase.STAT_ACCOUNTS_DELETED);
                 refToday = refToday.child(Firebase.STAT_ACCOUNTS_DELETED);
                 refToday.runTransaction(incrementValue);
@@ -59,7 +59,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
         if(getMessage() != null && getMessage().length() > 0) {
             Map<String, String> map = new HashMap<>();
             map.put("account", accountId);
-            map.put("action", getAccountAction());
+            map.put("action", getAccountAction().name());
             ((StatisticsMessage) getFireBus().getHolder(StatisticsMessage.TYPE))
                     .setMessage(getMessage())
                     .call(null, map);
@@ -93,7 +93,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
                             map.put(Firebase.VALUE, "[" + getValue().getClass().getSimpleName() + "]");
                         }
                         refAccounts.child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValueAsync(map);
-                        Misc.log("StatisticsAccount", accountId, "action:", getAccountAction());
+                        Misc.log("StatisticsAccount", "register", accountId, "with action", getAccountAction());
                     }
                     clear();
                 }
@@ -110,11 +110,10 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
         setMessage(null);
         setKey(null);
         setValue(null);
-        setPersistent(null);
         return this;
     }
 
-    public String getAccountAction() {
+    public AbstractDataProcessor.Action getAccountAction() {
         return accountAction;
     }
 
@@ -127,16 +126,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
         return this;
     }
 
-    public Boolean getPersistent() {
-        return persistent;
-    }
-
-    public StatisticsAccount setPersistent(Boolean persistent) {
-        this.persistent = persistent;
-        return this;
-    }
-
-    public StatisticsAccount setAction(String accountAction) {
+    public StatisticsAccount setAction(AbstractDataProcessor.Action accountAction) {
         this.accountAction = accountAction;
         return this;
     }

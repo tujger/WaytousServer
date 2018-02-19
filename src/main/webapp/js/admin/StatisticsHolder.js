@@ -444,7 +444,8 @@ function StatisticsHolder(main) {
         var addValueToChartError = function(e) {
             console.warn("Resign because of",e.message);
             resign = true;
-            WTU.resign(updateData);
+//            WTU.resign(updateData);
+            window.location = window.location.href;
         };
 
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_BY_DATE).off();

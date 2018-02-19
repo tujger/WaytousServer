@@ -39,7 +39,7 @@ public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String>
             getOnSuccess().call(json);
 
             ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
-                    .setAction(AbstractDataProcessor.AccountAction.ACCOUNT_DELETED.toString())
+                    .setAction(AbstractDataProcessor.Action.ACCOUNT_DELETED)
                     .setMessage(accountId + " deleted.")
                     .call(null, accountId);
 

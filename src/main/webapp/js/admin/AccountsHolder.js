@@ -248,7 +248,8 @@ function AccountsHolder(main) {
 
         }, function(error){
             console.warn("Resign because of",error);
-            WTU.resign(updateAll);
+//            WTU.resign(updateAll);
+            window.location = window.location.href;
         });
 
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MISC).child(DATABASE.STAT_MISC_ACCOUNTS_CLEANED).off();

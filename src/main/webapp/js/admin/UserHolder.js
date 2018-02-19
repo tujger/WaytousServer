@@ -213,7 +213,8 @@ function UserHolder(main) {
             }
         }).catch(function(error){
             console.warn("Resign because of",error.message);
-            WTU.resign(updateSummary);
+//            WTU.resign(updateSummary);
+            window.location = window.location.href;
         });
 
         refGroups.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).off();
@@ -230,7 +231,8 @@ function UserHolder(main) {
 
         },function(error){
             console.warn("Resign because of",error.message);
-            WTU.resign(updateSummary);
+//            WTU.resign(updateSummary);
+            window.location = window.location.href;
         });
     }
 
@@ -333,7 +335,8 @@ function UserHolder(main) {
 
         }, function(error){
             console.warn("Resign because of",error);
-            WTU.resign(updateAll);
+//            WTU.resign(updateAll);
+            window.location = window.location.href;
         });
 
     }
@@ -394,10 +397,11 @@ function UserHolder(main) {
                 }).catch(function(code,xhr){
                 u.progress.hide();
                 console.warn("Resign because of",code,xhr);
-                WTU.resign(updateSummary);
+//                WTU.resign(updateSummary);
                 var res = JSON.parse(xhr.responseText) || {};
                 u.toast.show(res.message || xhr.statusText);
                 renderButtons(buttons);
+                window.location = window.location.href;
             });
         }}, buttons);
         u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){

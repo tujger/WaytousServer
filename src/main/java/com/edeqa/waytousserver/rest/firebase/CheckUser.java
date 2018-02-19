@@ -84,7 +84,7 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
 
                                                 ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
                                                         .setGroupId(userRequest.getGroupId())
-                                                        .setAction(AbstractDataProcessor.UserAction.USER_RECONNECTED)
+                                                        .setAction(AbstractDataProcessor.Action.USER_RECONNECTED)
                                                         .call(null, userRequest.getUid());
                                             } catch (Exception e) {
                                                 e.printStackTrace();

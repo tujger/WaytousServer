@@ -107,9 +107,10 @@ function GroupHolder(main) {
                                     u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.WELCOME_MESSAGE, value:newValue}))
                                         .catch(function(code,xhr){
                                             console.error(code,xhr);
-                                            WTU.resign(updateSummary);
+//                                            WTU.resign(updateSummary);
                                             var res = JSON.parse(xhr.responseText) || {};
                                             u.toast.show(res.message || xhr.statusText);
+                                            window.location = window.location.href;
                                         });
                                 }
                             }
@@ -118,7 +119,8 @@ function GroupHolder(main) {
                     }).open();
                 }).catch(function(error){
                     console.warn("Resign because of",error);
-                    WTU.resign(updateSummary);
+//                    WTU.resign(updateSummary);
+                    window.location = window.location.href;
                 });
             },
             cells: [
@@ -132,9 +134,10 @@ function GroupHolder(main) {
                 u.post("/admin/rest/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.PERSISTENT}))
                     .catch(function(code,xhr){
                         console.warn("Resign because of",code,xhr);
-                        WTU.resign(updateSummary);
+//                        WTU.resign(updateSummary);
                         var res = JSON.parse(xhr.responseText) || {};
                         u.toast.show(res.message || xhr.statusText);
+                        window.location = window.location.href;
                     });
             },
             cells: [
@@ -161,9 +164,10 @@ function GroupHolder(main) {
                                 u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.TIME_TO_LIVE_IF_EMPTY, value:newValue}))
                                     .catch(function(code,xhr){
                                         console.warn("Resign because of",code,xhr);
-                                        WTU.resign(updateSummary);
+//                                        WTU.resign(updateSummary);
                                         var res = JSON.parse(xhr.responseText) || {};
                                         u.toast.show(res.message || xhr.statusText);
+                                        window.location = window.location.href;
                                     });
                             }
                         }
@@ -183,9 +187,10 @@ function GroupHolder(main) {
                 u.post("/admin/rest/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.DISMISS_INACTIVE}))
                     .catch(function(code,xhr){
                         console.warn("Resign because of",code,xhr);
-                        WTU.resign(updateSummary);
+//                        WTU.resign(updateSummary);
                         var res = JSON.parse(xhr.responseText) || {};
                         u.toast.show(res.message || xhr.statusText);
+                        window.location = window.location.href;
                     });
             },
             cells: [
@@ -211,9 +216,10 @@ function GroupHolder(main) {
                                 u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.DELAY_TO_DISMISS, value:newValue}))
                                     .catch(function(code,xhr){
                                         console.warn("Resign because of",code,xhr);
-                                        WTU.resign(updateSummary);
+//                                        WTU.resign(updateSummary);
                                         var res = JSON.parse(xhr.responseText) || {};
                                         u.toast.show(res.message || xhr.statusText);
+                                        window.location = window.location.href;
                                     });
                             }
                         }
@@ -350,7 +356,8 @@ function GroupHolder(main) {
 
         }).catch(function(error){
             console.warn("Resign because of",error);
-            WTU.resign(updateAll);
+//            WTU.resign(updateAll);
+            window.location = window.location.href;
         });
 
     }
@@ -512,7 +519,8 @@ function GroupHolder(main) {
                     if(!reload) {
                         reload = true;
                         console.warn("Resign because of",error);
-                        WTU.resign(updateData);
+//                        WTU.resign(updateData);
+                        window.location = window.location.href;
                     } else {
 //                    console.error("ERROR, ALREADY RESIGNING");
                     }
@@ -520,7 +528,8 @@ function GroupHolder(main) {
             }.bind(snapshot), 0);
         }, function(error){
             console.warn("Resign because of",error);
-            WTU.resign(updateAll);
+//            WTU.resign(updateAll);
+            window.location = window.location.href
         });
         ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("child_removed", function(snapshot) {
             reload = true;
@@ -535,7 +544,8 @@ function GroupHolder(main) {
 
         }, function(error){
             console.warn("Resign because of",error);
-            WTU.resign(updateAll);
+//            WTU.resign(updateAll);
+            window.location = window.location.href
         });
 
     }
@@ -560,10 +570,11 @@ function GroupHolder(main) {
                     u.toast.show("Group "+groupId+" was deleted.");
                 }).catch(function(code,xhr){
                     console.warn("Resign because of",code,xhr);
-                    WTU.resign(updateSummary);
+//                    WTU.resign(updateSummary);
                     var res = JSON.parse(xhr.responseText) || {};
                     u.toast.show(res.message || xhr.statusText);
                     renderButtons(buttons);
+                    window.location = window.location.href;
                 });
         }}, buttons);
         u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){

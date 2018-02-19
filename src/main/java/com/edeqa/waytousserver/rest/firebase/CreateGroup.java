@@ -74,7 +74,7 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
                                     Misc.err("CreateGroup", group.getId(), t.getMessage());
                                     if (getOnError() != null) getOnError().call(json);
                                     ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                                            .setAction(AbstractDataProcessor.GroupAction.GROUP_REJECTED)
+                                            .setAction(AbstractDataProcessor.Action.GROUP_REJECTED)
                                             .setMessage(t.getMessage())
                                             .call(null, group);
                                 }
@@ -85,7 +85,7 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
                                     json.put(Rest.GROUP_ID, group.getId());
                                     getOnSuccess().call(json);
                                     ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                                            .setAction(group.isPersistent() ? AbstractDataProcessor.GroupAction.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.GroupAction.GROUP_CREATED_TEMPORARY)
+                                            .setAction(group.isPersistent() ? AbstractDataProcessor.Action.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.Action.GROUP_CREATED_TEMPORARY)
                                             .call(null, group);
                                 }
                             });
@@ -107,7 +107,7 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
                             Misc.err("CreateGroup", group.getId(), "not created, already exists");
                             if (getOnError() != null) getOnError().call(json);
                             ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                                    .setAction(AbstractDataProcessor.GroupAction.GROUP_REJECTED)
+                                    .setAction(AbstractDataProcessor.Action.GROUP_REJECTED)
                                     .setMessage("already exists")
                                     .call(null, group);
                         }

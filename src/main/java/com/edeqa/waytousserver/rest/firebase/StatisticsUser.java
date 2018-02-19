@@ -16,7 +16,7 @@ public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, Strin
 
     public static final String TYPE = "/rest/firebase/statistics/user";
 
-    private AbstractDataProcessor.UserAction action;
+    private AbstractDataProcessor.Action action;
     private String groupId;
     private String message;
     private UserRequest userRequest;
@@ -30,7 +30,7 @@ public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, Strin
     public void call(JSONObject json, String userId) {
         ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
                 .setKey("group")
-                .setAction(getAction().toString())
+                .setAction(getAction())
                 .setValue(getGroupId())
                 .setMessage(getMessage())
                 .call(null, userId);
@@ -89,11 +89,11 @@ public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, Strin
         return this;
     }
 
-    public AbstractDataProcessor.UserAction getAction() {
+    public AbstractDataProcessor.Action getAction() {
         return action;
     }
 
-    public StatisticsUser setAction(AbstractDataProcessor.UserAction action) {
+    public StatisticsUser setAction(AbstractDataProcessor.Action action) {
         this.action = action;
         return this;
     }

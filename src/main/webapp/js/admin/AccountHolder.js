@@ -155,7 +155,12 @@ function AccountHolder(main) {
         var ref = database.ref();
 
         ref.child(DATABASE.SECTION_USERS).child(accountId).child(DATABASE.PRIVATE).once("value").then(function(snapshot) {
-            if(!snapshot || !snapshot.val()) return;
+            if(!snapshot || !snapshot.val()) {
+                console.warn("No information about account", accountId);
+                u.toast.show("No information about requested account");
+                main.turn("accounts");
+                return;
+            }
 
             var privateData = snapshot.val();
 
@@ -182,7 +187,8 @@ function AccountHolder(main) {
 
         }).catch(function(error){
             console.warn("Resign because of",error);
-            WTU.resign(updateAll);
+//            WTU.resign(updateAll);
+            window.location = window.location.href;
         });
     }
 
@@ -227,7 +233,8 @@ function AccountHolder(main) {
 
         }, function(error){
             console.warn("Resign because of",error);
-            WTU.resign(updateAll);
+//            WTU.resign(updateAll)
+            window.location = window.location.href;
         });
 
     }
@@ -247,10 +254,11 @@ function AccountHolder(main) {
                     u.toast.show("Account " + accountId + " was deleted.");
                 }).catch(function(code,xhr){
                     console.warn("Resign because of",code,xhr);
-                    WTU.resign(updateSummary);
+//                    WTU.resign(updateSummary);
                     var res = JSON.parse(xhr.responseText) || {};
                     u.toast.show(res.message || xhr.statusText);
                     renderButtons(buttons);
+                    window.location = window.location.href;
                 });
         }}, buttons);
         u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){
