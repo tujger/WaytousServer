@@ -5,7 +5,6 @@
  * Created 1/23/17.
  */
 function UserHolder(main) {
-
     var positions;
     var div;
     var groupId;
@@ -20,7 +19,6 @@ function UserHolder(main) {
     var limit = 1000;
     var marker;
 
-//     this.category = DRAWER.SECTION_PRIMARY;
      this.type = "user";
      this.title = "User";
 
@@ -52,7 +50,6 @@ function UserHolder(main) {
      }
 
     this.resume = function(group_id, user_number) {
-
         groupId = group_id;
         userNumber = user_number;
 
@@ -120,7 +117,6 @@ function UserHolder(main) {
         ]});
 
         tableSummary.userUpdatedNode = tableSummary.add({
-//            style: { display: (snapshot.val().persistent ? "none" : "")},
             cells: [
                 { className: "th", innerHTML: "Updated" },
                 { className: "highlight option", innerHTML: "..." }
@@ -155,7 +151,6 @@ function UserHolder(main) {
         buttons = u.create({className:"buttons"}, div);
         renderButtons(buttons);
 
-
         u.create(HTML.H2, "Positions", div);
 
         tableLocations = u.table({
@@ -188,7 +183,7 @@ function UserHolder(main) {
         updateAll();
         return div;
 
-    };
+    }
 
     function updateSummary() {
         var refRoot = database.ref();
@@ -213,7 +208,6 @@ function UserHolder(main) {
             }
         }).catch(function(error){
             console.warn("Resign because of",error.message);
-//            WTU.resign(updateSummary);
             window.location = window.location.href;
         });
 
@@ -231,7 +225,6 @@ function UserHolder(main) {
 
         },function(error){
             console.warn("Resign because of",error.message);
-//            WTU.resign(updateSummary);
             window.location = window.location.href;
         });
     }
@@ -335,10 +328,8 @@ function UserHolder(main) {
 
         }, function(error){
             console.warn("Resign because of",error);
-//            WTU.resign(updateAll);
             window.location = window.location.href;
         });
-
     }
 
     function renderButtons(div) {
@@ -349,7 +340,6 @@ function UserHolder(main) {
 
     function switchActivity(){
         u.clear(buttons);
-
         u.create(HTML.BUTTON,{innerHTML:"Active", onclick: function(){
             switchActive(userNumber, true);
             renderButtons(buttons);
@@ -381,7 +371,6 @@ function UserHolder(main) {
             u.toast.show(res.message || xhr.statusText);
             renderButtons(buttons);
         });
-
     }
 
     function removeUser() {
@@ -397,7 +386,6 @@ function UserHolder(main) {
                 }).catch(function(code,xhr){
                 u.progress.hide();
                 console.warn("Resign because of",code,xhr);
-//                WTU.resign(updateSummary);
                 var res = JSON.parse(xhr.responseText) || {};
                 u.toast.show(res.message || xhr.statusText);
                 renderButtons(buttons);
@@ -407,12 +395,10 @@ function UserHolder(main) {
         u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){
             renderButtons(buttons);
         }}, buttons);
-
     }
 
     function initMap() {
         // Create a map object and specify the DOM element for display.
-
         map = new google.maps.Map(divMap, {
             scrollwheel: true,
             panControl: true,
@@ -442,7 +428,6 @@ function UserHolder(main) {
 
             }
         }, divMap);
-
         updateAll();
     }
 }

@@ -5,7 +5,6 @@
  * Created 4/20/17.
  */
 function ChatHolder(main) {
-
     this.category = DRAWER.SECTION_EXPLORE;
     this.type = "chat";
     this.title = "Chat";
@@ -96,7 +95,6 @@ function ChatHolder(main) {
             }
         }
     }
-
 }
 
 

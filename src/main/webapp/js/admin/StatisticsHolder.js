@@ -5,7 +5,6 @@
  * Created 9/11/17.
  */
 function StatisticsHolder(main) {
-
     this.category = DRAWER.SECTION_MISCELLANEOUS;
     this.type = "statistics";
     this.title = "Statistics";
@@ -48,7 +47,7 @@ function StatisticsHolder(main) {
     this.start = function() {
         div = document.getElementsByClassName("layout")[0];
         database = firebase.database();
-    };
+    }
 
     this.resume = function() {
         var self = this;
@@ -59,10 +58,9 @@ function StatisticsHolder(main) {
             .catch(function(){
                 console.log("FAIL");
             })
-    };
+    }
 
     function renderInterface() {
-
         div = document.getElementsByClassName("layout")[0];
         u.clear(div);
         ref = database.ref();
@@ -277,13 +275,11 @@ function StatisticsHolder(main) {
     }
 
     function updateData(){
-
-        var resign = true;
-
         tableMessages.placeholder.show();
         u.clear(tableMessages.body);
 
         var updateValue = function(node, value) {
+            if(!active) return;
             if(value == undefined) return;
             value = +value;
             var oldValue = +node.innerHTML;
@@ -316,7 +312,6 @@ function StatisticsHolder(main) {
                 if(!active) return;
                 var data = this;
 
-                resign = false;
                 var json = data.val();
 
                 var date = new Date();
@@ -443,10 +438,8 @@ function StatisticsHolder(main) {
 
         var addValueToChartError = function(e) {
             console.warn("Resign because of",e.message);
-            resign = true;
-//            WTU.resign(updateData);
             window.location = window.location.href;
-        };
+        }
 
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_BY_DATE).off();
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_BY_DATE).on("child_added", addValueToChart, addValueToChartError);
@@ -492,7 +485,6 @@ function StatisticsHolder(main) {
             u.toast.show("Message at "+data.key+" was removed.");
         }, function(error){
             console.error("REMOVED",error);
-
         })
     }
 
@@ -524,7 +516,6 @@ function StatisticsHolder(main) {
             no.hide()
         }}, div);
     }
-
 }
 
 

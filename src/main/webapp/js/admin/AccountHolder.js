@@ -5,7 +5,6 @@
  * Created 10/12/17.
  */
 function AccountHolder(main) {
-
      this.type = "account";
      this.title = "Account";
 
@@ -51,7 +50,7 @@ function AccountHolder(main) {
         accountId = account_id;
         window.history.pushState({}, null, "/admin/account/" + accountId);
 
-         u.clear(div);
+        u.clear(div);
 
         u.create(HTML.H2, "Summary", div);
         u.create(HTML.H4, "No real-time updating", div);
@@ -151,7 +150,6 @@ function AccountHolder(main) {
             main.turn("accounts");
             return;
         }
-
         var ref = database.ref();
 
         ref.child(DATABASE.SECTION_USERS).child(accountId).child(DATABASE.PRIVATE).once("value").then(function(snapshot) {
@@ -198,7 +196,6 @@ function AccountHolder(main) {
     }
 
     function updateData(){
-
         var ref = database.ref();
         tableHistory.placeholder.show();
         u.clear(tableHistory.body);
@@ -265,5 +262,4 @@ function AccountHolder(main) {
             renderButtons(buttons);
         }}, buttons);
     }
-
 }

@@ -5,7 +5,6 @@
  * Created 1/19/17.
  */
 function LogoutHolder(main) {
-
     this.category = DRAWER.SECTION_LAST;
     this.type = "logout";
     this.title = "Log out";
@@ -19,7 +18,7 @@ function LogoutHolder(main) {
             main.arguments.utils.dialogAbout().open();
             e.stopPropagation();
         }}).place(HTML.SPAN, "\nBuild " + data.version));
-    };
+    }
 
     this.resume = function() {
         u.clear(document.body);

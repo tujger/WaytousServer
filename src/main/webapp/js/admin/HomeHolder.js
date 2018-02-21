@@ -5,7 +5,6 @@
  * Created 1/19/17.
  */
 function HomeHolder() {
-
     this.category = DRAWER.SECTION_PRIMARY;
     this.type = "home";
     this.title = "Home";
@@ -14,15 +13,11 @@ function HomeHolder() {
 
     this.start = function() {
         div = document.getElementsByClassName("layout")[0];
-    };
+    }
 
     this.resume = function() {
         u.clear(div);
-
         u.create(HTML.H2, "Waytous admin", div);
-
-        u.create(HTML.DIV, "Here you may view and change groups and users in Waytous service.", div);
-
+        u.create(HTML.DIV, "Summary.", div);
     }
-
 }

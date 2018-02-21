@@ -5,8 +5,6 @@
  * Created 1/19/17.
  */
 function GroupHolder(main) {
-
-//     this.category = DRAWER.SECTION_PRIMARY;
      this.type = "group";
      this.title = "Group";
      this.icon = "group";
@@ -90,7 +88,6 @@ function GroupHolder(main) {
                   }}) }
         ]});*/
 
-
         tableSummary.welcomeMessageNode = tableSummary.add({
             onclick: function() {
                 ref.child(groupId).child(DATABASE.OPTIONS).child(DATABASE.WELCOME_MESSAGE).once("value").then(function(snapshot){
@@ -108,7 +105,6 @@ function GroupHolder(main) {
                                     u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.WELCOME_MESSAGE, value:newValue}))
                                         .catch(function(code,xhr){
                                             console.error(code,xhr);
-//                                            WTU.resign(updateSummary);
                                             var res = JSON.parse(xhr.responseText) || {};
                                             u.toast.show(res.message || xhr.statusText);
                                             window.location = window.location.href;
@@ -120,7 +116,6 @@ function GroupHolder(main) {
                     }).open();
                 }).catch(function(error){
                     console.warn("Resign because of",error);
-//                    WTU.resign(updateSummary);
                     window.location = window.location.href;
                 });
             },
@@ -128,14 +123,12 @@ function GroupHolder(main) {
                 { className: "th", innerHTML: "Welcome message" },
                 { className: "option", innerHTML: "..." }
             ]});
-
         tableSummary.persistentNode = tableSummary.add({
             onclick: function() {
                 this.lastChild.innerHTML += " ...wait";
                 u.post("/admin/rest/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.PERSISTENT}))
                     .catch(function(code,xhr){
                         console.warn("Resign because of",code,xhr);
-//                        WTU.resign(updateSummary);
                         var res = JSON.parse(xhr.responseText) || {};
                         u.toast.show(res.message || xhr.statusText);
                         window.location = window.location.href;
@@ -145,7 +138,6 @@ function GroupHolder(main) {
                 { className: "th", innerHTML: "Persistent group" },
                 { className: "option", innerHTML: "..." }
             ]});
-
         tableSummary.timeToLiveNode = tableSummary.add({
             className: "hidden",
             onclick: function() {
@@ -157,7 +149,6 @@ function GroupHolder(main) {
                     ],
                     positive: {
                         label: u.create(HTML.SPAN, "OK"),
-//                        dismiss: false,
                         onclick: function(items) {
                             var newValue = items[1].value;
                             if(tableSummary.timeToLiveNode.lastChild.innerHTML !== newValue) {
@@ -165,7 +156,6 @@ function GroupHolder(main) {
                                 u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.TIME_TO_LIVE_IF_EMPTY, value:newValue}))
                                     .catch(function(code,xhr){
                                         console.warn("Resign because of",code,xhr);
-//                                        WTU.resign(updateSummary);
                                         var res = JSON.parse(xhr.responseText) || {};
                                         u.toast.show(res.message || xhr.statusText);
                                         window.location = window.location.href;
@@ -181,14 +171,12 @@ function GroupHolder(main) {
                 { className: "option", innerHTML: "..." }
             ]
         });
-
         tableSummary.dismissInactiveNode = tableSummary.add({
             onclick: function() {
                 this.lastChild.innerHTML += " ...wait";
                 u.post("/admin/rest/group/switch", JSON.stringify({group_id:groupId, property:DATABASE.DISMISS_INACTIVE}))
                     .catch(function(code,xhr){
                         console.warn("Resign because of",code,xhr);
-//                        WTU.resign(updateSummary);
                         var res = JSON.parse(xhr.responseText) || {};
                         u.toast.show(res.message || xhr.statusText);
                         window.location = window.location.href;
@@ -198,7 +186,6 @@ function GroupHolder(main) {
                 { className: "th", innerHTML: "Dismiss inactive" },
                 { className: "option", innerHTML: "..." }
             ]});
-
         tableSummary.delayToDismissNode = tableSummary.add({
             className: "hidden",
             onclick: function() {
@@ -217,7 +204,6 @@ function GroupHolder(main) {
                                 u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.DELAY_TO_DISMISS, value:newValue}))
                                     .catch(function(code,xhr){
                                         console.warn("Resign because of",code,xhr);
-//                                        WTU.resign(updateSummary);
                                         var res = JSON.parse(xhr.responseText) || {};
                                         u.toast.show(res.message || xhr.statusText);
                                         window.location = window.location.href;
@@ -232,12 +218,10 @@ function GroupHolder(main) {
                 { className: "th", innerHTML: "&#150; dismiss after, sec" },
                 { className: "option", innerHTML: "..." }
             ]});
-
         tableSummary.createdNode = tableSummary.add({ cells: [
             { className: "th", innerHTML: "Created" },
             { className: "option", innerHTML: "..." }
         ]});
-
         tableSummary.changedNode = tableSummary.add({ cells: [
             { className: "th", innerHTML: "Changed" },
             { className: "option highlight", innerHTML: "..." }
@@ -258,7 +242,6 @@ function GroupHolder(main) {
                 { className: "th", innerHTML: "Users total" },
                 { className: "option highlight", innerHTML: 0 }
             ]});
-
         tableSummary.activeUsersNode = tableSummary.add({
             onclick: function(){
                 tableUsers.filter.add(filterActive);
@@ -267,7 +250,6 @@ function GroupHolder(main) {
                 { className: "th", innerHTML: "&#150; active" },
                 { className: "option highlight", innerHTML: 0 }
             ]});
-
         tableSummary.enabledUsersNode = tableSummary.add({
             onclick: function(){
                 tableUsers.filter.add(filterEnabled);
@@ -323,8 +305,7 @@ function GroupHolder(main) {
         } else {
             updateAll();
         }
-
-    };
+    }
 
     function updateSummary() {
         if(!groupId) {
@@ -361,14 +342,11 @@ function GroupHolder(main) {
 //                tableSummary.changedNode.lastChild.innerHTML = new Date(snapshot.val()[DATABASE.CHANGED]).toLocaleString();
 
             });
-//            updateData();
-
         }).catch(function(error){
             console.warn("Resign because of",error);
 //            WTU.resign(updateAll);
             window.location = window.location.href;
         });
-
     }
 
     function updateAll() {
@@ -533,16 +511,12 @@ function GroupHolder(main) {
                     if(!reload) {
                         reload = true;
                         console.warn("Resign because of",error);
-//                        WTU.resign(updateData);
                         window.location = window.location.href;
-                    } else {
-//                    console.error("ERROR, ALREADY RESIGNING");
                     }
                 });
             }.bind(snapshot), 0);
         }, function(error){
             console.warn("Resign because of",error);
-//            WTU.resign(updateAll);
             window.location = window.location.href
         });
         ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("child_removed", function(snapshot) {
@@ -559,10 +533,8 @@ function GroupHolder(main) {
 
         }, function(error){
             console.warn("Resign because of",error);
-//            WTU.resign(updateAll);
             window.location = window.location.href
         });
-
     }
 
     function isEnabledTime(time) {
@@ -581,11 +553,9 @@ function GroupHolder(main) {
             u.post("/admin/rest/group/delete", JSON.stringify({group_id:groupId}))
                 .then(function(){
                     main.turn("groups");
-//                    WTU.switchTo("/admin/groups");
                     u.toast.show("Group "+groupId+" was deleted.");
                 }).catch(function(code,xhr){
                     console.warn("Resign because of",code,xhr);
-//                    WTU.resign(updateSummary);
                     var res = JSON.parse(xhr.responseText) || {};
                     u.toast.show(res.message || xhr.statusText);
                     renderButtons(buttons);
@@ -628,10 +598,8 @@ function GroupHolder(main) {
 
             }
         }, divMapGroup);
-
         updateAll();
     }
-
 }
 
 

@@ -5,7 +5,6 @@
  * Created 1/19/17.
  */
 function GroupsHolder(main) {
-
     this.category = DRAWER.SECTION_MAIN;
     this.type = "groups";
     this.title = "Groups";
@@ -27,12 +26,8 @@ function GroupsHolder(main) {
     }
 
     this.resume = function() {
-
         u.clear(div);
-//        u.create("div", {className:"summary"}, div);
-//        u.create("h2", "Groups", div);
         ref = database.ref();
-
 
         u.create(HTML.H2, "Summary", div);
 
@@ -56,7 +51,6 @@ function GroupsHolder(main) {
                 { className:"option", innerHTML: 0 }
             ]
         });
-
         tableSummary.groupsPersistentItem = tableSummary.add({
             cells: [
                 { className:"th", innerHTML: "&#150; persistent" },
@@ -137,10 +131,9 @@ function GroupsHolder(main) {
 
         u.create("br", null, div);
         updateData();
-    };
+    }
 
     function updateData(){
-
         var initial = true;
         setTimeout(function(){initial = false;}, 3000);
         var resign = true;
@@ -291,9 +284,7 @@ function GroupsHolder(main) {
         }}, div);
     }
 
-
     function updateTableSummary() {
-
         tableSummary.groupsItem.lastChild.innerHTML = tableGroups.rows.length;
 
         var usersTotal = 0, usersOnline = 0, groupPersistent = 0, groupTemporary = 0;
@@ -312,7 +303,5 @@ function GroupsHolder(main) {
         tableSummary.groupsTemporaryItem.lastChild.innerHTML = groupTemporary;
         tableSummary.usersTotalItem.lastChild.innerHTML = usersTotal;
         tableSummary.usersOnlineItem.lastChild.innerHTML = usersOnline;
-
     }
-
 }

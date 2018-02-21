@@ -5,7 +5,6 @@
  * Created 4/20/17.
  */
 function LogsHolder() {
-
     this.category = DRAWER.SECTION_MISCELLANEOUS;
     this.type = "logs";
     this.title = "Logs";
@@ -18,7 +17,7 @@ function LogsHolder() {
 
     this.start = function() {
         div = document.getElementsByClassName("layout")[0];
-    };
+    }
 
     this.resume = function() {
 
@@ -40,7 +39,7 @@ function LogsHolder() {
         }, {passive: true});
 
         updateData();
-    };
+    }
 
     function updateData(){
         u.clear(logBody);
@@ -94,7 +93,6 @@ function LogsHolder() {
             no.hide();
         }}, div);
     }
-
 }
 
 

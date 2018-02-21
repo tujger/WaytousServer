@@ -5,7 +5,6 @@
  * Created 10/12/17.
  */
 function AccountsHolder(main) {
-
     var div;
     var groupId;
     var userNumber;
@@ -32,9 +31,7 @@ function AccountsHolder(main) {
         div = document.getElementsByClassName("layout")[0];
     }
 
-
     this.resume = function() {
-
         u.clear(div);
         u.create(HTML.H2, "Summary", div);
 
@@ -166,21 +163,11 @@ function AccountsHolder(main) {
             placeholder: "Loading..."
         }, div);
 
-        updateAll();
-        return div;
-
-    };
-
-    function updateSummary() {
-    }
-
-    function updateAll() {
-        updateSummary();
         updateData();
+        return div;
     }
 
     function updateData(){
-
         var ref = database.ref();
         tableAccounts.placeholder.show();
         u.clear(tableAccounts.body);
@@ -249,7 +236,6 @@ function AccountsHolder(main) {
 
         }, function(error){
             console.warn("Resign because of",error);
-//            WTU.resign(updateAll);
             window.location = window.location.href;
         });
 
@@ -289,5 +275,4 @@ function AccountsHolder(main) {
             no.hide();
         }}, div);
     }
-
 }

@@ -5,7 +5,6 @@
  * Created 1/19/17.
  */
 function CreateHolder(main) {
-
     var dialog;
     var div;
 
@@ -83,7 +82,6 @@ function CreateHolder(main) {
         inputTtl = dialog.items[5];
         inputDismissInactive = dialog.items[6];
         inputDelay = dialog.items[7];
-
     };
 
     var validate_id = function() {
@@ -100,7 +98,6 @@ function CreateHolder(main) {
     };
 
     var validate_submit = function() {
-
         validate_id.call(inputId);
         validate_ttl.call(inputTtl);
         validate_delay.call(inputDelay);
@@ -128,7 +125,5 @@ function CreateHolder(main) {
         });
 
         return false;
-    };
-
-
+    }
 }
