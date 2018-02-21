@@ -24,7 +24,6 @@ abstract public class AbstractFirebaseAction<U extends AbstractAction, T> extend
 
     public static void setFirebaseReference(DatabaseReference firebaseReference) {
         AbstractFirebaseAction.firebaseReference = firebaseReference;
-//        return (U) this;
     }
 
     protected Transaction.Handler incrementValue = new Transaction.Handler() {

@@ -1,8 +1,8 @@
 package com.edeqa.waytousserver.servers;
 
-import com.edeqa.edequate.rest.Resource;
 import com.edeqa.edequate.rest.Files;
 import com.edeqa.edequate.rest.Locales;
+import com.edeqa.edequate.rest.Resource;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.rest.InitialData;
 import com.edeqa.waytousserver.rest.Join;
@@ -34,7 +34,6 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
         registerAction(new Locales().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources").setActionName("/rest/locales"));
         registerAction(new TosAgreement());
         registerAction(new Version());
-
         registerAction(new Files().setFilenameFilter(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -46,8 +45,7 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
                 if("none.mp3".equals(o1.getName())) return -1;
                 return o1.getName().compareToIgnoreCase(o2.getName());
             }
-        }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("sounds"));
-
+        }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("sounds").setActionName("/rest/sounds"));
         registerAction(new Files().setFilenameFilter(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {

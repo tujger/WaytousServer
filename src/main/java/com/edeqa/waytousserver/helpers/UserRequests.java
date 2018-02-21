@@ -32,7 +32,9 @@ public class UserRequests {
     }
 
     public void remove(DataProcessorConnection dataProcessorConnection) {
-        if(dataProcessorConnection != null && map.containsKey(dataProcessorConnection.getRemoteSocketAddress().toString())) {
+        if(dataProcessorConnection != null
+                && dataProcessorConnection.getRemoteSocketAddress() != null
+                && map.containsKey(dataProcessorConnection.getRemoteSocketAddress().toString())) {
             map.remove(dataProcessorConnection.getRemoteSocketAddress().toString());
         }
     }
