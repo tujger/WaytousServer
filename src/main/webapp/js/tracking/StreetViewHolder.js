@@ -21,12 +21,12 @@ function StreetViewHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                drawerShow = object.add(DRAWER.SECTION_VIEWS, type+"_show", u.lang.show_street_view, "streetview", function(){
+                drawerShow = object.add({section: DRAWER.SECTION_VIEWS, id: type+"_show", name: u.lang.show_street_view, icon: "streetview", callback: function(){
                     view.open();
-                });
-                drawerHide = object.add(DRAWER.SECTION_VIEWS, type+"_hide", u.lang.hide_street_view, "streetview", function(){
+                }});
+                drawerHide = object.add({section: DRAWER.SECTION_VIEWS, id: type+"_hide", name: u.lang.hide_street_view, icon: "streetview", callback: function(){
                     view.close();
-                });
+                }});
                 drawerShow.hide();
                 drawerHide.hide();
                 break;

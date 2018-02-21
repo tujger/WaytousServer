@@ -23,19 +23,19 @@ function TrackHolder(main) {
         // console.log("SAMPLEEVENT",EVENT,object)
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                drawerItemShow = object.add(DRAWER.SECTION_VIEWS,EVENTS.SHOW_TRACK, u.lang.show_tracks,"title",function(){
+                drawerItemShow = object.add({section: DRAWER.SECTION_VIEWS, id: EVENTS.SHOW_TRACK, name: u.lang.show_tracks, icon: "title", callback: function(){
                     main.users.forAllActiveUsers(function (number, user) {
                         if(!user.location) return;
                         user.fire(EVENTS.SHOW_TRACK);
                         drawerPopulate();
                     });
-                });
-                drawerItemHide = object.add(DRAWER.SECTION_VIEWS,EVENTS.HIDE_TRACK, u.lang.hide_tracks,"format_strikethrough",function(){
+                }});
+                drawerItemHide = object.add({section: DRAWER.SECTION_VIEWS, id: EVENTS.HIDE_TRACK, name: u.lang.hide_tracks, icon: "format_strikethrough", callback: function(){
                     main.users.forAllActiveUsers(function (number, user) {
                         user.fire(EVENTS.HIDE_TRACK);
                         drawerPopulate();
                     });
-                });
+                }});
                 drawerPopulate();
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:

@@ -55,11 +55,11 @@ function CameraHolder(main) {
         // if(!this || !this.views || !this.views.camera) return true;
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                menuFitToScreen = object.add(DRAWER.SECTION_VIEWS,type+"_1", u.lang.fit_to_screen, "fullscreen", function(){
+                menuFitToScreen = object.add({section: DRAWER.SECTION_VIEWS, id: type+"_1", name: u.lang.fit_to_screen, icon: "fullscreen", callback: function(){
                     main.users.forAllUsers(function (number, user) {
                         user.fire(EVENTS.SELECT_USER);
                     });
-                });
+                }});
                 menuFitToScreen.disable();
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:

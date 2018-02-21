@@ -34,9 +34,9 @@ function UserProfileHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                object.add(DRAWER.SECTION_MISCELLANEOUS, EVENTS.SHOW_USER_PROFILE, u.lang.user_profile, "person", function(){
+                object.add({section: DRAWER.SECTION_MISCELLANEOUS, id: EVENTS.SHOW_USER_PROFILE, name: u.lang.user_profile, icon: "person", callback: function(){
                     main.fire(EVENTS.SHOW_USER_PROFILE);
-                });
+                }});
                 break;
             case EVENTS.SHOW_USER_PROFILE:
                 initProfileDialog();

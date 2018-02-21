@@ -34,13 +34,13 @@ function SavedLocationHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                drawerMenuItem = object.add(DRAWER.SECTION_NAVIGATION, EVENT.SHOW_SAVED_LOCATIONS, u.lang.saved_locations, "pin_drop", function(){
+                drawerMenuItem = object.add({section: DRAWER.SECTION_NAVIGATION, id: EVENTS.SHOW_SAVED_LOCATIONS, name: u.lang.saved_locations, icon: "pin_drop", callback: function(){
                     if(locationsDialog && locationsDialog.opened) {
                         locationsDialog.close();
                     } else {
                         main.fire(EVENTS.SHOW_SAVED_LOCATIONS);
                     }
-                });
+                }});
                 var last = u.load("saved_location:counter") || 0;
                 var exists = false;
                 for(var i = 0; i <= last; i++) {

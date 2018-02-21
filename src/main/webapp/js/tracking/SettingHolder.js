@@ -20,9 +20,9 @@ function SettingHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                object.add(DRAWER.SECTION_MISCELLANEOUS, EVENTS.SHOW_SETTINGS, u.lang.settings, "settings", function(){
+                object.add({section: DRAWER.SECTION_MISCELLANEOUS, id: EVENTS.SHOW_SETTINGS, name: u.lang.settings, icon: "settings", callback: function(){
                     main.fire(EVENTS.SHOW_SETTINGS);
-                });
+                }});
                 break;
             case EVENTS.SHOW_SETTINGS:
                 initOptionsDialog();

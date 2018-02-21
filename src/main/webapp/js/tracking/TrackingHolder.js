@@ -58,17 +58,17 @@ function TrackingHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                drawerItemNew = object.add(DRAWER.SECTION_PRIMARY,EVENTS.TRACKING_NEW, u.lang.create_group,
-                    u.create(HTML.IMG, {
+                drawerItemNew = object.add({section: DRAWER.SECTION_PRIMARY, id: EVENTS.TRACKING_NEW, name: u.lang.create_group,
+                    icon: u.create(HTML.IMG, {
                         src: "/images/navigation_twinks.svg",
                         className: "icon drawer-menu-item-icon"
-                    }),function(){
+                    }), callback: function(){
                         main.fire(EVENTS.TRACKING_NEW);
-                    });
+                    }});
                 drawerItemNew.hide();
-                drawerItemExit = object.add(DRAWER.SECTION_LAST,EVENTS.TRACKING_STOP, u.lang.exit_group,"exit_to_app",function(){
+                drawerItemExit = object.add({section: DRAWER.SECTION_LAST, id: EVENTS.TRACKING_STOP, name: u.lang.exit_group, icon: "exit_to_app", callback: function(){
                     main.fire(EVENTS.TRACKING_STOP);
-                });
+                }});
                 drawerItemExit.hide();
                 break;
             case EVENTS.MAP_READY:

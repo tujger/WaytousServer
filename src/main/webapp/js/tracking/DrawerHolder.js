@@ -174,9 +174,9 @@ function DrawerHolder(main) {
                 }
                 break;
             case EVENTS.CREATE_DRAWER:
-                drawerItemShare = drawerItemShare || object.add(DRAWER.SECTION_COMMUNICATION, "share", u.lang.share, "share", function(){
+                drawerItemShare = drawerItemShare || object.add({section: DRAWER.SECTION_COMMUNICATION, id: "share", name: u.lang.share, icon: "share", callback: function(){
                     main.fire(EVENTS.SHARE_LINK, main.tracking.getTrackingUri());
-                });
+                }});
                 drawerItemShare.hide();
                 break;
         }

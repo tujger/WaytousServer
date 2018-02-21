@@ -29,7 +29,7 @@ function PlaceHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                drawerItemSearch = object.add(DRAWER.SECTION_NAVIGATION, EVENTS.SHOW_PLACE, u.lang.search, "search", function(){
+                drawerItemSearch = object.add({section: DRAWER.SECTION_NAVIGATION, id: EVENTS.SHOW_PLACE, name: u.lang.search, icon: "search", callback: function(){
                     if(!searchDialog) {
                         searchDialog = u.dialog({
                             className: "place-search",
@@ -90,7 +90,7 @@ function PlaceHolder(main) {
                         searchDialog.items[0].addEventListener("blur", function(){ searchDialog.close() }, {passive: true});
                     }
                     searchDialog.open();
-                });
+                }});
                 drawerItemSearch.disable();
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:

@@ -93,21 +93,21 @@ function MapHolder(main) {
         }
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                object.add(DRAWER.SECTION_MAP, EVENTS.REQUEST_MODE_TRAFFIC, u.lang.traffic, "traffic", function(){
+                object.add({section: DRAWER.SECTION_MAP, id: EVENTS.REQUEST_MODE_TRAFFIC, name: u.lang.traffic, icon: "traffic", callback: function(){
                     main.fire(EVENTS.REQUEST_MODE_TRAFFIC);
-                });
-                object.add(DRAWER.SECTION_MAP, EVENTS.REQUEST_MODE_TRANSIT, u.lang.transit, "directions_transit", function(){
+                }});
+                object.add({section: DRAWER.SECTION_MAP, id: EVENTS.REQUEST_MODE_TRANSIT, name: u.lang.transit, icon: "directions_transit", callback: function(){
                     main.fire(EVENTS.REQUEST_MODE_TRANSIT);
-                });
-                object.add(DRAWER.SECTION_MAP, EVENTS.REQUEST_MODE_BIKE, u.lang.bicycle, "directions_bike", function(){
+                }});
+                object.add({section: DRAWER.SECTION_MAP, id: EVENTS.REQUEST_MODE_BIKE, name: u.lang.bicycle, icon: "directions_bike", callback: function(){
                     main.fire(EVENTS.REQUEST_MODE_BIKE);
-                });
-                object.add(DRAWER.SECTION_MAP, EVENTS.REQUEST_MODE_SATELLITE, u.lang.satellite, "satellite", function(){
+                }});
+                object.add({section: DRAWER.SECTION_MAP, id: EVENTS.REQUEST_MODE_SATELLITE, name: u.lang.satellite, icon: "satellite", callback: function(){
                     main.fire(EVENTS.REQUEST_MODE_SATELLITE);
-                });
-                object.add(DRAWER.SECTION_MAP, EVENTS.REQUEST_MODE_TERRAIN, u.lang.terrain, "terrain", function(){
+                }});
+                object.add({section: DRAWER.SECTION_MAP, id: EVENTS.REQUEST_MODE_TERRAIN, name: u.lang.terrain, icon: "terrain", callback: function(){
                     main.fire(EVENTS.REQUEST_MODE_TERRAIN);
-                });
+                }});
                 break;
             case EVENTS.REQUEST_MODE_TRAFFIC:
                 if(trafficLayer){

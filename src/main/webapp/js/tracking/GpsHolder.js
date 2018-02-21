@@ -22,10 +22,10 @@ function GpsHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                drawerEnableGeoposition = object.add(DRAWER.SECTION_PRIMARY,type+"_1",u.lang.enable_geolocation,"gps_fixed",function(){
+                drawerEnableGeoposition = object.add({section: DRAWER.SECTION_PRIMARY, id: type+"_1", name: u.lang.enable_geolocation, icon: "gps_fixed",callback: function(){
                     u.save("gps:asked");
                     main.fire(EVENTS.MAP_READY);
-                });
+                }});
                 if(u.load("gps:allowed")) {
                     drawerEnableGeoposition.hide();
                 }

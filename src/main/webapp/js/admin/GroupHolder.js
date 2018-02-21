@@ -17,6 +17,7 @@ function GroupHolder(main) {
      var ref;
      var database;
      var utils = main.arguments.utils;
+     var active;
 
      this.start = function() {
          database = firebase.database();
@@ -276,6 +277,13 @@ function GroupHolder(main) {
                 { className: "option highlight", innerHTML: 0 }
             ]});
 
+        active = true;
+        tableSummary.addEventListener("DOMNodeRemovedFromDocument", function(e) {
+            if(e && e.srcElement === tableSummary) {
+                active = false;
+            }
+        }, {passive: true});
+
         divMapGroup = u.create(HTML.DIV, {className: "map"}, u.create(HTML.DIV, {
             className: "map-place"
         }, divSummaryMap));
@@ -327,7 +335,8 @@ function GroupHolder(main) {
         var ref = database.ref().child(DATABASE.SECTION_GROUPS);
 
         ref.child(groupId).child(DATABASE.OPTIONS).once("value").then(function(snapshot) {
-            if(!snapshot || !snapshot.val()) return;
+           if(!active) return;
+           if(!snapshot || !snapshot.val()) return;
 
             ref.child(groupId).child(DATABASE.OPTIONS).off();
             ref.child(groupId).child(DATABASE.OPTIONS).on("value", function(snapshot){
@@ -384,6 +393,7 @@ function GroupHolder(main) {
         ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).off();
 
         ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("child_added", function(snapshot) {
+            if(!active) return;
             if(!snapshot || !snapshot.val()){
                 tableUsers.placeholder.show("No users");
                 return;
@@ -429,6 +439,7 @@ function GroupHolder(main) {
 //            }
 
                 ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.CHANGED).on("value", function(snapshot){
+                    if(!active) return;
                     if(!snapshot.val()) return;
                     userChangedNode.sort = snapshot.val();
                     userChangedNode.innerHTML = new Date(snapshot.val()).toLocaleString();
@@ -448,24 +459,26 @@ function GroupHolder(main) {
                     tableUsers.update();
                 });
                 ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.ACTIVE).on("value", function(snapshot){
-                    var active = !!snapshot.val();
-                    if(active && row.classList.contains("inactive")) {
+                    if(!active) return;
+                    var isActive = !!snapshot.val();
+                    if(isActive && row.classList.contains("inactive")) {
                         tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML + 1;
-                    } else if(!active && !row.classList.contains("inactive")) {
+                    } else if(!isActive && !row.classList.contains("inactive")) {
                         tableSummary.activeUsersNode.lastChild.innerHTML = +tableSummary.activeUsersNode.lastChild.innerHTML - 1;
                     }
-                    row.classList[active ? "remove" : "add"]("inactive");
+                    row.classList[isActive ? "remove" : "add"]("inactive");
                     tableUsers.update();
                 });
                 ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).child(userNumber).child(DATABASE.NAME).on("value", function(snapshot){
+                    if(!active) return;
                     userNameNode.innerHTML = u.clear(snapshot.val() || "&lt;Friend "+userNumber+"&gt;");
                     tableUsers.update();
                 });
                 ref.child(groupId).child(DATABASE.PUBLIC).child("tracking").child(userNumber).limitToLast(1).on("child_added", function(snapshot){
+                    if(!active) return;
                     var position = snapshot.val();
                     if(position) {
                         row.classList.remove("italic");
-
                         if(map) {
                             positions[userNumber] = utils.latLng({coords:{latitude:position[USER.LATITUDE], longitude:position[USER.LONGITUDE]}});
                             var bounds = new google.maps.LatLngBounds();
@@ -501,6 +514,7 @@ function GroupHolder(main) {
                     }
                 });
                 ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PRIVATE).child(userNumber).once("value").then(function(snapshot){
+                    if(!active) return;
                     if(!snapshot.val()) return;
 
                     var uid = snapshot.val()[REQUEST.UID];
@@ -532,6 +546,7 @@ function GroupHolder(main) {
             window.location = window.location.href
         });
         ref.child(groupId).child(DATABASE.USERS).child(DATABASE.PUBLIC).on("child_removed", function(snapshot) {
+            if(!active) return;
             reload = true;
 
             updateAll();

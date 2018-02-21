@@ -20,9 +20,9 @@ function HelpHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                object.add(DRAWER.SECTION_MISCELLANEOUS, EVENTS.SHOW_HELP, u.lang.help, "help_outline", function(){
+                object.add({section: DRAWER.SECTION_MISCELLANEOUS, id: EVENTS.SHOW_HELP, name: u.lang.help, priority: -1, icon: "help_outline", callback: function(){
                     main.fire(EVENTS.SHOW_HELP);
-                });
+                }});
                 break;
             case EVENTS.HIDE_HELP:
                 dialog && dialog.close();

@@ -40,15 +40,15 @@ function NavigationHolder(main) {
                         drawerPopulate();
                     });
                 });*/
-                drawerItemHide = object.add(DRAWER.SECTION_VIEWS, EVENTS.HIDE_NAVIGATIONS, u.lang.hide_navigations, u.create(HTML.IMG, {
+                drawerItemHide = object.add({section: DRAWER.SECTION_VIEWS, id: EVENTS.HIDE_NAVIGATIONS, name: u.lang.hide_navigations, icon: u.create(HTML.IMG, {
                     src: "/images/navigation_outline.svg",
                     className: "icon drawer-menu-item-icon"
-                }), function(){
+                }), callback: function(){
                     main.users.forAllUsers(function (number, user) {
                         user.fire(EVENTS.HIDE_NAVIGATION);
                         drawerPopulate();
                     });
-                });
+                }});
                 drawerPopulate();
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:

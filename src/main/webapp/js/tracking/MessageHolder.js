@@ -86,14 +86,14 @@ function MessageHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                drawerItemChat = object.add(DRAWER.SECTION_COMMUNICATION, type+"_1", u.lang.chat, "chat", function(){
+                drawerItemChat = object.add({section: DRAWER.SECTION_COMMUNICATION, id: type+"_1", name: u.lang.chat, icon: "chat", callback: function(){
                     if(chat.classList.contains("hidden")) {
                         main.fire(EVENTS.SHOW_MESSAGES);
                     } else {
                         u.saveForContext("message:chat");
                         chat.close();
                     }
-                });
+                }});
                 break;
             case EVENTS.TRACKING_ACTIVE:
                 if(u.loadForContext("message:chat")) chat.open();

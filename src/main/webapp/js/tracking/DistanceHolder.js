@@ -56,19 +56,19 @@ function DistanceHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                drawerItemShow = object.add(DRAWER.SECTION_VIEWS, EVENTS.SHOW_DISTANCE, u.lang.show_distances, "settings_ethernet", function(){
+                drawerItemShow = object.add({section: DRAWER.SECTION_VIEWS, id: EVENTS.SHOW_DISTANCE, name: u.lang.show_distances, icon: "settings_ethernet", callback: function(){
                     main.users.forAllActiveUsers(function (number, user) {
                         if(!user.location) return;
                         user.fire(EVENTS.SHOW_DISTANCE);
                         drawerPopulate();
                     });
-                });
-                drawerItemHide = object.add(DRAWER.SECTION_VIEWS, EVENTS.HIDE_DISTANCE, u.lang.hide_distances, "code", function(){
+                }});
+                drawerItemHide = object.add({section: DRAWER.SECTION_VIEWS, id: EVENTS.HIDE_DISTANCE, name: u.lang.hide_distances, icon: "code", callback: function(){
                     main.users.forAllActiveUsers(function (number, user) {
                         user.fire(EVENTS.HIDE_DISTANCE);
                         drawerPopulate();
                     });
-                });
+                }});
                 drawerItemShow.hide();
                 drawerItemHide.hide();
                 break;

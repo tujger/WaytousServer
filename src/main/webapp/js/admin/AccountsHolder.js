@@ -17,6 +17,7 @@ function AccountsHolder(main) {
     this.title = "Accounts";
     this.menu = "Accounts";
     this.icon = "person";
+    this.priority = 10;
 
     var tableSummary;
     var tableGroups;
