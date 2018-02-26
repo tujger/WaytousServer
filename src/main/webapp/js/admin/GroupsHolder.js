@@ -222,11 +222,7 @@ function GroupsHolder(main) {
                         console.error(error);
                         tableGroups.placeholder.show();
                     });
-                    // }, function(e) {
-                    //     console.warn("Resign because of",e.message);
-                    //     resign = true;
-                    //     WTU.resign(updateData);
-                    // });
+
                     ref.child(DATABASE.SECTION_GROUPS).on("child_removed", function(data) {
                         if(!active) return;
                         for(var i in tableGroups.rows) {

@@ -344,7 +344,6 @@ function GroupHolder(main) {
             });
         }).catch(function(error){
             console.warn("Resign because of",error);
-//            WTU.resign(updateAll);
             window.location = window.location.href;
         });
     }
@@ -569,7 +568,6 @@ function GroupHolder(main) {
 
     function initMap() {
         // Create a map object and specify the DOM element for display.
-
         map = new google.maps.Map(divMapGroup, {
             scrollwheel: true,
             panControl: true,

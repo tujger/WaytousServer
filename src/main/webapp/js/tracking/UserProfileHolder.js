@@ -28,7 +28,6 @@ function UserProfileHolder(main) {
                 { type: HTML.DIV, className: "progress-dialog-title", innerHTML: u.lang.waiting_for_sign_in }
             ]
         }, document.body);
-
     }
 
     function onEvent(EVENT,object){
@@ -450,7 +449,6 @@ function UserProfileHolder(main) {
         if(resign) {
             main.tracking.setLink(window.location.href);
             main.tracking.start(function(e){console.log(e)});
-            //window.location = window.location.href;
             resign = false;
         }
     }
@@ -527,7 +525,6 @@ function UserProfileHolder(main) {
     }
 
     return {
-        //createView:createView,
         onEvent:onEvent,
         start:start,
         type:type

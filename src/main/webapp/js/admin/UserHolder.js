@@ -31,22 +31,7 @@ function UserHolder(main) {
 
      this.start = function() {
          database = firebase.database();
-
          div = document.getElementsByClassName("layout")[0];
-
-//         if(request) {
-//             groupId = request[3];
-//             userNumber = request[4];
-//         } else {
-//             var parts = window.location.pathname.split("/");
-//             groupId = parts[3];
-//             userNumber = parts[4];
-//         }
-//         this.page = "user" + "/" + groupId + "/" + userNumber;
-//         div = document.getElementsByClassName("layout")[0];
-//         u.clear(div);
-//
-//         renderInterface();
      }
 
     this.resume = function(group_id, user_number) {
@@ -182,7 +167,6 @@ function UserHolder(main) {
         }
         updateAll();
         return div;
-
     }
 
     function updateSummary() {
@@ -324,8 +308,6 @@ function UserHolder(main) {
                     }, 100);
                 }
             }.bind(snapshot), 0);
-
-
         }, function(error){
             console.warn("Resign because of",error);
             window.location = window.location.href;

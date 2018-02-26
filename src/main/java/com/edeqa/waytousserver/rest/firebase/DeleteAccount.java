@@ -5,8 +5,7 @@ import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
-import com.google.firebase.tasks.Task;
-import com.google.firebase.tasks.Tasks;
+import com.google.api.core.ApiFuture;
 
 import org.json.JSONObject;
 
@@ -30,9 +29,9 @@ public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String>
         json = new JSONObject();
         json.put(Rest.UID, accountId);
 
-        Task<Void> deleteAccountTask = getFirebaseReference().child(Firebase.SECTION_USERS).child(accountId).removeValue();
+        ApiFuture<Void> deleteAccountTask = getFirebaseReference().child(Firebase.SECTION_USERS).child(accountId).removeValueAsync();
         try {
-            Tasks.await(deleteAccountTask);
+            deleteAccountTask.get();
 
             json.put(STATUS, STATUS_SUCCESS);
             Misc.log("DeleteAccount", accountId, "deleted");

@@ -82,20 +82,20 @@ function CreateHolder(main) {
         inputTtl = dialog.items[5];
         inputDismissInactive = dialog.items[6];
         inputDelay = dialog.items[7];
-    };
+    }
 
     var validate_id = function() {
         this.value = this.value.toUpperCase().replace(/[^\w]/g, "");
-    };
+    }
 
     var validate_ttl = function() {
         this.value = this.value.replace(/[^\d]/g, "");
-    };
+    }
 
     var validate_delay = function() {
         this.value = this.value.replace(/[^\d]/g, "");
         if(this.value < 300) this.value = 300;
-    };
+    }
 
     var validate_submit = function() {
         validate_id.call(inputId);
@@ -123,7 +123,6 @@ function CreateHolder(main) {
             var res = JSON.parse(xhr.responseText) || {};
             u.toast.show(res.message || xhr.statusText);
         });
-
         return false;
     }
 }

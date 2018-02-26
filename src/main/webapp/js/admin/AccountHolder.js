@@ -142,8 +142,7 @@ function AccountHolder(main) {
 
         updateAll();
         return div;
-
-    };
+    }
 
     function updateSummary() {
         if(!accountId) {
@@ -185,7 +184,6 @@ function AccountHolder(main) {
 
         }).catch(function(error){
             console.warn("Resign because of",error);
-//            WTU.resign(updateAll);
             window.location = window.location.href;
         });
     }
@@ -230,10 +228,8 @@ function AccountHolder(main) {
 
         }, function(error){
             console.warn("Resign because of",error);
-//            WTU.resign(updateAll)
             window.location = window.location.href;
         });
-
     }
 
     function renderButtons(div) {
@@ -251,7 +247,6 @@ function AccountHolder(main) {
                     u.toast.show("Account " + accountId + " was deleted.");
                 }).catch(function(code,xhr){
                     console.warn("Resign because of",code,xhr);
-//                    WTU.resign(updateSummary);
                     var res = JSON.parse(xhr.responseText) || {};
                     u.toast.show(res.message || xhr.statusText);
                     renderButtons(buttons);

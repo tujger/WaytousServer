@@ -41,12 +41,11 @@ function LogoutHolder(main) {
             xhr.setRequestHeader("Authorization", "Digest logout");
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
-
                     var url = new URL(window.location.href);
                     url = "https://" + url.hostname + (data.HTTPS_PORT === 443 ? "" : ":"+ data.HTTPS_PORT) + "/";
                     window.location = url
                 }
-            };
+            }
             xhr.send();
         }, 0);
     }

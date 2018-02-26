@@ -9,6 +9,7 @@ import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutureCallback;
 import com.google.api.core.ApiFutures;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static com.edeqa.waytous.Constants.REQUEST_CHECK_USER;
 import static com.edeqa.waytous.Constants.REQUEST_JOIN_GROUP;

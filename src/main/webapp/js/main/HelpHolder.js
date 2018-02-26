@@ -15,7 +15,7 @@ function HelpHolder(main) {
 
     this.start = function() {
         console.log("Starting HelpHolder");
-    };
+    }
 
     this.resume = function() {
         console.log("Resuming HelpHolder");
@@ -32,19 +32,4 @@ function HelpHolder(main) {
             u.progress.hide();
         });
     }
-
-    this.onEvent = function(event, object) {
-        console.log("onEvent", event, object);
-//        switch(event) {
-//            case EVENTS.API:
-//                console.log("INDEX HOME");
-//                u.byId("content").innerHTML = u.lang.api_body.innerHTML;
-//                u.byId("content").classList.add("content-api");
-//                if(object) object();
-//                break;
-//        }
-        return true;
-    }
-
-
 }
