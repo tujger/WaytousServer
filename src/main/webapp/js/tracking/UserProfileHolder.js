@@ -430,18 +430,18 @@ function UserProfileHolder(main) {
 
     function onAuthStateChanged(result) {
         waitingDialog.close();
-        if (result && result.user) {
-            try {
-                result = result.user ? result.user.toJSON() : result.toJSON();
-                u.save("uuid", result.uid);
-                result.providerData.forEach(function (profile) {
-                    u.save(REQUEST.SIGN_PROVIDER, profile.providerId);
-                    main.toast.show(u.lang.signed_as_s_using_s.format(profile.displayName || profile.email, profile.providerId));
+        if (result && fetchAccount()) {
+            var user = fetchAccount();
+            if(user) {
+                try {
+                    u.save("uuid", user.uid);
+                    u.save(REQUEST.SIGN_PROVIDER, user.providerId);
+                    main.toast.show(u.lang.signed_as_s_using_s.format(user.displayName || user.email, user.providerId));
                     doGlobalSync();
-                });
-                initProfileDialog();
-            }catch(e) {
-                console.error(e);
+                    initProfileDialog();
+                }catch(e) {
+                    console.error(e);
+                }
             }
         } else {
             // console.log("OUT:");
@@ -509,11 +509,17 @@ function UserProfileHolder(main) {
         var data = firebase.auth().currentUser;
         if(data) {
             user = {};
+            var registered = false;
             data.providerData.forEach(function(item){
                 user = u.cloneAsObject(item);
+                registered = true;
                 return false;
             });
-            user.uid = data.uid;
+            if(registered) {
+                user.uid = data.uid;
+            } else {
+                user = null;
+            }
         }
         return user;
     }

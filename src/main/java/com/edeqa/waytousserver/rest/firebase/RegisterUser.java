@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import static com.edeqa.waytous.Constants.REQUEST_CHECK_USER;
 import static com.edeqa.waytous.Constants.REQUEST_JOIN_GROUP;
@@ -61,7 +60,14 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
 
         if(REQUEST_NEW_GROUP.equals(getAction())) {
             DatabaseReference nodeNumber = refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.QUEUE).push();
-            nodeNumber.setValue(user.getUid());
+            nodeNumber.setValue(user.getUid(), new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError error, DatabaseReference ref) {
+                    if (error != null) {
+                        Misc.err("RegisterUser", error);
+                    }
+                }
+            });
         }
 
         user.setColor(MyUser.selectColor(user.getNumber()));

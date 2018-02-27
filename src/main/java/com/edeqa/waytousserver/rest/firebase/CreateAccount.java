@@ -5,11 +5,10 @@ import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
+import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.tasks.Task;
-import com.google.firebase.tasks.Tasks;
 
 import org.json.JSONObject;
 
@@ -71,13 +70,11 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
                                     .setAction(ACCOUNT_CREATED)
                                     .call(null, user.getUid());
                         } else {
-                            Misc.log("CreateAccount", "updated for uid:", user.getUid(), accountPrivateData);
+                            Misc.log("CreateAccount", "updating for uid:", user.getUid(), accountPrivateData);
                         }
-                        final Task<Void> updateAccountTask = refAccounts.child(user.getUid()).child(Firebase.PRIVATE).updateChildren(accountPrivateData);
-
+                        ApiFuture<Void> updateAccountTask = refAccounts.child(user.getUid()).child(Firebase.PRIVATE).updateChildrenAsync(accountPrivateData);
                         try {
-                            Tasks.await(updateAccountTask);
-//                            Misc.log(LOG, "createOrUpdateAccount:accountDone:" + user.getUid());
+                            updateAccountTask.get();
                             getOnSuccess().run();
                         } catch (Exception e) {
                             Misc.err("CreateAccount", "failed for uid:", user.getUid(), e);

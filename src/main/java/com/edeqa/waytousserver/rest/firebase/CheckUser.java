@@ -7,10 +7,9 @@ import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.helpers.UserRequest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
+import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.tasks.Task;
-import com.google.firebase.tasks.Tasks;
 
 import org.json.JSONObject;
 
@@ -71,9 +70,9 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
                                             .setOnSuccess(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Task<Void> updateUserTask = refGroup.child(Firebase.USERS).child(Firebase.PUBLIC).child("" + userRequest.getNumber()).updateChildren(update);
+                                            ApiFuture<Void> updateUserTask = refGroup.child(Firebase.USERS).child(Firebase.PUBLIC).child("" + userRequest.getNumber()).updateChildrenAsync(update);
                                             try {
-                                                Tasks.await(updateUserTask);
+                                                updateUserTask.get();
                                                 json.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
                                                 json.put(RESPONSE_NUMBER, userRequest.getNumber());
                                                 json.put(RESPONSE_SIGN, customToken);
@@ -87,7 +86,7 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
                                                         .setAction(AbstractDataProcessor.Action.USER_RECONNECTED)
                                                         .call(null, userRequest.getUid());
                                             } catch (Exception e) {
-                                                e.printStackTrace();
+                                                Misc.err("CheckUser", "failed joining:", e);
                                             }
                                         }
                                     }).setOnError(new Runnable1<Throwable>() {

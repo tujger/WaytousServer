@@ -48,10 +48,13 @@ abstract public class AbstractFirebaseAction<U extends AbstractAction, T> extend
     };
 
     protected EventBus<AbstractFirebaseAction> getFireBus() {
+        //noinspection unchecked
         return (EventBus<AbstractFirebaseAction>) EventBus.getOrCreate(AbstractFirebaseAction.EVENTBUS);
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected EventBus<AbstractTrackingAction> getTrackingBus() {
+        //noinspection unchecked
         return (EventBus<AbstractTrackingAction>) EventBus.getOrCreate(AbstractTrackingAction.EVENTBUS);
     }
 }
