@@ -15,11 +15,11 @@ function CreateHolder(main) {
     this.icon = "group_add";
     this.preventState = true;
 
-    var inputId,inputRequiresPassword,inputPassword,inputWelcomeMessage,inputPersistent,inputTtl,inputDismissInactive,inputDelay;
+    var inputId,inputRequiresPassword,inputPassword,inputWelcomeMessage,inputPersistent,inputTtl,inputLimitUsers,inputDismissInactive,inputDelay;
 
     this.start = function() {
         div = document.getElementsByClassName("layout")[0];
-    }
+    };
 
     this.resume = function() {
         dialog = dialog || u.dialog({
@@ -54,6 +54,7 @@ function CreateHolder(main) {
                     }
                 },
                 { type: HTML.NUMBER, label: "&#150; time to live, min", oninput: validate_ttl, value: 24 * 60 },
+                { type: HTML.NUMBER, label: "Limit users" },
                 { type: HTML.CHECKBOX, label: "Dismiss inactive users", onchange: function() {
                     // noinspection PointlessBooleanExpressionJS
                     dialog.items[7].disabled = !!this.checked;
@@ -80,22 +81,23 @@ function CreateHolder(main) {
         inputWelcomeMessage = dialog.items[3];
         inputPersistent = dialog.items[4];
         inputTtl = dialog.items[5];
-        inputDismissInactive = dialog.items[6];
-        inputDelay = dialog.items[7];
-    }
+        inputLimitUsers = dialog.items[6];
+        inputDismissInactive = dialog.items[7];
+        inputDelay = dialog.items[8];
+    };
 
     var validate_id = function() {
         this.value = this.value.toUpperCase().replace(/[^\w]/g, "");
-    }
+    };
 
     var validate_ttl = function() {
         this.value = this.value.replace(/[^\d]/g, "");
-    }
+    };
 
     var validate_delay = function() {
         this.value = this.value.replace(/[^\d]/g, "");
         if(this.value < 300) this.value = 300;
-    }
+    };
 
     var validate_submit = function() {
         validate_id.call(inputId);
@@ -111,6 +113,7 @@ function CreateHolder(main) {
             "welcome-message": inputWelcomeMessage.value,
             "persistent": inputPersistent.checked,
             "time-to-live-if-empty": inputTtl.value,
+            "limit-users": inputLimitUsers.value,
             "dismiss-inactive": inputDismissInactive.checked,
             "delay-to-dismiss": inputDelay.value
         };

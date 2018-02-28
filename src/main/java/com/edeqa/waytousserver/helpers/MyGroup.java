@@ -48,6 +48,7 @@ public class MyGroup {
     private int timeToLiveIfEmpty;
     private boolean dismissInactive;
     private int delayToDismiss;
+    private int limitUsers;
 
 
     public MyGroup(){
@@ -61,7 +62,7 @@ public class MyGroup {
         dismissInactive = false;
         delayToDismiss = 3600;
         welcomeMessage = "";
-
+        limitUsers = 0;
     }
 
     public String getId(){
@@ -73,20 +74,14 @@ public class MyGroup {
     }
 
     public void addUser(MyUser user){
-
-//        user.setToken(id);
         users.put(user.getUid(),user);
         user.setNumber(count++);
         if(owner == null) setOwner(user.getUid());
-
         if(user.getColor() == 0){
             user.setColor(MyUser.selectColor(user.getNumber()));
         }
-
         updateChanged();
     }
-
-
 
     public boolean removeUser(String hash){
         boolean res;
@@ -107,7 +102,6 @@ public class MyGroup {
     public void setOwner(String owner) {
         this.owner = owner;
     }
-
 
     @Override
     public String toString() {
@@ -390,5 +384,13 @@ public class MyGroup {
 
     public void setDelayToDismiss(int delayToDismiss) {
         this.delayToDismiss = delayToDismiss;
+    }
+
+    public int getLimitUsers() {
+        return limitUsers;
+    }
+
+    public void setLimitUsers(int limitUsers) {
+        this.limitUsers = limitUsers;
     }
 }

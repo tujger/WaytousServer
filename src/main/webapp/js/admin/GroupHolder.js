@@ -171,6 +171,37 @@ function GroupHolder(main) {
                 { className: "option", innerHTML: "..." }
             ]
         });
+        tableSummary.limitUsers = tableSummary.add({
+            onclick: function() {
+                u.dialog({
+                    title: "Limit users",
+                    items: [
+                        { type:HTML.NUMBER, label:"Limit amount of users to", value:parseInt(tableSummary.limitUsers.lastChild.innerHTML || 0) },
+                        { type:HTML.DIV, innerHTML:"0 - no limit." }
+                    ],
+                    positive: {
+                        label: u.create(HTML.SPAN, "OK"),
+                        onclick: function(items) {
+                            var newValue = items[0].value;
+                            if(tableSummary.limitUsers.lastChild.innerHTML !== newValue) {
+                                tableSummary.limitUsers.lastChild.innerHTML += " ...wait";
+                                u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.LIMIT_USERS, value:newValue || "0"}))
+                                    .catch(function(code,xhr){
+                                        console.warn("Resign because of",code,xhr);
+                                        var res = JSON.parse(xhr.responseText) || {};
+                                        u.toast.show(res.message || xhr.statusText);
+                                        window.location = window.location.href;
+                                    });
+                            }
+                        }
+                    },
+                    negative: { label: u.create(HTML.SPAN, "Cancel")}
+                }).open();
+            },
+            cells: [
+                { className: "th", innerHTML: "Limit users" },
+                { className: "option", innerHTML: "..." }
+            ]});
         tableSummary.dismissInactiveNode = tableSummary.add({
             onclick: function() {
                 this.lastChild.innerHTML += " ...wait";
@@ -332,6 +363,8 @@ function GroupHolder(main) {
                 tableSummary.timeToLiveNode[snapshot.val()[DATABASE.PERSISTENT] ? "hide":"show"]();
 
                 tableSummary.timeToLiveNode.lastChild.innerHTML = u.clear(snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY] || 15);
+
+                tableSummary.limitUsers.lastChild.innerHTML = u.clear(snapshot.val()[DATABASE.LIMIT_USERS] || "&#150;");
 
                 tableSummary.dismissInactiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.DISMISS_INACTIVE] ? "Yes" : "No";
                 tableSummary.delayToDismissNode[snapshot.val()[DATABASE.DISMISS_INACTIVE] ? "show":"hide"]();

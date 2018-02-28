@@ -133,6 +133,7 @@ function Constants() {
         DELAY_TO_DISMISS : "delay-to-dismiss",
         DISMISS_INACTIVE : "dismiss-inactive",
         KEYS: "k",
+        LIMIT_USERS: "limit-users",
         NAME : "name", // name
         OPTIONS : "o", // options
         QUEUE: "q",

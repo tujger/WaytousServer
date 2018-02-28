@@ -11,11 +11,16 @@
         "o": { // options
           ".read": "root.child('_g/'+$group_id+'/u/k/'+auth.uid).exists()",
           ".write": false,
-          "welcome-message": {
-            ".write": "root.child('_g/'+$group_id+'/u/p/0/uid').val() === auth.uid",
-            ".validate": "newData.isString() && newData.val().length < 10240"
-          },
           "date-created": {
+            ".write": "!data.exists() && newData.exists()"
+          },
+          "delay-to-dismiss": {
+            ".write": "!data.exists() && newData.exists()"
+          },
+          "dismiss-inactive": {
+            ".write": "!data.exists() && newData.exists()"
+          },
+          "limit-users": {
             ".write": "!data.exists() && newData.exists()"
           },
           "persistent": {
@@ -27,11 +32,9 @@
           "time-to-live-if-empty": {
             ".write": "!data.exists() && newData.exists()"
           },
-          "dismiss-inactive": {
-            ".write": "!data.exists() && newData.exists()"
-          },
-          "delay-to-dismiss": {
-            ".write": "!data.exists() && newData.exists()"
+          "welcome-message": {
+            ".write": "root.child('_g/'+$group_id+'/u/p/0/uid').val() === auth.uid",
+            ".validate": "newData.isString() && newData.val().length < 10240"
           }
         },
         "u": { // users
@@ -100,7 +103,6 @@
         }
         //    ".read": "root.child($group_id+'/u/'+auth.uid).exists()",
         //    ".write": "root.child($group_id+'/u/'+auth.uid).exists() && newData.child('author_id').val() === auth.uid && !data.exists() && newData.exists()",
-
       }
     },
     "_s": { // stat

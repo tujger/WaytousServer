@@ -13,19 +13,21 @@ public class GroupRequest {
     private boolean dismissInactive;
     private long delayToDismiss;
     private MyGroup group;
+    private int limitUsers;
 
     public GroupRequest() {
-        this(null);
+        setDelayToDismiss(3600);
+        setDismissInactive(false);
+        setLimitUsers(0);
+        setPersistent(false);
+        setRequiresPassword(false);
+        setTimeToLiveIfEmpty(24 * 60);
         fetchNewId();
     }
 
     public GroupRequest(String id) {
+        this();
         this.id = id;
-        setDelayToDismiss(3600);
-        setDismissInactive(false);
-        setPersistent(false);
-        setRequiresPassword(false);
-        setTimeToLiveIfEmpty(24 * 60);
     }
 
     public void fetchNewId() {
@@ -35,13 +37,14 @@ public class GroupRequest {
     public MyGroup fetchGroup() {
         if(group != null) return group;
         group = new MyGroup();
+        group.setDelayToDismiss((int) getDelayToDismiss());
+        group.setDismissInactive(isDismissInactive());
         group.setId(getId());
-        group.setRequiresPassword(isRequiresPassword());
+        group.setLimitUsers(getLimitUsers());
         group.setPassword(getPassword());
         group.setPersistent(isPersistent());
+        group.setRequiresPassword(isRequiresPassword());
         group.setTimeToLiveIfEmpty((int) getTimeToLiveIfEmpty());
-        group.setDismissInactive(isDismissInactive());
-        group.setDelayToDismiss((int) getDelayToDismiss());
         group.setWelcomeMessage(getWelcomeMessage());
         return group;
     }
@@ -129,6 +132,15 @@ public class GroupRequest {
                 (persistent ? ", timeToLiveIfEmpty=" + timeToLiveIfEmpty : "") +
                 ", dismissInactive=" + dismissInactive +
                 (dismissInactive ? ", delayToDismiss=" + delayToDismiss : "") +
+                (limitUsers != 0 ? ", limitUsers=" + limitUsers : "") +
                 '}';
+    }
+
+    public void setLimitUsers(int limitUsers) {
+        this.limitUsers = limitUsers;
+    }
+
+    public int getLimitUsers() {
+        return limitUsers;
     }
 }

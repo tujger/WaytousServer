@@ -23,7 +23,7 @@ function GroupsHolder(main) {
     this.start = function() {
         database = firebase.database();
         div = document.getElementsByClassName("layout")[0];
-    }
+    };
 
     this.resume = function() {
         u.clear(div);
@@ -131,7 +131,7 @@ function GroupsHolder(main) {
 
         u.create("br", null, div);
         updateData();
-    }
+    };
 
     function updateData(){
         var initial = true;

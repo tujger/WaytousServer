@@ -63,6 +63,13 @@ public class GroupCreate extends AbstractAction<RequestWrapper> {
                         groupRequest.setDelayToDismiss(300);
                     }
                 }
+                if(json.has(Firebase.LIMIT_USERS)) {
+                    try {
+                        groupRequest.setLimitUsers(Integer.parseInt(json.getString(Firebase.LIMIT_USERS)));
+                    } catch(Exception e){
+                        groupRequest.setLimitUsers(10000);
+                    }
+                }
 
 
             /*final Runnable1<JSONObject>[] onresult = new Runnable1[2];

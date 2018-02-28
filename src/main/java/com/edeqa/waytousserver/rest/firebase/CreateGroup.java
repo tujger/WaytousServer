@@ -47,22 +47,15 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
                     public void call(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.getValue() == null) {
                             Map<String, Object> childUpdates = new HashMap<>();
-                            childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.WELCOME_MESSAGE, group.getWelcomeMessage());
-                            childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.REQUIRES_PASSWORD, group.isRequiresPassword());
-                            childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.TIME_TO_LIVE_IF_EMPTY, group.getTimeToLiveIfEmpty());
-                            childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.PERSISTENT, group.isPersistent());
-                            childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.DISMISS_INACTIVE, group.isDismissInactive());
-                            childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.DELAY_TO_DISMISS, group.getDelayToDismiss());
-                            childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.CREATED, ServerValue.TIMESTAMP);
-                            childUpdates.put(Firebase.OPTIONS + "/"
-                                    + Firebase.CHANGED, ServerValue.TIMESTAMP);
+                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.WELCOME_MESSAGE, group.getWelcomeMessage());
+                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.REQUIRES_PASSWORD, group.isRequiresPassword());
+                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.TIME_TO_LIVE_IF_EMPTY, group.getTimeToLiveIfEmpty());
+                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.PERSISTENT, group.isPersistent());
+                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.DISMISS_INACTIVE, group.isDismissInactive());
+                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.DELAY_TO_DISMISS, group.getDelayToDismiss());
+                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.LIMIT_USERS, group.getLimitUsers());
+                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.CREATED, ServerValue.TIMESTAMP);
+                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.CHANGED, ServerValue.TIMESTAMP);
 
                             ApiFuture<Void> task = refGroups.child(group.getId()).updateChildrenAsync(childUpdates);
                             ApiFutures.addCallback(task, new ApiFutureCallback<Void>() {

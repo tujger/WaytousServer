@@ -3,6 +3,7 @@ package com.edeqa.waytousserver.rest.firebase;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
+import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.helpers.UserRequest;
@@ -19,6 +20,7 @@ import static com.edeqa.waytous.Constants.REQUEST_JOIN_GROUP;
 import static com.edeqa.waytous.Constants.RESPONSE_CONTROL;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_CHECK;
+import static com.edeqa.waytous.Firebase.LIMIT_USERS;
 
 @SuppressWarnings("unused")
 public class JoinGroup extends AbstractFirebaseAction<JoinGroup, UserRequest> {
@@ -37,6 +39,7 @@ public class JoinGroup extends AbstractFirebaseAction<JoinGroup, UserRequest> {
         if (userRequest != null) {
             final DatabaseReference refGroup = refGroups.child(userRequest.getGroupId());
             final TaskSingleValueEventFor[] requestDataPrivateTask = new TaskSingleValueEventFor[1];
+            final GroupRequest groupRequest = new GroupRequest();
             requestDataPrivateTask[0] = new TaskSingleValueEventFor<DataSnapshot>().addOnCompleteListener(new Runnable1<DataSnapshot>() {
                 @Override
                 public void call(DataSnapshot dataSnapshot) {
@@ -82,9 +85,15 @@ public class JoinGroup extends AbstractFirebaseAction<JoinGroup, UserRequest> {
                             }
                         }).call(null, user);
                     } else {
-                        DatabaseReference nodeNumber = refGroups.child(userRequest.getGroupId()).child(Firebase.USERS).child(Firebase.QUEUE).push();
-                        nodeNumber.setValue(userRequest.getUid());
-                        requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
+                        if(groupRequest.getLimitUsers() > 0 && count > groupRequest.getLimitUsers()) {
+                            ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                                    .setUserRequest(userRequest)
+                                    .call(json,"Sorry, group is full.");
+                        } else {
+                            DatabaseReference nodeNumber = refGroups.child(userRequest.getGroupId()).child(Firebase.USERS).child(Firebase.QUEUE).push();
+                            nodeNumber.setValue(userRequest.getUid());
+                            requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
+                        }
                     }
                 }
             });
@@ -116,6 +125,12 @@ public class JoinGroup extends AbstractFirebaseAction<JoinGroup, UserRequest> {
                         @Override
                         public void call(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.getValue() != null) {
+                                System.out.println("OPTIONS:"+dataSnapshot.getValue());
+                                try {
+                                    groupRequest.setLimitUsers(Integer.parseInt(String.valueOf(((HashMap) dataSnapshot.getValue()).get(LIMIT_USERS))));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 numberForKeyTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.KEYS).child(userRequest.getUid())).start();
                             } else {
                                 ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
