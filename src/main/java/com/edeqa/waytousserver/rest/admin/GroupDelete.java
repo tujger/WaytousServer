@@ -35,7 +35,7 @@ public class GroupDelete extends AbstractAction<RequestWrapper> {
                 JSONObject json = new JSONObject(options);
                 String groupId = json.getString(Rest.GROUP_ID);
 
-                Common.getInstance().getDataProcessor("v1").deleteGroup(groupId,new Runnable1<JSONObject>() {
+                Common.getInstance().getDataProcessor().deleteGroup(groupId,new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
                         request.sendResult(json);

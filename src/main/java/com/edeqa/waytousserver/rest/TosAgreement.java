@@ -23,7 +23,7 @@ public class TosAgreement extends AbstractAction<RequestWrapper> {
         String body = request.getBody();
         Misc.log("TosAgreement", request.getRemoteAddress(), "tosAgreement:", body);
 
-        Common.getInstance().getDataProcessor(request.getRequestURI().getPath().split("/")[3]).onMessage(new HttpDPConnection(request), body);
+        Common.getInstance().getDataProcessor().onMessage(new HttpDPConnection(request), body);
 
         json.put(STATUS, STATUS_SUCCESS);
     }

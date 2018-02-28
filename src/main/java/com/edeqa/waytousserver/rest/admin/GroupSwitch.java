@@ -36,7 +36,7 @@ public class GroupSwitch extends AbstractAction<RequestWrapper> {
                 String groupId = json.getString(Rest.GROUP_ID);
                 String property = json.getString(Rest.PROPERTY);
 
-                Common.getInstance().getDataProcessor("v1").switchPropertyInGroup(groupId,property,new Runnable1<JSONObject>() {
+                Common.getInstance().getDataProcessor().switchPropertyInGroup(groupId,property,new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
                         request.sendResult(json);

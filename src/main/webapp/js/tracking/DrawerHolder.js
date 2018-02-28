@@ -17,7 +17,6 @@ DRAWER = {
 };
 
 function DrawerHolder(main) {
-
     var drawer;
     var backButtonAction;
     var actionbar;
@@ -25,7 +24,6 @@ function DrawerHolder(main) {
 
     var start = function() {
         var dialogAbout = utils.dialogAbout(main.right);
-
         dialogAbout.addItem({
             enclosed: true,
             label: u.lang.privacy_policy,

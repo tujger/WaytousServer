@@ -42,7 +42,7 @@ public class TrackingServletHandler extends AbstractServletHandler {
     }
 
     /**
-     * Initialize DataProcessorFirebaseV1 for installation type "google-appengine".
+     * Initialize DataProcessorFirebase for installation type "google-appengine".
      */
     @Override
     public void init() throws ServletException {

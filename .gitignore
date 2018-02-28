@@ -15,3 +15,4 @@ generate_letsencrypt_jks.sh
 waytous-beta.log
 /out/
 /waytous.log
+options_developer.json

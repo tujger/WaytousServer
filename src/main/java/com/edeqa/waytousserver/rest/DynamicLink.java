@@ -4,7 +4,6 @@ import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.servers.DataProcessorFirebaseV1;
 import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;
@@ -31,7 +30,7 @@ public class DynamicLink extends AbstractAction<RequestWrapper> {
     public void call(JSONObject json, RequestWrapper requestWrapper) {
 
         String mobileRedirect, webRedirect, mainLink;
-        if(Common.getInstance().getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode()){
+        if(Common.getInstance().getDataProcessor().isServerMode()){
 //                mobileRedirect = "waytous://" + host + "/track/" + tokenId;
             mobileRedirect = "https://" + getHost() + "/track/" + getGroupId();
             webRedirect = "https://" + getHost() + Common.getWrappedHttpsPort() + "/group/" + getGroupId();

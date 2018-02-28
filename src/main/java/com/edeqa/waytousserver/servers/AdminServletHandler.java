@@ -40,7 +40,6 @@ import static com.edeqa.helpers.HtmlGenerator.SRC;
 import static com.edeqa.helpers.HtmlGenerator.TITLE;
 import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytousserver.helpers.Common.FIREBASE_JAVASCRIPT_VERSION;
-import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 
 
 /**
@@ -77,7 +76,7 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
     }
 
     /**
-     * Initialize DataProcessorFirebaseV1 for installation type "google-appengine".
+     * Initialize DataProcessorFirebase for installation type "google-appengine".
      */
     @Override
     public void init() throws ServletException {
@@ -99,7 +98,7 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
             Misc.log("Admin", "[" + ipRemote + "]", requestWrapper.getRequestURI().getPath());
 
             try {
-//                String customToken = Common.getInstance().getDataProcessor("v1").createCustomToken("Viewer");
+//                String customToken = Common.getInstance().getDataProcessor().createCustomToken("Viewer");
 //                if(adminToken == null) {
 //                    adminToken = new AdminToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile());
 //                }

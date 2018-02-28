@@ -44,7 +44,7 @@ public class CustomToken extends AbstractFirebaseAction<CustomToken, String> {
         Calendar cal = Calendar.getInstance();
         Long now = cal.getTime().getTime();
         if(!tokens.containsKey(uid) || tokens.get(uid) == null || ((long)tokens.get(uid).get("timestamp")) < now - 10*60*1000) {
-            if (Common.getInstance().getDataProcessor("v1").isServerMode()) {
+            if (Common.getInstance().getDataProcessor().isServerMode()) {
                 try {
                     Class tempClass = Class.forName("com.google.firebase.auth.FirebaseAuth");
                     //noinspection unchecked

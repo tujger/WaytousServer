@@ -84,7 +84,7 @@ public class GroupCreate extends AbstractAction<RequestWrapper> {
                 }
             };*/
 
-                Common.getInstance().getDataProcessor("v1").createGroup(groupRequest,
+                Common.getInstance().getDataProcessor().createGroup(groupRequest,
                         new Runnable1<JSONObject>() {
                             @Override
                             public void call(JSONObject json) {
@@ -94,7 +94,7 @@ public class GroupCreate extends AbstractAction<RequestWrapper> {
                                 user.setOs(System.getProperty("os.name"));
                                 user.setModel(OPTIONS.getAppName() + " 1." + Common.SERVER_BUILD);
 
-                                Common.getInstance().getDataProcessor("v1").registerUser(groupRequest.getId(), user, REQUEST_NEW_GROUP, new Runnable1<JSONObject>() {
+                                Common.getInstance().getDataProcessor().registerUser(groupRequest.getId(), user, REQUEST_NEW_GROUP, new Runnable1<JSONObject>() {
                                     @Override
                                     public void call(JSONObject json) {
                                         request.sendResult(json);

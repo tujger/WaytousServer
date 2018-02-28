@@ -25,7 +25,7 @@ public class StatClean extends AbstractAction<RequestWrapper> {
 
         //noinspection HardCodedStringLiteral
         Misc.log(StatClean.this.getClass().getSimpleName(), "started");
-        Common.getInstance().getDataProcessor("v1").cleanStatisticsMessages(new Runnable1<JSONObject>() {
+        Common.getInstance().getDataProcessor().cleanStatisticsMessages(new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject json) {
                 Misc.log(StatClean.this.getClass().getSimpleName(), "done");

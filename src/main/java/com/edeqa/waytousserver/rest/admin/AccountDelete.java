@@ -35,7 +35,7 @@ public class AccountDelete extends AbstractAction<RequestWrapper> {
                 JSONObject json = new JSONObject(options);
                 String accountId = json.getString(Rest.UID);
 
-                Common.getInstance().getDataProcessor("v1").deleteAccount(accountId,new Runnable1<JSONObject>() {
+                Common.getInstance().getDataProcessor().deleteAccount(accountId,new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
                         request.sendResult(json);

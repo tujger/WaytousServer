@@ -3,13 +3,9 @@ package com.edeqa.waytousserver.rest;
 import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.eventbus.EventBus;
-import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.helpers.HttpDPConnection;
 import com.edeqa.waytousserver.rest.firebase.AbstractFirebaseAction;
 import com.edeqa.waytousserver.rest.firebase.AdminToken;
-import com.edeqa.waytousserver.rest.firebase.CustomToken;
-import com.edeqa.waytousserver.servers.DataProcessorFirebaseV1;
 
 import org.json.JSONObject;
 
@@ -40,10 +36,10 @@ public class InitialData extends AbstractAction<RequestWrapper> {
         json.put("firebase_config", OPTIONS.getFirebaseConfig());
 
         if(isAdmin()) {
-            json.put("sign", Common.getInstance().getDataProcessor("v1").createCustomToken("Viewer"));
+            json.put("sign", Common.getInstance().getDataProcessor().createCustomToken("Viewer"));
             json.put("access", ((AdminToken) EventBus.getOrCreate(AbstractFirebaseAction.EVENTBUS).getHolder(AdminToken.TYPE)).fetchToken());
         } else {
-            json.put("is_stand_alone", Common.getInstance().getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode());
+            json.put("is_stand_alone", Common.getInstance().getDataProcessor().isServerMode());
             if(OPTIONS.isDebugMode()) json.put("is_debug_mode", true);
             json.put("google_analytics_tracking_id", OPTIONS.getGoogleAnalyticsTrackingId());
         }

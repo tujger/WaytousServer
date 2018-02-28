@@ -4,15 +4,12 @@ import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Mime;
 import com.edeqa.waytous.Options;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
-import com.edeqa.waytousserver.servers.DataProcessorFirebaseV1;
+import com.edeqa.waytousserver.servers.DataProcessorFirebase;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -41,7 +38,7 @@ public class Common {
     public final static int SERVER_BUILD = 60;
     public final static String FIREBASE_JAVASCRIPT_VERSION = "4.9.0"; // https://firebase.google.com/docs/web/setup
 
-    private volatile Map<String,AbstractDataProcessor> dataProcessor;
+    private volatile AbstractDataProcessor dataProcessor;
 
     private static final Common ourInstance = new Common();
 
@@ -50,7 +47,6 @@ public class Common {
     }
 
     private Common() {
-        dataProcessor = new HashMap<>();
     }
 
     public static JSONObject fetchGeneralInfo() {
@@ -81,28 +77,20 @@ public class Common {
     }
 
     public void initDataProcessor() throws ServletException {
-        if(getDataProcessor(DataProcessorFirebaseV1.VERSION) == null) {
-            try {
-                setDataProcessor(new DataProcessorFirebaseV1());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if(getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode()){
-                throw new ServletException("\n\nThis configuration can not be runned in Google AppEngine mode. Set the installation type in build.gradle with the following property:\n\tdef installationType = 'google-appengine'\n");
-            }
+        if(getDataProcessor() == null) {
+            setDataProcessor(new DataProcessorFirebase());
+        }
+        if(getDataProcessor().isServerMode()){
+            throw new ServletException("\n\nThis configuration can not be runned in Google AppEngine mode. Set the installation type in build.gradle with the following property:\n\tdef installationType = 'google-appengine'\n");
         }
     }
 
-    public AbstractDataProcessor getDataProcessor(String version) {
-        if(dataProcessor.containsKey(version)) {
-            return dataProcessor.get(version);
-        } else {
-            return dataProcessor.get("v1");
-        }
+    public AbstractDataProcessor getDataProcessor() {
+        return dataProcessor;
     }
 
     public void setDataProcessor(AbstractDataProcessor dataProcessor) {
-        this.dataProcessor.put(DataProcessorFirebaseV1.VERSION, dataProcessor);
+        this.dataProcessor = dataProcessor;
     }
 
     public static void addNoscript(HtmlGenerator html) {

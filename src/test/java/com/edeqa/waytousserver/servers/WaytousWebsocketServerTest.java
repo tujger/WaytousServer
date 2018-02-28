@@ -7,7 +7,7 @@ import org.junit.Test;
 /**
  * Created 9/21/2017.
  */
-public class MyWsServerTest {
+public class WaytousWebsocketServerTest {
     @Before
     public void setUp() throws Exception {
 

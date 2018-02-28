@@ -9,22 +9,29 @@ var urlsToCache = [
     "/group/",
     "/css/tracking.css",
     "/css/edequate.css",
-    "/images/logo.png",
+    "/images/edeqa-logo.svg",
+    "/images/logo.svg",
     "/images/marker.svg",
+    "/images/navigation_outline.svg",
+    "/images/navigation_twinks.svg",
     "/js/helpers/Constants.js",
     "/js/Edequate.js",
     "/js/helpers/MyUser.js",
     "/js/helpers/MyUsers.js",
-    "/js/helpers/NoSleep.js",
     "/js/helpers/TrackingFB.js",
     "/js/helpers/Utils.js",
+    "/js/tracking/Main.js",
     "/js/all.js",
     "/resources/en/tracking.json",
     "/icons/android-chrome-192x192.png",
     "/icons/favicon-32x32.png",
     "/icons/favicon-16x16.png",
     "/icons/favicon-194x194.png",
-    "/icons/favicon.ico"
+    "/icons/favicon.ico",
+    "/sounds/office-1.mp3",
+    "/sounds/oringz-w426.mp3",
+    "/sounds/youve-been-informed.mp3",
+    "/sounds/oringz-w427.mp3"
 ];
 
 self.addEventListener("install", function(event) {

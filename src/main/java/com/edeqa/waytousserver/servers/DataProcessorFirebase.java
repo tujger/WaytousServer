@@ -66,18 +66,17 @@ import static com.edeqa.waytous.Constants.RESPONSE_STATUS_UPDATED;
  * Created 10/5/16.
  */
 @SuppressWarnings("HardCodedStringLiteral")
-public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
+public class DataProcessorFirebase extends AbstractDataProcessor {
 
-    public static final String VERSION = "v1";
-    private static final String LOG = "DPF1";
+    private static final String LOG = "DPF";
     private DatabaseReference refRoot;
 
-    public DataProcessorFirebaseV1() throws IOException {
+    public DataProcessorFirebase() {
         super();
 
         if(OPTIONS.isDebugMode()) {
             try {
-                Misc.log(LOG, "Data Processor Firebase " + VERSION + ", config file: " + new File(OPTIONS.getFirebasePrivateKeyFile()).getCanonicalPath());
+                Misc.log(LOG, "Data Processor Firebase, config file: " + new File(OPTIONS.getFirebasePrivateKeyFile()).getCanonicalPath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -162,6 +161,7 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
         if (isServerMode()) {
             try {
                 Class tempClass = Class.forName("com.google.firebase.auth.FirebaseCredentials");
+                //noinspection unchecked
                 Method fromCertificate = tempClass.getDeclaredMethod("fromCertificate", InputStream.class);
 
                 assert method != null;
@@ -408,10 +408,12 @@ public class DataProcessorFirebaseV1 extends AbstractDataProcessor {
     }
 
     private EventBus<AbstractFirebaseAction> getFireBus() {
+        //noinspection unchecked
         return (EventBus<AbstractFirebaseAction>) EventBus.getOrCreate(AbstractFirebaseAction.EVENTBUS);
     }
 
     private EventBus<AbstractTrackingAction> getTrackingBus() {
+        //noinspection unchecked
         return (EventBus<AbstractTrackingAction>) EventBus.getOrCreate(AbstractTrackingAction.EVENTBUS);
     }
 }

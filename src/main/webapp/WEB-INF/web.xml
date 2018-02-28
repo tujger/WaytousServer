@@ -48,11 +48,15 @@
 
     <security-constraint>
         <web-resource-collection>
+            <web-resource-name>all</web-resource-name>
             <url-pattern>/admin/*</url-pattern>
         </web-resource-collection>
-        <auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+        <!--<auth-constraint>
             <role-name>admin</role-name>
-        </auth-constraint>
+        </auth-constraint>-->
     </security-constraint>
 
     <context-param>

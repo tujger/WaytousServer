@@ -5,12 +5,12 @@ import com.edeqa.waytous.Options;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.helpers.DigestAuthenticator;
 import com.edeqa.waytousserver.servers.AdminServletHandler;
-import com.edeqa.waytousserver.servers.DataProcessorFirebaseV1;
+import com.edeqa.waytousserver.servers.DataProcessorFirebase;
 import com.edeqa.waytousserver.servers.MainServletHandler;
-import com.edeqa.waytousserver.servers.MyWsServer;
 import com.edeqa.waytousserver.servers.RedirectHandler;
 import com.edeqa.waytousserver.servers.RestServletHandler;
 import com.edeqa.waytousserver.servers.TrackingServletHandler;
+import com.edeqa.waytousserver.servers.WaytousWebsocketServer;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsParameters;
@@ -45,8 +45,8 @@ import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 public class WaytousServer {
 
     private static final String LOG = "WaytousServer";
-    private static MyWsServer wsServer;
-    private static MyWsServer wssServer;
+    private static WaytousWebsocketServer wsServer;
+    private static WaytousWebsocketServer wssServer;
 
     @SuppressWarnings("AppEngineForbiddenCode")
     public static void main(final String[] args ) throws Exception {
@@ -54,9 +54,9 @@ public class WaytousServer {
         Misc.log(LOG, "====== Waytous server v1."+SERVER_BUILD+". Copyright (C) Edeqa. http://www.edeqa.com ======");
         OPTIONS = new Options(args);
 
-        Common.getInstance().setDataProcessor(new DataProcessorFirebaseV1());
+        Common.getInstance().setDataProcessor(new DataProcessorFirebase());
 
-        if(!Common.getInstance().getDataProcessor(DataProcessorFirebaseV1.VERSION).isServerMode()){
+        if(!Common.getInstance().getDataProcessor().isServerMode()){
             throw new RuntimeException("\n\nThis configuration can not be runned in stand-alone server mode. Set the installation type in build.gradle with the following property:\n\tdef installationType = 'standalone-server'\n");
         }
 
@@ -203,8 +203,8 @@ public class WaytousServer {
         /*
          * Websocket part
          */
-        wsServer = new MyWsServer(OPTIONS.getWsPortFirebase());
-        wssServer = new MyWsServer(OPTIONS.getWssPortFirebase());
+        wsServer = new WaytousWebsocketServer(OPTIONS.getWsPortFirebase());
+        wssServer = new WaytousWebsocketServer(OPTIONS.getWssPortFirebase());
 
 
         DefaultSSLWebSocketServerFactory socket = new DefaultSSLWebSocketServerFactory(sslContext);
@@ -214,9 +214,9 @@ public class WaytousServer {
             public void run() {
                 try {
                     WebSocketImpl.DEBUG = false;
-                    Misc.log(LOG, "starting", MyWsServer.class.getSimpleName(), "with", DataProcessorFirebaseV1.class.getSimpleName(), "on port", OPTIONS.getWsPortFirebase());
+                    Misc.log(LOG, "starting", WaytousWebsocketServer.class.getSimpleName(), "with", DataProcessorFirebase.class.getSimpleName(), "on port", OPTIONS.getWsPortFirebase());
                     wsServer.start();
-                    Misc.log(LOG, "starting", MyWsServer.class.getSimpleName(), "with", DataProcessorFirebaseV1.class.getSimpleName(), "on secured port", OPTIONS.getWssPortFirebase());
+                    Misc.log(LOG, "starting", WaytousWebsocketServer.class.getSimpleName(), "with", DataProcessorFirebase.class.getSimpleName(), "on secured port", OPTIONS.getWssPortFirebase());
                     wssServer.start();
 
                         /*BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));

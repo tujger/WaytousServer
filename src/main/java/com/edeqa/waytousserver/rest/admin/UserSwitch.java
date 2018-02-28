@@ -38,7 +38,7 @@ public class UserSwitch extends AbstractAction<RequestWrapper> {
                 String property = json.getString(Rest.PROPERTY);
                 Boolean value = json.getBoolean(Rest.VALUE);
 
-                Common.getInstance().getDataProcessor("v1").switchPropertyForUser(groupId,userNumber,property,value,new Runnable1<JSONObject>() {
+                Common.getInstance().getDataProcessor().switchPropertyForUser(groupId,userNumber,property,value,new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
                         request.sendResult(json);

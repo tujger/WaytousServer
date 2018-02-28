@@ -36,7 +36,6 @@ abstract public class AbstractDataProcessor {
         GROUP_CREATED_PERSISTENT(Firebase.STAT_GROUPS_CREATED_PERSISTENT), GROUP_CREATED_TEMPORARY(Firebase.STAT_GROUPS_CREATED_TEMPORARY), GROUP_DELETED(Firebase.STAT_GROUPS_DELETED), GROUP_REJECTED(Firebase.STAT_GROUPS_REJECTED),
         USER_JOINED(Firebase.STAT_USERS_JOINED), USER_RECONNECTED(Firebase.STAT_USERS_RECONNECTED), USER_REJECTED(Firebase.STAT_USERS_REJECTED), USER_REMOVED(Firebase.STAT_USERS_REMOVED),
         ACCOUNT_CREATED(Firebase.STAT_ACCOUNTS_CREATED), ACCOUNT_DELETED(Firebase.STAT_ACCOUNTS_DELETED);
-        ;
         private String id;
         Action(String id) {
             this.id = id;
@@ -49,19 +48,6 @@ abstract public class AbstractDataProcessor {
     public AbstractDataProcessor() {
         groups = new ConcurrentHashMap<>();
         userRequests = new UserRequests();
-
-//        if (classes != null) {
-//            for (String s : classes) {
-//                try {
-//                    Class<FlagHolder> _tempClass = (Class<FlagHolder>) Class.forName("com.edeqa.waytousserver.holders.flag." + s);
-//                    Constructor<FlagHolder> ctor = _tempClass.getDeclaredConstructor(AbstractDataProcessor.class);
-//                    registerFlagHolder(ctor.newInstance(this));
-//                } catch (Exception e) {
-//                    System.out.println("Trying to instantiate " + s);
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
     }
 
     final public void onOpen(DataProcessorConnection conn, ClientHandshake handshake) {
@@ -73,7 +59,6 @@ abstract public class AbstractDataProcessor {
     }
 
     public void onClose(DataProcessorConnection conn, int code, String reason, boolean remote) {
-//        System.out.println("WSS:on close:" + conn.getRemoteSocketAddress() + " disconnected:by client:"+remote+":"+code+":"+reason);
         getUserRequests().remove(conn);
     }
 
@@ -82,7 +67,6 @@ abstract public class AbstractDataProcessor {
     final public void onError(DataProcessorConnection conn, Exception ex) {
         ex.printStackTrace();
         getUserRequests().remove(conn);
-        // some errors like port binding failed may not be assignable to a specific websocket
     }
 
     public void onWebSocketPing(DataProcessorConnection conn, Framedata f) {

@@ -7,16 +7,17 @@ import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
+import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.internal.NonNull;
 import com.google.firebase.tasks.OnFailureListener;
-import com.google.firebase.tasks.OnSuccessListener;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static com.edeqa.waytous.Constants.REQUEST_UID;
 
@@ -82,18 +83,20 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
                                                         }
                                                     }
 
-                                                    refGroups.child(getGroupId()).updateChildren(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void result) {
-                                                            res.put(STATUS, STATUS_SUCCESS);
-                                                            Misc.log("RemoveUser", getUserNumber(), "[" + value.toString() + "]", "removed from group", getGroupId());
-                                                            getOnSuccess().call(res);
-                                                            ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
-                                                                    .setGroupId(getGroupId())
-                                                                    .setAction(AbstractDataProcessor.Action.USER_REMOVED)
-                                                                    .call(null, value.toString());
-                                                        }
-                                                    }).addOnFailureListener(onFailureListener);
+                                                    ApiFuture<Void> removeUserTask = refGroups.child(getGroupId()).updateChildrenAsync(updates);
+                                                    try {
+                                                        removeUserTask.get();
+                                                        res.put(STATUS, STATUS_SUCCESS);
+                                                        Misc.log("RemoveUser", getUserNumber(), "[" + value.toString() + "]", "removed from group", getGroupId());
+                                                        getOnSuccess().call(res);
+                                                        ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
+                                                                .setGroupId(getGroupId())
+                                                                .setAction(AbstractDataProcessor.Action.USER_REMOVED)
+                                                                .call(null, value.toString());
+
+                                                    } catch (InterruptedException | ExecutionException e) {
+                                                        onFailureListener.onFailure(e);
+                                                    }
                                                 }
                                             }
                                         }

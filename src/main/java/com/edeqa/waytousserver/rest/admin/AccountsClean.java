@@ -19,7 +19,7 @@ public class AccountsClean extends AbstractAction<RequestWrapper> {
     @Override
     public void call(JSONObject json, final RequestWrapper request) {
         //noinspection HardCodedStringLiteral
-        Common.getInstance().getDataProcessor("v1").validateAccounts();
+        Common.getInstance().getDataProcessor().validateAccounts();
 
         json.put(STATUS, STATUS_SUCCESS);
         json.put(MESSAGE, "Clean started.");
