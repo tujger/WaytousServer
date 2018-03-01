@@ -11,10 +11,6 @@ function StatisticsHolder(main) {
     this.menu = "Statistics";
     this.icon = "trending_up";
 
-    var task;
-    var logBody;
-    var logCaption;
-
     var tableSummaryGroups;
     var tableSummaryUsers;
     var tableSummaryAccounts;
@@ -47,7 +43,7 @@ function StatisticsHolder(main) {
     this.start = function() {
         div = document.getElementsByClassName("layout")[0];
         database = firebase.database();
-    }
+    };
 
     this.resume = function() {
         var self = this;
@@ -57,8 +53,8 @@ function StatisticsHolder(main) {
             })
             .catch(function(){
                 console.log("FAIL");
-            })
-    }
+            });
+    };
 
     function renderInterface() {
         div = document.getElementsByClassName("layout")[0];
@@ -267,7 +263,6 @@ function StatisticsHolder(main) {
                     updateData();
                 });
                 accountsChart.draw(usersStat, usersChartOptions);
-                updateData();
             });
             usersChart.draw(usersStat, usersChartOptions);
         });
@@ -280,7 +275,7 @@ function StatisticsHolder(main) {
 
         var updateValue = function(node, value) {
             if(!active) return;
-            if(value == undefined) return;
+            if(value === undefined) return;
             value = +value;
             var oldValue = +node.innerHTML;
             if(value !== oldValue) {
@@ -306,150 +301,111 @@ function StatisticsHolder(main) {
             console.err("ERR", err);
         });
 
-
+        var chartsReady = false;
         var addValueToChart = function(data) {
-            setTimeout(function(){
-                if(!active) return;
-                var data = this;
+            if(!active) return;
+            var json = data.val;
 
-                var json = data.val();
+            var date = new Date();
+            date = "%04d-%02d-%02d".sprintf(date.getFullYear(), date.getMonth()+1, date.getDate());
+            if(data.key === date) {
+                updateValue(tableSummaryGroups.groupsCreatedPersistentItem.cells[1], json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT]);
+                updateValue(tableSummaryGroups.groupsCreatedTemporaryItem.cells[1], json[DATABASE.STAT_GROUPS_CREATED_TEMPORARY]);
+                updateValue(tableSummaryGroups.groupsDeletedItem.cells[1], json[DATABASE.STAT_GROUPS_DELETED]);
+                updateValue(tableSummaryGroups.groupsRejectedItem.cells[1], json[DATABASE.STAT_GROUPS_REJECTED]);
+                updateValue(tableSummaryUsers.usersJoinedItem.cells[1], json[DATABASE.STAT_USERS_JOINED]);
+                updateValue(tableSummaryUsers.usersReconnectedItem.cells[1], json[DATABASE.STAT_USERS_RECONNECTED]);
+                updateValue(tableSummaryUsers.usersRejectedItem.cells[1], json[DATABASE.STAT_USERS_REJECTED]);
+                updateValue(tableSummaryAccounts.accountsCreatedItem.cells[1], json[DATABASE.STAT_ACCOUNTS_CREATED]);
+                updateValue(tableSummaryAccounts.accountsDeletedItem.cells[1], json[DATABASE.STAT_ACCOUNTS_DELETED]);
+            }
 
-                var date = new Date();
-                date = "%04d-%02d-%02d".sprintf(date.getFullYear(), date.getMonth()+1, date.getDate());
-
-                setTimeout(function(){
-                    if(!active) return;
-
-                    var data = this;
-                    var json = data.val();
-
-                    if(data.key == date) {
-                        updateValue(tableSummaryGroups.groupsCreatedPersistentItem.cells[1], json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT]);
-                        updateValue(tableSummaryGroups.groupsCreatedTemporaryItem.cells[1], json[DATABASE.STAT_GROUPS_CREATED_TEMPORARY]);
-                        updateValue(tableSummaryGroups.groupsDeletedItem.cells[1], json[DATABASE.STAT_GROUPS_DELETED]);
-                    }
-
-                    var groupsData = [data.key,0,0,0,0];
-                    if(json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT]) {
-                        groupsData[1] = json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT];
-                    }
-                    if(json[DATABASE.STAT_GROUPS_CREATED_TEMPORARY]) {
-                        groupsData[2] = json[DATABASE.STAT_GROUPS_CREATED_TEMPORARY];
-                    }
-                    if(json[DATABASE.STAT_GROUPS_DELETED]) {
-                        groupsData[3] = json[DATABASE.STAT_GROUPS_DELETED];
-                    }
-                    if(json[DATABASE.STAT_GROUPS_REJECTED]) {
-                        groupsData[4] = json[DATABASE.STAT_GROUPS_REJECTED];
-                    }
-                    var index = groupsStat.getFilteredRows([{column:0, value:data.key}])[0];
-                    if(index != undefined) {
-                        for(var i in groupsData) {
-                            groupsStat.setValue(index, +i, groupsData[i]);
-                        }
-                    } else {
-                        groupsStat.addRow(groupsData);
-                    }
-                    groupsChart.draw(groupsStat, groupsChartOptions);
-
-                }.bind(data), 0);
-
-                setTimeout(function(){
-                    if(!active) return;
-
-                    var data = this;
-                    var json = data.val();
-
-                    if(data.key == date) {
-                        updateValue(tableSummaryUsers.usersJoinedItem.cells[1], json[DATABASE.STAT_USERS_JOINED]);
-                        updateValue(tableSummaryUsers.usersReconnectedItem.cells[1], json[DATABASE.STAT_USERS_RECONNECTED]);
-                        updateValue(tableSummaryUsers.usersRejectedItem.cells[1], json[DATABASE.STAT_USERS_REJECTED]);
-                    }
-
-                    var usersData = [data.key,0,0,0];
-                    if(json[DATABASE.STAT_USERS_JOINED]) {
-                        usersData[1] = json[DATABASE.STAT_USERS_JOINED];
-                    }
-                    if(json[DATABASE.STAT_USERS_RECONNECTED]) {
-                        usersData[2] = json[DATABASE.STAT_USERS_RECONNECTED];
-                    }
-                    if(json[DATABASE.STAT_USERS_REJECTED]) {
-                        usersData[3] = json[DATABASE.STAT_USERS_REJECTED];
-                    }
-                    index = usersStat.getFilteredRows([{column:0, value:data.key}])[0];
-                    if(index != undefined) {
-                        for(var i in usersData) {
-                            usersStat.setValue(index, +i, usersData[i]);
-                        }
-                    } else {
-                        usersStat.addRow(usersData);
-                    }
-                    usersChart.draw(usersStat, usersChartOptions);
-
-                }.bind(data), 0);
-
-
-                setTimeout(function(){
-                    if(!active) return;
-
-                    var data = this;
-                    var json = data.val();
-
-                    if(data.key == date) {
-                        updateValue(tableSummaryAccounts.accountsCreatedItem.cells[1], json[DATABASE.STAT_ACCOUNTS_CREATED]);
-                        updateValue(tableSummaryAccounts.accountsDeletedItem.cells[1], json[DATABASE.STAT_ACCOUNTS_DELETED]);
-                    }
-
-                    var accountsData = [data.key,0,0];
-                    if(json[DATABASE.STAT_ACCOUNTS_CREATED]) {
-                        accountsData[1] = json[DATABASE.STAT_ACCOUNTS_CREATED];
-                    }
-                    if(json[DATABASE.STAT_ACCOUNTS_DELETED]) {
-                        accountsData[2] = json[DATABASE.STAT_ACCOUNTS_DELETED];
-                    }
-                    index = accountsStat.getFilteredRows([{column:0, value:data.key}])[0];
-                    if(index != undefined) {
-                        for(var i in accountsData) {
-                            accountsStat.setValue(index, +i, accountsData[i]);
-                        }
-                    } else {
-                        accountsStat.addRow(accountsData);
-                    }
-                    accountsChart.draw(accountsStat, accountsChartOptions);
-
-                }.bind(data), 0);
-
-
-                date = new Date();
-                date = "%04d-%02d-%02d".sprintf(date.getFullYear(), date.getMonth()+1, date.getDate());
-                if(data.key == date) {
-                    updateValue(tableSummaryGroups.groupsCreatedPersistentItem.cells[1], json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT]);
-                    updateValue(tableSummaryGroups.groupsCreatedTemporaryItem.cells[1], json[DATABASE.STAT_GROUPS_CREATED_TEMPORARY]);
-                    updateValue(tableSummaryGroups.groupsDeletedItem.cells[1], json[DATABASE.STAT_GROUPS_DELETED]);
-                    updateValue(tableSummaryGroups.groupsRejectedItem.cells[1], json[DATABASE.STAT_GROUPS_REJECTED]);
-                    updateValue(tableSummaryUsers.usersJoinedItem.cells[1], json[DATABASE.STAT_USERS_JOINED]);
-                    updateValue(tableSummaryUsers.usersReconnectedItem.cells[1], json[DATABASE.STAT_USERS_RECONNECTED]);
-                    updateValue(tableSummaryUsers.usersRejectedItem.cells[1], json[DATABASE.STAT_USERS_REJECTED]);
-                    updateValue(tableSummaryAccounts.accountsCreatedItem.cells[1], json[DATABASE.STAT_ACCOUNTS_CREATED]);
-                    updateValue(tableSummaryAccounts.accountsDeletedItem.cells[1], json[DATABASE.STAT_ACCOUNTS_DELETED]);
+            var groupsData = [data.key,0,0,0,0];
+            if(json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT]) {
+                groupsData[1] = json[DATABASE.STAT_GROUPS_CREATED_PERSISTENT];
+            }
+            if(json[DATABASE.STAT_GROUPS_CREATED_TEMPORARY]) {
+                groupsData[2] = json[DATABASE.STAT_GROUPS_CREATED_TEMPORARY];
+            }
+            if(json[DATABASE.STAT_GROUPS_DELETED]) {
+                groupsData[3] = json[DATABASE.STAT_GROUPS_DELETED];
+            }
+            if(json[DATABASE.STAT_GROUPS_REJECTED]) {
+                groupsData[4] = json[DATABASE.STAT_GROUPS_REJECTED];
+            }
+            var index = groupsStat.getFilteredRows([{column:0, value:data.key}])[0];
+            if(index !== undefined) {
+                for(var i in groupsData) {
+                    groupsStat.setValue(index, +i, groupsData[i]);
                 }
-            }.bind(data), 0);
+            } else {
+                groupsStat.addRow(groupsData);
+            }
+
+            var usersData = [data.key,0,0,0];
+            if(json[DATABASE.STAT_USERS_JOINED]) {
+                usersData[1] = json[DATABASE.STAT_USERS_JOINED];
+            }
+            if(json[DATABASE.STAT_USERS_RECONNECTED]) {
+                usersData[2] = json[DATABASE.STAT_USERS_RECONNECTED];
+            }
+            if(json[DATABASE.STAT_USERS_REJECTED]) {
+                usersData[3] = json[DATABASE.STAT_USERS_REJECTED];
+            }
+            index = usersStat.getFilteredRows([{column:0, value:data.key}])[0];
+            if(index !== undefined) {
+                for(var i in usersData) {
+                    usersStat.setValue(index, +i, usersData[i]);
+                }
+            } else {
+                usersStat.addRow(usersData);
+            }
+
+            var accountsData = [data.key,0,0];
+            if(json[DATABASE.STAT_ACCOUNTS_CREATED]) {
+                accountsData[1] = json[DATABASE.STAT_ACCOUNTS_CREATED];
+            }
+            if(json[DATABASE.STAT_ACCOUNTS_DELETED]) {
+                accountsData[2] = json[DATABASE.STAT_ACCOUNTS_DELETED];
+            }
+            index = accountsStat.getFilteredRows([{column:0, value:data.key}])[0];
+            if(index !== undefined) {
+                for(var i in accountsData) {
+                    accountsStat.setValue(index, +i, accountsData[i]);
+                }
+            } else {
+                accountsStat.addRow(accountsData);
+            }
+            if(chartsReady) {
+                groupsChart.draw(groupsStat, groupsChartOptions);
+                usersChart.draw(usersStat, usersChartOptions);
+                accountsChart.draw(accountsStat, accountsChartOptions);
+            }
         };
 
         var addValueToChartError = function(e) {
             console.warn("Resign because of",e.message);
             window.location = window.location.href;
-        }
+        };
 
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_BY_DATE).off();
-        ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_BY_DATE).on("child_added", addValueToChart, addValueToChartError);
-        ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_BY_DATE).on("child_changed", addValueToChart, addValueToChartError);
+        ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_BY_DATE).once("value", function(data) {
+            var values = data.val();
+            var length = u.keys(values).length;
+            var count = 0;
+            for(var x in values) {
+                if((++count) >= length) chartsReady = true;
+                addValueToChart({key:x, val:values[x]});
+            }
+        }, addValueToChartError);
+        ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_BY_DATE).on("child_changed", function(data) {
+            addValueToChart({key:data.key, val:data.val()});
+        }, addValueToChartError);
 
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MESSAGES).off();
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MESSAGES).on("child_added", function(data) {
             setTimeout(function() {
                 if(!active) return;
-
                 var data = this;
                 var json = data.val();
                 tableMessages.add({
@@ -476,7 +432,7 @@ function StatisticsHolder(main) {
         });
         ref.child(DATABASE.SECTION_STAT).child(DATABASE.STAT_MESSAGES).on("child_removed", function(data) {
             for(var i in tableMessages.rows) {
-                if(tableMessages.rows[i].id == data.key) {
+                if(tableMessages.rows[i].id === data.key) {
                     tableMessages.body.removeChild(tableMessages.rows[i]);
                     tableMessages.rows.splice(i,1);
                 }
