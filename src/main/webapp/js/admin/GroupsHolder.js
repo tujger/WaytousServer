@@ -187,6 +187,8 @@ function GroupsHolder(main) {
                         row.cells[6].innerHTML = snapshot.val()[DATABASE.CREATED] ? new Date(snapshot.val()[DATABASE.CREATED]).toLocaleString() : "&#150;";
                         row.cells[7].innerHTML = snapshot.val()[DATABASE.REQUIRES_PASSWORD] ? "Yes" : "No";
 
+                        var usersLimit = parseInt(snapshot.val()[DATABASE.LIMIT_USERS] || 0);
+
                         var usersNode = row.cells[5];
                         var changedNode = row.cells[7];
                         updateTableSummary();
@@ -202,7 +204,7 @@ function GroupsHolder(main) {
                                 if(c > changed) changed = c;
                                 if(snapshot.val()[i][DATABASE.ACTIVE]) activeUser ++;
                             }
-                            usersNode.innerHTML = activeUser + " / " + total;
+                            usersNode.innerHTML = activeUser + " / " + total + (usersLimit ? " / " + usersLimit : "");
 
                             changed = 0;
                             for(i in snapshot.val()) {

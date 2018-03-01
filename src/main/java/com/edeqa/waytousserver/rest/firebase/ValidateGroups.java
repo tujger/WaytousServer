@@ -55,8 +55,6 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
                                     public void call(DataSnapshot dataSnapshot) {
                                         Map value = (Map) dataSnapshot.getValue();
 
-//                                        Misc.log("ValidateGroups", "found a group:", group/* + ", leader id:", leader, dataSnapshot.getValue()*/);
-
                                         GroupRequest groupRequest = new GroupRequest(group);
 
                                         if (value == null) {

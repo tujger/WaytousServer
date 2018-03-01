@@ -37,7 +37,7 @@ public class GroupModify extends AbstractAction<RequestWrapper> {
                 String property = json.getString(Rest.PROPERTY);
                 String value = json.getString(Rest.VALUE);
 
-                Common.getInstance().getDataProcessor().modifyPropertyInGroup(groupId,property,value,new Runnable1<JSONObject>() {
+                Common.getInstance().getDataProcessor().modifyOptionInGroup(groupId, property, value, new Runnable1<JSONObject>() {
                     @Override
                     public void call(JSONObject json) {
                         request.sendResult(json);

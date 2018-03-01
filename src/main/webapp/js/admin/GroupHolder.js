@@ -5,31 +5,27 @@
  * Created 1/19/17.
  */
 function GroupHolder(main) {
-     this.type = "group";
-     this.title = "Group";
-     this.icon = "group";
+    this.type = "group";
+    this.title = "Group";
+    this.icon = "group";
 
-     var tableSummary;
-     var tableGroups;
-     var div;
-     var ref;
-     var database;
-     var utils = main.arguments.utils;
-     var active;
-
-     this.start = function() {
-         database = firebase.database();
-         div = document.getElementsByClassName("layout")[0];
-     }
-
+    var tableSummary;
+    var div;
+    var database;
+    var utils = main.arguments.utils;
+    var active;
     var groupId;
     var buttons;
-    var tableSummary;
     var tableUsers;
     var map;
     var divMapGroup;
     var positions;
     var markers;
+
+    this.start = function() {
+        database = firebase.database();
+        div = document.getElementsByClassName("layout")[0];
+    };
 
     this.resume = function(group_id) {
         groupId = group_id;
@@ -57,9 +53,9 @@ function GroupHolder(main) {
             .place(HTML.A, { href: url + "/group/"+groupId, innerHTML:"(Force open in browser)", target:"_blank", rel:"noopener"});
 
         tableSummary.add({ cells: [
-            { className: "th", innerHTML: "ID" },
-            { className: "option", content: td }
-        ]});
+                { className: "th", innerHTML: "ID" },
+                { className: "option", content: td }
+            ]});
 
         /*var requiresPasswordNode = tableSummary.add({
             onclick: function() {
@@ -91,7 +87,7 @@ function GroupHolder(main) {
         tableSummary.welcomeMessageNode = tableSummary.add({
             onclick: function() {
                 ref.child(groupId).child(DATABASE.OPTIONS).child(DATABASE.WELCOME_MESSAGE).once("value").then(function(snapshot){
-                    u.dialog({
+                    tableSummary.welcomeMessageNode.dialog = tableSummary.welcomeMessageNode.dialog || u.dialog({
                         title: "Welcome message",
                         items: [
                             { type:HTML.INPUT, className:"welcome-input", value: tableSummary.welcomeMessageNode.lastChild.innerHTML }
@@ -113,7 +109,8 @@ function GroupHolder(main) {
                             }
                         },
                         negative: { label:u.create(HTML.SPAN, "Cancel")}
-                    }).open();
+                    });
+                    tableSummary.welcomeMessageNode.dialog.open();
                 }).catch(function(error){
                     console.warn("Resign because of",error);
                     window.location = window.location.href;
@@ -141,7 +138,7 @@ function GroupHolder(main) {
         tableSummary.timeToLiveNode = tableSummary.add({
             className: "hidden",
             onclick: function() {
-                u.dialog({
+                tableSummary.timeToLiveNode.dialog = tableSummary.timeToLiveNode.dialog || u.dialog({
                     title: "Time to live",
                     items: [
                         { type:HTML.DIV, innerHTML:"Set time to live (in minutes) if the group is empty (i.e. all users are offline)." },
@@ -164,44 +161,14 @@ function GroupHolder(main) {
                         }
                     },
                     negative: { label: u.create(HTML.SPAN, "Cancel")}
-                }).open();
+                });
+                tableSummary.timeToLiveNode.dialog.open();
             },
             cells: [
                 { className: "th", innerHTML: "&#150; time to live, min" },
                 { className: "option", innerHTML: "..." }
             ]
         });
-        tableSummary.limitUsers = tableSummary.add({
-            onclick: function() {
-                u.dialog({
-                    title: "Limit users",
-                    items: [
-                        { type:HTML.NUMBER, label:"Limit amount of users to", value:parseInt(tableSummary.limitUsers.lastChild.innerHTML || 0) },
-                        { type:HTML.DIV, innerHTML:"0 - no limit." }
-                    ],
-                    positive: {
-                        label: u.create(HTML.SPAN, "OK"),
-                        onclick: function(items) {
-                            var newValue = items[0].value;
-                            if(tableSummary.limitUsers.lastChild.innerHTML !== newValue) {
-                                tableSummary.limitUsers.lastChild.innerHTML += " ...wait";
-                                u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.LIMIT_USERS, value:newValue || "0"}))
-                                    .catch(function(code,xhr){
-                                        console.warn("Resign because of",code,xhr);
-                                        var res = JSON.parse(xhr.responseText) || {};
-                                        u.toast.show(res.message || xhr.statusText);
-                                        window.location = window.location.href;
-                                    });
-                            }
-                        }
-                    },
-                    negative: { label: u.create(HTML.SPAN, "Cancel")}
-                }).open();
-            },
-            cells: [
-                { className: "th", innerHTML: "Limit users" },
-                { className: "option", innerHTML: "..." }
-            ]});
         tableSummary.dismissInactiveNode = tableSummary.add({
             onclick: function() {
                 this.lastChild.innerHTML += " ...wait";
@@ -220,7 +187,7 @@ function GroupHolder(main) {
         tableSummary.delayToDismissNode = tableSummary.add({
             className: "hidden",
             onclick: function() {
-                u.dialog({
+                tableSummary.delayToDismissNode.dialog = tableSummary.delayToDismissNode.dialog || u.dialog({
                     title: "Delay to dismiss",
                     items: [
                         { type:HTML.DIV, innerHTML:"Switch user offline if he is not active at least (in seconds)." },
@@ -243,20 +210,54 @@ function GroupHolder(main) {
                         }
                     },
                     negative: { label: u.create(HTML.SPAN, "Cancel")}
-                }).open();
+                });
+                tableSummary.delayToDismissNode.dialog.open();
             },
             cells: [
                 { className: "th", innerHTML: "&#150; dismiss after, sec" },
                 { className: "option", innerHTML: "..." }
             ]});
         tableSummary.createdNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Created" },
-            { className: "option", innerHTML: "..." }
-        ]});
+                { className: "th", innerHTML: "Created" },
+                { className: "option", innerHTML: "..." }
+            ]});
         tableSummary.changedNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Changed" },
-            { className: "option highlight", innerHTML: "..." }
-        ]});
+                { className: "th", innerHTML: "Changed" },
+                { className: "option highlight", innerHTML: "..." }
+            ]});
+        tableSummary.limitUsers = tableSummary.add({
+            onclick: function() {
+                tableSummary.limitUsers.dialog = tableSummary.limitUsers.dialog || u.dialog({
+                    title: "Limit users",
+                    items: [
+                        { type:HTML.NUMBER, label:"Limit amount of users to", value:parseInt(tableSummary.limitUsers.lastChild.innerHTML || 0) },
+                        { type:HTML.DIV, innerHTML:"0 - no limit." }
+                    ],
+                    positive: {
+                        label: u.create(HTML.SPAN, "OK"),
+                        onclick: function(items) {
+                            var newValue = items[0].value;
+                            if(tableSummary.limitUsers.lastChild.innerHTML !== newValue) {
+                                tableSummary.limitUsers.lastChild.innerHTML += " ...wait";
+                                u.post("/admin/rest/group/modify", JSON.stringify({group_id:groupId, property:DATABASE.LIMIT_USERS, value:newValue || "0"}))
+                                    .then(function(xhr){})
+                                    .catch(function(code,xhr){
+                                        console.warn("Resign because of",code,xhr);
+                                        var res = JSON.parse(xhr.responseText) || {};
+                                        u.toast.show(res.message || xhr.statusText);
+                                        window.location = window.location.href;
+                                    });
+                            }
+                        }
+                    },
+                    negative: { label: u.create(HTML.SPAN, "Cancel")}
+                });
+                tableSummary.limitUsers.dialog.open();
+            },
+            cells: [
+                { className: "th", innerHTML: "Limit users" },
+                { className: "option", innerHTML: "..." }
+            ]});
 
         function filterActive(row){
             return !row.classList.contains("inactive");
@@ -336,7 +337,7 @@ function GroupHolder(main) {
         } else {
             updateAll();
         }
-    }
+    };
 
     function updateSummary() {
         if(!groupId) {
@@ -347,8 +348,8 @@ function GroupHolder(main) {
         var ref = database.ref().child(DATABASE.SECTION_GROUPS);
 
         ref.child(groupId).child(DATABASE.OPTIONS).once("value").then(function(snapshot) {
-           if(!active) return;
-           if(!snapshot || !snapshot.val()) return;
+            if(!active) return;
+            if(!snapshot || !snapshot.val()) return;
 
             ref.child(groupId).child(DATABASE.OPTIONS).off();
             ref.child(groupId).child(DATABASE.OPTIONS).on("value", function(snapshot){
@@ -364,7 +365,8 @@ function GroupHolder(main) {
 
                 tableSummary.timeToLiveNode.lastChild.innerHTML = u.clear(snapshot.val()[DATABASE.TIME_TO_LIVE_IF_EMPTY] || 15);
 
-                tableSummary.limitUsers.lastChild.innerHTML = u.clear(snapshot.val()[DATABASE.LIMIT_USERS] || "&#150;");
+                var number = parseInt(snapshot.val()[DATABASE.LIMIT_USERS] || 0);
+                tableSummary.limitUsers.lastChild.innerHTML = number || "&#150;";
 
                 tableSummary.dismissInactiveNode.lastChild.innerHTML = snapshot.val()[DATABASE.DISMISS_INACTIVE] ? "Yes" : "No";
                 tableSummary.delayToDismissNode[snapshot.val()[DATABASE.DISMISS_INACTIVE] ? "show":"hide"]();
@@ -582,21 +584,21 @@ function GroupHolder(main) {
         u.clear(buttons);
         u.create({className:"question", innerHTML: "Are you sure you want to delete group "+groupId+"?"}, buttons);
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
-            u.post("/admin/rest/group/delete", JSON.stringify({group_id:groupId}))
-                .then(function(){
-                    main.turn("groups");
-                    u.toast.show("Group "+groupId+" was deleted.");
-                }).catch(function(code,xhr){
+                u.post("/admin/rest/group/delete", JSON.stringify({group_id:groupId}))
+                    .then(function(){
+                        main.turn("groups");
+                        u.toast.show("Group "+groupId+" was deleted.");
+                    }).catch(function(code,xhr){
                     console.warn("Resign because of",code,xhr);
                     var res = JSON.parse(xhr.responseText) || {};
                     u.toast.show(res.message || xhr.statusText);
                     renderButtons(buttons);
                     window.location = window.location.href;
                 });
-        }}, buttons);
+            }}, buttons);
         u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){
-            renderButtons(buttons);
-        }}, buttons);
+                renderButtons(buttons);
+            }}, buttons);
     }
 
     function initMap() {

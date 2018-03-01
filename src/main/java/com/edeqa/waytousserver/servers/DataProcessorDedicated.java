@@ -414,12 +414,12 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }
 
     @Override
-    public void switchPropertyInGroup(String groupId, String property, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+    public void switchOptionInGroup(String groupId, String property, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
         // TODO
     }
 
     @Override
-    public void modifyPropertyInGroup(String groupId, String property, Serializable value, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+    public void modifyOptionInGroup(String groupId, String property, Serializable value, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
         // TODO
     }
 

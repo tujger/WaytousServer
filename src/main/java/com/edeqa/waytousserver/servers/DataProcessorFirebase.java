@@ -16,7 +16,7 @@ import com.edeqa.waytousserver.rest.firebase.CreateGroup;
 import com.edeqa.waytousserver.rest.firebase.CustomToken;
 import com.edeqa.waytousserver.rest.firebase.DeleteAccount;
 import com.edeqa.waytousserver.rest.firebase.DeleteGroup;
-import com.edeqa.waytousserver.rest.firebase.GroupProperty;
+import com.edeqa.waytousserver.rest.firebase.GroupOption;
 import com.edeqa.waytousserver.rest.firebase.JoinGroup;
 import com.edeqa.waytousserver.rest.firebase.NewGroup;
 import com.edeqa.waytousserver.rest.firebase.RegisterUser;
@@ -306,21 +306,21 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
     }
 
     @Override
-    public void switchPropertyInGroup(final String groupId, final String property, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
-        new GroupProperty()
+    public void switchOptionInGroup(final String groupId, final String option, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+        new GroupOption()
                 .setGroupId(groupId)
-                .setKey(property)
-                .performSwitchBoolean()
+                .setKey(option)
+                .switchBoolean()
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
                 .call(null, null);
     }
 
     @Override
-    public void modifyPropertyInGroup(final String groupId, final String property, final Serializable value, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
-        new GroupProperty()
+    public void modifyOptionInGroup(final String groupId, final String option, final Serializable value, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+        new GroupOption()
                 .setGroupId(groupId)
-                .setKey(property)
+                .setKey(option)
                 .setValue(value)
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
