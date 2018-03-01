@@ -54,14 +54,14 @@ function CreateHolder(main) {
                     }
                 },
                 { type: HTML.NUMBER, label: "&#150; time to live, min", oninput: validate_ttl, value: 24 * 60 },
-                { type: HTML.NUMBER, label: "Limit users" },
                 { type: HTML.CHECKBOX, label: "Dismiss inactive users", onchange: function() {
                     // noinspection PointlessBooleanExpressionJS
                     dialog.items[7].disabled = !!this.checked;
                     dialog.items[7].parentNode.classList[this.checked ? "add" : "remove"]("disabled");
                     dialog.items[7].focus();
                 }, checked: true },
-                { type: HTML.NUMBER, itemClassName: "", label: "&#150; delay to dismiss, sec", title:"Minimal value 300", onchange: validate_delay, oninput: validate_delay, value: 3600 }
+                { type: HTML.NUMBER, itemClassName: "", label: "&#150; delay to dismiss, sec", title:"Minimal value 300", onchange: validate_delay, oninput: validate_delay, value: 3600 },
+                { type: HTML.NUMBER, label: "Limit users" }
             ],
             positive: {
                 label: u.create(HTML.SPAN, "OK"),
@@ -81,9 +81,9 @@ function CreateHolder(main) {
         inputWelcomeMessage = dialog.items[3];
         inputPersistent = dialog.items[4];
         inputTtl = dialog.items[5];
-        inputLimitUsers = dialog.items[6];
-        inputDismissInactive = dialog.items[7];
-        inputDelay = dialog.items[8];
+        inputDismissInactive = dialog.items[6];
+        inputDelay = dialog.items[7];
+        inputLimitUsers = dialog.items[8];
     };
 
     var validate_id = function() {

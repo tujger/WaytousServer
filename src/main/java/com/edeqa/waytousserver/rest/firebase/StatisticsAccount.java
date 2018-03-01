@@ -20,7 +20,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
 
     public static final String TYPE = "/rest/firebase/statistics/account";
 
-    private AbstractDataProcessor.Action accountAction;
+    private AbstractDataProcessor.Action action;
     private String message;
     private String key;
     private Object value;
@@ -41,7 +41,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
         DatabaseReference refTotal = getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_TOTAL);
         DatabaseReference refToday = getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_BY_DATE).child(today);
 
-        switch(getAccountAction()) {
+        switch(getAction()) {
             case ACCOUNT_CREATED:
                 refTotal = refTotal.child(Firebase.STAT_ACCOUNTS_CREATED);
                 refToday = refToday.child(Firebase.STAT_ACCOUNTS_CREATED);
@@ -59,7 +59,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
         if(getMessage() != null && getMessage().length() > 0) {
             Map<String, String> map = new HashMap<>();
             map.put("account", accountId);
-            map.put("action", getAccountAction().name());
+            map.put("action", getAction().name());
             ((StatisticsMessage) getFireBus().getHolder(StatisticsMessage.TYPE))
                     .setMessage(getMessage())
                     .call(null, map);
@@ -75,7 +75,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
                         Map<String, Object> map = new HashMap<>();
                         map.put(Firebase.TIMESTAMP, new Date().getTime());
                         map.put(Firebase.KEYS, getKey());
-                        if (getAccountAction() != null) map.put(Firebase.MODE, getAccountAction());
+                        if (getAction() != null) map.put(Firebase.MODE, getAction());
 
                         if (getValue() instanceof Boolean) {
                             map.put(Firebase.VALUE, getValue());
@@ -93,7 +93,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
                             map.put(Firebase.VALUE, "[" + getValue().getClass().getSimpleName() + "]");
                         }
                         refAccounts.child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValueAsync(map);
-                        Misc.log("StatisticsAccount", "register", accountId, "with action", getAccountAction());
+                        Misc.log("StatisticsAccount", "register", accountId, "with action", getAction());
                     }
                     clear();
                 }
@@ -113,8 +113,8 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
         return this;
     }
 
-    public AbstractDataProcessor.Action getAccountAction() {
-        return accountAction;
+    public AbstractDataProcessor.Action getAction() {
+        return action;
     }
 
     public String getMessage() {
@@ -126,8 +126,8 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
         return this;
     }
 
-    public StatisticsAccount setAction(AbstractDataProcessor.Action accountAction) {
-        this.accountAction = accountAction;
+    public StatisticsAccount setAction(AbstractDataProcessor.Action action) {
+        this.action = action;
         return this;
     }
 

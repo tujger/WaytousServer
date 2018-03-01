@@ -73,7 +73,7 @@ public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, Strin
             Map<String, String> map = new HashMap<>();
             map.put("group", getGroupId());
             map.put("user", userId);
-            map.put("action", getAction().toString());
+            map.put("action", getAction().name());
             ((StatisticsMessage) getFireBus().getHolder(StatisticsMessage.TYPE))
                     .setMessage(getMessage())
                     .call(null, map);

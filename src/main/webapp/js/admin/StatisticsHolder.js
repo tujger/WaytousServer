@@ -39,6 +39,9 @@ function StatisticsHolder(main) {
     actions[DATABASE.STAT_USERS_REJECTED] = "User rejected";
     actions[DATABASE.STAT_ACCOUNTS_CREATED] = "Account created";
     actions[DATABASE.STAT_ACCOUNTS_DELETED] = "Account deleted";
+    actions[DATABASE.STAT_MISC_GROUPS_CLEANED] = "Groups cleaning";
+    actions[DATABASE.STAT_MISC_ACCOUNTS_CLEANED] = "Accounts cleaning";
+
 
     this.start = function() {
         div = document.getElementsByClassName("layout")[0];

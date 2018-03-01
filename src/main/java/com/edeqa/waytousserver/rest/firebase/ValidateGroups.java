@@ -12,6 +12,7 @@ import com.google.firebase.database.ServerValue;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -31,6 +32,14 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_GROUPS_CLEANED).setValueAsync(ServerValue.TIMESTAMP);
+
+        Map<String, String> map = new HashMap<>();
+//        map.put("group", groupRequest.getId());
+//        map.put("user", userId);
+        map.put("action", Firebase.STAT_MISC_GROUPS_CLEANED);
+        ((StatisticsMessage) getFireBus().getHolder(StatisticsMessage.TYPE))
+//                .setMessage(getMessage())
+                .call(null, map);
 
         Misc.log("ValidateGroups", "is performing");
         new TaskSingleValueEventFor<JSONObject>(refGroups.child("/"))
