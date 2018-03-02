@@ -529,18 +529,18 @@ function GroupHolder(main) {
                     if(!active) return;
                     if(!snapshot.val()) return;
 
-                    var uid = snapshot.val()[REQUEST.UID];
-                    if(uid) {
-                        ref.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
-                            .then(function(snapshot){
-                                if(snapshot.val()) {
+                    // var uid = snapshot.val()[REQUEST.UID];
+                    // if(uid) {
+                    //     ref.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
+                    //         .then(function(snapshot){
+                    //             if(snapshot.val()) {
                                     userOsNode.innerHTML = u.clear(snapshot.val()[REQUEST.OS] || "&#150");
                                     userDeviceNode.innerHTML = u.clear(snapshot.val()[REQUEST.MODEL] || "&#150;");
                                     userSignProviderNode.innerHTML = u.clear(snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous");
                                     tableUsers.update();
-                                }
-                            });
-                    }
+                    //             }
+                    //         });
+                    // }
                 }).catch(function(error){
                     if(!reload) {
                         reload = true;

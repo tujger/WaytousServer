@@ -22,7 +22,10 @@ import java.util.Map;
 
 import static com.edeqa.waytous.Constants.REQUEST_CHECK_USER;
 import static com.edeqa.waytous.Constants.REQUEST_JOIN_GROUP;
+import static com.edeqa.waytous.Constants.REQUEST_MODEL;
 import static com.edeqa.waytous.Constants.REQUEST_NEW_GROUP;
+import static com.edeqa.waytous.Constants.REQUEST_OS;
+import static com.edeqa.waytous.Constants.REQUEST_SIGN_PROVIDER;
 import static com.edeqa.waytous.Constants.REQUEST_UID;
 import static com.edeqa.waytous.Constants.RESPONSE_MESSAGE;
 import static com.edeqa.waytous.Constants.RESPONSE_NUMBER;
@@ -101,7 +104,11 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
         // private data inside group
         Map<String, Object> userPrivateData = new HashMap<>();
         userPrivateData.put(REQUEST_UID, user.getUid());
-
+        userPrivateData.put(REQUEST_MODEL, user.getModel());
+        userPrivateData.put(REQUEST_OS, user.getOs());
+        if (user.getSignProvider() != null) {
+            userPrivateData.put(REQUEST_SIGN_PROVIDER, user.getSignProvider().toString());
+        }
         childUpdates.put(Firebase.USERS + "/" + Firebase.PRIVATE + "/" + user.getNumber(), userPrivateData);
 
         ApiFuture<Void> updateUserTask = refGroup.updateChildrenAsync(childUpdates);

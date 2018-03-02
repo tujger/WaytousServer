@@ -1,9 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
-import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.firebase.database.DatabaseReference;
 
@@ -66,12 +64,12 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
         }
 
         if(getKey() != null && accountId != null && accountId.length() > 0) {
-            new TaskSingleValueEventFor<JSONObject>(refAccounts.child(accountId))
-                    .setFirebaseRest(((AdminToken) getFireBus().getHolder(AdminToken.TYPE)).fetchToken())
-                    .addOnCompleteListener(new Runnable1<JSONObject>() {
-                @Override
-                public void call(JSONObject json) {
-                    if(json.has(Firebase.PRIVATE) && json.getBoolean(Firebase.PRIVATE)) {
+//            new TaskSingleValueEventFor<JSONObject>(refAccounts.child(accountId))
+//                    .ifExists()
+//                    .addOnCompleteListener(new Runnable1<JSONObject>() {
+//                @Override
+//                public void call(JSONObject json) {
+//                    if(json != null) {
                         Map<String, Object> map = new HashMap<>();
                         map.put(Firebase.TIMESTAMP, new Date().getTime());
                         map.put(Firebase.KEYS, getKey());
@@ -94,10 +92,10 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
                         }
                         refAccounts.child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValueAsync(map);
                         Misc.log("StatisticsAccount", "register", accountId, "with action", getAction());
-                    }
-                    clear();
-                }
-            }).start();
+//                    }
+//                    clear();
+//                }
+//            }).start();
 
         } else {
             clear();

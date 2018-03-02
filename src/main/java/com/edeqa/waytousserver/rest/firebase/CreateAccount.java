@@ -6,7 +6,6 @@ import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.google.api.core.ApiFuture;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 
@@ -44,12 +43,12 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
         }
 
         final DatabaseReference refAccounts = getFirebaseReference().child(Firebase.SECTION_USERS);
-
-        TaskSingleValueEventFor createAccountTask = new TaskSingleValueEventFor<DataSnapshot>()
+        TaskSingleValueEventFor createAccountTask = new TaskSingleValueEventFor<JSONObject>()
                 .setRef(refAccounts.child(user.getUid()))
-                .addOnSuccessListener(new Runnable1<DataSnapshot>() {
+                .ifExists()
+                .addOnSuccessListener(new Runnable1<JSONObject>() {
                     @Override
-                    public void call(DataSnapshot dataSnapshot) {
+                    public void call(JSONObject dataSnapshot) {
                         Map<String, Object> accountPrivateData = new HashMap<>();
 
                         if (user.getName() != null && user.getName().length() > 0) {
@@ -60,7 +59,7 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
                         }
                         accountPrivateData.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
 
-                        if (dataSnapshot.getValue() == null) {
+                        if (dataSnapshot == null) {
                             accountPrivateData.put(REQUEST_MODEL, user.getModel());
                             accountPrivateData.put(REQUEST_OS, user.getOs());
                             accountPrivateData.put(Firebase.CREATED, ServerValue.TIMESTAMP);

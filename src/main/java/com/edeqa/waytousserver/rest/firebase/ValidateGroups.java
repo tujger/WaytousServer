@@ -43,7 +43,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
 
         Misc.log("ValidateGroups", "is performing");
         new TaskSingleValueEventFor<JSONObject>(refGroups.child("/"))
-                .setFirebaseRest(((AdminToken) getFireBus().getHolder(AdminToken.TYPE)).fetchToken())
+                .setFirebaseRest()
                 .addOnCompleteListener(new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject groups) {

@@ -1,8 +1,10 @@
 package com.edeqa.waytousserver.helpers;
 
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.helpers.interfaces.Runnable1;
-import com.google.firebase.auth.FirebaseAuth;
+import com.edeqa.waytousserver.rest.firebase.AbstractFirebaseAction;
+import com.edeqa.waytousserver.rest.firebase.AdminToken;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,7 +15,6 @@ import com.google.firebase.tasks.Tasks;
 
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -24,8 +25,7 @@ public class TaskSingleValueEventFor<T> {
     private static final String LOG = "TSVEF";
     private DatabaseReference ref;
     private boolean firebaseRest = false;
-    private String customToken;
-    private String accessToken;
+    private boolean checkExisting;
 
     private Runnable1<T> onCompleteListener;
     private Runnable1<T> onSuccessListener;
@@ -71,16 +71,8 @@ public class TaskSingleValueEventFor<T> {
             Thread.dumpStack();
             return;
         }
-        if(isFirebaseRest()) {
-            if(customToken == null) {
-                HashMap<String, Object> additionalClaims = new HashMap<>();
-                additionalClaims.put("Administrator", true);
-                try {
-                    customToken = FirebaseAuth.getInstance().createCustomTokenAsync("Administrator", additionalClaims).get();
-                    restRequestWithTokenUpdate();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
+        if(isFirebaseRest() || checkExisting) {
+            restRequest();
 /*
                 FirebaseAuth.getInstance().createCustomToken("Administrator", additionalClaims)
                         .addOnSuccessListener(new OnSuccessListener<String>() {
@@ -98,9 +90,6 @@ public class TaskSingleValueEventFor<T> {
                             }
                         });
 */
-            } else {
-                restRequest();
-            }
         } else {
             final TaskCompletionSource<DataSnapshot> tcs = new TaskCompletionSource<>();
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -129,22 +118,21 @@ public class TaskSingleValueEventFor<T> {
         }
     }
 
-    private void restRequestWithTokenUpdate() {
-        customToken = this.accessToken;
-        restRequest();
-    }
-
     private void restRequest() {
         try {
+            String customToken = ((AdminToken) EventBus.getOrCreate(AbstractFirebaseAction.EVENTBUS).getHolder(AdminToken.TYPE)).fetchToken();
             String url = "" + ref.getDatabase().getReference() + ref.getPath() + ".json?shallow=true&access_token=" + customToken;
-//            Misc.log(LOG, "restRequest:" + url);
+            Misc.log(LOG, "restRequest:" + url);
             String res = Misc.getUrl(url, "UTF-8");
+//            Misc.log(LOG, "restResult:" + res);
+            JSONObject json = null;
             if(res.length() == 0 || res.startsWith("null")) {
-                return;
+//                json = new JSONObject();
+            } else {
+                json = new JSONObject(res);
             }
 //            Common.log(LOG, res);
 
-            JSONObject json = new JSONObject(res);
             if(onSuccessListener != null) onSuccessListener.call((T) json);
             if(onCompleteListener != null) onCompleteListener.call((T) json);
 
@@ -155,14 +143,17 @@ public class TaskSingleValueEventFor<T> {
         }
     }
 
-
     public boolean isFirebaseRest() {
         return firebaseRest;
     }
 
-    public TaskSingleValueEventFor<T> setFirebaseRest(String accessToken) {
+    public TaskSingleValueEventFor<T> setFirebaseRest() {
         this.firebaseRest = true;
-        this.customToken = accessToken;
+        return this;
+    }
+
+    public TaskSingleValueEventFor<T> ifExists() {
+        checkExisting = true;
         return this;
     }
 }

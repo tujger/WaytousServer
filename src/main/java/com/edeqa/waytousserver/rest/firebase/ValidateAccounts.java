@@ -37,7 +37,7 @@ public class ValidateAccounts extends AbstractFirebaseAction<ValidateAccounts, O
         Misc.log("ValidateAccounts", "is performing, checking online users");
 
         new TaskSingleValueEventFor<JSONObject>(refAccounts)
-                .setFirebaseRest(((AdminToken) getFireBus().getHolder(AdminToken.TYPE)).fetchToken())
+                .setFirebaseRest()
                 .addOnCompleteListener(new Runnable1<JSONObject>() {
             @Override
             public void call(JSONObject accounts) {

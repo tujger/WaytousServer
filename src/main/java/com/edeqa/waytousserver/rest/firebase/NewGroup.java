@@ -30,7 +30,6 @@ public class NewGroup extends AbstractFirebaseAction<NewGroup, GroupRequest> {
     public void call(final JSONObject json, final GroupRequest groupRequest) {
 
         Misc.log("NewGroup", "from", getUserRequest());
-
         ((CreateAccount) getFireBus().getHolder(CreateAccount.TYPE))
                 .setOnSuccess(new Runnable() {
                     @Override
@@ -80,6 +79,7 @@ public class NewGroup extends AbstractFirebaseAction<NewGroup, GroupRequest> {
                                         .setKey("group")
                                         .setValue(groupRequest.getId())
                                         .call(null, getUserRequest().getUid());
+
                             }
                         };
                         onresult[2].call(new JSONObject());
