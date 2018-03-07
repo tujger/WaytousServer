@@ -29,6 +29,7 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
         useDefault();
         registerAction(new Resource().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("content").setActionName("/rest/content"));
         registerAction(new Resource().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources").setActionName("/rest/resources"));
+        registerAction(new Resource().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("data").setActionName("/rest/data"));
         registerAction(new InitialData());
         registerAction(new Join());
         registerAction(new Locales().setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("resources").setActionName("/rest/locales"));
