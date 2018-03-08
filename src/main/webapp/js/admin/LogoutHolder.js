@@ -18,7 +18,7 @@ function LogoutHolder(main) {
             main.arguments.utils.dialogAbout().open();
             e.stopPropagation();
         }}).place(HTML.SPAN, "\nBuild " + data.version));
-    }
+    };
 
     this.resume = function() {
         u.clear(document.body);
@@ -45,7 +45,7 @@ function LogoutHolder(main) {
                     url = "https://" + url.hostname + (data.HTTPS_PORT === 443 ? "" : ":"+ data.HTTPS_PORT) + "/";
                     window.location = url
                 }
-            }
+            };
             xhr.send();
         }, 0);
     }

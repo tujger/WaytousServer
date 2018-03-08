@@ -22,17 +22,13 @@ function UserHolder(main) {
      this.type = "user";
      this.title = "User";
 
-     var tableSummary;
-     var tableGroups;
-     var div;
-     var ref;
      var database;
      var utils = main.arguments.utils;
 
      this.start = function() {
          database = firebase.database();
-         div = document.getElementsByClassName("layout")[0];
-     }
+         div = main.content;
+     };
 
     this.resume = function(group_id, user_number) {
         groupId = group_id;
@@ -167,7 +163,7 @@ function UserHolder(main) {
         }
         updateAll();
         return div;
-    }
+    };
 
     function updateSummary() {
         var refRoot = database.ref();

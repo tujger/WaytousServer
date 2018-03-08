@@ -276,6 +276,10 @@ div.question {
         white-space: nowrap;
     }
 
+    .content {
+        max-width: 100%;
+    }
+
     .actionbar {
         flex: 0 0 50px;
         justify-content: center;

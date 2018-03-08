@@ -43,8 +43,8 @@ function AccountHolder(main) {
 
     this.start = function() {
          database = firebase.database();
-         div = document.getElementsByClassName("layout")[0];
-     }
+        div = main.content;
+     };
 
     this.resume = function(account_id) {
         accountId = account_id;
@@ -142,7 +142,7 @@ function AccountHolder(main) {
 
         updateAll();
         return div;
-    }
+    };
 
     function updateSummary() {
         if(!accountId) {

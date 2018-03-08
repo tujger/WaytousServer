@@ -44,7 +44,7 @@ function StatisticsHolder(main) {
 
 
     this.start = function() {
-        div = document.getElementsByClassName("layout")[0];
+        div = main.content;
         database = firebase.database();
     };
 
@@ -60,7 +60,6 @@ function StatisticsHolder(main) {
     };
 
     function renderInterface() {
-        div = document.getElementsByClassName("layout")[0];
         u.clear(div);
         ref = database.ref();
 

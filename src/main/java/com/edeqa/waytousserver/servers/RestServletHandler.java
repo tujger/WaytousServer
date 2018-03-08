@@ -50,6 +50,12 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
         registerAction(new Files().setFilenameFilter(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
+                return name.contains("pages-");
+            }
+        }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("data").setActionName("/rest/data/types"));
+        registerAction(new Files().setFilenameFilter(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
                 return name.contains("Holder");
             }
         }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("js/main").setActionName("/rest/main"));

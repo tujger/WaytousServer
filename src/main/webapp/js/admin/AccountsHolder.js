@@ -6,8 +6,6 @@
  */
 function AccountsHolder(main) {
     var div;
-    var groupId;
-    var userNumber;
     var tableSummary;
     var tableAccounts;
 
@@ -18,18 +16,14 @@ function AccountsHolder(main) {
     this.icon = "person";
     this.priority = 10;
 
-    var tableSummary;
-    var tableGroups;
-    var div;
-    var ref;
     var database;
     var active;
     var utils = main.arguments.utils;
 
     this.start = function() {
         database = firebase.database();
-        div = document.getElementsByClassName("layout")[0];
-    }
+        div = main.content;
+    };
 
     this.resume = function() {
         u.clear(div);
@@ -165,7 +159,7 @@ function AccountsHolder(main) {
 
         updateData();
         return div;
-    }
+    };
 
     function updateData(){
         var ref = database.ref();

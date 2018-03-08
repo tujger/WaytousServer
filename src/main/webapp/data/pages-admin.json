@@ -1,0 +1,12 @@
+[
+  [
+    {
+      "category": 0,
+      "icon": "home",
+      "menu": "home",
+      "resource": "admin-home.html",
+      "title": "home",
+      "type": "home"
+    }
+  ]
+]

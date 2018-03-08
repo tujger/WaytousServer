@@ -4,7 +4,7 @@
  *
  * Created 4/20/17.
  */
-function LogsHolder() {
+function LogsHolder(main) {
     this.category = DRAWER.SECTION_MISCELLANEOUS;
     this.type = "logs";
     this.title = "Logs";
@@ -16,12 +16,10 @@ function LogsHolder() {
     var logCaption;
 
     this.start = function() {
-        div = document.getElementsByClassName("layout")[0];
-    }
+        div = main.content;
+    };
 
     this.resume = function() {
-
-        div = document.getElementsByClassName("layout")[0];
         u.clear(div);
 
         var logsTitleNode = u.create(HTML.H2, null, div).place(HTML.SPAN, "Logs");
@@ -39,7 +37,7 @@ function LogsHolder() {
         }, {passive: true});
 
         updateData();
-    }
+    };
 
     function updateData(){
         u.clear(logBody);

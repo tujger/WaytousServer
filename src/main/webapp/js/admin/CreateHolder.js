@@ -18,7 +18,7 @@ function CreateHolder(main) {
     var inputId,inputRequiresPassword,inputPassword,inputWelcomeMessage,inputPersistent,inputTtl,inputLimitUsers,inputDismissInactive,inputDelay;
 
     this.start = function() {
-        div = document.getElementsByClassName("layout")[0];
+        div = main.content;
     };
 
     this.resume = function() {

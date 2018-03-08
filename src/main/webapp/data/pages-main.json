@@ -1,0 +1,63 @@
+[
+  [
+    {
+      "category": 5,
+      "icon": "extension",
+      "menu": "api",
+      "resource": "main-api.html",
+      "title": "api",
+      "type": "api"
+    },
+    {
+      "category": 5,
+      "icon": "help",
+      "menu": "help",
+      "resource": "main-help.html",
+      "title": "help",
+      "type": "help"
+    }
+  ],
+  [
+    {
+      "category": 9,
+      "icon": "help",
+      "menu": "privacy_policy",
+      "resource": "privacy-policy.html",
+      "title": "privacy_policy",
+      "type": "privacy"
+    },
+    {
+      "category": 9,
+      "icon": "mail_outline",
+      "menu": "contact",
+      "resource": "main-contact.html",
+      "title": "contact",
+      "type": "contact"
+    },
+    {
+      "category": 9,
+      "icon": "feedback",
+      "menu": "feedback",
+      "resource": "main-feedback.html",
+      "title": "feedback",
+      "type": "feedback"
+    },
+    {
+      "category": 9,
+      "icon": "live_help",
+      "menu": "support",
+      "resource": "main-support.html",
+      "title": "support",
+      "type": "support"
+    },
+    {
+      "category": 9,
+      "icon": "info_outline",
+      "menu": "about",
+      "priority": -10,
+      "resource": "main-about.html",
+      "title": "about",
+      "type": "about"
+    }
+  ]
+]

@@ -22,7 +22,7 @@ function GroupsHolder(main) {
 
     this.start = function() {
         database = firebase.database();
-        div = document.getElementsByClassName("layout")[0];
+        div = main.content;
     };
 
     this.resume = function() {

@@ -13,7 +13,7 @@ function HomeHolder() {
 
     this.start = function() {
         div = document.getElementsByClassName("layout")[0];
-    }
+    };
 
     this.resume = function() {
         u.clear(div);

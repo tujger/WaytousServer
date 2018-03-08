@@ -20,7 +20,7 @@ function ChatHolder(main) {
 
     this.start = function() {
         database = firebase.database();
-    }
+    };
 
     this.resume = function() {
         dialogChat = dialogChat || u.dialog({
