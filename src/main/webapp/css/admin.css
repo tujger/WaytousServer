@@ -251,6 +251,39 @@ div.question {
     display: none;
 }
 
+.tree {
+    margin-top: 22px;
+}
+.tree-pages-root {
+    display: flex;
+}
+.tree-pages-item-leaf {
+    display: flex;
+    /*width: 100%;*/
+}
+.tree-pages-item-title {
+    text-decoration: none;
+    color: inherit;
+}
+.tree-pages-item-icon {
+    margin-left: 4px;
+    font-size: 14px;
+    border-width: 0;
+    text-decoration: none;
+    color: inherit;
+}
+.tree-pages-category {
+    display: flex;
+}
+
+.page-edit-dialog {
+    width: 80%;
+    max-width: 90%;
+    z-index: 10000;
+    height: 80%;
+}
+
+
 @media screen and (max-width: 1000px) {
     .buttons {
         flex-wrap: wrap;
@@ -692,6 +725,10 @@ div.question {
         font-style: normal;
         stroke: darkslategray;
         padding-right: 2px;
+    }
+
+    .tree-pages-item-icon {
+        height: 30px;
     }
 
     /* media specific classes */

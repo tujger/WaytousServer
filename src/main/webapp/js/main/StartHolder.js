@@ -19,7 +19,7 @@ function StartHolder(main) {
 
     this.start = function() {
         console.log("Starting StartHolder");
-    }
+    };
 
     this.resume = function() {
         console.log("Resuming StartHolder");

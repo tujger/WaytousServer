@@ -18,7 +18,7 @@ function GroupsHolder(main) {
     var database;
     var active;
 
-    var utils = main.arguments.utils;
+    var utils = main && main.arguments.utils;
 
     this.start = function() {
         database = firebase.database();

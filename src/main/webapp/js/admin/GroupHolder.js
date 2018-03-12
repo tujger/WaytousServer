@@ -12,7 +12,7 @@ function GroupHolder(main) {
     var tableSummary;
     var div;
     var database;
-    var utils = main.arguments.utils;
+    var utils = main && main.arguments.utils;
     var active;
     var groupId;
     var buttons;

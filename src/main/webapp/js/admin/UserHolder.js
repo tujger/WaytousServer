@@ -23,7 +23,7 @@ function UserHolder(main) {
      this.title = "User";
 
      var database;
-     var utils = main.arguments.utils;
+     var utils = main && main.arguments.utils;
 
      this.start = function() {
          database = firebase.database();

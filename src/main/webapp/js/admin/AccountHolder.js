@@ -13,7 +13,7 @@ function AccountHolder(main) {
     var accountId;
     var tableSummary;
     var tableHistory;
-    var utils = main.arguments.utils;
+    var utils = main && main.arguments.utils;
 
     var modes = {
         ra: "Add remote value",
