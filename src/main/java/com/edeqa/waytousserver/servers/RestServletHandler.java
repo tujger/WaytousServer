@@ -3,6 +3,7 @@ package com.edeqa.waytousserver.servers;
 import com.edeqa.edequate.rest.Files;
 import com.edeqa.edequate.rest.Locales;
 import com.edeqa.edequate.rest.Resource;
+import com.edeqa.helpers.interfaces.Callable1;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.rest.InitialData;
 import com.edeqa.waytousserver.rest.Join;
@@ -51,6 +52,11 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
             @Override
             public boolean accept(File dir, String name) {
                 return name.contains("pages-");
+            }
+        }).setFilenameProcess(new Callable1<String, String>() {
+            @Override
+            public String call(String s) {
+                return s.replaceAll("pages-(.*?)\\.json", "$1");
             }
         }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("data").setActionName("/rest/data/types"));
         registerAction(new Files().setFilenameFilter(new FilenameFilter() {

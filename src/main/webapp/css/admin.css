@@ -265,13 +265,6 @@ div.question {
     text-decoration: none;
     color: inherit;
 }
-.tree-pages-item-icon {
-    margin-left: 4px;
-    font-size: 14px;
-    border-width: 0;
-    text-decoration: none;
-    color: inherit;
-}
 .tree-pages-category {
     display: flex;
 }
@@ -725,10 +718,6 @@ div.question {
         font-style: normal;
         stroke: darkslategray;
         padding-right: 2px;
-    }
-
-    .tree-pages-item-icon {
-        height: 30px;
     }
 
     /* media specific classes */
