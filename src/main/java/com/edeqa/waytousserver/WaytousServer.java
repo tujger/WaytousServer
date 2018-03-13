@@ -182,10 +182,13 @@ public class WaytousServer {
         sslServer.createContext("/rest/", restServer);
         Misc.log(LOG, "starting", RestServletHandler.class.getSimpleName(), "on HTTPS:", OPTIONS.getHttpsPort(), (OPTIONS.getHttpsPort() == OPTIONS.getHttpsPortMasked() ? "(masked by "+ OPTIONS.getHttpsPortMasked() +")" : ""), "[/rest/]");
 
+        DigestAuthenticator authenticator = new DigestAuthenticator("waytous");
+//        authenticator
         sslAdminServer.createContext("/rest/", restServer);
-        sslAdminServer.createContext("/", adminServer).setAuthenticator(new DigestAuthenticator("waytous"));
+        sslAdminServer.createContext("/", adminServer).setAuthenticator(authenticator);
         sslAdminServer.createContext("/admin/logout", adminServer);
         Misc.log(LOG, "starting", AdminServletHandler.class.getSimpleName(), "on HTTPS:", OPTIONS.getHttpsAdminPort(), "[/]");
+
 
         ExecutorService executor = Executors.newCachedThreadPool();
         server.setExecutor(executor);

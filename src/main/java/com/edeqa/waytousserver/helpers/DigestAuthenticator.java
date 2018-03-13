@@ -251,7 +251,6 @@ public class DigestAuthenticator extends Authenticator {
             String key;
             String value;
         }
-
     }
 
     public String createNonce() {

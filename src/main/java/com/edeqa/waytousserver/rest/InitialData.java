@@ -38,6 +38,7 @@ public class InitialData extends AbstractAction<RequestWrapper> {
         if(isAdmin()) {
             json.put("sign", Common.getInstance().getDataProcessor().createCustomToken("Viewer"));
             json.put("access", ((AdminToken) EventBus.getOrCreate(AbstractFirebaseAction.EVENTBUS).getHolder(AdminToken.TYPE)).fetchToken());
+            json.put("user", requestWrapper.getUserName());
         } else {
             json.put("is_stand_alone", Common.getInstance().getDataProcessor().isServerMode());
             if(OPTIONS.isDebugMode()) json.put("is_debug_mode", true);
