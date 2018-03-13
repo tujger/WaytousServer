@@ -40,11 +40,11 @@ function Main() {
     preloaded = function(){
         window.u = new Edequate({exportConstants:true, origin:"waytous"});
 
-        main.right = main.layout = u.create(HTML.DIV, {className:"layout changeable"}, document.body);
+        main.right = main.layout = u.create(HTML.DIV, {className:"layout changeable",role:"main"}, document.body);
         main.appName = "${APP_NAME}";
 
         u.loading("0%");
-        u.require("/js/helpers/Constants").then(function(){
+        u.require("/js/helpers/Constants.js").then(function(){
             loadResources("tracking.json", function() {
                 initializeHeader();
                 initializeProperties();
@@ -59,7 +59,8 @@ function Main() {
     function initializeHeader() {
 
         document.head
-            .place(HTML.META, {name:"viewport", content:"width=device-width, initial-scale=1, maximum-scale=5, user-scalable=no"})
+            .place(HTML.META, {name:"viewport", content:"width=device-width, initial-scale=1, user-scalable=no"})
+            .place(HTML.META, {name:"description", content:data.description})
             .place(HTML.STYLE, {innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/edequate.css');@import url('/css/tracking.css');"})
             .place(HTML.LINK, {rel:"apple-touch-icon", href:"/icons/apple-touch-icon.png"})
             .place(HTML.LINK, {rel:"apple-touch-icon", sizes:"60x60", href:"/icons/apple-touch-icon-60x60.png"})
@@ -136,32 +137,32 @@ function Main() {
             // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js",
             "https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js", // https://cdnjs.com/libraries/fingerprintjs2
             "/js/helpers/Utils.js",
-            "/js/helpers/MyUser",
-            "/js/helpers/MyUsers",
+            "/js/helpers/MyUser.js",
+            "/js/helpers/MyUsers.js",
             "/js/helpers/NoSleep.js",
-            "/js/tracking/PropertiesHolder", // must be first of holders
-            "/js/tracking/AddressHolder",
-            "/js/tracking/GpsHolder",
-            "/js/tracking/ButtonHolder",
-            "/js/tracking/CameraHolder",
-            "/js/tracking/DistanceHolder",
-            "/js/tracking/DrawerHolder",
-            // "/js/tracking/FabHolder",
-            "/js/tracking/HelpHolder",
-            "/js/tracking/MapHolder",
-            "/js/tracking/MarkerHolder",
-            "/js/tracking/MessageHolder",
-            "/js/tracking/NavigationHolder",
-            "/js/tracking/PlaceHolder",
-            "/js/tracking/SavedLocationHolder",
-            "/js/tracking/ShareHolder",
-            "/js/tracking/StreetViewHolder",
-            "/js/tracking/TrackingHolder",
-            "/js/tracking/TrackHolder",
-            "/js/tracking/UserProfileHolder",
-            "/js/tracking/SettingHolder"
-//            "/js/tracking/WelcomeHolder",
-//             "/js/tracking/SampleHolder",
+            "/js/tracking/PropertiesHolder.js", // must be first of holders
+            "/js/tracking/AddressHolder.js",
+            "/js/tracking/GpsHolder.js",
+            "/js/tracking/ButtonHolder.js",
+            "/js/tracking/CameraHolder.js",
+            "/js/tracking/DistanceHolder.js",
+            "/js/tracking/DrawerHolder.js",
+            // "/js/tracking/FabHolder.js",
+            "/js/tracking/HelpHolder.js",
+            "/js/tracking/MapHolder.js",
+            "/js/tracking/MarkerHolder.js",
+            "/js/tracking/MessageHolder.js",
+            "/js/tracking/NavigationHolder.js",
+            "/js/tracking/PlaceHolder.js",
+            "/js/tracking/SavedLocationHolder.js",
+            "/js/tracking/ShareHolder.js",
+            "/js/tracking/StreetViewHolder.js",
+            "/js/tracking/TrackingHolder.js",
+            "/js/tracking/TrackHolder.js",
+            "/js/tracking/UserProfileHolder.js",
+            "/js/tracking/SettingHolder.js"
+//            "/js/tracking/WelcomeHolder.js",
+//             "/js/tracking/SampleHolder.js",
         ] : [
             // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js", // https://firebase.google.com/docs/web/setup
             // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
@@ -185,14 +186,14 @@ function Main() {
             "MarkerHolder",
             "MessageHolder",
             "NavigationHolder",
-            "SettingHolder",
             "PlaceHolder",
             "SavedLocationHolder",
             "ShareHolder",
             "StreetViewHolder",
             "TrackingHolder",
             "TrackHolder",
-            "UserProfileHolder"
+            "UserProfileHolder",
+            "SettingHolder"
         ];
 
         u.eventBus.register(files, {

@@ -190,14 +190,12 @@ function GpsHolder(main) {
     function alternativeGeolocation() {
         u.getJSON("//www.googleapis.com/geolocation/v1/geolocate?key=" + data.firebase_config.apiKey, {}).then(function(json){
             console.log("Alternative geolocation applied",json);
-        }).catch(function(error, json) {
-            console.log("Alternative geolocation failed",error,json);
+        }).catch(function(error, xhr) {
+            console.log("Alternative geolocation failed",error,xhr);
         });
         return;
-        u.require("//js.maxmind.com/js/apis/geoip2/v2.1/geoip2.js").then(function() {
+        u.require("//js.maxmind.com/js/apis/geoip2/v2.1/geoip2.js").then(function(geoip2) {
             console.log("Alternative geolocation applied",geoip2);
-
-
 
             geoip2.insights(function(json){
                 console.log("GEOSU",json);

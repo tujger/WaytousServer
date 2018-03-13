@@ -13,7 +13,7 @@ function LogoutHolder(main) {
 
     this.start = function() {
         main.drawer.headerTitle.innerHTML = "Waytous";
-        main.drawer.headerSubtitle.innerHTML = "Admin";
+        main.drawer.headerSubtitle.innerHTML = data.user || "Admin";
         main.drawer.footer.lastChild.firstChild.replaceWith(u.create(HTML.DIV).place(HTML.SPAN, {className: "drawer-footer-link", innerHTML: "${APP_NAME} &copy;2017-18 Edeqa", onclick: function(e){
             main.arguments.utils.dialogAbout().open();
             e.stopPropagation();

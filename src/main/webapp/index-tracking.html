@@ -8,7 +8,7 @@
         @import url("/css/edequate.css");
         @import url("/css/tracking.css");
     </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
     <script async src="/js/Edequate.js"
             data-variable="u"
@@ -18,7 +18,7 @@
                     (function checkVersion(){var l=localStorage;if(l){var w='waytous:version';var d=data.version;var i=parseInt(l[w]||0);if(i<d){l[w]=d;console.warn('Forced reloading because of version '+d+' is newer than '+i);window.location.reload(true);}}})();
 
                     firebase.initializeApp(data.firebase_config);
-                    u.require('/js/tracking/Main', u).then(function(main){
+                    u.require('/js/tracking/Main.js', u).then(function(main){
                         main.start({type:'tracking'});
                     });
                 });
