@@ -270,10 +270,8 @@ div.question {
 }
 
 .page-edit-dialog {
-    width: 80%;
-    max-width: 90%;
-    z-index: 10000;
-    height: 80%;
+    width: 90%;
+    /*max-width: 90%;*/
 }
 
 
