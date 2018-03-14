@@ -3,7 +3,6 @@ package com.edeqa.waytousserver.servers;
 import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.edequate.helpers.WebPath;
 import com.edeqa.edequate.rest.Content;
-import com.edeqa.edequate.rest.Files;
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Mime;
 import com.edeqa.helpers.MimeType;
@@ -27,8 +26,6 @@ import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
@@ -46,7 +43,7 @@ import static com.edeqa.waytousserver.helpers.Common.FIREBASE_JAVASCRIPT_VERSION
  * Created 10/5/16.
  */
 @SuppressWarnings("HardCodedStringLiteral")
-public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
+public class AdminServletHandler extends com.edeqa.edequate.AdminServletHandler {
 
 //    private final LinkedHashMap<String, PageHolder> holders;
     private AdminToken adminToken;
@@ -67,12 +64,6 @@ public class AdminServletHandler extends com.edeqa.edequate.RestServletHandler {
         registerAction(new UserRemove());
         registerAction(new UserSwitch());
         registerAction(new InitialData());
-        registerAction(new Files().setFilenameFilter(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.contains("Holder");
-            }
-        }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("js/admin").setActionName("/rest/admin"));
     }
 
     /**

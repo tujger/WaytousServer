@@ -55,7 +55,7 @@ public class MainServletHandler extends com.edeqa.edequate.MainServletHandler {
 
         JSONObject o = new JSONObject();
         o.put("version", Common.SERVER_BUILD);
-        o.put("is_stand_alone", Common.getInstance().getDataProcessor().isServerMode());
+        o.put("is_stand_alone", true);//Common.getInstance().getDataProcessor().isServerMode());
         if(OPTIONS.isDebugMode()) o.put("is_debug_mode", true);
         o.put("google_analytics_tracking_id", OPTIONS.getGoogleAnalyticsTrackingId());
         getReplacements().add(new Replacement().setPattern(PATTERN_APP_DATA).setReplace("var data = " + o.toString()));

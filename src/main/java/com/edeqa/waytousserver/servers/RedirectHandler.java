@@ -1,12 +1,13 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.edequate.abstracts.AbstractServletHandler;
+import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.helpers.Mime;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
 import com.google.common.net.HttpHeaders;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +24,7 @@ import static com.edeqa.waytous.Constants.OPTIONS;
 /**
  * Created 10/5/16.
  */
-public class RedirectHandler implements HttpHandler {
+public class RedirectHandler extends AbstractServletHandler {
 
     private final static String LOG = "Redirect";
 
@@ -126,6 +127,11 @@ public class RedirectHandler implements HttpHandler {
             }
             redirect(exchange, host, "/404.html");
         }
+    }
+
+    @Override
+    public void perform(RequestWrapper requestWrapper) throws IOException {
+
     }
 
     public void redirect(HttpExchange exchange, String host, String path) throws IOException {
