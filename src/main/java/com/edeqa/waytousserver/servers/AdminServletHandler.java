@@ -1,16 +1,6 @@
 package com.edeqa.waytousserver.servers;
 
-import com.edeqa.edequate.abstracts.AbstractAction;
-import com.edeqa.edequate.helpers.RequestWrapper;
-import com.edeqa.edequate.helpers.WebPath;
-import com.edeqa.edequate.rest.Content;
-import com.edeqa.eventbus.EventBus;
-import com.edeqa.helpers.HtmlGenerator;
-import com.edeqa.helpers.Mime;
-import com.edeqa.helpers.MimeType;
-import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.rest.Arguments;
 import com.edeqa.waytousserver.rest.admin.AccountDelete;
 import com.edeqa.waytousserver.rest.admin.AccountsClean;
 import com.edeqa.waytousserver.rest.admin.GroupCreate;
@@ -24,21 +14,8 @@ import com.edeqa.waytousserver.rest.admin.LogsLog;
 import com.edeqa.waytousserver.rest.admin.StatClean;
 import com.edeqa.waytousserver.rest.admin.UserRemove;
 import com.edeqa.waytousserver.rest.admin.UserSwitch;
-import com.google.common.net.HttpHeaders;
-
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.URI;
 
 import javax.servlet.ServletException;
-
-import static com.edeqa.helpers.HtmlGenerator.SCRIPT;
-import static com.edeqa.helpers.HtmlGenerator.SRC;
-import static com.edeqa.helpers.HtmlGenerator.TITLE;
-import static com.edeqa.waytous.Constants.OPTIONS;
-import static com.edeqa.waytousserver.helpers.Common.FIREBASE_JAVASCRIPT_VERSION;
 
 
 /**
@@ -65,6 +42,8 @@ public class AdminServletHandler extends com.edeqa.edequate.AdminServletHandler 
         registerAction(new UserRemove());
         registerAction(new UserSwitch());
         registerAction(new InitialData());
+
+        registerActionsPool();
     }
 
     /**
@@ -76,61 +55,4 @@ public class AdminServletHandler extends com.edeqa.edequate.AdminServletHandler 
         Common.getInstance().initOptions(getServletContext());
         Common.getInstance().initDataProcessor();
     }
-
-    @Override
-    public void perform(final RequestWrapper requestWrapper) throws IOException {
-        if(requestWrapper.getRequestURI().getPath().startsWith("/admin/rest/")) {
-            super.perform(requestWrapper);
-        } else if(requestWrapper.getRequestURI().getPath().startsWith("/admin/")) {
-            new Content().setMimeType(new MimeType().setMime(Mime.TEXT_HTML).setText(true)).setWebPath(new WebPath(OPTIONS.getWebRootDirectory(), "index-admin.html")).setResultCode(200).call(null, requestWrapper);
-            return;
-        } else if (requestWrapper.getRequestURI().getPath().startsWith("/admin")) {
-
-            String ipRemote = requestWrapper.getRemoteAddress().getAddress().getHostAddress();
-            Misc.log("Admin", "[" + ipRemote + "]", requestWrapper.getRequestURI().getPath());
-
-            try {
-//                String customToken = Common.getInstance().getDataProcessor().createCustomToken("Viewer");
-//                if(adminToken == null) {
-//                    adminToken = new AdminToken().setFirebasePrivateKeyFile(OPTIONS.getFirebasePrivateKeyFile());
-//                }
-
-                final JSONObject o = new JSONObject();
-                new InitialData().setAdmin(true).call(o, requestWrapper);
-
-                HtmlGenerator html = new HtmlGenerator();
-                html.getHead().add(TITLE).with("Admin");
-
-                html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/" + FIREBASE_JAVASCRIPT_VERSION + "/firebase.js");
-                html.getHead().add(SCRIPT).with("data", o);
-                html.getHead().add(SCRIPT).with("firebase.initializeApp(data.firebase_config);");
-                html.getHead().add(SCRIPT).with(SRC, "/js/admin/Main.js");
-
-                new Content()
-                        .setMimeType(new MimeType().setMime(Mime.TEXT_HTML).setText(true).setGzip(true))
-                        .setContent(html.build())
-                        .setResultCode(200)
-                        .call(null, requestWrapper);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            URI uri = requestWrapper.getRequestURI();
-            String host;
-            try {
-                host = requestWrapper.getRequestHeaders().get(HttpHeaders.HOST).get(0);
-                host = host.split(":")[0];
-            } catch(Exception e){
-                e.printStackTrace();
-                host = InetAddress.getLocalHost().getHostAddress();
-            }
-
-            Arguments arguments = ((Arguments) EventBus.getEventBus(AbstractAction.SYSTEMBUS).getHolder(Arguments.TYPE));
-            String redirectLink = "https://" + host + arguments.getWrappedHttpsPort() + uri.getPath();
-//                Common.log("ASH","->", redirectLink);
-            requestWrapper.sendRedirect(redirectLink);
-        }
-    }
-
 }

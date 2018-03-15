@@ -72,6 +72,7 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
             }
         }).setWebDirectory(OPTIONS.getWebRootDirectory()).setChildDirectory("js/tracking").setActionName("/rest/tracking"));
 
+        registerActionsPool();
     }
 
     @Override

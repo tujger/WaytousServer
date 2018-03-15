@@ -11,7 +11,6 @@ import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.rest.DynamicLink;
 import com.edeqa.waytousserver.rest.InitialData;
-import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;
 
@@ -36,6 +35,7 @@ import static com.edeqa.waytousserver.helpers.Common.FIREBASE_JAVASCRIPT_VERSION
 @SuppressWarnings("HardCodedStringLiteral")
 public class TrackingServletHandler extends AbstractServletHandler {
 
+    private static final String LOG = "Tracking";
     private final HtmlGenerator html = new HtmlGenerator();
 
     public TrackingServletHandler(){
@@ -56,14 +56,10 @@ public class TrackingServletHandler extends AbstractServletHandler {
 
         URI uri = requestWrapper.getRequestURI();
 
-        String host = requestWrapper.getRequestedHost(), referer = null;
-        try {
-            referer = requestWrapper.getRequestHeaders().get(HttpHeaders.REFERER).get(0);
-            if(referer.contains(host)) referer = null;
-        } catch(Exception e){
-        }
+        String host = requestWrapper.getRequestedHost();
+        String referer = requestWrapper.getReferer();
 
-        Misc.log("Tracking", "[" + requestWrapper.getRemoteAddress().getAddress().getHostAddress() + ":" + requestWrapper.getRemoteAddress().getPort() + "]", host + uri.getPath() + (referer != null ? ", referer: " + referer : ""));
+        Misc.log(LOG, "[" + requestWrapper.getRemoteAddress().getAddress().getHostAddress() + ":" + requestWrapper.getRemoteAddress().getPort() + "]", host + uri.getPath() + (referer != null ? ", referer: " + referer : ""));
 
         ArrayList<String> parts = new ArrayList<>();
         parts.addAll(Arrays.asList(uri.getPath().split("/")));
@@ -72,7 +68,11 @@ public class TrackingServletHandler extends AbstractServletHandler {
 //        File file = new File(root + uri.getPath()).getCanonicalFile();
 
         if(uri.getPath().startsWith("/track2/")) {
-            new Content().setMimeType(new MimeType().setMime(Mime.TEXT_HTML).setText(true)).setWebPath(new WebPath(OPTIONS.getWebRootDirectory(), "index-tracking.html")).setResultCode(200).call(null, requestWrapper);
+            new Content()
+                    .setMimeType(new MimeType().setMime(Mime.TEXT_HTML).setText(true))
+                    .setWebPath(new WebPath(OPTIONS.getWebRootDirectory(), "index-tracking.html"))
+                    .setResultCode(200)
+                    .call(null, requestWrapper);
             return;
         } else if(uri.getPath().startsWith("/track/")) {
 

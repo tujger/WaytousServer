@@ -11,7 +11,6 @@ import com.edeqa.helpers.MimeType;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.rest.Arguments;
 import com.edeqa.waytousserver.rest.DynamicLink;
-import com.google.common.net.HttpHeaders;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,21 +22,16 @@ import static com.edeqa.waytous.Constants.OPTIONS;
 /**
  * Created 10/5/16.
  */
-public class RedirectHandler extends AbstractServletHandler {
+public class RedirectServletHandler extends AbstractServletHandler {
 
-    private final static String LOG = "RedirectHandler";
+    private final static String LOG = "Redirect";
 
     @Override
     public void perform(RequestWrapper requestWrapper) throws IOException {
         try {
             URI uri = requestWrapper.getRequestURI();
             String host = requestWrapper.getRequestedHost();
-            String referer = null;
-            try {
-                referer = requestWrapper.getRequestHeaders().get(HttpHeaders.REFERER).get(0);
-                if(referer.contains(host)) referer = null;
-            } catch(Exception e){
-            }
+            String referer = requestWrapper.getReferer();
 
             Misc.log(LOG, "[" + requestWrapper.getRemoteAddress() + "]", uri.getPath(), (referer != null ? "referer: " + referer : ""));
 
@@ -55,12 +49,15 @@ public class RedirectHandler extends AbstractServletHandler {
                 WebPath webPath = new WebPath(arguments.getWebRootDirectory(), uri.getPath());
 
                 if(webPath.path().exists()) {
-                    new Content().setMimeType(new MimeType().setMime(Mime.TEXT_PLAIN)).setWebPath(webPath).setResultCode(200).call(null, requestWrapper);
+                    new Content()
+                            .setMimeType(new MimeType().setMime(Mime.TEXT_PLAIN))
+                            .setWebPath(webPath)
+                            .setResultCode(200)
+                            .call(null, requestWrapper);
                 } else {
                     requestWrapper.sendError(404, "Not found");
                 }
             } else if(uri.getPath().startsWith("/track/") && tokenId != null) {
-
                 String redirectLink = new DynamicLink().setHost(host).fetchLink(requestWrapper, tokenId);
                 Misc.log(LOG, "->", redirectLink);
                 requestWrapper.sendRedirect(redirectLink);

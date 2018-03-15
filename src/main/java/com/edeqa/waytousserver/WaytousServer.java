@@ -10,7 +10,7 @@ import com.edeqa.waytousserver.rest.Arguments;
 import com.edeqa.waytousserver.servers.AdminServletHandler;
 import com.edeqa.waytousserver.servers.DataProcessorFirebase;
 import com.edeqa.waytousserver.servers.MainServletHandler;
-import com.edeqa.waytousserver.servers.RedirectHandler;
+import com.edeqa.waytousserver.servers.RedirectServletHandler;
 import com.edeqa.waytousserver.servers.RestServletHandler;
 import com.edeqa.waytousserver.servers.TrackingServletHandler;
 import com.edeqa.waytousserver.servers.WaytousWebsocketServer;
@@ -49,7 +49,7 @@ public class WaytousServer extends EdequateServer {
     }
 
     protected static void setupServletHandlers(){
-        RedirectHandler redirectServer = new RedirectHandler();
+        RedirectServletHandler redirectServer = new RedirectServletHandler();
         MainServletHandler mainServer = new MainServletHandler();
         RestServletHandler restServer = new RestServletHandler();
         TrackingServletHandler trackingServer = new TrackingServletHandler();
@@ -66,7 +66,6 @@ public class WaytousServer extends EdequateServer {
         ServletHandlerOptions.getOrCreate(getAdminServer()).putIfAbsent(new ServletHandlerOptions().setContext("/rest").setServletHandler(restServer));
         ServletHandlerOptions.getOrCreate(getAdminServer()).putIfAbsent(new ServletHandlerOptions().setContext("/").setServletHandler(adminServer).setAuthenticator(new DigestAuthenticator("waytous")));
         ServletHandlerOptions.getOrCreate(getAdminServer()).putIfAbsent(new ServletHandlerOptions().setContext("/admin/logout").setServletHandler(adminServer));
-
     }
 
     protected static void startServer() throws Exception {

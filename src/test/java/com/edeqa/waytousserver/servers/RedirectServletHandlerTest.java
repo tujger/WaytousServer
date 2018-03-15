@@ -7,7 +7,7 @@ import org.junit.Test;
 /**
  * Created 9/21/2017.
  */
-public class RedirectHandlerTest {
+public class RedirectServletHandlerTest {
     @Before
     public void setUp() throws Exception {
 
