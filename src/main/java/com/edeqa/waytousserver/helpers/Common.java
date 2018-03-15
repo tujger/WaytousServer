@@ -60,14 +60,6 @@ public class Common {
         return o;
     }
 
-    public static String getWrappedHttpPort(){
-        return OPTIONS.getHttpPortMasked() == 80 ? "" : ":" + OPTIONS.getHttpPortMasked();
-    }
-
-    public static String getWrappedHttpsPort(){
-        return OPTIONS.getHttpsPortMasked() == 443 ? "" : ":" + OPTIONS.getHttpsPortMasked();
-    }
-
     public void initOptions(ServletContext servletContext) {
         if(OPTIONS == null) {
             //noinspection HardCodedStringLiteral

@@ -18,8 +18,6 @@ public class Arguments extends com.edeqa.edequate.rest.Arguments {
 
     @Override
     public void call(JSONObject json, String[] args) {
-//        json.put(STATUS, STATUS_SUCCESS);
-
         OPTIONS = new Options(args);
     }
 

@@ -47,9 +47,9 @@ public class LogsLog extends AbstractAction<RequestWrapper> {
 
             byte[] bytes = (file.toString() + " not found. Fix the key 'log_file' in your options file.").getBytes();
 
-            OutputStream os = request.getResponseBody();
-            os.write(bytes);
-            os.close();
+            try (OutputStream os = request.getResponseBody()) {
+                os.write(bytes);
+            }
             return;
         }
 

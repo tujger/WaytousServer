@@ -35,18 +35,19 @@ public class AdminToken extends AbstractFirebaseAction<AdminToken, Object> {
         Long now = cal.getTime().getTime();
 
         if(token == null || timeCreated < now - 10*60*1000) {
-            FileInputStream serviceAccount = new FileInputStream(getFirebasePrivateKeyFile());
-            GoogleCredential googleCred = GoogleCredential.fromStream(serviceAccount);
-            GoogleCredential scoped = googleCred.createScoped(
-                    Arrays.asList(
-                            "https://www.googleapis.com/auth/firebase.database",
-                            "https://www.googleapis.com/auth/userinfo.email"
-                    )
-            );
-            scoped.refreshToken();
-            token = scoped.getAccessToken();
-            Misc.log("AdminToken", "generated", "[" + token + "]");
-            timeCreated = now;
+            try (FileInputStream serviceAccount = new FileInputStream(getFirebasePrivateKeyFile()) ) {
+                GoogleCredential googleCred = GoogleCredential.fromStream(serviceAccount);
+                GoogleCredential scoped = googleCred.createScoped(
+                        Arrays.asList(
+                                "https://www.googleapis.com/auth/firebase.database",
+                                "https://www.googleapis.com/auth/userinfo.email"
+                        )
+                );
+                scoped.refreshToken();
+                token = scoped.getAccessToken();
+                Misc.log("AdminToken", "generated", "[" + token + "]");
+                timeCreated = now;
+            }
         }
 
         json.put(STATUS, STATUS_SUCCESS);

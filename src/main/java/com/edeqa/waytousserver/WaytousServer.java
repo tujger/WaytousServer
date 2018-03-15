@@ -27,7 +27,7 @@ import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
 /**
  * Created 10/2/16.
  */
-@SuppressWarnings("HardCodedStringLiteral")
+@SuppressWarnings({"HardCodedStringLiteral", "GoogleAppEngineForbiddenCode"})
 public class WaytousServer extends EdequateServer {
 
     private static final String LOG = "WaytousServer";
@@ -37,7 +37,7 @@ public class WaytousServer extends EdequateServer {
     @SuppressWarnings("AppEngineForbiddenCode")
     public static void main(final String[] args ) throws Exception {
 
-        Misc.log(LOG, "====== Waytous server v1."+SERVER_BUILD+". Copyright (C) Edeqa. http://www.edeqa.com ======");
+        Misc.log(LOG, "====== Waytous server v1."+SERVER_BUILD+". Copyright (C) 2017-18, Edeqa. http://www.edeqa.com ======");
 
         setArguments(new Arguments());
         getArguments().call(null, args);
@@ -46,7 +46,6 @@ public class WaytousServer extends EdequateServer {
         prepareServer();
         setupServletHandlers();
         startServer();
-
     }
 
     protected static void setupServletHandlers(){
@@ -73,7 +72,7 @@ public class WaytousServer extends EdequateServer {
     protected static void startServer() throws Exception {
         EdequateServer.startServer();
 
-        Misc.log(LOG, "handles track link", "http://" + InetAddress.getLocalHost().getHostAddress() + Common.getWrappedHttpPort() + "/track/");
+        Misc.log(LOG, "handles track link", "http://" + InetAddress.getLocalHost().getHostAddress() + getArguments().getWrappedHttpPort() + "/track/");
 
         /*
          * Websocket part

@@ -1,13 +1,16 @@
 package com.edeqa.waytousserver.servers;
 
+import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.edequate.helpers.WebPath;
 import com.edeqa.edequate.rest.Content;
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.HtmlGenerator;
 import com.edeqa.helpers.Mime;
 import com.edeqa.helpers.MimeType;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
+import com.edeqa.waytousserver.rest.Arguments;
 import com.edeqa.waytousserver.rest.admin.AccountDelete;
 import com.edeqa.waytousserver.rest.admin.AccountsClean;
 import com.edeqa.waytousserver.rest.admin.GroupCreate;
@@ -21,7 +24,6 @@ import com.edeqa.waytousserver.rest.admin.LogsLog;
 import com.edeqa.waytousserver.rest.admin.StatClean;
 import com.edeqa.waytousserver.rest.admin.UserRemove;
 import com.edeqa.waytousserver.rest.admin.UserSwitch;
-import com.edeqa.waytousserver.rest.firebase.AdminToken;
 import com.google.common.net.HttpHeaders;
 
 import org.json.JSONObject;
@@ -46,7 +48,6 @@ import static com.edeqa.waytousserver.helpers.Common.FIREBASE_JAVASCRIPT_VERSION
 public class AdminServletHandler extends com.edeqa.edequate.AdminServletHandler {
 
 //    private final LinkedHashMap<String, PageHolder> holders;
-    private AdminToken adminToken;
 
     public AdminServletHandler(){
         super();
@@ -124,7 +125,9 @@ public class AdminServletHandler extends com.edeqa.edequate.AdminServletHandler 
                 e.printStackTrace();
                 host = InetAddress.getLocalHost().getHostAddress();
             }
-            String redirectLink = "https://" + host + Common.getWrappedHttpsPort() + uri.getPath();
+
+            Arguments arguments = ((Arguments) EventBus.getEventBus(AbstractAction.SYSTEMBUS).getHolder(Arguments.TYPE));
+            String redirectLink = "https://" + host + arguments.getWrappedHttpsPort() + uri.getPath();
 //                Common.log("ASH","->", redirectLink);
             requestWrapper.sendRedirect(redirectLink);
         }

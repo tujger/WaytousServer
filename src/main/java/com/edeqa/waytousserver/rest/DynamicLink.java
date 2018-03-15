@@ -2,6 +2,7 @@ package com.edeqa.waytousserver.rest;
 
 import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
 import com.google.common.net.HttpHeaders;
@@ -31,10 +32,13 @@ public class DynamicLink extends AbstractAction<RequestWrapper> {
 
         String mobileRedirect, webRedirect, mainLink;
         if(Common.getInstance().getDataProcessor().isServerMode()){
+
+            Arguments arguments = ((Arguments) EventBus.getEventBus(AbstractAction.SYSTEMBUS).getHolder(Arguments.TYPE));
+
 //                mobileRedirect = "waytous://" + host + "/track/" + tokenId;
             mobileRedirect = "https://" + getHost() + "/track/" + getGroupId();
-            webRedirect = "https://" + getHost() + Common.getWrappedHttpsPort() + "/group/" + getGroupId();
-            mainLink = "https://" + getHost() + Common.getWrappedHttpsPort() + "/group/" + getGroupId();
+            webRedirect = "https://" + getHost() + arguments.getWrappedHttpsPort() + "/group/" + getGroupId();
+            mainLink = "https://" + getHost() + arguments.getWrappedHttpsPort() + "/group/" + getGroupId();
         } else {
 //                mobileRedirect = "waytous://" + host + "/track/" + tokenId;
             mobileRedirect = "https://" + getHost() + "/track/" + getGroupId();
