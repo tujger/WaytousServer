@@ -21,7 +21,7 @@
     {
       "category": 9,
       "icon": "help",
-      "menu": "privacy_policy",
+      "menu": "privacy",
       "resource": "privacy-policy.html",
       "title": "privacy_policy",
       "type": "privacy"
