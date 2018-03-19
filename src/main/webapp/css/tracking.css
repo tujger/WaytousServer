@@ -46,6 +46,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0;
 }
 .version {
     position: fixed;
@@ -83,16 +84,16 @@
     color: white;
     cursor: pointer;
 }
-.drawer-collapsed:hover {
+.drawer.collapsed:hover {
     transition-delay: 1s;
 }
-.drawer-header-name, .drawer-collapsed:hover .drawer-header-name {
+.drawer-header-name, .collapsed:hover .drawer-header-name {
     transition-delay: 1s;
 }
-.drawer-collapsed .drawer-header-name {
+.collapsed .drawer-header-name {
     transition-delay: 0s;
 }
-.drawer-menu-item-collapse, .drawer-collapsed:hover .drawer-menu-item-collapse {
+.drawer-menu-item-collapse, .collapsed:hover .drawer-menu-item-collapse {
     transition-delay: 1s;
 }
 
@@ -142,7 +143,7 @@ p.top-desc {
 }
 
 p.bottom-desc {
-  padding: 0em 1em 1em 1em;
+  padding: 0 1em 1em 1em;
 }
 .user-buttons {
     max-height: 90%;
@@ -152,11 +153,9 @@ p.bottom-desc {
     min-width: 120px;
     -webkit-overflow-scrolling: touch;
 }
-.user-buttons-title {
-}
 .user-buttons-title-button {
     left: auto !important;
-    right: 0px !important;
+    right: 0 !important;
 }
 .user-buttons-title-button::before {
     content: "" !important;
@@ -166,7 +165,7 @@ p.bottom-desc {
     border-radius: 5px;
     background-color: transparent;
     display: block !important;
-    padding: 0px !important;
+    padding: 0 !important;
 }
 .user-button {
     display: flex;
@@ -286,11 +285,6 @@ p.bottom-desc {
     padding-left: 10px;
     padding-right: 10px;
 }
-.progress-dialog {
-    min-width: 20%;
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
 @keyframes rotate {
     0%    { transform: rotate(0deg); }
     100%  { transform: rotate(360deg); }
@@ -317,7 +311,7 @@ p.bottom-desc {
 
 .alpha {
     position: absolute;
-    top: 0px;
+    top: 0;
     left: 20px;
     z-index: 9999;
     color: red;
@@ -433,7 +427,6 @@ p.bottom-desc {
 .streetview-dialog {
     width: 500px;
     max-width: 60%;
-    top: auto;
     top: 10px;
     left: 10px;
     outline: none;
@@ -461,7 +454,7 @@ p.bottom-desc {
     text-align: center;
     z-index: 1000;
     font-weight: bold;
-    text-shadow: #000 0px 0px 5px;
+    text-shadow: #000 0 0 5px;
 }
 .navigation-label {
     opacity: 0.7;
@@ -476,7 +469,7 @@ p.bottom-desc {
     text-align: center;
     z-index: 1000;
     font-weight: bold;
-    text-shadow: #000 0px 0px 5px;
+    text-shadow: #000 0 0 5px;
 }
 .navigation-mode {
     font-family: "Material Icons";
@@ -489,7 +482,7 @@ p.bottom-desc {
 .navigation-mode-items {
     display: flex;
     flex-direction: row;
-    padding: 0px;
+    padding: 0;
 }
 .navigation-mode-item {
     font-size: 20px;
@@ -538,13 +531,10 @@ p.bottom-desc {
 }
 .help-dialog-module-item {
     width: 100%;
-    margin-top: 0px;
+    margin-top: 0;
 }
 .saved-locations-dialog {
     width: 500px;
-}
-.saved-locations-dialog-items {
-    display: initial !important;
 }
 .saved-locations-dialog-item {
     width: 100%;
@@ -600,29 +590,21 @@ p.bottom-desc {
     font-weight: bold;
 }
 .saved-locations-dialog-item-image {
-    align-self: flex-start;
     order: 1;
     height: 120px;
     border-style: solid;
     border-width: 1px;
     flex: 1 0 30%;
     margin-right: 5px;
-    display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "Material Icons";
-    font-feature-settings: "liga" 1;
-    font-style: normal;
     font-size: 32px;
     object-fit: cover;
     padding-top: 1px;
 }
 .saved-locations-dialog-item-button {
-    font-family: "Material Icons";
-    font-feature-settings: "liga" 1;
-    font-style: normal;
     font-size: 10px;
-    flex: 1 0 0%;
+    flex: 1 0 0;
     border: none;
     outline: none;
     min-height: 16px;
@@ -695,7 +677,7 @@ p.bottom-desc {
 }
 .options-dialog-item {
     width: 100%;
-    margin-top: 0px;
+    margin-top: 0;
 }
 .options-dialog-item-about {
     text-align: left;
@@ -813,7 +795,7 @@ p.bottom-desc {
     background: none;
     box-shadow: none;
     color: darkslategray;
-    padding: 2px 20px 0px 2px;
+    padding: 2px 20px 0 2px;
 }
 .user-profile-dialog-menu-button:hover {
     background-color: #4c93af;
@@ -836,14 +818,16 @@ p.bottom-desc {
 }
 
 @media screen and (max-width: 1000px) {
-
+    html, body {
+        height: 100%;
+    }
     .title {
         position: absolute;
         padding-top:15px;
         padding-left: 52px;
     }
     .actionbar {
-        flex: 0 0 50px;
+        height: 50px;
         justify-content: center;
     }
     .actionbar-label {
@@ -856,7 +840,7 @@ p.bottom-desc {
         font-size: 16px;
     }
     .alert {
-        margin: 0px;
+        margin: 0;
     }
     .alert-icon {
         right: -10px;
@@ -921,19 +905,19 @@ p.bottom-desc {
         padding: 3px;
     }
     .user-button-badge {
-        top: 0px;
+        top: 0;
         float: right;
-        right: 0px;
+        right: 0;
     }
     .user-button-label {
-        padding-left: 0px;
-        padding-right: 0px;
+        padding-left: 0;
+        padding-right: 0;
     }
     .user-button-title {
         white-space: nowrap;
         min-width: 40px;
         max-width: 50px;
-        padding: 0px;
+        padding: 0;
     }
     .user-button-subtitle {
         font-size: 9px;
@@ -959,7 +943,7 @@ p.bottom-desc {
     }
     .user-context-menu-item {
         justify-content: center;
-        padding: 0px;
+        padding: 0;
         margin: 1px;
         cursor: pointer;
         background-color: rgba(211, 211, 211, 0.8);
@@ -1007,10 +991,10 @@ p.bottom-desc {
     }
     .chat-dialog {
         max-width: 100%;
-        left: 0px !important;
-        right: 0px !important;
-        top: 0px !important;
-        bottom: 0px !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
         transform: none !important;
         width: 100% !important;
         max-height: 100%;
@@ -1025,7 +1009,7 @@ p.bottom-desc {
     .chat-dialog-reply-button {
         min-width: 40px;
         height: 32px;
-        padding: 0px;
+        padding: 0;
     }
     .streetview-dialog {
         position: initial;
@@ -1048,10 +1032,10 @@ p.bottom-desc {
         height: 100%;
     }
     .help-dialog {
-        left: 0px !important;
-        right: 0px !important;
-        top: 0px !important;
-        bottom: 0px !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
         transform: none !important;
         width: 100% !important;
         max-height: 100%;
@@ -1064,10 +1048,10 @@ p.bottom-desc {
         align-items: flex-end;
     }
     .saved-locations-dialog {
-        left: 0px !important;
-        right: 0px !important;
-        top: 0px !important;
-        bottom: 0px !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
         transform: none !important;
         width: 100% !important;
         max-height: 100%;
@@ -1099,7 +1083,7 @@ p.bottom-desc {
     }
     .saved-locations-dialog-item-navigate {
         position: absolute;
-        left: 0px;
+        left: 0;
         height: 100px;
         max-height: initial;
         width: 120px;
@@ -1109,21 +1093,21 @@ p.bottom-desc {
     .saved-locations-dialog-item-edit {
         position: absolute;
         right: 68px;
-        bottom: 0px;
+        bottom: 0;
         min-width: 32px;
         min-height: 32px;
     }
     .saved-locations-dialog-item-share {
         position: absolute;
         right: 34px;
-        bottom: 0px;
+        bottom: 0;
         min-width: 32px;
         min-height: 32px;
     }
     .saved-locations-dialog-item-delete {
         position: absolute;
-        right: 0px;
-        bottom: 0px;
+        right: 0;
+        bottom: 0;
         min-width: 32px;
         min-height: 32px;
     }
@@ -1151,15 +1135,18 @@ p.bottom-desc {
         top: auto !important;
         transform: translate(-50%) !important;
     }
+    .layout {
+        height: 100%;
+    }
     .map-recenter {
         padding-left: 20px;
         padding-right: 20px;
         font-size: 20px;
     }
     .place-search {
-        top: 0px !important;
-        left: 0px !important;
-        right: 0px !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
         transform: none !important;
         width: auto !important;
         max-width: 100%;

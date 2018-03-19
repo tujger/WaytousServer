@@ -32,7 +32,7 @@ body {
     flex-direction: column;
     justify-content: flex-end;
     position: fixed;
-    top: 0px;
+    top: 0;
     overflow: hidden;
     width: 100%;
 }
@@ -51,10 +51,10 @@ body {
     font-size: x-large;
     font-weight: bold;
 }
-.actionbar-holder.actionbar-collapsed {
+.actionbar-holder.collapsed {
     flex: 0 0 50px;
 }
-.actionbar.actionbar-collapsed {
+.actionbar.collapsed {
     height: 50px;
 }
 .actionbar-select-lang {
@@ -65,14 +65,14 @@ body {
     background-color: #819bc7;
     outline: none;
 }
-.actionbar-collapsed .actionbar-select-lang {
+.collapsed .actionbar-select-lang {
     right: -150px;
 }
 
 .content, .content-about {
     position: initial;
     height: 100%;
-    padding: 0px;
+    padding: 0;
     -webkit-overflow-scrolling: touch;
     width: 600px;
     max-width: 80%;
@@ -125,17 +125,10 @@ body {
     background-color: #2e5d7d;
 }
 
-.image-full-width {
-    width: 100%;
-    border-style: solid;
-    border-width: 1px;
-    border-color: darkslategray;
-}
-
 @media screen and (min-width: 1001px) {
     .drawer {
         height: 150px;
-        top: 0px;
+        top: 0;
         position: fixed;
         border: none;
         background: none;
@@ -150,7 +143,7 @@ body {
         display: none;
         flex: 0 0 150px;
     }
-    .drawer-header-name, .drawer-collapsed:hover .drawer-header-name {
+    .drawer-header-name, .collapsed:hover .drawer-header-name {
         display: none;
     }
     .drawer-header-logo {
@@ -219,60 +212,60 @@ body {
     }
     .drawer-footer {
         position: fixed;
-        bottom: 0px;
+        bottom: 0;
         width: 100%;
         background-color: lightgray;
         padding: 5px;
-        margin: 0px;
+        margin: 0;
     }
     .drawer-footer-button {
         display: none;
     }
 
-    .drawer-collapsed {
+    .collapsed {
         max-width: 100%;
         min-width: 100%;
     }
-    .drawer-collapsed:hover {
+    .collapsed:hover {
         max-width: 100%;
         min-width: 100%;
     }
-    .drawer.drawer-collapsed {
+    .drawer.collapsed {
         height: 50px;
         width: auto;
     }
-    .drawer-collapsed .drawer-header {
+    .collapsed .drawer-header {
         height: 50px;
     }
-    .drawer-header-holder.drawer-collapsed {
+    .drawer-header-holder.collapsed {
         flex: 0 0 50px;
     }
-    .drawer-collapsed .drawer-header-logo {
+    .collapsed .drawer-header-logo {
         height: 32px;
         width: 32px;
         left: 8px;
         top: 9px;
     }
-    .drawer-collapsed .drawer-header-name {
+    .collapsed .drawer-header-name {
         display: none;
     }
-    .drawer-collapsed .drawer-header-title {
+    .collapsed .drawer-header-title {
         font-size: large;
         left: 50px;
         top: 14px;
     }
-    .drawer-collapsed .drawer-menu {
+    .collapsed .drawer-menu {
         top: 28px;
         height: 22px;
     }
-    .drawer-collapsed:hover .drawer-menu {
+    .collapsed:hover .drawer-menu {
         height: auto;
     }
-    .drawer-collapsed .drawer-menu-section-title {
+    .collapsed .drawer-menu-section-title {
         display: block;
         height: 18px;
     }
-    .drawer-collapsed .drawer-menu-section-label {
+    .collapsed .drawer-menu-section-label {
         font-size: small;
     }
 
@@ -280,23 +273,23 @@ body {
 
 @media screen and (max-width: 1000px) {
     .layout {
-        margin-bottom: 0px;
+        margin-bottom: 0;
     }
 
     .actionbar-button {
         display: block;
     }
-    .actionbar-collapsed .actionbar-button {
+    .collapsed .actionbar-button {
     }
     .actionbar-label {
-        left: 0px;
+        left: 0;
         right: auto;
         bottom: 15px;
         top: auto;
         padding-left: 15px;
     }
-    .actionbar-collapsed .actionbar-label {
-        left: 0px;
+    .collapsed .actionbar-label {
+        left: 0;
         right: auto;
         bottom: 15px;
         top: auto;
@@ -306,7 +299,7 @@ body {
         font-size: 24px;
         padding-right: 20px;
     }
-    .actionbar-collapsed .actionbar-label-title {
+    .collapsed .actionbar-label-title {
         font-size: 16px;
     }
     .actionbar-select-lang {

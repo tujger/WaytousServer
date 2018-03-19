@@ -98,7 +98,7 @@ function DrawerHolder(main) {
                      console.error(e);
                  }
              }
-        }, main.right);
+        }, document.body);
 
         setTimeout(function(){
             main.fire(EVENTS.CREATE_DRAWER, drawer);

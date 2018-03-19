@@ -100,7 +100,7 @@ button:active {
 .drawer-header {
     background: linear-gradient(135deg, #2e5d7d 0%,#32667b 54%,#819bc7 100%);
 }
-.drawer-header-name, .drawer-collapsed:hover .drawer-header-name {
+.drawer-header-name, .collapsed:hover .drawer-header-name {
     color: white;
 }
 .drawer-header-title {
@@ -127,7 +127,7 @@ button:active {
 .drawer-menu-item-icon, .drawer-menu-item svg {
     stroke: darkslategray;
 }
-.drawer-menu-item-badge, .drawer-collapsed:hover .drawer-menu-item-badge {
+.drawer-menu-item-badge, .collapsed:hover .drawer-menu-item-badge {
     background-color: lightgreen;
 }
 .drawer-footer-button:hover {
@@ -229,7 +229,7 @@ button:active {
     .dialog-filter-clear {
         color: white;
     }
-    .drawer, .drawer-collapsed {
+    .drawer, .collapsed {
         background-color: white;
     }
     .drawer-menu-item:hover {

@@ -139,7 +139,6 @@ function Main() {
             "/js/helpers/Utils.js",
             "/js/helpers/MyUser.js",
             "/js/helpers/MyUsers.js",
-            "/js/helpers/NoSleep.js",
             "/js/tracking/PropertiesHolder.js", // must be first of holders
             "/js/tracking/AddressHolder.js",
             "/js/tracking/GpsHolder.js",
@@ -216,10 +215,9 @@ function Main() {
             }
         });
 
-        // main.right.webkitRequestFullScreen();
-        /*window.addEventListener("load",function() { setTimeout(function(){ // This hides the address bar:
+        window.addEventListener("load",function() { setTimeout(function(){ // This hides the address bar:
             window.scrollTo(0, 1); }, 0);
-        });*/
+        });
 
     }
 

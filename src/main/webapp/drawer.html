@@ -1,0 +1,40 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edeqa</title>
+    <link rel="icon" href="/icons/favicon.ico">
+    <style>
+        @import url("/css/edequate.css");
+        @import url("/css/edeqa-colors.css");
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script async src="/js/Edequate.js"
+            data-variable="u"
+            data-callback="u.require('/js/main/Main.js', u).then(function(main){main.start()})"
+            data-export-constants="true"></script>
+</head>
+<body>
+<div id="loading-dialog" class="modal shadow progress-dialog" tabindex="-1">
+    <div class="dialog-items">
+        <div class="dialog-item progress-dialog-circle"></div>
+        <div class="dialog-item progress-dialog-title">Loading...</div>
+        <div id="loading-dialog-progress" class="dialog-item progress-dialog-title"></div>
+    </div>
+</div>
+<noscript>
+    <link type="text/css" rel="stylesheet" href="/css/noscript.css">
+    <div class="header">
+        <img src="/images/edeqa-logo.svg" width="24" height="24">
+        Edequate Example
+    </div>
+    <div class="text">
+        This site requires to allow Javascript. Please enable Javascript in your browser and try again or use
+        other browser that supports Javascript.
+    </div>
+    <div class="copyright">
+        <a href="http://www.edeqa.com/edequate" class="link">Edequate</a> &copy;2017-18 <a href="http://www.edeqa.com" class="link">Edeqa</a>
+    </div>
+</noscript>
+</body>
+</html>
