@@ -9,8 +9,6 @@ import com.edeqa.waytousserver.rest.admin.GroupModify;
 import com.edeqa.waytousserver.rest.admin.GroupSwitch;
 import com.edeqa.waytousserver.rest.admin.GroupsClean;
 import com.edeqa.waytousserver.rest.admin.InitialData;
-import com.edeqa.waytousserver.rest.admin.LogsClear;
-import com.edeqa.waytousserver.rest.admin.LogsLog;
 import com.edeqa.waytousserver.rest.admin.StatClean;
 import com.edeqa.waytousserver.rest.admin.UserRemove;
 import com.edeqa.waytousserver.rest.admin.UserSwitch;
@@ -36,8 +34,6 @@ public class AdminServletHandler extends com.edeqa.edequate.AdminServletHandler 
         registerAction(new GroupModify());
         registerAction(new GroupSwitch());
         registerAction(new GroupsClean());
-        registerAction(new LogsClear());
-        registerAction(new LogsLog());
         registerAction(new StatClean());
         registerAction(new UserRemove());
         registerAction(new UserSwitch());

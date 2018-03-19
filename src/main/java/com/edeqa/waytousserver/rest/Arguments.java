@@ -76,4 +76,8 @@ public class Arguments extends com.edeqa.edequate.rest.Arguments {
         return OPTIONS.getHttpPortMasked();
     }
 
+    @Override
+    public String getLogFile() {
+        return OPTIONS.getLogFile();
+    }
 }
