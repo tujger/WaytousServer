@@ -35,6 +35,10 @@ case $i in
     EMPTY=false
     UPLOAD_FILE="${i#*=}"
     ;;
+    --get-log)
+    EMPTY=false
+    GETLOG=true
+    ;;
     --destination-path=*)
     EMPTY=false
     DESTINATION_PATH="${i#*=}"
@@ -47,20 +51,21 @@ done
 
 if [ $EMPTY == true ]; then
     echo aws.sh -n=[name] -u -uu -r $EMPTY
-    echo    -n, --name - login name
-    echo    -u, --update - update configs
-    echo    -uu, --update-server - update WaytousServer.war and deploy it on server
-    echo    -r, --restart - start/restart server
-    echo    --upload-file=SOURCE_FILE
-    echo    --destination-path=DESTINATION_FILE
-    echo    -s, --session - ssh session
+    echo "    " -n, --name - login name, default is "ec2-user"
+    echo "    " -u, --update - update configs
+    echo "    " -uu, --update-server - update WaytousServer.war and deploy it on server
+    echo "    " -r, --restart - start/restart server
+    echo "    " -s, --session - ssh session
+    echo "    " --upload-file=SOURCE_FILE
+    echo "    " --destination-path=DESTINATION_FILE
+    echo "    " --get-log - get waytous.log
     exit 1
 fi
 if [ $USERNAME ]; then
     echo --- Username: $USERNAME
 else
-    echo --- Define -n=username, i.e. ec2-user
-    exit 1
+    echo --- Username is not defined, using default "ec2-user". Redefine it: -n=username
+    USERNAME="ec2-user"
 fi
 if [ $FOLDER ]; then
     FOLDER=FOLDER
@@ -100,6 +105,10 @@ if [ $UPLOAD_FILE ]; then
         exit 1
     fi
 fi
+if [ $GETLOG ]; then
+    echo --- Getting waytous.log -> aws-waytous.log...
+    scp -i conf/aws/aws_credentials.pem $USERNAME@wayto.us:waytous.log aws-waytous.log
+fi
 if [ $RESTART ]; then
     echo --- Restarting server...
     ssh -i conf/aws/aws_credentials.pem $USERNAME@wayto.us "pkill -f java"
@@ -115,7 +124,6 @@ if [ $RESTART ]; then
         cd $FOLDER/WEB-INF/classes
         /usr/bin/java -classpath .:../lib/guava-20.0.jar:../lib/* com.edeqa.waytousserver.WaytousServer ../../../conf/options_aws.json &> ../../../waytous.log
 STARTSERVER
-#        /usr/bin/java -cp .:../lib/Java-WebSocket-1.3.5.jar:../lib/firebase-admin-5.4.0.jar:../lib/javax.servlet-api-3.1.0.jar:../lib/json-20171018.jar:../lib/slf4j-nop-1.7.25.jar:../lib/guava-20.0.jar:../lib/junit-4.12.jar:../lib/google-api-client-1.22.0.jar:../lib/google-api-client-gson-1.22.0.jar:../lib/google-http-client-1.22.0.jar:../lib/api-common-1.1.0.jar:../lib/google-auth-library-oauth2-http-0.8.0.jar:../lib/google-cloud-storage-1.2.1.jar:../lib/slf4j-api-1.7.25.jar:../lib/hamcrest-core-1.3.jar:../lib/google-oauth-client-1.22.0.jar:../lib/google-http-client-jackson2-1.22.0.jar:../lib/google-http-client-gson-1.22.0.jar:../lib/httpclient-4.0.1.jar:../lib/google-auth-library-credentials-0.8.0.jar:../lib/google-cloud-core-1.2.1.jar:../lib/google-cloud-core-http-1.2.1.jar:../lib/google-api-services-storage-v1-rev100-1.22.0.jar:../lib/guava-jdk5-17.0.jar:../lib/joda-time-2.9.2.jar:../lib/gax-1.4.1.jar:../lib/protobuf-java-util-3.3.0.jar:../lib/proto-google-common-protos-0.1.12.jar:../lib/proto-google-iam-v1-0.1.12.jar:../lib/google-http-client-appengine-1.21.0.jar:../lib/google-http-client-jackson-1.21.0.jar:../lib/auto-value-1.2.jar:../lib/threetenbp-1.3.3.jar:../lib/protobuf-java-3.3.0.jar:../lib/jackson-core-asl-1.9.11.jar:../lib/jsr305-3.0.0.jar:../lib/httpcore-4.0.1.jar:../lib/commons-logging-1.1.1.jar:../lib/commons-codec-1.3.jar:../lib/WaytousFramework.jar:../lib/Helpers.jar:../lib/jackson-core-2.1.3.jar:../lib/gson-2.7.jar com.edeqa.waytousserver.WaytousServer ../../../conf/options_aws.json &> ../../../waytous.log
 fi
 if [ $SESSION ]; then
     if [ $USERNAME ]; then
@@ -126,7 +134,5 @@ if [ $SESSION ]; then
         exit 1
     fi
 fi
-#/usr/bin/java -cp .:../lib/appengine-api-1.0-sdk-1.9.54.jar.:../lib/firebase-admin-5.2.0.jar.:../lib/google-api-client-gson-1.22.0.jar.:../lib/google-http-client-gson-1.22.0.jar.:../lib/google-oauth-client-1.22.0.jar.:../lib/guava-20.0.jar.:../lib/jackson-core-2.1.3.jar.:../lib/javax.servlet-api-3.1.0.jar.:../lib/jsr305-1.3.9.jar.:../lib/eventbus-0.3.jar.:../lib/google-api-client-1.22.0.jar.:../lib/google-http-client-1.22.0.jar.:../lib/google-http-client-jackson2-1.22.0.jar.:../lib/gson-2.1.jar.:../lib/guava-jdk5-17.0.jar.:../lib/Java-WebSocket-1.3.4.jar.:../lib/json-20160810.jar com.edeqa.waytousserver.WaytousServer ../../../conf/options_aws.json > ../../../waytous.log
-
 #/usr/bin/java -cp :../lib/appengine-api-1.0-sdk-1.9.54.jar:../lib/firebase-server-sdk-3.0.3.jar:../lib/google-api-client-gson-1.21.0.jar:../lib/google-http-client-gson-1.21.0.jar:../lib/google-oauth-client-1.21.0.jar:../lib/guava-20.0.jar:../lib/jackson-core-2.1.3.jar:../lib/javax.servlet-api-3.1.0.jar:../lib/jsr305-1.3.9.jar:../lib/eventbus-0.3.jar:../lib/google-api-client-1.21.0.jar:../lib/google-http-client-1.21.0.jar:../lib/google-http-client-jackson2-1.21.0.jar:../lib/gson-2.6.2.jar:../lib/guava-jdk5-17.0.jar:../lib/Java-WebSocket-1.3.4.jar:../lib/json-20160212.jar com.edeqa.waytousserver.WaytousServer ../../../conf/options_aws.json > ../../../waytous.log
 

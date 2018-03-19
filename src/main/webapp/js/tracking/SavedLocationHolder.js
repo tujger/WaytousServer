@@ -389,7 +389,7 @@ function SavedLocationHolder(main) {
 
                         u.create(HTML.IMG, {
                             src: url,
-                            className: "saved-locations-dialog-item-image",
+                            className: "icon saved-locations-dialog-item-image",
                             onload: function(e) {
 //                                console.log(e);
                             },
@@ -405,11 +405,11 @@ function SavedLocationHolder(main) {
                         u.create(HTML.DIV, { className: "saved-locations-dialog-item-address", innerHTML:loc.a }, content);
                         if(!loc.a) fetchAddressFor(i);
                         u.create(HTML.DIV, { className: "saved-locations-dialog-item-description", innerHTML:loc.d }, content);
-                        u.create(HTML.BUTTON, { className: "saved-locations-dialog-item-button saved-locations-dialog-item-show notranslate", dataNumber: i, innerHTML:"remove_red_eye", title: u.lang.show_location.innerText, onclick:function(){
+                        u.create(HTML.BUTTON, { className: "icon saved-locations-dialog-item-button saved-locations-dialog-item-show notranslate", dataNumber: i, innerHTML:"remove_red_eye", title: u.lang.show_location.innerText, onclick:function(){
                             locationsDialog.close();
                             main.fire(EVENTS.SHOW_SAVED_LOCATION, this.dataset.number);
                         } }, content);
-                        u.create(HTML.BUTTON, { className: "saved-locations-dialog-item-button saved-locations-dialog-item-navigate icon notranslate", dataNumber: i, innerHTML:"navigation", title:u.lang.show_direction_to_location.innerText, onclick:function(){
+                        u.create(HTML.BUTTON, { className: "icon saved-locations-dialog-item-button saved-locations-dialog-item-navigate icon notranslate", dataNumber: i, innerHTML:"navigation", title:u.lang.show_direction_to_location.innerText, onclick:function(){
                             locationsDialog.close();
                             var number = this.dataset.number;
                             main.fire(EVENTS.SHOW_SAVED_LOCATION, number);
@@ -419,13 +419,13 @@ function SavedLocationHolder(main) {
                                 });
                             },0);
                         } }, content);
-                        u.create(HTML.BUTTON, { className: "saved-locations-dialog-item-button saved-locations-dialog-item-edit notranslate", dataNumber: i, innerHTML:"mode_edit", title:u.lang.edit_location.innerText, onclick:function(){
+                        u.create(HTML.BUTTON, { className: "icon saved-locations-dialog-item-button saved-locations-dialog-item-edit notranslate", dataNumber: i, innerHTML:"mode_edit", title:u.lang.edit_location.innerText, onclick:function(){
                             main.fire(EVENTS.EDIT_SAVED_LOCATION, this.dataset.number);
                         } }, content);
-                        u.create(HTML.BUTTON, { className: "saved-locations-dialog-item-button saved-locations-dialog-item-share notranslate", dataNumber: i, innerHTML:"share", title:u.lang.share_location.innerText, onclick:function(){
+                        u.create(HTML.BUTTON, { className: "icon saved-locations-dialog-item-button saved-locations-dialog-item-share notranslate", dataNumber: i, innerHTML:"share", title:u.lang.share_location.innerText, onclick:function(){
                             main.fire(EVENTS.SHARE_SAVED_LOCATION, this.dataset.number);
                         } }, content);
-                        u.create(HTML.BUTTON, { className: "saved-locations-dialog-item-button saved-locations-dialog-item-delete notranslate", dataNumber: i, innerHTML:"clear", title:u.lang.delete_location.innerText, onclick:function(){
+                        u.create(HTML.BUTTON, { className: "icon saved-locations-dialog-item-button saved-locations-dialog-item-delete notranslate", dataNumber: i, innerHTML:"clear", title:u.lang.delete_location.innerText, onclick:function(){
                             main.fire(EVENTS.DELETE_SAVED_LOCATION, this.dataset.number);
                         } }, content);
                     }
