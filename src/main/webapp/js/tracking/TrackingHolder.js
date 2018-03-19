@@ -14,8 +14,6 @@ function TrackingHolder(main) {
     var progressTitle;
     var drawerItemNew;
     var drawerItemExit;
-    var noSleep;
-    var wakeLockEnabled;
     var sound;
     var sounds;
     var joinSound;
@@ -42,9 +40,6 @@ function TrackingHolder(main) {
             }
         }}, main.right);
         progressTitle = progress.items[1];
-        noSleep = new NoSleep();
-        wakeLockEnabled = false;
-
     }
 
     function perform(json){
@@ -121,27 +116,6 @@ function TrackingHolder(main) {
                         console.log(this,e)
                     }
                 });
-
-                /*if (!wakeLockEnabled && /android/ig.test(navigator.userAgent)) {
-                    noSleepDialog = noSleepDialog || u.dialog({
-                        queue: true,
-                        items: [
-                            { type: HTML.DIV, innerHTML: u.lang.do_you_want_to_keep_screen_on_during_group_is_active }
-                        ],
-                        positive: {
-                            label: u.lang.yes,
-                            onclick: function(){
-                                noSleep.enable(); // keep the screen on!
-                                wakeLockEnabled = true;
-                            }
-                        },
-                        negative: {
-                            label: u.lang.no
-                        },
-                        timeout: 3000
-                    });
-                    noSleepDialog.open();
-                }*/
                 break;
             case EVENTS.TRACKING_CONNECTING:
 //                window.onbeforeunload = beforeunload;
@@ -162,10 +136,6 @@ function TrackingHolder(main) {
 
                 document.title = main.appName;
                 drawerItemExit.hide();
-                if (wakeLockEnabled) {
-                    noSleep.disable(); // let the screen turn off.
-                    wakeLockEnabled = false;
-                }
                 break;
             case EVENTS.TRACKING_STOP:
                 if(main.tracking.getStatus() !== EVENTS.TRACKING_DISABLED) {
