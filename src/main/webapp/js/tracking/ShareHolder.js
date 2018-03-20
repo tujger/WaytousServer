@@ -114,7 +114,7 @@ function ShareHolder(main) {
                             });
                          }
                     }, shareDialog.itemFacebook).place(HTML.DIV, {
-                        className: "dialog-item-icon",
+                        className: "icon notranslate dialog-item-icon",
                         content: u.create(HTML.IMG, {src:"/images/facebook.svg"})
                     }).place(HTML.DIV, {
                         innerHTML: u.lang.share_to_facebook
@@ -136,7 +136,7 @@ function ShareHolder(main) {
                             });
                          }
                     }, shareDialog.itemTwitter).place(HTML.DIV, {
-                        className: "dialog-item-icon",
+                        className: "icon notranslate dialog-item-icon",
                         content: u.create(HTML.IMG, {src:"/images/twitter.svg"})
                     }).place(HTML.DIV, {
                         innerHTML: u.lang.share_to_twitter
@@ -158,7 +158,7 @@ function ShareHolder(main) {
                             });
                          }
                     }, shareDialog.itemWhatsapp).place(HTML.DIV, {
-                        className: "dialog-item-icon",
+                        className: "icon notranslate dialog-item-icon",
                         content: u.create(HTML.IMG, {src:"/images/whatsapp.svg"})
                     }).place(HTML.DIV, {
                         innerHTML: u.lang.share_to_whatsapp
@@ -180,7 +180,7 @@ function ShareHolder(main) {
                             });
                          }
                     }, shareDialog.itemTelegram).place(HTML.DIV, {
-                        className: "dialog-item-icon",
+                        className: "icon notranslate dialog-item-icon",
                         content: u.create(HTML.IMG, {src:"/images/telegram.svg"})
                     }).place(HTML.DIV, {
                         innerHTML: u.lang.share_to_telegram
@@ -214,7 +214,7 @@ function ShareHolder(main) {
                             });
                          }
                     }, shareDialog.itemShare).place(HTML.DIV, {
-                        className: "dialog-item-icon",
+                        className: "icon notranslate dialog-item-icon",
                         innerHTML: "share"
                     }).place(HTML.DIV, {
                         innerHTML: u.lang.share_by_mail
