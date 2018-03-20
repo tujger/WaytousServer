@@ -177,7 +177,7 @@ if (installationType == 'google-appengine') {
         httpPort = 8180
         httpsPort = 8444
         contextPath = '/'
-        servletContainer = 'jetty9'  // What App Engine Flexible uses
+        servletContainer = "jetty9"
     }
 }
 

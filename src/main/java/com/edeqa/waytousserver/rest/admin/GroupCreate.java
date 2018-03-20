@@ -95,9 +95,9 @@ public class GroupCreate extends AbstractAction<RequestWrapper> {
                         new Runnable1<JSONObject>() {
                             @Override
                             public void call(JSONObject json) {
-                                MyUser user = new MyUser(null, "Administrator:" + OPTIONS.getLogin());
+                                MyUser user = new MyUser(null, "Administrator:" + request.getUserName());
                                 user.setSignProvider(SignProvider.ADMIN);
-                                user.setName(OPTIONS.getLogin());
+                                user.setName(request.getUserName());
                                 user.setOs(System.getProperty("os.name"));
                                 user.setModel(OPTIONS.getAppName() + " 1." + Common.SERVER_BUILD);
 
