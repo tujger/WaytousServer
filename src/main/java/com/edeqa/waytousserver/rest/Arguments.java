@@ -27,8 +27,8 @@ public class Arguments extends com.edeqa.edequate.rest.Arguments {
     }
 
     @Override
-    public String getPassword() {
-        return OPTIONS.getPassword();
+    public String getPasswordHash() {
+        return OPTIONS.getPasswordHash();
     }
 
     @Override
