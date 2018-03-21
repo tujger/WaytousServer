@@ -21,14 +21,11 @@
     color: red;
     padding: 30px;
     padding-bottom: 20px;
-    text-align: center;
     width: 500px;
     max-width: 80%;
     z-index: 20000 !important;
 }
 .alert-icon {
-    font-family: "Material Icons";
-    font-feature-settings: "liga" 1;
     position: absolute;
     top: 5px;
     left: 5px;
@@ -38,9 +35,12 @@
     border: none;
     outline: none;
     color: red;
+    width: 40px;
+    height: 40px;
 }
 .alert-icon:hover {
     background: none;
+    color: brown;
 }
 .layout {
     display: flex;
@@ -102,7 +102,6 @@
   position: relative;
   width: 100%;
 }
-
 .maps-frame {
   height: 100%;
   width: 100%;
@@ -114,10 +113,9 @@
     width: 16px;
     height: 16px;
 }
-.dialog-header .menu-item-icon {
-    padding-left: 5px;
+.modal {
+    position: absolute;
 }
-
 .kd-tabbed-vert.header-links .kd-tabbutton a {
   color: #757575;
   display: inline-block;
@@ -367,11 +365,7 @@ p.bottom-desc {
 .chat-dialog-message {
     font-size: 10px;
     text-align: left;
-    justify-content: flex-start;
-}
-.chat-dialog-message {
     display: block;
-    text-align: left;
 }
 .chat-dialog-message-private {
 }
@@ -688,34 +682,20 @@ p.bottom-desc {
 .share-dialog {
     z-index: 1001;
 }
-.share-dialog-item {
-}
-.share-dialog-item-message {
-    padding-bottom: 10px;
-}
 .dialog-item-button {
     display: flex;
     width: 100%;
     justify-content: center;
     align-items: center;
-    background-color: #4c93af;
-    color: white;
     margin: 1px !important;
 }
-.dialog-item-button:hover/*, .dialog-item-button:focus*/ {
-    background-color: #2e5d7d;
-}
 .dialog-item-icon {
-    font-family: "Material Icons";
-    font-feature-settings: "liga" 1;
-    font-style: normal;
-    font-size: 16px;
-    min-width: 16px;
     padding-right: 5px;
     color: black;
-    width: 16px;
-    height: 16px;
     filter: invert(100%);
+}
+.dialog-header .menu-item-icon {
+    padding-left: 5px;
 }
 .wizard-dialog {
     position: absolute;

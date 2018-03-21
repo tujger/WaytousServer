@@ -22,16 +22,6 @@ public class Arguments extends com.edeqa.edequate.rest.Arguments {
     }
 
     @Override
-    public String getLogin() {
-        return OPTIONS.getLogin();
-    }
-
-    @Override
-    public String getPassword() {
-        return OPTIONS.getPassword();
-    }
-
-    @Override
     public String getWebRootDirectory() {
         return OPTIONS.getWebRootDirectory();
     }

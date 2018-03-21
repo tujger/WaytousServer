@@ -260,8 +260,9 @@ function GroupsHolder(main) {
             yes.show();
             no.show();
         }}, div);
-        var question = u.create({className:"question hidden", innerHTML: "This will immediately check for expired users and groups. Options for each group are important. Continue?"}, div);
-        var yes = u.create(HTML.BUTTON,{ className:"question hidden", innerHTML:"Yes", onclick: function() {
+
+        var question = u.create(HTML.DIV, {className:"buttons hidden", innerHTML: u.create(HTML.DIV, {className:"question", innerHTML:"This will immediately check for expired users and groups. Options for each group are important. Continue?"})}, div);
+        var yes = u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
             clear.show();
             question.hide();
             yes.hide();
@@ -273,13 +274,13 @@ function GroupsHolder(main) {
                 var res = JSON.parse(xhr.responseText) || {};
                 u.toast.show(res.message || xhr.statusText);
             });
-        }}, div);
-        var no = u.create(HTML.BUTTON,{ className:"hidden", innerHTML:"No", onclick: function(){
+        }}, question);
+        var no = u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){
             clear.show();
             question.hide();
             yes.hide();
             no.hide();
-        }}, div);
+        }}, question);
     }
 
     function updateTableSummary() {

@@ -125,7 +125,6 @@ public class JoinGroup extends AbstractFirebaseAction<JoinGroup, UserRequest> {
                         @Override
                         public void call(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.getValue() != null) {
-                                System.out.println("OPTIONS:"+dataSnapshot.getValue());
                                 try {
                                     groupRequest.setLimitUsers(Integer.parseInt(String.valueOf(((HashMap) dataSnapshot.getValue()).get(LIMIT_USERS))));
                                 } catch (Exception e) {

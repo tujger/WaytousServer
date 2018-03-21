@@ -149,7 +149,7 @@ function GpsHolder(main) {
                 }
             }, main.right).open();
 
-            icon = u.create(HTML.BUTTON, {className:"alert-icon hidden", type: HTML.BUTTON, innerHTML:"warning", onclick: function(){
+            icon = u.create(HTML.BUTTON, {className:"icon notranslate alert-icon hidden", type: HTML.BUTTON, innerHTML:"warning", onclick: function(){
                 icon.hide();
                 alert.open();
             }}, main.right);

@@ -1,0 +1,77 @@
+/**
+ * Created 1/19/17.
+ */
+
+.chat-dialog {
+    right: 10px;
+    bottom: 10px;
+    width: 30%;
+    height: 300px;
+}
+.chat-dialog-messages {
+    font-size: x-small;
+}
+.chat-dialog-message {
+    display: block;
+    text-align: left;
+}
+.chat-dialog-message-content {
+    display: flex;
+    flex-wrap: wrap;
+}
+.chat-dialog-message-group {
+    flex: 0 0 80px;
+    cursor: pointer;
+}
+.chat-dialog-message-group:hover {
+    color: blue;
+}
+.chat-dialog-message-name {
+    flex: 0 0 100px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.chat-dialog-message-name:hover {
+    color: blue;
+}
+.chat-dialog-message-timestamp {
+    flex: 1 1;
+    text-align: right;
+}
+.chat-dialog-message-body {
+    padding-bottom: 8px;
+    white-space: pre-wrap;
+    flex: 0 0 100%;
+}
+
+.map-place {
+    margin-top: 22px;
+    flex: 1 1 100%;
+}
+.map-place-switch {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border: none;
+}
+.map-place.modal {
+    width: 40%;
+    height: 30%;
+    position: fixed;
+    right: 5px;
+    border: 0;
+}
+.map {
+    width: 100%;
+    height: 100%;
+    border-style: groove;
+    border-width: 1px;
+    box-sizing: border-box;
+}
+
+.summary-place {
+    flex: 1 1 100%;
+}
+.statistics-chart{
+    width: 100%;
+}

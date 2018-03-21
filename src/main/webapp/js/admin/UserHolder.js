@@ -19,16 +19,16 @@ function UserHolder(main) {
     var limit = 1000;
     var marker;
 
-     this.type = "user";
-     this.title = "User";
+    this.type = "user";
+    this.title = "User";
 
-     var database;
-     var utils = main && main.arguments.utils;
+    var database;
+    var utils = main && main.arguments.utils;
 
-     this.start = function() {
-         database = firebase.database();
-         div = main.content;
-     };
+    this.start = function() {
+        database = firebase.database();
+        div = main.content;
+    };
 
     this.resume = function(group_id, user_number) {
         groupId = group_id;
@@ -49,19 +49,19 @@ function UserHolder(main) {
         }, divSummary);
 
         tableSummary.userNumberNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Number" },
-            { className: "option", innerHTML: userNumber }
-        ] });
+                { className: "th", innerHTML: "Number" },
+                { className: "option", innerHTML: userNumber }
+            ] });
 
         tableSummary.userNameNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Name" },
-            { className: "option", innerHTML: "..." }
-        ] });
+                { className: "th", innerHTML: "Name" },
+                { className: "option", innerHTML: "..." }
+            ] });
 
         tableSummary.userActiveNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Active" },
-            { className: "option highlight", innerHTML: "..." }
-        ] });
+                { className: "th", innerHTML: "Active" },
+                { className: "option highlight", innerHTML: "..." }
+            ] });
 
         tableSummary.add({
             onclick: function(){
@@ -76,26 +76,26 @@ function UserHolder(main) {
 
         tableSummary.userUidNode = tableSummary.add({
             onclick: function(){
-                if(tableSummary.userUidNode.cells[1].innerHTML && tableSummary.userUidNode.cells[1].innerHTML !== "[invalid]") {
-                    main.turn("account", tableSummary.userUidNode.cells[1].innerHTML);
+                if(tableSummary.userUidNode.cells[1].lastChild.innerHTML && tableSummary.userUidNode.cells[1].lastChild.innerHTML !== "[invalid]") {
+                    main.turn("account", tableSummary.userUidNode.cells[1].lastChild.innerHTML);
                 }
                 return false;
             },
             cells: [
                 { className: "th", innerHTML: "UID" },
-                { className: "option", innerHTML: "..." }
+                { className: "option", innerHTML: u.create(HTML.DIV, "...") }
             ]
         });
 
         tableSummary.userColorNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Color" },
-            { style: { /*backgroundColor: utils.getHexColor(snapshot.val().color), */opacity: 0.5 } }
-        ]});
+                { className: "th", innerHTML: "Color" },
+                { style: { /*backgroundColor: utils.getHexColor(snapshot.val().color), */opacity: 0.5 } }
+            ]});
 
         tableSummary.userCreatedNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Created" },
-            { className: "option", innerHTML: "..." }
-        ]});
+                { className: "th", innerHTML: "Created" },
+                { className: "option", innerHTML: "..." }
+            ]});
 
         tableSummary.userUpdatedNode = tableSummary.add({
             cells: [
@@ -105,24 +105,24 @@ function UserHolder(main) {
         });
 
         tableSummary.userOsNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Platform" },
-            { className: "option", innerHTML: "..." }
-        ]});
+                { className: "th", innerHTML: "Platform" },
+                { className: "option", innerHTML: "..." }
+            ]});
 
         tableSummary.userDeviceNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Device" },
-            { className: "option", innerHTML: "..." }
-        ]});
+                { className: "th", innerHTML: "Device" },
+                { className: "option", innerHTML: "..." }
+            ]});
 
         tableSummary.userSignProviderNode = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Sign provider" },
-            { className: "option", innerHTML: "..." }
-        ]});
+                { className: "th", innerHTML: "Sign provider" },
+                { className: "option", innerHTML: "..." }
+            ]});
 
         tableSummary.userLocations = tableSummary.add({ cells: [
-            { className: "th", innerHTML: "Locations" },
-            { className: "option", innerHTML: 0 }
-        ]});
+                { className: "th", innerHTML: "Locations" },
+                { className: "option", innerHTML: 0 }
+            ]});
 
         divMap = u.create(HTML.DIV, {className: "map"}, u.create(HTML.DIV, {
             className: "map-place"
@@ -175,16 +175,16 @@ function UserHolder(main) {
             if(!snapshot || !snapshot.val()) return;
 
             var uid = snapshot.val()[REQUEST.UID];
-            tableSummary.userUidNode.lastChild.innerHTML = uid || "[invalid]";
+            tableSummary.userUidNode.lastChild.lastChild.innerHTML = uid || "[invalid]";
             if(uid) {
                 refRoot.child(DATABASE.SECTION_USERS).child(uid).child(DATABASE.PRIVATE).once("value")
-                .then(function(snapshot){
-                    if(snapshot.val()) {
-                        tableSummary.userOsNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.OS] || "&#150;");
-                        tableSummary.userDeviceNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.MODEL] || "&#150;");
-                        tableSummary.userSignProviderNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous");
-                    }
-                });
+                    .then(function(snapshot){
+                        if(snapshot.val()) {
+                            tableSummary.userOsNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.OS] || "&#150;");
+                            tableSummary.userDeviceNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.MODEL] || "&#150;");
+                            tableSummary.userSignProviderNode.lastChild.innerHTML = u.clear(snapshot.val()[REQUEST.SIGN_PROVIDER] || "anonymous");
+                        }
+                    });
             }
         }).catch(function(error){
             console.warn("Resign because of",error.message);
@@ -319,15 +319,15 @@ function UserHolder(main) {
     function switchActivity(){
         u.clear(buttons);
         u.create(HTML.BUTTON,{innerHTML:"Active", onclick: function(){
-            switchActive(userNumber, true);
-            renderButtons(buttons);
-        }}, buttons);
+                switchActive(userNumber, true);
+                renderButtons(buttons);
+            }}, buttons);
         u.create(HTML.BUTTON,{innerHTML:"Inactive", onclick: function(){
-            switchActive(userNumber, false);
-        }}, buttons);
+                switchActive(userNumber, false);
+            }}, buttons);
         u.create(HTML.BUTTON,{innerHTML:"Cancel", onclick: function(){
-            renderButtons(buttons);
-        }}, buttons);
+                renderButtons(buttons);
+            }}, buttons);
     }
 
     function switchActive(number, active) {
@@ -355,24 +355,24 @@ function UserHolder(main) {
         u.clear(buttons);
         u.create({className:"question", innerHTML: "Are you sure you want to remove user "+userNumber+" from group "+groupId+"? Note that all user information will be removed from group."}, buttons);
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {
-            u.progress.show("Removing...");
-            u.post("/admin/rest/user/remove", JSON.stringify({group_id:groupId, user_number:userNumber}))
-                .then(function(){
+                u.progress.show("Removing...");
+                u.post("/admin/rest/user/remove", JSON.stringify({group_id:groupId, user_number:userNumber}))
+                    .then(function(){
+                        u.progress.hide();
+                        u.toast.show("User #"+userNumber+" was removed.");
+                        main.turn("group", groupId);
+                    }).catch(function(code,xhr){
                     u.progress.hide();
-                    u.toast.show("User #"+userNumber+" was removed.");
-                    main.turn("group", groupId);
-                }).catch(function(code,xhr){
-                u.progress.hide();
-                console.warn("Resign because of",code,xhr);
-                var res = JSON.parse(xhr.responseText) || {};
-                u.toast.show(res.message || xhr.statusText);
-                renderButtons(buttons);
-                window.location = window.location.href;
-            });
-        }}, buttons);
+                    console.warn("Resign because of",code,xhr);
+                    var res = JSON.parse(xhr.responseText) || {};
+                    u.toast.show(res.message || xhr.statusText);
+                    renderButtons(buttons);
+                    window.location = window.location.href;
+                });
+            }}, buttons);
         u.create(HTML.BUTTON,{ innerHTML:"No", onclick: function(){
-            renderButtons(buttons);
-        }}, buttons);
+                renderButtons(buttons);
+            }}, buttons);
     }
 
     function initMap() {
