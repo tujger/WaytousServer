@@ -29,7 +29,6 @@ public class DynamicLink extends AbstractAction<RequestWrapper> {
 
     @Override
     public void call(JSONObject json, RequestWrapper requestWrapper) {
-
         String mobileRedirect, webRedirect, mainLink;
         if(Common.getInstance().getDataProcessor().isServerMode()){
 

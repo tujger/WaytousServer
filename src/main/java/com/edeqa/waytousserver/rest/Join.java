@@ -26,8 +26,7 @@ public class Join extends AbstractAction<RequestWrapper> {
         Misc.log("Join", body);
         try {
             Common.getInstance().getDataProcessor().onMessage(new HttpDPConnection(request), body);
-            json.put(STATUS, STATUS_SUCCESS);
-            json.put(CODE, CODE_DELAYED);
+            json.put(STATUS, STATUS_DELAYED);
         } catch(Exception e) {
             e.printStackTrace();
         }

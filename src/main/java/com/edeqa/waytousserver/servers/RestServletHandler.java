@@ -24,9 +24,14 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
     public RestServletHandler() {
         super();
         useDefault();
+        registerActionsPool();
+    }
+
+    @Override
+    public void useDefault() {
+        super.useDefault();
 
         Arguments arguments = (Arguments) getSystemBus().getHolder(Arguments.TYPE);
-
         registerAction(new InitialData());
         registerAction(new Join());
         registerAction(new TosAgreement());
@@ -50,7 +55,6 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
             }
         }).setWebDirectory(arguments.getWebRootDirectory()).setChildDirectory("js/tracking").setActionName("/rest/tracking"));
 
-        registerActionsPool();
     }
 
     @Override

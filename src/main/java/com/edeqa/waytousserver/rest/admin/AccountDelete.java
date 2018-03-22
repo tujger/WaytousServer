@@ -21,8 +21,7 @@ public class AccountDelete extends AbstractAction<RequestWrapper> {
 
     @Override
     public void call(JSONObject json, final RequestWrapper request) {
-        json.put(STATUS, STATUS_SUCCESS);
-        json.put(CODE, CODE_DELAYED);
+        json.put(STATUS, STATUS_DELAYED);
         request.processBody(new Runnable1<StringBuilder>() {
             @SuppressWarnings("HardCodedStringLiteral")
             @Override

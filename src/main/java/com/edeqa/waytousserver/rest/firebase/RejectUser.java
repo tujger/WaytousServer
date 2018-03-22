@@ -40,8 +40,7 @@ public class RejectUser extends AbstractFirebaseAction<RejectUser, String> {
                     .setMessage(message)
                     .call(null, userRequest.getUid());
         }
-        response.put(STATUS, STATUS_SUCCESS);
-        response.put(CODE, CODE_DELAYED);
+        response.put(STATUS, STATUS_DELAYED);
 
         clear();
     }

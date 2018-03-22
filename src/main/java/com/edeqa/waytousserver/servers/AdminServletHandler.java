@@ -26,7 +26,22 @@ public class AdminServletHandler extends com.edeqa.edequate.AdminServletHandler 
 
     public AdminServletHandler(){
         super();
+        useDefault();
+    }
 
+    /**
+     * Initialize DataProcessorFirebase for installation type "google-appengine".
+     */
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        Common.getInstance().initOptions(getServletContext());
+        Common.getInstance().initDataProcessor();
+    }
+
+    @Override
+    public void useDefault() {
+        super.useDefault();
         registerAction(new AccountDelete());
         registerAction(new AccountsClean());
         registerAction(new GroupCreate());
@@ -38,17 +53,5 @@ public class AdminServletHandler extends com.edeqa.edequate.AdminServletHandler 
         registerAction(new UserRemove());
         registerAction(new UserSwitch());
         registerAction(new InitialData());
-
-        registerActionsPool();
-    }
-
-    /**
-     * Initialize DataProcessorFirebase for installation type "google-appengine".
-     */
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        Common.getInstance().initOptions(getServletContext());
-        Common.getInstance().initDataProcessor();
     }
 }
