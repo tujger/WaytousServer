@@ -4,11 +4,11 @@
  *
  * Created 9/19/17.
  */
-EVENTS.SHOW_USER_PROFILE = "show_user_profile";
+EVENTS.SHOW_MEMBER_PROFILE = "show_member_profile";
 
-function UserProfileHolder(main) {
+function MemberProfileHolder(main) {
 
-    var type = "user";
+    var type = "member";
     var profileDialog;
     var resign;
     var nameUpdateDialog;
@@ -33,11 +33,11 @@ function UserProfileHolder(main) {
     function onEvent(EVENT,object){
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                object.add({section: DRAWER.SECTION_MISCELLANEOUS, id: EVENTS.SHOW_USER_PROFILE, name: u.lang.user_profile, icon: "person", callback: function(){
-                    main.fire(EVENTS.SHOW_USER_PROFILE);
+                object.add({section: DRAWER.SECTION_MISCELLANEOUS, id: EVENTS.SHOW_MEMBER_PROFILE, name: u.lang.user_profile, icon: "person", callback: function(){
+                    main.fire(EVENTS.SHOW_MEMBER_PROFILE);
                 }});
                 break;
-            case EVENTS.SHOW_USER_PROFILE:
+            case EVENTS.SHOW_MEMBER_PROFILE:
                 initProfileDialog();
                 profileDialog.open();
                 break;

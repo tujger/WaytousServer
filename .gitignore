@@ -16,3 +16,4 @@ waytous-beta.log
 /out/
 /waytous.log
 options_developer.json
+/src/main/webapp/data/.admins.json

@@ -45,7 +45,7 @@ function GroupHolder(main) {
         }, divSummary);
 
         var url = new URL(window.location.href);
-        url = "https://" + url.hostname + (url.port ? (data.HTTPS_PORT === 443 ? "" : ":"+ data.HTTPS_PORT) : "");
+        url = "https://" + url.hostname + (url.port ? (window.data.HTTPS_PORT === 443 ? "" : ":"+ window.data.HTTPS_PORT) : "");
 
         var td = u.create()
             .place(HTML.A, { href: url + "/track/"+groupId, innerHTML:groupId, target:"_blank", rel:"noopener"})
@@ -329,7 +329,7 @@ function GroupHolder(main) {
         if(divMapGroup.offsetHeight) {
             if(!map && !(window.google && google.maps)) {
                 window.initMap = initMap;
-                u.require("https://maps.googleapis.com/maps/api/js?key=" + data.firebase_config.apiKey + "&callback=initMap&libraries=geometry,places").then(function(){});
+                u.require("https://maps.googleapis.com/maps/api/js?key=" + window.data.firebase_config.apiKey + "&callback=initMap&libraries=geometry,places").then(function(){});
             } else {
                 initMap();
             }

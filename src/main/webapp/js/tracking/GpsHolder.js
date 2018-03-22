@@ -188,7 +188,7 @@ function GpsHolder(main) {
     }
 
     function alternativeGeolocation() {
-        u.getJSON("//www.googleapis.com/geolocation/v1/geolocate?key=" + data.firebase_config.apiKey, {}).then(function(json){
+        u.getJSON("//www.googleapis.com/geolocation/v1/geolocate?key=" + window.data.firebase_config.apiKey, {}).then(function(json){
             console.log("Alternative geolocation applied",json);
         }).catch(function(error, xhr) {
             console.log("Alternative geolocation failed",error,xhr);

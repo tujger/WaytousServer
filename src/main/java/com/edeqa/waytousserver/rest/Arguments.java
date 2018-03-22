@@ -70,4 +70,9 @@ public class Arguments extends com.edeqa.edequate.rest.Arguments {
     public String getLogFile() {
         return OPTIONS.getLogFile();
     }
+
+    @Override
+    public String getRealm() {
+        return "waytous";
+    }
 }

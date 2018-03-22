@@ -32,8 +32,8 @@ function TrackingFB(main) {
         }
 
         var path = uri.path.replace("/group/","/track/");
-        serverUri = "wss://" + uri.hostname + ":"+ data.WSS_FB_PORT + "/v1" + path;
-//         serverUri = "ws://" + uri.hostname + ":" + data.WS_FB_PORT + "/v1" + path;
+        serverUri = "wss://" + uri.hostname + ":"+ window.data.WSS_FB_PORT + "/v1" + path;
+//         serverUri = "ws://" + uri.hostname + ":" + window.data.WS_FB_PORT + "/v1" + path;
 
         if(newTracking) {
             setStatus(EVENTS.TRACKING_CONNECTING);
@@ -104,7 +104,7 @@ function TrackingFB(main) {
             //var uri = new URL(serverUri);
             window.location.href = "/group/";
         }*/
-//        window.location.href = "https://" + uri.hostname + (data.HTTPS_PORT == 443 ? "" : ":"+ data.HTTPS_PORT) + "/track/";
+//        window.location.href = "https://" + uri.hostname + (window.data.HTTPS_PORT == 443 ? "" : ":"+ window.data.HTTPS_PORT) + "/track/";
     }
 
     function WebSocketListener(link, reconnect) {
@@ -255,7 +255,7 @@ function TrackingFB(main) {
         var xhrModeStart = function(link) {
             var uri = new URL(link);
             link = "/rest/join"/* + uri.pathname*/;
-//            link = "https://" + uri.hostname + (data.HTTPS_PORT == 443 ? "" : ":" + data.HTTPS_PORT) + "/rest/v1/join"/* + uri.pathname*/;
+//            link = "https://" + uri.hostname + (window.data.HTTPS_PORT == 443 ? "" : ":" + window.data.HTTPS_PORT) + "/rest/v1/join"/* + uri.pathname*/;
 
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() { //
@@ -316,7 +316,7 @@ function TrackingFB(main) {
                 if(webSocket instanceof WebSocket && webSocket.readyState != WebSocket.OPEN) {
                     webSocket.close();
                 }
-            }, data.is_stand_alone ? 15000 : 100);
+            }, window.data.is_stand_alone ? 15000 : 100);
         } catch(e){
             console.warn(link,e);
             xhrModeStart(link);
@@ -447,7 +447,7 @@ function TrackingFB(main) {
         uri = uri.replace("/group/", "/track/");
         return uri;
 //        var uri = new URL(serverUri);
-//        return "http://" + uri.hostname + (data.HTTP_PORT == 80 ? "" : ":"+data.HTTP_PORT) + "/track/" + token;
+//        return "http://" + uri.hostname + (window.data.HTTP_PORT == 80 ? "" : ":"+window.data.HTTP_PORT) + "/track/" + token;
     }
 
     function registerChildListener(ref, listener, limit) {

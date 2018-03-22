@@ -149,6 +149,7 @@ p.bottom-desc {
     top: 12px;
     right: 52px;
     min-width: 120px;
+    width: initial;
     -webkit-overflow-scrolling: touch;
 }
 .user-buttons-title-button {
@@ -645,7 +646,6 @@ p.bottom-desc {
     position: absolute;
     top: 10px;
     left: 50px;
-    width: 400px;
 }
 .place-search-items {
     padding: 2px;

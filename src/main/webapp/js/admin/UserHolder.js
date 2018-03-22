@@ -154,7 +154,7 @@ function UserHolder(main) {
         if(divMap.offsetHeight) {
             if(!map && !(window.google && google.maps)) {
                 window.initMap = initMap;
-                u.require("https://maps.googleapis.com/maps/api/js?key="+data.firebase_config.apiKey+"&callback=initMap&libraries=geometry,places").then(function(){});
+                u.require("https://maps.googleapis.com/maps/api/js?key="+window.data.firebase_config.apiKey+"&callback=initMap&libraries=geometry,places").then(function(){});
             } else {
                 initMap();
             }

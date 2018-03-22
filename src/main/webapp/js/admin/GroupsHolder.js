@@ -144,7 +144,7 @@ function GroupsHolder(main) {
 
         ref.child(DATABASE.SECTION_GROUPS).off();
 
-        u.getJSON(ref.toString() + "_g.json?shallow=true&print=pretty&access_token=" + data.access).then(function(json) {
+        u.getJSON(ref.toString() + "_g.json?shallow=true&print=pretty&access_token=" + window.data.access).then(function(json) {
             for(var x in json) {
                 if(!json[x]) continue;
 

@@ -11,7 +11,7 @@ function Main() {
     var me;
     var main = window.Waytous = this;
 
-    if (!data.is_debug_mode && "serviceWorker" in navigator) {
+    if (!window.data.is_debug_mode && "serviceWorker" in navigator) {
         window.addEventListener("load", function() {
             navigator.serviceWorker.register("/sw.js")
             .then(function(registration) {
@@ -60,7 +60,7 @@ function Main() {
 
         document.head
             .place(HTML.META, {name:"viewport", content:"width=device-width, initial-scale=1, user-scalable=no"})
-            .place(HTML.META, {name:"description", content:data.description})
+            .place(HTML.META, {name:"description", content:window.data.description})
             .place(HTML.STYLE, {innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/edequate.css');@import url('/css/tracking.css');"})
             .place(HTML.LINK, {rel:"apple-touch-icon", href:"/icons/apple-touch-icon.png"})
             .place(HTML.LINK, {rel:"apple-touch-icon", sizes:"60x60", href:"/icons/apple-touch-icon-60x60.png"})
@@ -92,12 +92,12 @@ function Main() {
             //"ga('send', 'pageview');"})
             //.place(HTML.SCRIPT, {src: "https://www.google-analytics.com/analytics.js", async: true});
 
-        if(data && data.google_analytics_tracking_id) {
-            document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + data.google_analytics_tracking_id, async:""})
+        if(window.data && window.data.google_analytics_tracking_id) {
+            document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + window.data.google_analytics_tracking_id, async:""})
                 .place(HTML.SCRIPT, {innerHTML: "window.dataLayer = window.dataLayer || [];\n" +
                 "function gtag(){dataLayer.push(arguments)};\n" +
                 "gtag('js', new Date());\n" +
-                "gtag('config', '" + data.google_analytics_tracking_id + "');"});
+                "gtag('config', '" + window.data.google_analytics_tracking_id + "');"});
         }
 
     }
@@ -131,7 +131,7 @@ function Main() {
     }
 
     function loadScripts(){
-        var files = data.is_debug_mode ? [
+        var files = window.data.is_debug_mode ? [
             // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js", // https://firebase.google.com/docs/web/setup
             // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
             // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js",
@@ -169,7 +169,7 @@ function Main() {
             "https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js", // https://cdnjs.com/libraries/fingerprintjs2
             "/js/all.js"
         ];
-        var modules = data.is_debug_mode ? null : [
+        var modules = window.data.is_debug_mode ? null : [
             "MyUser",
             "MyUsers",
 //            "NoSleep",
@@ -254,7 +254,7 @@ function Main() {
 //
 //            return;
 //        }
-        // firebase.initializeApp(data.firebase_config);
+        // firebase.initializeApp(window.data.firebase_config);
         database = firebase.database();
 
         firebase.auth().onAuthStateChanged(function(user) {

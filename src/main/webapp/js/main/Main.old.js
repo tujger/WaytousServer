@@ -60,12 +60,12 @@ function Main() {
             .place(HTML.LINK, {rel:"icon", type:"image/png", sizes:"16x16", href:"/icons/favicon-16x16.png"})
             .place(HTML.LINK, {rel:"icon", type:"image/png", sizes:"194x194", href:"/icons/favicon-194x194.png"});
 
-        if(data && data.google_analytics_tracking_id) {
-            document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + data.google_analytics_tracking_id, async:""})
+        if(data && window.data.google_analytics_tracking_id) {
+            document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + window.data.google_analytics_tracking_id, async:""})
                 .place(HTML.SCRIPT, {innerHTML: "window.dataLayer = window.dataLayer || [];\n" +
                 "function gtag(){dataLayer.push(arguments)};\n" +
                 "gtag('js', new Date());\n" +
-                "gtag('config', '" + data.google_analytics_tracking_id + "');"});
+                "gtag('config', '" + window.data.google_analytics_tracking_id + "');"});
         }
 
         u.require("/js/helpers/Constants").then(function(){

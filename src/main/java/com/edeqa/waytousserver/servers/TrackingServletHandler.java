@@ -97,7 +97,7 @@ public class TrackingServletHandler extends AbstractServletHandler {
         html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/" + FIREBASE_JAVASCRIPT_VERSION + "/firebase.js").with("nonce", "waytous");
 //        html.getHead().add(SCRIPT).with("var inline = 1;").with("nonce", "waytous");
         html.getHead().add(SCRIPT).with("data", o).with("nonce", "waytous");
-        html.getHead().add(SCRIPT).with("firebase.initializeApp(data.firebase_config);").with("nonce", "waytous");
+        html.getHead().add(SCRIPT).with("firebase.initializeApp(window.data.firebase_config);").with("nonce", "waytous");
 
         html.getHead().add(SCRIPT).with("(function checkVersion(){var l=localStorage;if(l){var w=\"waytous:version\";var d=data.version;var i=parseInt(l[w]||0);if(i<d){l[w]=d;console.warn(\"Forced reloading because of version \"+d+\" is newer than \"+i);window.location.reload(true);}}})();").with("nonce", "waytous");
         html.getHead().add(SCRIPT).with(SRC, "/js/tracking/Main.js").with("async",true).with("defer",true).with(ONLOAD, "(window.WTU = new Main()).start();").with("nonce", "waytous");

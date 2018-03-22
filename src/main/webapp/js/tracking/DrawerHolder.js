@@ -83,7 +83,7 @@ function DrawerHolder(main) {
                     // e.preventDefault();
                     // e.stopPropagation();
                     return false;
-                }}).place(HTML.SPAN, "\nBuild " + data.version)
+                }}).place(HTML.SPAN, "\nBuild " + window.data.version)
             },
             sections: sections,
             collapsible: [DRAWER.SECTION_MAP]

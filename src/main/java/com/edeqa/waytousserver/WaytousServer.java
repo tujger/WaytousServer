@@ -64,7 +64,7 @@ public class WaytousServer extends EdequateServer {
         ServletHandlerOptions.getOrCreate(getSslServer()).putIfAbsent(new ServletHandlerOptions().setContext("/rest").setServletHandler(restServer));
 
         ServletHandlerOptions.getOrCreate(getAdminServer()).putIfAbsent(new ServletHandlerOptions().setContext("/rest").setServletHandler(restServer));
-        ServletHandlerOptions.getOrCreate(getAdminServer()).putIfAbsent(new ServletHandlerOptions().setContext("/").setServletHandler(adminServer).setAuthenticator(new DigestAuthenticator("waytous")));
+        ServletHandlerOptions.getOrCreate(getAdminServer()).putIfAbsent(new ServletHandlerOptions().setContext("/").setServletHandler(adminServer).setAuthenticator(new DigestAuthenticator(getArguments().getRealm())));
         ServletHandlerOptions.getOrCreate(getAdminServer()).putIfAbsent(new ServletHandlerOptions().setContext("/admin/logout").setServletHandler(adminServer));
     }
 
