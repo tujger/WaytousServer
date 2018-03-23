@@ -50,6 +50,7 @@ function StatisticsHolder(main) {
 
     this.resume = function() {
         var self = this;
+        u.clear(div);
         u.require("https://www.google.com/jsapi")
             .then(function () {
                 google.load("visualization", "1.1", { "callback": renderInterface, "packages": ["corechart", "line"] });
@@ -60,7 +61,6 @@ function StatisticsHolder(main) {
     };
 
     function renderInterface() {
-        u.clear(div);
         ref = database.ref();
 
         u.create(HTML.H2, "Summary", div);

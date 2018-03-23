@@ -254,7 +254,11 @@ function GroupsHolder(main) {
     }
 
     function renderButtons(div) {
-        var clear = u.create(HTML.BUTTON, { className:"icon button-inline", innerHTML: "clear_all", title:"Clean groups", onclick: function(){
+        u.create(HTML.BUTTON, { className:"icon notranslate button-inline", innerHTML: "add", title:"Create group", onclick: function(){
+                self.scrollTop = main.content.scrollTop;
+                main.turn("create");
+            }}, div);
+        var clear = u.create(HTML.BUTTON, { className:"icon notranslate button-inline", innerHTML: "clear_all", title:"Clean groups", onclick: function(){
             clear.hide();
             question.show();
             yes.show();

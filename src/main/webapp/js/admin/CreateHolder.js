@@ -8,11 +8,11 @@ function CreateHolder(main) {
     var dialog;
     var div;
 
-    this.category = DRAWER.SECTION_EXPLORE;
+    // this.category = DRAWER.SECTION_EXPLORE;
     this.type = "create";
     this.title = "Create group";
-    this.menu = "Create group";
-    this.icon = "group_add";
+    // this.menu = "Create group";
+    // this.icon = "group_add";
     this.preventState = true;
 
     var inputId,inputRequiresPassword,inputPassword,inputWelcomeMessage,inputPersistent,inputTtl,inputLimitUsers,inputDismissInactive,inputDelay;
