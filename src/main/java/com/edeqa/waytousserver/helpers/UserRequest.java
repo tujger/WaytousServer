@@ -102,7 +102,7 @@ public class UserRequest {
         try {
             return getDataProcessorConnection().getRemoteSocketAddress().toString();
         } catch(Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return String.valueOf(getDataProcessorConnection().getRemoteSocketAddress());
         }
     }

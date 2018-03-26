@@ -337,7 +337,7 @@ function TrackingHolder(main) {
                 if (o[REQUEST.WELCOME_MESSAGE]) {
                     main.fire(EVENTS.WELCOME_MESSAGE, o[RESPONSE.WELCOME_MESSAGE]);
                 }
-                if (o[RESPONSE.NUMBER] != undefined) {
+                if (o[RESPONSE.NUMBER] !== undefined) {
                     main.users.forMe(function (number, user) {
                         user.createViews();
                         progress.close();

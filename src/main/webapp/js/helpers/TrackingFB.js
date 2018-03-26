@@ -179,11 +179,17 @@ function TrackingFB(main) {
                                         serverUri = link + "/" + o[RESPONSE.TOKEN];
                                     }
                                 }
-                                if (o[RESPONSE.NUMBER] != undefined) {
+                                if (o[RESPONSE.NUMBER] !== undefined) {
                                     console.warn("Joined with number",o[RESPONSE.NUMBER]);
                                     main.users.setMyNumber(o[RESPONSE.NUMBER]);
                                 }
                                 o[RESPONSE.INITIAL] = true;
+
+                                try {
+                                    trackingListener.onAccept(o);
+                                } catch (e) {
+                                    console.error(e.message);
+                                }
 
                                 refRoot = database.ref();
                                 refGroup = refRoot.child(DATABASE.SECTION_GROUPS).child(getToken());
@@ -208,11 +214,6 @@ function TrackingFB(main) {
                                     }
                                 });
 
-                                try {
-                                    trackingListener.onAccept(o);
-                                } catch (e) {
-                                    console.error(e.message);
-                                }
                             }).catch(function (error) {
                                 setStatus(EVENTS.TRACKING_DISABLED);
                                 trackingListener.onReject(error.message);

@@ -36,9 +36,11 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
     public void call(final JSONObject json, final MyUser user) {
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
+        getOnSuccess().run();
+
         if(!user.isAccountAllowed()) {
             Misc.log("CreateAccount", "skipped for uid:", user.getUid(), "[" + user.getSignProvider() +"]");
-            getOnSuccess().run();
+//            getOnSuccess().run();
             return;
         }
 
@@ -74,7 +76,6 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
                         ApiFuture<Void> updateAccountTask = refAccounts.child(user.getUid()).child(Firebase.PRIVATE).updateChildrenAsync(accountPrivateData);
                         try {
                             updateAccountTask.get();
-                            getOnSuccess().run();
                         } catch (Exception e) {
                             Misc.err("CreateAccount", "failed for uid:", user.getUid(), e);
                             getOnError().call(e);

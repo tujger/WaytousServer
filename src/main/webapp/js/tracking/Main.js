@@ -389,9 +389,8 @@ function Main() {
         }
         var lang = (locale || u.load("lang") || navigator.language).toLowerCase().slice(0,2);
         u.lang.overrideResources({
-            "default": "/resources/en/" + resource,
             resources: "/rest/resources",
-            resource: resource,
+            resource: ["common.json", resource],
             locale: lang,
             callback: callback
         });
