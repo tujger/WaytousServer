@@ -1,30 +1,42 @@
 ::selection {
     background-color: lightgray;
+    color: inherit;
 }
 ::-moz-selection {
     background-color: lightgray;
+    color: inherit;
 }
-html, body {
+
+body {
     color: darkslategray;
 }
-button:hover {
-    background-color: #eeeeee;
+button:hover, button:active {
+    background-color: #2e5d7d;
+    color: white;
 }
-button:active {
-    background-color: #aaaaaa;
-}
-.layout {
-    background-color: white;
+.image-full-width {
+    border-color: darkslategray;
 }
 .toast {
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
 }
+.toast-error{
+    background-color: firebrick;
+    box-shadow: 3px 3px 7px 2px #222222bb;
+}
+.shadow {
+    box-shadow: 3px 3px 7px 2px rgba(0,0,0,.5);
+}
 .clickable:hover {
     background-color: lightcyan;
+    color: darkslategray;
 }
 .disabled {
     color: gray;
+}
+.button-scroll-top {
+    background-color: white;
 }
 .modal {
     background-color: floralwhite;
@@ -33,59 +45,62 @@ button:active {
     background-color: #4c93af;
     color: white;
 }
+.dialog-title-button {
+    color: inherit;
+}
 .dialog-title-button:hover {
     color: red;
+    background-color: initial;
+}
+.dialog-filter {
+    background: none;
+    color: inherit;
 }
 .dialog-filter-button:hover {
     color: red;
+    background-color: initial;
 }
 .dialog-filter-clear {
     color: gray;
 }
-.dialog-item-input-input, .dialog-item-input-password, .dialog-item-input-number {
+.dialog-item-input-input, .dialog-item-input-password, .dialog-item-input-number, .dialog-item-input-checkbox, .dialog-item-input-select, .dialog-item-input-button, .dialog-item-input-date, .dialog-item-input-datetime, .dialog-item-input-datetime-local {
     background-color: antiquewhite;
-}
-.dialog-item-input-button {
-    background-color: #4c93af;
-    color: white;
-}
-.dialog-item-input-button:hover, .dialog-item-input-button:focus {
-    background-color: #2e5d7d;
+    border: 1px solid lightgray;
 }
 .dialog-item-enclosed-button:hover {
     background-color: burlywood;
 }
-.dialog-button:before {
-    background-color: rgba(236, 240, 241, .3);
-}
-.dialog-button-positive {
+.dialog-button {
     background-color: #4c93af;
     color: white;
+}
+.dialog-button:focus {
+    background-color: #2e5d7d;
 }
 .dialog-button-positive:hover/*, .dialog-button-positive:focus*/ {
     background-color: #2e5d7d;
 }
 .dialog-button-neutral {
     background-color: #4c93af;
-    color: white;
 }
 .dialog-button-neutral:hover/*, .dialog-button-neutral:focus*/ {
     background-color: #2e5d7d;
 }
 .dialog-button-negative {
     background-color: #4c93af;
-    color: white;
 }
 .dialog-button-negative:hover/*, .dialog-button-negative:focus*/ {
     background-color: #2e5d7d;
 }
 .dialog-progress-bar {
-    background-color: darkgray;
+    background-color: #4c93af;
+    background: linear-gradient(to right, green 0%,red 100%);
 }
 .dialog-progress-value {
-    background-color: #4c93af;
+    background-color: darkgray;
 }
 .dialog-help-button {
+    background: none;
     color: darkslategray;
 }
 .dialog-help-button:hover {
@@ -100,17 +115,15 @@ button:active {
 .drawer-header {
     background: linear-gradient(135deg, #2e5d7d 0%,#32667b 54%,#819bc7 100%);
 }
-.drawer-header-name, .collapsed:hover .drawer-header-name {
-    color: white;
-}
 .drawer-header-title {
     color: white;
 }
 .drawer-header-subtitle {
     color: white;
 }
-.drawer-menu-divider {
-    border-bottom-color: darkgray;
+.drawer-header-subtitle-icon {
+    background-color: transparent;
+    color: white;
 }
 .drawer-menu-section-title:hover {
     background: #dddd99;
@@ -125,6 +138,7 @@ button:active {
     background: burlywood;
 }
 .drawer-menu-item-icon, .drawer-menu-item svg {
+    margin: 10px;
     stroke: darkslategray;
 }
 .drawer-menu-item-badge, .collapsed:hover .drawer-menu-item-badge {
@@ -136,14 +150,14 @@ button:active {
 .drawer-footer-button:active {
     background-color: burlywood;
 }
+.drawer-footer-label a {
+    color: inherit;
+}
 .menu {
     background-color: white;
 }
 .menu .dialog-item:hover {
     background-color: gainsboro;
-}
-.table-placeholder {
-    border: 1px solid black;
 }
 .table-filter-clear {
     color: gray;
@@ -155,61 +169,13 @@ button:active {
 .thead {
     background: #ffffdd;
 }
-.th {
-    border: 1px solid black;
+.tree-item-icon {
+    color: inherit;
 }
-.td {
-    border: 1px solid black;
+.tree-item-leaf-icon {
+    color: inherit;
 }
-.progress-dialog-circle {
-    border: 8px solid #888888;
-    border-right-color: transparent;
-}
-
-.actionbar {
-    background: linear-gradient(135deg, #2e5d7d 0%,#32667b 54%,#819bc7 100%);
-}
-
-.actionbar-label {
-    color: white;
-}
-.actionbar-select-lang {
-    background-color: #819bc7;
-}
-.button-scroll-top {
-    background-color: white;
-}
-
-.create-dialog-button {
-    color: white;
-}
-.create-dialog-button:hover/*, .dialog-button-positive:focus*/ {
-    background-color: #2e5d7d;
-}
-
-.image-full-width {
-    border-color: darkslategray;
-}
-
-@media screen and (min-width: 1001px) {
-    .drawer {
-        background: none;
-    }
-    .drawer-header {
-        background: none;
-    }
-    .drawer-menu {
-        color: white;
-    }
-    .drawer-menu:hover {
-        background-color: rgba(255, 255, 255, 0.9);
-        color: black;
-    }
-    .drawer-footer {
-        background-color: lightgray;
-    }
-}
-
+/* media specific classes */
 @media screen and (max-width: 1000px) {
     body {
         color: darkslategray;
@@ -219,24 +185,31 @@ button:active {
         background-color: ivory;
     }
     .actionbar {
+        border: none;
         background-color: rgba(76, 147, 175, 1);
         color: white;
     }
+    .actionbar-label {
+        color: white;
+    }
+    .actionbar-select-lang {
+        background-color: #819bc7;
+    }
     .dialog-filter-input {
         background-color: #4c93af;
+        border: none;
         color: white;
     }
     .dialog-filter-clear {
         color: white;
     }
-    .drawer, .collapsed {
+    .drawer, .drawer.collapsed {
         background-color: white;
+    }
+    .drawer-header-holder {
+        background: transparent !important;
     }
     .drawer-menu-item:hover {
         background: #dddd99;
     }
-    .toast {
-        border-color: rgba(255, 255, 240, 0.7);
-    }
 }
-

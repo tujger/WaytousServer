@@ -29,20 +29,23 @@
         @import url("/css/edequate-admin.css");
         @import url("/css/waytous-admin.css");
     </style>
-    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
     <script async src="/js/Edequate.js"
             data-variable="u"
             data-callback="
-                u.require([{src:'/admin/rest/initial', isJSON:true},'/js/main/Main.js','/js/helpers/Utils.js','/js/helpers/Constants.js'], u)
-                    .then(function(json, main, utils){
-                        data = json;
-                        firebase.initializeApp(data.firebase_config);
-                        firebase.auth().signInWithCustomToken(data.sign).then(function(){
-                            main.start({type:'admin', utils:utils});
-                        }).catch(function(e) {
-                            console.error('ERROR',e);
-                        });
+                u.require([
+                    {src:'/admin/rest/initial', isJSON:true},
+                    '/js/Main.js','/js/helpers/Utils.js',
+                    '/js/helpers/Constants.js',
+                    'https://www.gstatic.com/firebasejs/4.9.0/firebase.js'
+                ], u).then(function(json, main, utils){
+                    data = json;
+                    firebase.initializeApp(data.firebase_config);
+                    firebase.auth().signInWithCustomToken(data.sign).then(function(){
+                        main.start({type:'admin', utils:utils});
+                    }).catch(function(e) {
+                        console.error('ERROR',e);
                     });
+                });
             "
             data-origin="waytousadmin"
             data-export-constants="true">
