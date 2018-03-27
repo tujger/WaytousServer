@@ -24,7 +24,7 @@ function DrawerHolder(main) {
 
     var start = function() {
         var dialogAbout = utils.dialogAbout(main.right);
-        dialogAbout.addItem({
+        dialogAbout.add({
             enclosed: true,
             label: u.lang.privacy_policy,
             body: u.lang.loading.outerHTML,
@@ -37,7 +37,7 @@ function DrawerHolder(main) {
                 });
             }
         });
-        dialogAbout.addItem({
+        dialogAbout.add({
             enclosed: true,
             label: u.lang.terms_of_service,
             body: u.lang.loading.outerHTML,
@@ -51,7 +51,7 @@ function DrawerHolder(main) {
                 });
             }
         });
-        dialogAbout.addItem({
+        dialogAbout.add({
             enclosed: true,
             label: u.lang.third_party_components,
             body: "Third party components",

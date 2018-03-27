@@ -91,12 +91,12 @@ function SettingHolder(main) {
                 title = title || modules[i].type;
 
                 if(!option.id || !sections[option.id]) {
-                    optionsDialog.addItem({
+                    optionsDialog.add({
                         type:HTML.DIV,
                         className:"options-dialog-title",
                         innerHTML: title
                     });
-                    sections[option.id] = optionsDialog.addItem({
+                    sections[option.id] = optionsDialog.add({
                         id: option.id || "",
                         type:HTML.DIV,
                         className:"options-dialog-section"
@@ -111,7 +111,7 @@ function SettingHolder(main) {
                     }
                     title = title || "";
 
-                    categories[category.id || ""] = categories[category.id || ""] || optionsDialog.addItem({
+                    categories[category.id || ""] = categories[category.id || ""] || optionsDialog.add({
                         id: category.id || "",
                         type: HTML.DIV,
                         className: "options-dialog-item",
@@ -121,7 +121,7 @@ function SettingHolder(main) {
                     for(var k in category.items) {
                         var item = category.items[k];
                         var id = i + ":" + j + ":" + k;
-                        options[id] = optionsDialog.addItem(item, categories[category.id || ""].lastChild);
+                        options[id] = optionsDialog.add(item, categories[category.id || ""].lastChild);
                         options[id].onaccept = item.onaccept;
                         options[id].dialog = optionsDialog;
                         if(item.onchange) options[id].addEventListener("change", item.onchange, {passive: true});

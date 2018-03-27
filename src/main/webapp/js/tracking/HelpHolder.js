@@ -46,12 +46,12 @@ function HelpHolder(main) {
                 dialog.clearItems();
                 if(object) {
                     if(object["module"].help) {
-                        dialog.addItem({
+                        dialog.add({
                             type: HTML.DIV,
                             className: "help-dialog-item-title",
                             innerHTML: object["module"].help()[object.article].title
                         });
-                        dialog.addItem({
+                        dialog.add({
                             type: HTML.DIV,
                             className: "help-dialog-item-body",
                             innerHTML: object["module"].help()[object.article].body
@@ -69,7 +69,7 @@ function HelpHolder(main) {
                                 title = title.outerHTML;
                             }
                             title = title || modules[i].type;
-                            dialog.addItem({
+                            dialog.add({
                                 type:HTML.DIV,
                                 className:"help-dialog-module-title",
                                 innerHTML: title
@@ -88,7 +88,7 @@ function HelpHolder(main) {
                                 }
                                 body = body || "";
 
-                                dialog.addItem({
+                                dialog.add({
                                     type:HTML.DIV,
                                     className:"help-dialog-module-item",
                                     enclosed:true,

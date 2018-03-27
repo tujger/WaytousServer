@@ -96,7 +96,7 @@ function ShareHolder(main) {
                 itemLink = shareDialog.items[0];
 
                 if(shareDialog && shareDialog.items && !shareDialog.itemFacebook) {
-                    shareDialog.itemFacebook = shareDialog.addItem({
+                    shareDialog.itemFacebook = shareDialog.add({
                         type: HTML.DIV,
                         className: "share-dialog-item"
                     });
@@ -122,7 +122,7 @@ function ShareHolder(main) {
                     shareDialog.itemsLayout.insertBefore(shareDialog.itemFacebook, shareDialog.itemFacebook.previousSibling);
                 }
                 if(shareDialog && shareDialog.items && !shareDialog.itemTwitter) {
-                    shareDialog.itemTwitter = shareDialog.addItem({
+                    shareDialog.itemTwitter = shareDialog.add({
                         type: HTML.DIV,
                         className: "share-dialog-item"
                     });
@@ -144,7 +144,7 @@ function ShareHolder(main) {
                     shareDialog.itemsLayout.insertBefore(shareDialog.itemTwitter, shareDialog.itemTwitter.previousSibling);
                 }
                 if(shareDialog && shareDialog.items && !shareDialog.itemWhatsapp) {
-                    shareDialog.itemWhatsapp = shareDialog.addItem({
+                    shareDialog.itemWhatsapp = shareDialog.add({
                         type: HTML.DIV,
                         className: "share-dialog-item desktop-hidden"
                     });
@@ -166,7 +166,7 @@ function ShareHolder(main) {
                     shareDialog.itemsLayout.insertBefore(shareDialog.itemWhatsapp, shareDialog.itemWhatsapp.previousSibling);
                 }
                 if(shareDialog && shareDialog.items && !shareDialog.itemTelegram) {
-                    shareDialog.itemTelegram = shareDialog.addItem({
+                    shareDialog.itemTelegram = shareDialog.add({
                         type: HTML.DIV,
                         className: "share-dialog-item"
                     });
@@ -188,7 +188,7 @@ function ShareHolder(main) {
                     shareDialog.itemsLayout.insertBefore(shareDialog.itemTelegram, shareDialog.itemTelegram.previousSibling);
                 }
                 if(shareDialog && shareDialog.items && !shareDialog.itemShare) {
-                    shareDialog.itemShare = shareDialog.addItem({
+                    shareDialog.itemShare = shareDialog.add({
                         type: HTML.DIV,
                         className: "share-dialog-item"
                     });

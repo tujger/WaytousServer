@@ -182,9 +182,9 @@ function MemberProfileHolder(main) {
                     innerHTML: u.lang.signing_in_to_account
                 });
                 var email = profileDialog.loginNode ? profileDialog.loginNode.value : "";
-                profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: u.lang.email, value: email });
-                profileDialog.passwordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: u.lang.password });
-                profileDialog.addItem({
+                profileDialog.loginNode = profileDialog.add({ type: HTML.INPUT, label: u.lang.email, value: email });
+                profileDialog.passwordNode = profileDialog.add({ type: HTML.PASSWORD, label: u.lang.password });
+                profileDialog.add({
                     type: HTML.DIV,
                     className: "user-profile-forgot-password",
                     innerHTML: u.lang.forgot_password,
@@ -222,9 +222,9 @@ function MemberProfileHolder(main) {
                     className: "user-profile-dialog-summary",
                     innerHTML: u.lang.creating_new_account
                 });
-                profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: u.lang.email, value: profileDialog.loginNode.value });
-                profileDialog.passwordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: u.lang.password });
-                profileDialog.confirmPasswordNode = profileDialog.addItem({ type: HTML.PASSWORD, label: u.lang.confirm_password });
+                profileDialog.loginNode = profileDialog.add({ type: HTML.INPUT, label: u.lang.email, value: profileDialog.loginNode.value });
+                profileDialog.passwordNode = profileDialog.add({ type: HTML.PASSWORD, label: u.lang.password });
+                profileDialog.confirmPasswordNode = profileDialog.add({ type: HTML.PASSWORD, label: u.lang.confirm_password });
                 profileDialog.setPositive({
                     label: u.lang.sign_up,
                     dismiss: false,
@@ -278,7 +278,7 @@ function MemberProfileHolder(main) {
                     className: "user-profile-dialog-summary",
                     innerHTML: u.lang.resetting_password
                 });
-                profileDialog.loginNode = profileDialog.addItem({ type: HTML.INPUT, label: "E-mail", value: profileDialog.loginNode.value});
+                profileDialog.loginNode = profileDialog.add({ type: HTML.INPUT, label: "E-mail", value: profileDialog.loginNode.value});
                 profileDialog.setPositive({
                     label: u.lang.reset,
                     dismiss: false,
@@ -306,7 +306,7 @@ function MemberProfileHolder(main) {
                 });
                 break;
             case "anonymous":
-                profileDialog.addItem({
+                profileDialog.add({
                     content: u.create(HTML.BUTTON, {
                         className: "dialog-button dialog-item-button",
                         onclick: function () {
@@ -327,7 +327,7 @@ function MemberProfileHolder(main) {
                         innerHTML: u.lang.sign_in_with_facebook
                     })
                 });
-                profileDialog.addItem({
+                profileDialog.add({
                     content: u.create(HTML.BUTTON, {
                         className: "dialog-button dialog-item-button",
                         onclick: function () {
@@ -345,7 +345,7 @@ function MemberProfileHolder(main) {
                         innerHTML: u.lang.sign_in_with_google
                     })
                 });
-                profileDialog.addItem({
+                profileDialog.add({
                     content: u.create(HTML.BUTTON, {
                         className: "dialog-button dialog-item-button",
                         onclick: function () {
@@ -363,7 +363,7 @@ function MemberProfileHolder(main) {
                         innerHTML: u.lang.sign_in_with_twitter
                     })
                 });
-                profileDialog.addItem({
+                profileDialog.add({
                     content: u.create(HTML.BUTTON, {
                         className: "dialog-button dialog-item-button",
                         onclick: function () {
@@ -411,7 +411,7 @@ function MemberProfileHolder(main) {
                     })
                 );
         }
-        profileDialog.errorNode = profileDialog.addItem({innerHTML: "", className: "user-profile-dialog-error hidden"});
+        profileDialog.errorNode = profileDialog.add({innerHTML: "", className: "user-profile-dialog-error hidden"});
 
     }
 

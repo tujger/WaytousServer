@@ -127,7 +127,7 @@ function MessageHolder(main) {
                 });
                 break;
             case EVENTS.USER_MESSAGE:
-                var div = chat.addItem({
+                var div = chat.add({
                     type:HTML.DIV,
                     className:"chat-dialog-message" + (object.private ? " chat-dialog-message-private" : ""),
                     order: object.timestamp

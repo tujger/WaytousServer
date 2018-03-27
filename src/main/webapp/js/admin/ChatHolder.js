@@ -64,7 +64,7 @@ function ChatHolder(main) {
                                 }
 
                                 var post = message.val();
-                                dialogChat.addItem({
+                                dialogChat.add({
                                     type: HTML.DIV,
                                     className:"chat-dialog-message",
                                     order: post[REQUEST.TIMESTAMP],

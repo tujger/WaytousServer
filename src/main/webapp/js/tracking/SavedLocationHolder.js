@@ -380,7 +380,7 @@ function SavedLocationHolder(main) {
                 for(var i = 1; i <= last; i++) {
                     var loc = u.load("saved_location:"+i);
                     if(loc && loc.la && loc.lo) {
-                        var div = locationsDialog.addItem({
+                        var div = locationsDialog.add({
                             type: HTML.DIV,
                             className: "saved-location-item",
                         });
