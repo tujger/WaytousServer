@@ -3,6 +3,7 @@ package com.edeqa.waytousserver.servers;
 import com.edeqa.edequate.rest.Arguments;
 import com.edeqa.edequate.rest.Files;
 import com.edeqa.waytousserver.helpers.Common;
+import com.edeqa.waytousserver.rest.Api;
 import com.edeqa.waytousserver.rest.InitialData;
 import com.edeqa.waytousserver.rest.Join;
 import com.edeqa.waytousserver.rest.TosAgreement;
@@ -55,6 +56,7 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
             }
         }).setWebDirectory(arguments.getWebRootDirectory()).setChildDirectory("js/tracking").setActionName("/rest/tracking"));
 
+        registerAction(new Api());
     }
 
     @Override
