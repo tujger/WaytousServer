@@ -1,10 +1,6 @@
 {
   "// Common": "",
-  "ok": "OK",
-  "cancel": "Cancel",
-  "yes": "Yes",
-  "no": "No",
-  "close": "Close",
+
   "maybe_later": "Maybe later",
   "hide": "Hide",
   "edit": "Edit",
@@ -14,7 +10,6 @@
   "reset": "Reset",
   "copy": "Copy",
   "mail": "Mail",
-  "loading":"Loading...",
   "s_s": "%s - %s",
   "force_reload": "Force reload application",
   "go": "Go",
@@ -31,10 +26,6 @@
 
   "general": "General",
   "main": "Main",
-  "language": "Language",
-  "default": "Default",
-  "english": "English (US)",
-  "russian": "Russian",
   "error_while_loading_service": "We are sorry but some error occurred while loading the service. Please wait a few minutes and try again.",
   "error_while_loading_s_code_s": "Error while loading %s: code %s",
   "error_while_initializing_s_s": "Error while initializing %s: %s",
@@ -80,8 +71,6 @@
   "alpha_6": "&nbsp;",
   "alpha_7": "<a href=\"/\" target=\"_blank\" rel=\"noopener\">Go to the main page of project (new window).</a>",
 
-  "privacy_policy": "Privacy policy",
-  "terms_of_service": "Terms of Service",
   "third_party_components":"Third party components",
   "d_selected": "%d selected",
 
@@ -138,7 +127,6 @@
 
   "// HelpHolder": "",
 
-  "help": "Help",
 
 
   "// MapHolder": "",
@@ -293,10 +281,8 @@
   "confirm_password": "Confirm password",
   "confirming_password_is_not_equals_to_password": "Confirming password is not equals to password.",
   "creating_new_account": "Creating new account",
-  "email": "E-mail",
   "email_has_sent": "E-mail has sent",
   "forgot_password": "Forgot password?",
-  "password": "Password",
   "resetting_password": "Resetting password",
   "sign_in": "Sign in",
   "sign_in_with_email": "Sign in with e-mail",
@@ -337,4 +323,5 @@
   "sample_menu": "Sample menu",
   "sample_title_1": "Article 1",
   "sample_body_1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
 }
