@@ -75,4 +75,9 @@ public class Arguments extends com.edeqa.edequate.rest.Arguments {
     public String getRealm() {
         return "waytous";
     }
+
+    @Override
+    public String getAppName() {
+        return OPTIONS.getAppName();
+    }
 }
