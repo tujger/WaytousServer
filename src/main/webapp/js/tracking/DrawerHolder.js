@@ -161,12 +161,12 @@ function DrawerHolder(main) {
                     }
                 }
                 if(main.tracking && main.tracking.getStatus() === EVENTS.TRACKING_ACTIVE) {
-                    actionbar.style.backgroundColor = utils.getRGBAColor(this.properties.color, 0.8);
+                    actionbar.style.background = "none " + utils.getRGBAColor(this.properties.color, 0.8);
                 }
                 break;
             case EVENTS.SELECT_USER:
                 if(main.users.getCountSelected() > 1) {
-                    actionbar.style.backgroundColor = "";
+                    actionbar.style.background = "";
                     u.lang.updateNode(actionbar.titleNode, u.lang.d_selected.format(main.users.getCountSelected()));
                     actionbar.subtitle.hide();
                 }

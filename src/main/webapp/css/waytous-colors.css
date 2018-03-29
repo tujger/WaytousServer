@@ -1,113 +1,24 @@
-::selection {
-    background-color: lightgray;
-    color: inherit;
-}
-::-moz-selection {
-    background-color: lightgray;
-    color: inherit;
-}
-
-body {
-    color: darkslategray;
-}
 button:hover, button:active {
     background-color: #2e5d7d;
     color: white;
 }
-.image-full-width {
-    border-color: darkslategray;
-}
-.toast {
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-}
-.toast-error{
-    background-color: firebrick;
-    box-shadow: 3px 3px 7px 2px #222222bb;
-}
-.shadow {
-    box-shadow: 3px 3px 7px 2px rgba(0,0,0,.5);
-}
-.clickable:hover {
-    background-color: lightcyan;
-    color: darkslategray;
-}
-.disabled {
-    color: gray;
-}
-.button-scroll-top {
-    background-color: white;
+.actionbar-select-lang {
+    background-color: #819bc7;
 }
 .modal {
     background-color: floralwhite;
 }
 .dialog-title {
     background-color: #4c93af;
-    color: white;
 }
 .dialog-title-button {
     color: inherit;
 }
-.dialog-title-button:hover {
-    color: red;
-    background-color: initial;
-}
-.dialog-filter {
-    background: none;
-    color: inherit;
-}
-.dialog-filter-button:hover {
-    color: red;
-    background-color: initial;
-}
-.dialog-filter-clear {
-    color: gray;
-}
-.dialog-item-input-input, .dialog-item-input-password, .dialog-item-input-number, .dialog-item-input-checkbox, .dialog-item-input-select, .dialog-item-input-button, .dialog-item-input-date, .dialog-item-input-datetime, .dialog-item-input-datetime-local {
-    background-color: antiquewhite;
-    border: 1px solid lightgray;
-}
-.dialog-item-enclosed-button:hover {
-    background-color: burlywood;
-}
 .dialog-button {
     background-color: #4c93af;
-    color: white;
 }
-.dialog-button:focus {
+.dialog-button:hover, .dialog-button:focus {
     background-color: #2e5d7d;
-}
-.dialog-button-positive:hover/*, .dialog-button-positive:focus*/ {
-    background-color: #2e5d7d;
-}
-.dialog-button-neutral {
-    background-color: #4c93af;
-}
-.dialog-button-neutral:hover/*, .dialog-button-neutral:focus*/ {
-    background-color: #2e5d7d;
-}
-.dialog-button-negative {
-    background-color: #4c93af;
-}
-.dialog-button-negative:hover/*, .dialog-button-negative:focus*/ {
-    background-color: #2e5d7d;
-}
-.dialog-progress-bar {
-    background-color: #4c93af;
-    background: linear-gradient(to right, green 0%,red 100%);
-}
-.dialog-progress-value {
-    background-color: darkgray;
-}
-.dialog-help-button {
-    background: none;
-    color: darkslategray;
-}
-.dialog-help-button:hover {
-    background-color: burlywood;
-}
-.dialog-dim {
-    background-color: rgba(128, 128, 128, 0.4);
 }
 .drawer {
     background-color: azure;
@@ -115,101 +26,9 @@ button:hover, button:active {
 .drawer-header {
     background: linear-gradient(135deg, #2e5d7d 0%,#32667b 54%,#819bc7 100%);
 }
-.drawer-header-title {
-    color: white;
-}
-.drawer-header-subtitle {
-    color: white;
-}
-.drawer-header-subtitle-icon {
-    background-color: transparent;
-    color: white;
-}
-.drawer-menu-section-title:hover {
-    background: #dddd99;
-}
-.drawer-menu-section-title:active {
-    background: burlywood;
-}
-.drawer-menu-item:hover {
-    background: gainsboro;
-}
-.drawer-menu-item:active {
-    background: burlywood;
-}
-.drawer-menu-item-icon, .drawer-menu-item svg {
-    margin: 10px;
-    stroke: darkslategray;
-}
-.drawer-menu-item-badge, .collapsed:hover .drawer-menu-item-badge {
-    background-color: lightgreen;
-}
-.drawer-footer-button:hover {
-    background-color: #dddd99;
-}
-.drawer-footer-button:active {
-    background-color: burlywood;
-}
-.drawer-footer-label a {
-    color: inherit;
-}
-.menu {
-    background-color: white;
-}
-.menu .dialog-item:hover {
-    background-color: gainsboro;
-}
-.table-filter-clear {
-    color: gray;
-}
-.table-select-active {
-    background-color: darkslategray;
-    color: white;
-}
-.thead {
-    background: #ffffdd;
-}
-.tree-item-icon {
-    color: inherit;
-}
-.tree-item-leaf-icon {
-    color: inherit;
-}
 /* media specific classes */
 @media screen and (max-width: 1000px) {
-    body {
-        color: darkslategray;
-    }
-    button {
-        border-color: gray;
-        background-color: ivory;
-    }
     .actionbar {
-        border: none;
-        background-color: rgba(76, 147, 175, 1);
-        color: white;
-    }
-    .actionbar-label {
-        color: white;
-    }
-    .actionbar-select-lang {
-        background-color: #819bc7;
-    }
-    .dialog-filter-input {
-        background-color: #4c93af;
-        border: none;
-        color: white;
-    }
-    .dialog-filter-clear {
-        color: white;
-    }
-    .drawer, .drawer.collapsed {
-        background-color: white;
-    }
-    .drawer-header-holder {
-        background: transparent !important;
-    }
-    .drawer-menu-item:hover {
-        background: #dddd99;
+        background: linear-gradient(135deg, #2e5d7d 0%,#32667b 54%,#819bc7 100%);
     }
 }

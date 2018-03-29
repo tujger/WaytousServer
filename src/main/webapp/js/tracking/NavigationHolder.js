@@ -331,7 +331,7 @@ function NavigationHolder(main) {
     function showModeButtons(user) {
         if(!modeButtons) {
             modeButtons = u.dialog({
-                className: "navigation-mode",
+                className: "icon notranslate navigation-mode",
                 itemsClassName: "navigation-mode-items",
                 items: [
                     {

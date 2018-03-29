@@ -61,7 +61,7 @@ function Main() {
         document.head
             .place(HTML.META, {name:"viewport", content:"width=device-width, initial-scale=1, user-scalable=no"})
             .place(HTML.META, {name:"description", content:window.data.description})
-            .place(HTML.STYLE, {innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/edequate.css');@import url('/css/tracking.css');"})
+            .place(HTML.STYLE, {innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/edequate.css');@import url('/css/waytous-colors.css');@import url('/css/tracking.css');"})
             .place(HTML.LINK, {rel:"apple-touch-icon", href:"/icons/apple-touch-icon.png"})
             .place(HTML.LINK, {rel:"apple-touch-icon", sizes:"60x60", href:"/icons/apple-touch-icon-60x60.png"})
             .place(HTML.LINK, {rel:"apple-touch-icon", sizes:"76x76", href:"/icons/apple-touch-icon-76x76.png"})
