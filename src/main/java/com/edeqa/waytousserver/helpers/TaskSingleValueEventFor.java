@@ -29,12 +29,9 @@ public class TaskSingleValueEventFor<T> {
 
     private Runnable1<T> onCompleteListener;
     private Runnable1<T> onSuccessListener;
-    private Runnable1<Throwable> onFailureListener = new Runnable1<Throwable>() {
-        @Override
-        public void call(Throwable arg) {
-            //noinspection HardCodedStringLiteral
-            arg.printStackTrace();
-        }
+    private Runnable1<Throwable> onFailureListener = error -> {
+        //noinspection HardCodedStringLiteral
+        error.printStackTrace();
     };
 
     public TaskSingleValueEventFor() {

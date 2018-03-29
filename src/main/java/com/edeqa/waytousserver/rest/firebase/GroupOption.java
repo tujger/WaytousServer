@@ -8,7 +8,6 @@ import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.internal.NonNull;
 import com.google.firebase.tasks.OnFailureListener;
 
 import org.json.JSONObject;
@@ -41,14 +40,11 @@ public class GroupOption extends AbstractFirebaseAction<GroupOption, Object> {
 
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
-        final OnFailureListener onFailureListener = new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                res.put(STATUS, STATUS_ERROR);
-                res.put(MESSAGE, e.getMessage());
-                Misc.log("GroupOption", "'" + getKey() + "'", "for group", getGroupId(), "not modified, error:", e.getMessage());
-                getOnError().call(res);
-            }
+        final OnFailureListener onFailureListener = error -> {
+            res.put(STATUS, STATUS_ERROR);
+            res.put(MESSAGE, error.getMessage());
+            Misc.log("GroupOption", "'" + getKey() + "'", "for group", getGroupId(), "not modified, error:", error.getMessage());
+            getOnError().call(res);
         };
 
         if(Firebase.DELAY_TO_DISMISS.equals(getKey())
@@ -59,37 +55,33 @@ public class GroupOption extends AbstractFirebaseAction<GroupOption, Object> {
             || Firebase.TIME_TO_LIVE_IF_EMPTY.equals(getKey())
             || Firebase.WELCOME_MESSAGE.equals(getKey())) {
             new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(getGroupId()).child(Firebase.OPTIONS).child(getKey()))
-                    .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                        @Override
-                        public void call(DataSnapshot dataSnapshot) {
-                            Serializable oldValue = (Serializable) dataSnapshot.getValue();
+                    .addOnCompleteListener(dataSnapshot -> {
+                        Serializable oldValue = (Serializable) dataSnapshot.getValue();
 
 //                            if ((oldValue != null && getValue() != null)
 //                                    || isSwitchBoolean()) {
-                                res.put(Rest.OLD_VALUE, oldValue);
+                            res.put(Rest.OLD_VALUE, oldValue);
 
-                                if(isSwitchBoolean()) {
-                                    if(oldValue == null) oldValue = false;
-                                    setValue(!(Boolean)oldValue);
-                                }
+                            if(isSwitchBoolean()) {
+                                if(oldValue == null) oldValue = false;
+                                setValue(!(Boolean)oldValue);
+                            }
 
-                                ApiFuture<Void> task = refGroups.child(getGroupId()).child(Firebase.OPTIONS).child(getKey()).setValueAsync(getValue());
-                                try {
-                                    task.get();
-                                    res.put(STATUS, STATUS_SUCCESS);
-                                    getOnSuccess().call(res);
-                                } catch (Exception e) {
-                                    onFailureListener.onFailure(e);
-                                }
+                            ApiFuture<Void> task = refGroups.child(getGroupId()).child(Firebase.OPTIONS).child(getKey()).setValueAsync(getValue());
+                            try {
+                                task.get();
+                                res.put(STATUS, STATUS_SUCCESS);
+                                getOnSuccess().call(res);
+                            } catch (Exception e) {
+                                onFailureListener.onFailure(e);
+                            }
 //                            } else {
 //                                onFailureListener.onFailure(new Exception("value not defined"));
 //                            }
-                        }
                     }).start();
         } else {
             onFailureListener.onFailure(new Exception("Incorrect option name."));
         }
-
     }
 
     public String getGroupId() {

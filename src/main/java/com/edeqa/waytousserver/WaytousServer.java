@@ -93,32 +93,30 @@ public class WaytousServer extends EdequateServer {
         DefaultSSLWebSocketServerFactory socket = new DefaultSSLWebSocketServerFactory(secureContext.getSslContext());
         wssServer.setWebSocketFactory(socket);
 
-        new Thread() {
-            public void run() {
-                try {
-                    WebSocketImpl.DEBUG = false;
-                    Misc.log(LOG, "starting", WaytousWebsocketServer.class.getSimpleName(), "with", DataProcessorFirebase.class.getSimpleName(), "on port", OPTIONS.getWsPortFirebase());
-                    wsServer.start();
-                    Misc.log(LOG, "starting", WaytousWebsocketServer.class.getSimpleName(), "with", DataProcessorFirebase.class.getSimpleName(), "on secured port", OPTIONS.getWssPortFirebase());
-                    wssServer.start();
+        new Thread(() -> {
+            try {
+                WebSocketImpl.DEBUG = false;
+                Misc.log(LOG, "starting", WaytousWebsocketServer.class.getSimpleName(), "with", DataProcessorFirebase.class.getSimpleName(), "on port", OPTIONS.getWsPortFirebase());
+                wsServer.start();
+                Misc.log(LOG, "starting", WaytousWebsocketServer.class.getSimpleName(), "with", DataProcessorFirebase.class.getSimpleName(), "on secured port", OPTIONS.getWssPortFirebase());
+                wssServer.start();
 
-                        /*BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
-                        while (true) {
-    //                        if(!wssServer.parse(sysin)) break;
-                            String in = sysin.readLine();
-                            Common.log(LOG, "READ:" + in);
-    //                        s.sendToAll(in);
-                            if (in.equals("exit")) {
-                                wssServer.stop();
-                                break;
-                            }
-                        }*/
-                } catch (Throwable e) {
-                    Misc.err(LOG, "Error starting WebsocketServer:", e);
-                    System.exit(1);
-                }
+                    /*BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
+                    while (true) {
+//                        if(!wssServer.parse(sysin)) break;
+                        String in = sysin.readLine();
+                        Common.log(LOG, "READ:" + in);
+//                        s.sendToAll(in);
+                        if (in.equals("exit")) {
+                            wssServer.stop();
+                            break;
+                        }
+                    }*/
+            } catch (Throwable e) {
+                Misc.err(LOG, "Error starting WebsocketServer:", e);
+                System.exit(1);
             }
-        }.start();
+        }).start();
     }
 
 }

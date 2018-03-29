@@ -9,7 +9,6 @@ import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutureCallback;
 import com.google.api.core.ApiFutures;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 
@@ -63,12 +62,9 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
 
         if(REQUEST_NEW_GROUP.equals(getAction())) {
             DatabaseReference nodeNumber = refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.QUEUE).push();
-            nodeNumber.setValue(user.getUid(), new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(DatabaseError error, DatabaseReference ref) {
-                    if (error != null) {
-                        Misc.err("RegisterUser", error);
-                    }
+            nodeNumber.setValue(user.getUid(), (error, ref) -> {
+                if (error != null) {
+                    Misc.err("RegisterUser", error);
                 }
             });
         }

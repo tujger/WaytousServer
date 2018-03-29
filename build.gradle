@@ -47,8 +47,8 @@ if (installationType == 'google-appengine') {
 //    apply plugin: 'appengine'
 }
 
-sourceCompatibility = 1.7
-
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 //minifyCss {
 //    source = file("${projectDir}/src/main/webapp/css/tracking.js")

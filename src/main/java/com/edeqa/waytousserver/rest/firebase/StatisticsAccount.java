@@ -64,43 +64,31 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
         }
 
         if(getKey() != null && accountId != null && accountId.length() > 0) {
-//            new TaskSingleValueEventFor<JSONObject>(refAccounts.child(accountId))
-//                    .ifExists()
-//                    .addOnCompleteListener(new Runnable1<JSONObject>() {
-//                @Override
-//                public void call(JSONObject json) {
-//                    if(json != null) {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put(Firebase.TIMESTAMP, new Date().getTime());
-                        map.put(Firebase.KEYS, getKey());
-                        if (getAction() != null) map.put(Firebase.MODE, getAction());
+            Map<String, Object> map = new HashMap<>();
+            map.put(Firebase.TIMESTAMP, new Date().getTime());
+            map.put(Firebase.KEYS, getKey());
+            if (getAction() != null) map.put(Firebase.MODE, getAction());
 
-                        if (getValue() instanceof Boolean) {
-                            map.put(Firebase.VALUE, getValue());
-                        } else if (getValue() instanceof Number) {
-                            map.put(Firebase.VALUE, getValue());
-                        } else if (getValue() instanceof String) {
-                            if (((String) getValue()).length() < 50) {
-                                map.put(Firebase.VALUE, getValue());
-                            } else {
-                                map.put(Firebase.VALUE, ((String) getValue()).substring(0, 40) + "...");
-                            }
-                        } else if (getValue() instanceof ArrayList) {
-                            map.put(Firebase.VALUE, "Array(" + ((ArrayList) getValue()).size() + ")");
-                        } else if (getValue() != null) {
-                            map.put(Firebase.VALUE, "[" + getValue().getClass().getSimpleName() + "]");
-                        }
-                        refAccounts.child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValueAsync(map);
-                        Misc.log("StatisticsAccount", "register", accountId, "with action", getAction());
-//                    }
-//                    clear();
-//                }
-//            }).start();
-
+            if (getValue() instanceof Boolean) {
+                map.put(Firebase.VALUE, getValue());
+            } else if (getValue() instanceof Number) {
+                map.put(Firebase.VALUE, getValue());
+            } else if (getValue() instanceof String) {
+                if (((String) getValue()).length() < 50) {
+                    map.put(Firebase.VALUE, getValue());
+                } else {
+                    map.put(Firebase.VALUE, ((String) getValue()).substring(0, 40) + "...");
+                }
+            } else if (getValue() instanceof ArrayList) {
+                map.put(Firebase.VALUE, "Array(" + ((ArrayList) getValue()).size() + ")");
+            } else if (getValue() != null) {
+                map.put(Firebase.VALUE, "[" + getValue().getClass().getSimpleName() + "]");
+            }
+            refAccounts.child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValueAsync(map);
+            Misc.log("StatisticsAccount", "register", accountId, "with action", getAction());
         } else {
             clear();
         }
-//        json.put(STATUS, STATUS_SUCCESS);
     }
 
     public StatisticsAccount clear() {

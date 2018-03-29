@@ -1,7 +1,6 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
@@ -42,63 +41,54 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
                 .call(null, map);
 
         Misc.log("ValidateGroups", "is performing");
-        new TaskSingleValueEventFor<JSONObject>(refGroups.child("/"))
-                .setFirebaseRest()
-                .addOnCompleteListener(new Runnable1<JSONObject>() {
-            @Override
-            public void call(JSONObject groups) {
-                try {
-                    Misc.log("ValidateGroups", "found groups:", groups.length() + ", checking online users");
+        new TaskSingleValueEventFor<JSONObject>(refGroups.child("/")).setFirebaseRest().addOnCompleteListener(jsonGroups -> {
+            try {
+                Misc.log("ValidateGroups", "found groups:", jsonGroups.length() + ", checking online users");
 
-                    Iterator<String> iter = groups.keys();
-                    while (iter.hasNext()) {
-                        final String group = iter.next();
-                        if (group.startsWith("_") || "overview".equals(group)) {
-                            Misc.log("ValidateGroups", "skips:", group);
-                            continue;
+                Iterator<String> iter = jsonGroups.keys();
+                while (iter.hasNext()) {
+                    final String group = iter.next();
+                    if (group.startsWith("_") || "overview".equals(group)) {
+                        Misc.log("ValidateGroups", "skips:", group);
+                        continue;
+                    }
+
+                    new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Firebase.OPTIONS)).addOnCompleteListener(dataSnapshot -> {
+                        Map value = (Map) dataSnapshot.getValue();
+
+                        GroupRequest groupRequest = new GroupRequest(group);
+
+                        if (value == null) {
+                            Misc.log("ValidateGroups", "removes lost group");
+                            refGroups.child(group).removeValueAsync();
+                            ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
+                                    .setAction(AbstractDataProcessor.Action.GROUP_DELETED)
+                                    .setMessage("lost group removing: " + group)
+                                    .call(null, groupRequest);
+                            return;
                         }
 
-                        new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Firebase.OPTIONS))
-                                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                                    @Override
-                                    public void call(DataSnapshot dataSnapshot) {
-                                        Map value = (Map) dataSnapshot.getValue();
+                        Object object = value.get(Firebase.REQUIRES_PASSWORD);
+                        groupRequest.setRequiresPassword(object != null && (boolean) object);
 
-                                        GroupRequest groupRequest = new GroupRequest(group);
+                        object = value.get(Firebase.DISMISS_INACTIVE);
+                        groupRequest.setDismissInactive(object != null && (boolean) object);
 
-                                        if (value == null) {
-                                            Misc.log("ValidateGroups", "removes lost group");
-                                            refGroups.child(group).removeValueAsync();
-                                            ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                                                    .setAction(AbstractDataProcessor.Action.GROUP_DELETED)
-                                                    .setMessage("lost group removing: " + group)
-                                                    .call(null, groupRequest);
-                                            return;
-                                        }
+                        object = value.get(Firebase.PERSISTENT);
+                        groupRequest.setPersistent(object != null && (boolean) object);
 
-                                        Object object = value.get(Firebase.REQUIRES_PASSWORD);
-                                        groupRequest.setRequiresPassword(object != null && (boolean) object);
+                        object = value.get(Firebase.DELAY_TO_DISMISS);
+                        groupRequest.setDelayToDismiss(object != null ? Long.parseLong("0" + object.toString()) : 0);
 
-                                        object = value.get(Firebase.DISMISS_INACTIVE);
-                                        groupRequest.setDismissInactive(object != null && (boolean) object);
+                        object = value.get(Firebase.TIME_TO_LIVE_IF_EMPTY);
+                        groupRequest.setTimeToLiveIfEmpty(object != null ? Long.parseLong("0" + object.toString()) : 0);
 
-                                        object = value.get(Firebase.PERSISTENT);
-                                        groupRequest.setPersistent(object != null && (boolean) object);
-
-                                        object = value.get(Firebase.DELAY_TO_DISMISS);
-                                        groupRequest.setDelayToDismiss(object != null ? Long.parseLong("0" + object.toString()) : 0);
-
-                                        object = value.get(Firebase.TIME_TO_LIVE_IF_EMPTY);
-                                        groupRequest.setTimeToLiveIfEmpty(object != null ? Long.parseLong("0" + object.toString()) : 0);
-
-                                        new ValidateUsers()
-                                                .call(null, groupRequest);
-                                    }
-                                }).start();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                        new ValidateUsers()
+                                .call(null, groupRequest);
+                    }).start();
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }).start();
 
@@ -222,6 +212,5 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
             e.printStackTrace();
         }*/
 
-//        json.put(STATUS, STATUS_SUCCESS);
     }
 }

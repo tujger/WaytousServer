@@ -78,7 +78,6 @@ public class StatisticsUser extends AbstractFirebaseAction<StatisticsUser, Strin
                     .setMessage(getMessage())
                     .call(null, map);
         }
-
         clear();
     }
 

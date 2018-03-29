@@ -1,7 +1,6 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyUser;
@@ -40,104 +39,86 @@ public class JoinGroup extends AbstractFirebaseAction<JoinGroup, UserRequest> {
             final DatabaseReference refGroup = refGroups.child(userRequest.getGroupId());
             final TaskSingleValueEventFor[] requestDataPrivateTask = new TaskSingleValueEventFor[1];
             final GroupRequest groupRequest = new GroupRequest();
-            requestDataPrivateTask[0] = new TaskSingleValueEventFor<DataSnapshot>().addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                @Override
-                public void call(DataSnapshot dataSnapshot) {
+            requestDataPrivateTask[0] = new TaskSingleValueEventFor<DataSnapshot>().addOnCompleteListener(dataSnapshot -> {
 
-                    int count = 1;
-                    boolean found = false;
-                    Object value = dataSnapshot.getValue();
+                int count = 1;
+                boolean found = false;
+                Object value = dataSnapshot.getValue();
 
-                    if (value == null) {
-                        dataSnapshot.getRef().push().setValue(userRequest.getUid());
-                        requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
-                        return;
+                if (value == null) {
+                    dataSnapshot.getRef().push().setValue(userRequest.getUid());
+                    requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
+                    return;
+                }
+
+                //noinspection unchecked
+                TreeMap<String, String> map = new TreeMap<>((HashMap<String, String>) dataSnapshot.getValue());
+
+                for (Map.Entry<String, String> x : map.entrySet()) {
+                    if (userRequest.getUid().equals(x.getValue())) {
+                        found = true;
+                        break;
                     }
-
-                    //noinspection unchecked
-                    TreeMap<String, String> map = new TreeMap<>((HashMap<String, String>) dataSnapshot.getValue());
-
-                    for (Map.Entry<String, String> x : map.entrySet()) {
-                        if (userRequest.getUid().equals(x.getValue())) {
-                            found = true;
-                            break;
-                        }
-                        ++count;
-                    }
-                    if (found) {
-                        userRequest.setNumber(count);
-                        final MyUser user = userRequest.fetchUser();
-                        ((CreateAccount) getFireBus().getHolder(CreateAccount.TYPE))
-                                .setOnSuccess(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
-                                                .setGroupId(userRequest.getGroupId())
-                                                .setAction(REQUEST_JOIN_GROUP)
-                                                .call(null, user);
-                                    }
-                                }).setOnError(new Runnable1<Throwable>() {
-                            @Override
-                            public void call(Throwable error) {
-                                ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
-                                        .setUserRequest(userRequest)
-                                        .call(json,"Cannot create group (code 17).");
-                            }
-                        }).call(null, user);
+                    ++count;
+                }
+                if (found) {
+                    userRequest.setNumber(count);
+                    final MyUser user = userRequest.fetchUser();
+                    ((CreateAccount) getFireBus().getHolder(CreateAccount.TYPE)).setOnSuccess(() -> {
+                        ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
+                                .setGroupId(userRequest.getGroupId())
+                                .setAction(REQUEST_JOIN_GROUP)
+                                .call(null, user);
+                    }).setOnError(error -> {
+                        ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                                .setUserRequest(userRequest)
+                                .call(json,"Cannot create group (code 17).");
+                    }).call(null, user);
+                } else {
+                    if(groupRequest.getLimitUsers() > 0 && count > groupRequest.getLimitUsers()) {
+                        ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                                .setUserRequest(userRequest)
+                                .call(json,"Sorry, group is full.");
                     } else {
-                        if(groupRequest.getLimitUsers() > 0 && count > groupRequest.getLimitUsers()) {
-                            ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
-                                    .setUserRequest(userRequest)
-                                    .call(json,"Sorry, group is full.");
-                        } else {
-                            DatabaseReference nodeNumber = refGroups.child(userRequest.getGroupId()).child(Firebase.USERS).child(Firebase.QUEUE).push();
-                            nodeNumber.setValue(userRequest.getUid());
-                            requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
-                        }
+                        DatabaseReference nodeNumber = refGroups.child(userRequest.getGroupId()).child(Firebase.USERS).child(Firebase.QUEUE).push();
+                        nodeNumber.setValue(userRequest.getUid());
+                        requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
                     }
                 }
             });
 
-            final TaskSingleValueEventFor numberForKeyTask = new TaskSingleValueEventFor<DataSnapshot>()
-                    .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                        @Override
-                        public void call(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.getValue() != null) { //join as existing member, go to check
-                                userRequest.setNumber(Integer.parseInt(dataSnapshot.getValue().toString()));
+            final TaskSingleValueEventFor numberForKeyTask = new TaskSingleValueEventFor<DataSnapshot>().addOnCompleteListener(dataSnapshot -> {
+                if (dataSnapshot.getValue() != null) { //join as existing member, go to check
+                    userRequest.setNumber(Integer.parseInt(dataSnapshot.getValue().toString()));
 
-                                Misc.log("JoinGroup", "checks request:", userRequest);
+                    Misc.log("JoinGroup", "checks request:", userRequest);
 
-                                json.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
-                                json.put(RESPONSE_CONTROL, userRequest.getControl());
-                                try {
-                                    userRequest.send(json.toString());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            } else { // join as new member
-                                requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
-                            }
-                        }
-                    });
+                    json.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
+                    json.put(RESPONSE_CONTROL, userRequest.getControl());
+                    try {
+                        userRequest.send(json.toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else { // join as new member
+                    requestDataPrivateTask[0].setRef(refGroup.child(Firebase.USERS).child(Firebase.QUEUE)).start();
+                }
+            });
 
-            TaskSingleValueEventFor groupOptionsTask = new TaskSingleValueEventFor<DataSnapshot>()
-                    .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                        @Override
-                        public void call(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.getValue() != null) {
-                                try {
-                                    groupRequest.setLimitUsers(Integer.parseInt(String.valueOf(((HashMap) dataSnapshot.getValue()).get(LIMIT_USERS))));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                numberForKeyTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.KEYS).child(userRequest.getUid())).start();
-                            } else {
-                                ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
-                                        .setUserRequest(userRequest)
-                                        .call(json,"This group is expired. (001)");
-                            }
-                        }
-                    });
+            TaskSingleValueEventFor groupOptionsTask = new TaskSingleValueEventFor<DataSnapshot>().addOnCompleteListener(dataSnapshot -> {
+                if (dataSnapshot.getValue() != null) {
+                    try {
+                        groupRequest.setLimitUsers(Integer.parseInt(String.valueOf(((HashMap) dataSnapshot.getValue()).get(LIMIT_USERS))));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    numberForKeyTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.KEYS).child(userRequest.getUid())).start();
+                } else {
+                    ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                            .setUserRequest(userRequest)
+                            .call(json,"This group is expired. (001)");
+                }
+            });
 
             if (userRequest.getUid() != null) {
                 Misc.log("JoinGroup", "joining:", userRequest);

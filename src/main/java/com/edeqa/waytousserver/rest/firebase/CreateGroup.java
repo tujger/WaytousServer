@@ -41,71 +41,67 @@ public class CreateGroup extends AbstractFirebaseAction<CreateGroup, GroupReques
 
         Misc.log("CreateGroup", "creating:", group.getId());
 
-        new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group.getId()))
-                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
+        new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group.getId())).addOnCompleteListener(dataSnapshot -> {
+            if (dataSnapshot.getValue() == null) {
+                Map<String, Object> childUpdates = new HashMap<>();
+                childUpdates.put(Firebase.OPTIONS + "/" + Firebase.WELCOME_MESSAGE, group.getWelcomeMessage());
+                childUpdates.put(Firebase.OPTIONS + "/" + Firebase.REQUIRES_PASSWORD, group.isRequiresPassword());
+                childUpdates.put(Firebase.OPTIONS + "/" + Firebase.TIME_TO_LIVE_IF_EMPTY, group.getTimeToLiveIfEmpty());
+                childUpdates.put(Firebase.OPTIONS + "/" + Firebase.PERSISTENT, group.isPersistent());
+                childUpdates.put(Firebase.OPTIONS + "/" + Firebase.DISMISS_INACTIVE, group.isDismissInactive());
+                childUpdates.put(Firebase.OPTIONS + "/" + Firebase.DELAY_TO_DISMISS, group.getDelayToDismiss());
+                childUpdates.put(Firebase.OPTIONS + "/" + Firebase.LIMIT_USERS, group.getLimitUsers());
+                childUpdates.put(Firebase.OPTIONS + "/" + Firebase.CREATED, ServerValue.TIMESTAMP);
+                childUpdates.put(Firebase.OPTIONS + "/" + Firebase.CHANGED, ServerValue.TIMESTAMP);
+
+                ApiFuture<Void> task = refGroups.child(group.getId()).updateChildrenAsync(childUpdates);
+                ApiFutures.addCallback(task, new ApiFutureCallback<Void>() {
                     @Override
-                    public void call(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.getValue() == null) {
-                            Map<String, Object> childUpdates = new HashMap<>();
-                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.WELCOME_MESSAGE, group.getWelcomeMessage());
-                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.REQUIRES_PASSWORD, group.isRequiresPassword());
-                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.TIME_TO_LIVE_IF_EMPTY, group.getTimeToLiveIfEmpty());
-                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.PERSISTENT, group.isPersistent());
-                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.DISMISS_INACTIVE, group.isDismissInactive());
-                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.DELAY_TO_DISMISS, group.getDelayToDismiss());
-                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.LIMIT_USERS, group.getLimitUsers());
-                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.CREATED, ServerValue.TIMESTAMP);
-                            childUpdates.put(Firebase.OPTIONS + "/" + Firebase.CHANGED, ServerValue.TIMESTAMP);
-
-                            ApiFuture<Void> task = refGroups.child(group.getId()).updateChildrenAsync(childUpdates);
-                            ApiFutures.addCallback(task, new ApiFutureCallback<Void>() {
-                                @Override
-                                public void onFailure(Throwable t) {
-                                    json.put(STATUS, STATUS_ERROR);
-                                    json.put(Rest.GROUP_ID, group.getId());
-                                    json.put(MESSAGE, "Group " + group.getId() + " already exists.");
-                                    Misc.err("CreateGroup", group.getId(), t.getMessage());
-                                    if (getOnError() != null) getOnError().call(json);
-                                    ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                                            .setAction(AbstractDataProcessor.Action.GROUP_REJECTED)
-                                            .setMessage(t.getMessage())
-                                            .call(null, group);
-                                }
-
-                                @Override
-                                public void onSuccess(Void result) {
-                                    json.put(STATUS, STATUS_SUCCESS);
-                                    json.put(Rest.GROUP_ID, group.getId());
-                                    getOnSuccess().call(json);
-                                    ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                                            .setAction(group.isPersistent() ? AbstractDataProcessor.Action.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.Action.GROUP_CREATED_TEMPORARY)
-                                            .call(null, group);
-                                }
-                            });
-
-                            /*refGroups.child(group.getId()).updateChildren(childUpdates);
-
-                            json.put(STATUS, STATUS_SUCCESS);
-                            json.put(Rest.GROUP_ID, group.getId());
-
-                            getOnSuccess().call(json);
-
-                            ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                                    .setAction(group.isPersistent() ? AbstractDataProcessor.GroupAction.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.GroupAction.GROUP_CREATED_TEMPORARY)
-                                    .call(null, group);*/
-                        } else {
-                            json.put(STATUS, STATUS_ERROR);
-                            json.put(Rest.GROUP_ID, group.getId());
-                            json.put(MESSAGE, "Group " + group.getId() + " already exists.");
-                            Misc.err("CreateGroup", group.getId(), "not created, already exists");
-                            if (getOnError() != null) getOnError().call(json);
-                            ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
-                                    .setAction(AbstractDataProcessor.Action.GROUP_REJECTED)
-                                    .setMessage("already exists")
-                                    .call(null, group);
-                        }
+                    public void onFailure(Throwable t) {
+                        json.put(STATUS, STATUS_ERROR);
+                        json.put(Rest.GROUP_ID, group.getId());
+                        json.put(MESSAGE, "Group " + group.getId() + " already exists.");
+                        Misc.err("CreateGroup", group.getId(), t.getMessage());
+                        if (getOnError() != null) getOnError().call(json);
+                        ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
+                                .setAction(AbstractDataProcessor.Action.GROUP_REJECTED)
+                                .setMessage(t.getMessage())
+                                .call(null, group);
                     }
-                }).start();
+
+                    @Override
+                    public void onSuccess(Void result) {
+                        json.put(STATUS, STATUS_SUCCESS);
+                        json.put(Rest.GROUP_ID, group.getId());
+                        getOnSuccess().call(json);
+                        ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
+                                .setAction(group.isPersistent() ? AbstractDataProcessor.Action.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.Action.GROUP_CREATED_TEMPORARY)
+                                .call(null, group);
+                    }
+                });
+
+                /*refGroups.child(group.getId()).updateChildren(childUpdates);
+
+                json.put(STATUS, STATUS_SUCCESS);
+                json.put(Rest.GROUP_ID, group.getId());
+
+                getOnSuccess().call(json);
+
+                ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
+                        .setAction(group.isPersistent() ? AbstractDataProcessor.GroupAction.GROUP_CREATED_PERSISTENT : AbstractDataProcessor.GroupAction.GROUP_CREATED_TEMPORARY)
+                        .call(null, group);*/
+            } else {
+                json.put(STATUS, STATUS_ERROR);
+                json.put(Rest.GROUP_ID, group.getId());
+                json.put(MESSAGE, "Group " + group.getId() + " already exists.");
+                Misc.err("CreateGroup", group.getId(), "not created, already exists");
+                if (getOnError() != null) getOnError().call(json);
+                ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
+                        .setAction(AbstractDataProcessor.Action.GROUP_REJECTED)
+                        .setMessage("already exists")
+                        .call(null, group);
+            }
+        }).start();
     }
 
     public Runnable1<JSONObject> getOnSuccess() {

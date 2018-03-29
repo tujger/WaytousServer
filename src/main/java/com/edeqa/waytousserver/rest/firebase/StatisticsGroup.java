@@ -57,17 +57,13 @@ public class StatisticsGroup extends AbstractFirebaseAction<StatisticsGroup, Gro
         refToday.runTransaction(incrementValue);
         refTotal.runTransaction(incrementValue);
 
-//        if(getMessage() != null && getMessage().length() > 0) {
-            Map<String, String> map = new HashMap<>();
-            map.put("group", groupRequest.getId());
-            map.put("action", getAction().toString());
+        Map<String, String> map = new HashMap<>();
+        map.put("group", groupRequest.getId());
+        map.put("action", getAction().toString());
         ((StatisticsMessage) getFireBus().getHolder(StatisticsMessage.TYPE))
-                    .setMessage(getMessage())
-                    .call(null, map);
-//        }
+                .setMessage(getMessage())
+                .call(null, map);
         clear();
-
-//        json.put(STATUS, STATUS_SUCCESS);
     }
 
     public StatisticsGroup clear() {

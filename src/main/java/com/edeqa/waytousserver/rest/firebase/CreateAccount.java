@@ -48,46 +48,40 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
         TaskSingleValueEventFor createAccountTask = new TaskSingleValueEventFor<JSONObject>()
                 .setRef(refAccounts.child(user.getUid()))
                 .ifExists()
-                .addOnSuccessListener(new Runnable1<JSONObject>() {
-                    @Override
-                    public void call(JSONObject dataSnapshot) {
-                        Map<String, Object> accountPrivateData = new HashMap<>();
+                .addOnSuccessListener(dataSnapshot -> {
+                    Map<String, Object> accountPrivateData = new HashMap<>();
 
-                        if (user.getName() != null && user.getName().length() > 0) {
-                            accountPrivateData.put(Firebase.NAME, user.getName());
-                        }
-                        if (user.getSignProvider() != null) {
-                            accountPrivateData.put(REQUEST_SIGN_PROVIDER, user.getSignProvider().toString());
-                        }
-                        accountPrivateData.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
+                    if (user.getName() != null && user.getName().length() > 0) {
+                        accountPrivateData.put(Firebase.NAME, user.getName());
+                    }
+                    if (user.getSignProvider() != null) {
+                        accountPrivateData.put(REQUEST_SIGN_PROVIDER, user.getSignProvider().toString());
+                    }
+                    accountPrivateData.put(Firebase.CHANGED, ServerValue.TIMESTAMP);
 
-                        if (dataSnapshot == null) {
-                            accountPrivateData.put(REQUEST_MODEL, user.getModel());
-                            accountPrivateData.put(REQUEST_OS, user.getOs());
-                            accountPrivateData.put(Firebase.CREATED, ServerValue.TIMESTAMP);
-                            Misc.log("CreateAccount", "created for uid:", user.getUid(), accountPrivateData);
+                    if (dataSnapshot == null) {
+                        accountPrivateData.put(REQUEST_MODEL, user.getModel());
+                        accountPrivateData.put(REQUEST_OS, user.getOs());
+                        accountPrivateData.put(Firebase.CREATED, ServerValue.TIMESTAMP);
+                        Misc.log("CreateAccount", "created for uid:", user.getUid(), accountPrivateData);
 
-                            ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
-                                    .setAction(ACCOUNT_CREATED)
-                                    .call(null, user.getUid());
-                        } else {
-                            Misc.log("CreateAccount", "updating for uid:", user.getUid(), accountPrivateData);
-                        }
-                        ApiFuture<Void> updateAccountTask = refAccounts.child(user.getUid()).child(Firebase.PRIVATE).updateChildrenAsync(accountPrivateData);
-                        try {
-                            updateAccountTask.get();
-                        } catch (Exception e) {
-                            Misc.err("CreateAccount", "failed for uid:", user.getUid(), e);
-                            getOnError().call(e);
-                        }
+                        ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
+                                .setAction(ACCOUNT_CREATED)
+                                .call(null, user.getUid());
+                    } else {
+                        Misc.log("CreateAccount", "updating for uid:", user.getUid(), accountPrivateData);
+                    }
+                    ApiFuture<Void> updateAccountTask = refAccounts.child(user.getUid()).child(Firebase.PRIVATE).updateChildrenAsync(accountPrivateData);
+                    try {
+                        updateAccountTask.get();
+                    } catch (Exception e) {
+                        Misc.err("CreateAccount", "failed for uid:", user.getUid(), e);
+                        getOnError().call(e);
                     }
                 })
-                .addOnFailureListener(new Runnable1<Throwable>() {
-                    @Override
-                    public void call(Throwable error) {
-                        Misc.err("CreateAccount", "failed for uid:", user.getUid(), error);
-                        getOnError().call(error);
-                    }
+                .addOnFailureListener(error -> {
+                    Misc.err("CreateAccount", "failed for uid:", user.getUid(), error);
+                    getOnError().call(error);
                 });
         createAccountTask.start();
     }

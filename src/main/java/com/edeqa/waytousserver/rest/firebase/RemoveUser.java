@@ -10,7 +10,6 @@ import com.edeqa.waytousserver.servers.AbstractDataProcessor;
 import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.internal.NonNull;
 import com.google.firebase.tasks.OnFailureListener;
 
 import org.json.JSONObject;
@@ -47,63 +46,54 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
         res.put(Rest.GROUP_ID, getGroupId());
         res.put(Rest.USER_NUMBER, getUserNumber());
 
-        final OnFailureListener onFailureListener = new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                res.put(STATUS, STATUS_ERROR);
-                res.put(MESSAGE, e.getMessage());
-                Misc.log("RemoveUser", getUserNumber(), "from group", getGroupId(), "failed:", e.getMessage());
-                getOnError().call(res);
-            }
+        final OnFailureListener onFailureListener = error -> {
+            res.put(STATUS, STATUS_ERROR);
+            res.put(MESSAGE, error.getMessage());
+            Misc.log("RemoveUser", getUserNumber(), "from group", getGroupId(), "failed:", error.getMessage());
+            getOnError().call(res);
         };
 
         new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.PRIVATE).child(String.valueOf(getUserNumber())).child(REQUEST_UID))
-                .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                    @Override
-                    public void call(DataSnapshot data) {
+                .addOnCompleteListener(dataSnapshot -> {
 
-                        final Object value = data.getValue();
+                    final Object value = dataSnapshot.getValue();
 
-                        if (value != null && value instanceof String) {
-                            new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.QUEUE))
-                                    .addOnCompleteListener(new Runnable1<DataSnapshot>() {
-                                        @Override
-                                        public void call(DataSnapshot data) {
-                                            for(DataSnapshot x: data.getChildren()) {
-                                                if(x.getValue().equals(value)) {
-                                                    Map<String,Object> updates = new HashMap<>();
-                                                    updates.put(Firebase.USERS + "/" + Firebase.PUBLIC + "/" + getUserNumber(), null);
-                                                    updates.put(Firebase.USERS + "/" + Firebase.QUEUE + "/" + x.getKey(), "removed:" + x.getValue());
-                                                    updates.put(Firebase.USERS + "/" + Firebase.PRIVATE + "/" + getUserNumber(), null);
-                                                    updates.put(Firebase.USERS + "/" + Firebase.KEYS + "/" + value.toString(), null);
+                    if (value != null && value instanceof String) {
+                        new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.QUEUE))
+                                .addOnCompleteListener(dataQueue -> {
+                                    for(DataSnapshot x: dataQueue.getChildren()) {
+                                        if(x.getValue().equals(value)) {
+                                            Map<String,Object> updates = new HashMap<>();
+                                            updates.put(Firebase.USERS + "/" + Firebase.PUBLIC + "/" + getUserNumber(), null);
+                                            updates.put(Firebase.USERS + "/" + Firebase.QUEUE + "/" + x.getKey(), "removed:" + x.getValue());
+                                            updates.put(Firebase.USERS + "/" + Firebase.PRIVATE + "/" + getUserNumber(), null);
+                                            updates.put(Firebase.USERS + "/" + Firebase.KEYS + "/" + value.toString(), null);
 
-                                                    for (Map.Entry<String,AbstractTrackingAction> entry : getTrackingBus().getHolders().entrySet()) {
-                                                        if (entry.getValue().isSaveable()) {
-                                                            updates.put(Firebase.PUBLIC + "/" + entry.getKey() + "/" + getUserNumber(), null);
-                                                        }
-                                                    }
-
-                                                    ApiFuture<Void> removeUserTask = refGroups.child(getGroupId()).updateChildrenAsync(updates);
-                                                    try {
-                                                        removeUserTask.get();
-                                                        res.put(STATUS, STATUS_SUCCESS);
-                                                        Misc.log("RemoveUser", getUserNumber(), "[" + value.toString() + "]", "removed from group", getGroupId());
-                                                        getOnSuccess().call(res);
-                                                        ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
-                                                                .setGroupId(getGroupId())
-                                                                .setAction(AbstractDataProcessor.Action.USER_REMOVED)
-                                                                .call(null, value.toString());
-
-                                                    } catch (InterruptedException | ExecutionException e) {
-                                                        onFailureListener.onFailure(e);
-                                                    }
+                                            for (Map.Entry<String,AbstractTrackingAction> entry : getTrackingBus().getHolders().entrySet()) {
+                                                if (entry.getValue().isSaveable()) {
+                                                    updates.put(Firebase.PUBLIC + "/" + entry.getKey() + "/" + getUserNumber(), null);
                                                 }
                                             }
+
+                                            ApiFuture<Void> removeUserTask = refGroups.child(getGroupId()).updateChildrenAsync(updates);
+                                            try {
+                                                removeUserTask.get();
+                                                res.put(STATUS, STATUS_SUCCESS);
+                                                Misc.log("RemoveUser", getUserNumber(), "[" + value.toString() + "]", "removed from group", getGroupId());
+                                                getOnSuccess().call(res);
+                                                ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
+                                                        .setGroupId(getGroupId())
+                                                        .setAction(AbstractDataProcessor.Action.USER_REMOVED)
+                                                        .call(null, value.toString());
+
+                                            } catch (InterruptedException | ExecutionException e) {
+                                                onFailureListener.onFailure(e);
+                                            }
                                         }
-                                    }).start();
-                        } else {
-                            onFailureListener.onFailure(new Exception("User not found."));
-                        }
+                                    }
+                                }).start();
+                    } else {
+                        onFailureListener.onFailure(new Exception("User not found."));
                     }
                 }).start();
     }

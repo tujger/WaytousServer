@@ -30,69 +30,45 @@ public class NewGroup extends AbstractFirebaseAction<NewGroup, GroupRequest> {
     public void call(final JSONObject json, final GroupRequest groupRequest) {
 
         Misc.log("NewGroup", "from", getUserRequest());
-        ((CreateAccount) getFireBus().getHolder(CreateAccount.TYPE))
-                .setOnSuccess(new Runnable() {
-                    @Override
-                    public void run() {
-                        //noinspection unchecked
-                        final Runnable1<JSONObject>[] onresult = new Runnable1[3];
-                        onresult[0] = new Runnable1<JSONObject>() {
-                            @Override
-                            public void call(JSONObject json) {
-
-                                ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
-                                        .setGroupId(groupRequest.getId())
-                                        .setAction(REQUEST_NEW_GROUP)
-                                        .setOnSuccess(new Runnable1<JSONObject>() {
-                                            @Override
-                                            public void call(JSONObject json) {
-                                                getUserRequest().send(json.toString());
-                                                getUserRequest().close();
-                                            }
-                                        })
-                                        .setOnError(new Runnable1<JSONObject>() {
-                                            @Override
-                                            public void call(JSONObject json) {
-                                                getUserRequest().send(json.toString());
-                                                getUserRequest().close();
-                                            }
-                                        })
-                                        .call(null, getUserRequest().fetchUser());
-                            }
-                        };
-                        onresult[1] = new Runnable1<JSONObject>() {
-                            @Override
-                            public void call(JSONObject json) {
-                                groupRequest.fetchNewId();
-                                onresult[2].call(json);
-                            }
-                        };
-                        onresult[2] = new Runnable1<JSONObject>() {
-                            @Override
-                            public void call(JSONObject arg) {
-                                ((CreateGroup) getFireBus().getHolder(CreateGroup.TYPE))
-                                        .setOnSuccess(onresult[0])
-                                        .setOnError(onresult[1])
-                                        .call(arg, groupRequest);
-                                ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
-                                        .setAction(AbstractDataProcessor.Action.GROUP_CREATED_TEMPORARY)
-                                        .setKey("group")
-                                        .setValue(groupRequest.getId())
-                                        .call(null, getUserRequest().getUid());
-
-                            }
-                        };
-                        onresult[2].call(new JSONObject());
-                    }
+        ((CreateAccount) getFireBus().getHolder(CreateAccount.TYPE)).setOnSuccess(() -> {
+                    //noinspection unchecked
+                    final Runnable1<JSONObject>[] onresult = new Runnable1[3];
+                    onresult[0] = jsonRequestNewGroup -> {
+                        ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
+                                .setGroupId(groupRequest.getId())
+                                .setAction(REQUEST_NEW_GROUP)
+                                .setOnSuccess(jsonSuccess -> {
+                                    getUserRequest().send(jsonSuccess.toString());
+                                    getUserRequest().close();
+                                })
+                                .setOnError(jsonError -> {
+                                    getUserRequest().send(jsonError.toString());
+                                    getUserRequest().close();
+                                })
+                                .call(null, getUserRequest().fetchUser());
+                    };
+                    onresult[1] = jsonFetchNewId -> {
+                        groupRequest.fetchNewId();
+                        onresult[2].call(jsonFetchNewId);
+                    };
+                    onresult[2] = jsonGroupCreated -> {
+                        ((CreateGroup) getFireBus().getHolder(CreateGroup.TYPE))
+                                .setOnSuccess(onresult[0])
+                                .setOnError(onresult[1])
+                                .call(jsonGroupCreated, groupRequest);
+                        ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
+                                .setAction(AbstractDataProcessor.Action.GROUP_CREATED_TEMPORARY)
+                                .setKey("group")
+                                .setValue(groupRequest.getId())
+                                .call(null, getUserRequest().getUid());
+                    };
+                    onresult[2].call(new JSONObject());
                 })
-                .setOnError(new Runnable1<Throwable>() {
-                    @Override
-                    public void call(Throwable error) {
-                        System.out.println("FAULT");
-                        ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
-                                .setUserRequest(getUserRequest())
-                                .call(json,"Cannot create group (code 16).");
-                    }
+                .setOnError(error -> {
+                    System.out.println("FAULT");
+                    ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                            .setUserRequest(getUserRequest())
+                            .call(json,"Cannot create group (code 16).");
                 })
                 .call(null, getUserRequest().fetchUser());
     }

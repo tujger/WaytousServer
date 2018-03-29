@@ -3,7 +3,6 @@ package com.edeqa.waytousserver.rest.admin;
 import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytousserver.helpers.Common;
 
 import org.json.JSONObject;
@@ -24,20 +23,14 @@ public class StatClean extends AbstractAction<RequestWrapper> {
 
         //noinspection HardCodedStringLiteral
         Misc.log(StatClean.this.getClass().getSimpleName(), "started");
-        Common.getInstance().getDataProcessor().cleanStatisticsMessages(new Runnable1<JSONObject>() {
-            @Override
-            public void call(JSONObject json) {
-                Misc.log(StatClean.this.getClass().getSimpleName(), "done");
-                request.sendResult(json);
-            }
-        }, new Runnable1<JSONObject>() {
-            @Override
-            public void call(JSONObject json) {
-                Misc.err(StatClean.this.getClass().getSimpleName(), "failed");
-                json.put(STATUS, STATUS_ERROR);
-                json.put(MESSAGE, "Messages cleaning failed.");
-                request.sendError(500, json);
-            }
+        Common.getInstance().getDataProcessor().cleanStatisticsMessages(jsonSuccess -> {
+            Misc.log(StatClean.this.getClass().getSimpleName(), "done");
+            request.sendResult(jsonSuccess);
+        }, jsonError -> {
+            Misc.err(StatClean.this.getClass().getSimpleName(), "failed");
+            jsonError.put(STATUS, STATUS_ERROR);
+            jsonError.put(MESSAGE, "Messages cleaning failed.");
+            request.sendError(500, jsonError);
         });
     }
 }
