@@ -5,11 +5,13 @@
   "contact": "Contact",
   "copyright": "Waytous &copy;2017-18 Edeqa",
   "docs": "Docs",
+  "drawer_last": "Info",
   "feedback_body": "\nFeedback is coming soon.",
   "help_body": "\nHelp is coming soon.",
   "signing_in": "Signing in...",
   "site_is_under_construction": "Under construction.",
   "start": "Start",
   "support_body": "\nSupport is coming soon.",
+  "title": "Waytous",
   "track": "Track"
 }
