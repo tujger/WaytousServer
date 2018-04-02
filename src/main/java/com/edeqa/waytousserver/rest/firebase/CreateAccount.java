@@ -49,6 +49,7 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
                 .setRef(refAccounts.child(user.getUid()))
                 .ifExists()
                 .addOnSuccessListener(dataSnapshot -> {
+
                     Map<String, Object> accountPrivateData = new HashMap<>();
 
                     if (user.getName() != null && user.getName().length() > 0) {

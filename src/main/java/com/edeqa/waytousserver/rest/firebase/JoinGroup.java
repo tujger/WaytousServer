@@ -2,6 +2,7 @@ package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytous.Firebase;
+import com.edeqa.waytousserver.helpers.FirebaseGroup;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
@@ -19,7 +20,6 @@ import static com.edeqa.waytous.Constants.REQUEST_JOIN_GROUP;
 import static com.edeqa.waytous.Constants.RESPONSE_CONTROL;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS;
 import static com.edeqa.waytous.Constants.RESPONSE_STATUS_CHECK;
-import static com.edeqa.waytous.Firebase.LIMIT_USERS;
 
 @SuppressWarnings("unused")
 public class JoinGroup extends AbstractFirebaseAction<JoinGroup, UserRequest> {
@@ -106,9 +106,10 @@ public class JoinGroup extends AbstractFirebaseAction<JoinGroup, UserRequest> {
             });
 
             TaskSingleValueEventFor groupOptionsTask = new TaskSingleValueEventFor<DataSnapshot>().addOnCompleteListener(dataSnapshot -> {
+                FirebaseGroup group = dataSnapshot.getValue(FirebaseGroup.class);
                 if (dataSnapshot.getValue() != null) {
                     try {
-                        groupRequest.setLimitUsers(Integer.parseInt(String.valueOf(((HashMap) dataSnapshot.getValue()).get(LIMIT_USERS))));
+                        groupRequest.setLimitUsers(group.limitUsers);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

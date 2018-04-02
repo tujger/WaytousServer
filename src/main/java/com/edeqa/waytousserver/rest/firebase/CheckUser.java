@@ -2,6 +2,7 @@ package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytous.Firebase;
+import com.edeqa.waytousserver.helpers.FirebaseUser;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.helpers.UserRequest;
@@ -47,9 +48,12 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
             final DatabaseReference refGroup = refGroups.child(userRequest.getGroupId());
 
             final TaskSingleValueEventFor userCheckTask = new TaskSingleValueEventFor<DataSnapshot>().addOnCompleteListener(dataSnapshot -> {
-                if (dataSnapshot.getValue() != null) { //join as existing member
+
+                FirebaseUser user = dataSnapshot.getValue(FirebaseUser.class);
+
+                if (user.uid != null) { //join as existing member
                     try {
-                        if (userRequest.checkControl((String) ((HashMap) dataSnapshot.getValue()).get(REQUEST_UID), getHash())) {
+                        if (userRequest.checkControl(user.uid, getHash())) {
                             Misc.log("CheckUser", "as existing:", userRequest);
 
                             try {
@@ -125,7 +129,6 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
                     Misc.log("CheckUser", "found number:", userRequest, "number:", dataSnapshot.getValue().toString());
                     userRequest.setNumber(Integer.parseInt(dataSnapshot.getValue().toString()));
                     userCheckTask.setRef(refGroup.child(Firebase.USERS).child(Firebase.PRIVATE).child(dataSnapshot.getValue().toString())).start();
-
                 } else {
                     Misc.err("CheckUser", "number not found:", userRequest);
                     ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))

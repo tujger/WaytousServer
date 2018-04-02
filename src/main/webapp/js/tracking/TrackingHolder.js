@@ -468,7 +468,7 @@ function TrackingHolder(main) {
     function synchronizeTosConfirmation() {
         var sync = new utils.sync({
             type: utils.sync.Type.ACCOUNT_PRIVATE,
-            key: "tos-confirmed",
+            key: DATABASE.TERMS_OF_SERVICE_CONFIRMED,
             log: true,
             onsavelocalvalue: function(key, newValue, oldValue) {
                 console.log("LOCAL", key, newValue, oldValue)

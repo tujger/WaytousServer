@@ -77,7 +77,7 @@ function Constants() {
         MANUFACTURER : "manufacturer",
         OS : "os",
         KEY : "key",
-        SIGN_PROVIDER : "sign-provider",
+        SIGN_PROVIDER : "signProvider",
 
         TRACKING : "tracking",
         MESSAGE : "message",
@@ -130,33 +130,33 @@ function Constants() {
         CHANGED : "ch",
         COLOR : "color", // color
         CREATED : "cr",
-        DELAY_TO_DISMISS : "delay-to-dismiss",
-        DISMISS_INACTIVE : "dismiss-inactive",
+        DELAY_TO_DISMISS : "delayToDismiss",
+        DISMISS_INACTIVE : "dismissInactive",
         KEYS: "k",
-        LIMIT_USERS: "limit-users",
+        LIMIT_USERS: "limitUsers",
         NAME : "name", // name
         OPTIONS : "o", // options
         QUEUE: "q",
         PERSISTENT : "persistent",
         PRIVATE : "p", // private
         PUBLIC : "b", // public
-        REQUIRES_PASSWORD : "requires-password",
+        REQUIRES_PASSWORD : "requiresPassword",
         SYNCED : "sy",
-        TIME_TO_LIVE_IF_EMPTY : "time-to-live-if-empty",
+        TIME_TO_LIVE_IF_EMPTY : "timeToLiveIfEmpty",
         TIMESTAMP: "t",
         USERS : "u", // users
-        WELCOME_MESSAGE : "welcome-message",
+        WELCOME_MESSAGE : "welcomeMessage",
 
         SECTION_STAT: "_s",
         STAT_TOTAL: "total",
-        STAT_BY_DATE: "by-date",
+        STAT_BY_DATE: "byDate",
         STAT_GROUPS_CREATED_PERSISTENT: "gp",
         STAT_GROUPS_CREATED_TEMPORARY: "gt",
         STAT_GROUPS_DELETED: "gd",
         STAT_GROUPS_REJECTED: "gr",
         STAT_MESSAGES: "messages",
-        STAT_MISC_GROUPS_CLEANED: "groups-cleaned",
-        STAT_MISC_ACCOUNTS_CLEANED: "accounts-cleaned",
+        STAT_MISC_GROUPS_CLEANED: "groupsCleaned",
+        STAT_MISC_ACCOUNTS_CLEANED: "accountsCleaned",
         STAT_MISC: "misc",
         STAT_USERS_JOINED: "uj",
         STAT_USERS_RECONNECTED: "uc",
@@ -168,7 +168,7 @@ function Constants() {
         SECTION_USERS: "_u",
         HISTORY: "h",
         MODE: "m",
-        TERMS_OF_SERVICE_CONFIRMED: "tos-confirmed",
+        TERMS_OF_SERVICE_CONFIRMED: "tosConfirmed",
         VALUE: "v"
    };
 

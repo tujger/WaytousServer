@@ -6,7 +6,7 @@
  */
 EVENTS.SHOW_MEMBER_PROFILE = "show_member_profile";
 
-function MemberProfileHolder(main) {
+function UserProfileHolder(main) {
 
     var type = "member";
     var profileDialog;

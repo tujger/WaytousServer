@@ -13,28 +13,28 @@
             "o": { // options
               ".read": "root.child('_g/'+$group_id+'/u/k/'+auth.uid).exists()",
               ".write": false,
-              "date-created": {
+              "dateCreated": {
                 ".write": "!data.exists() && newData.exists()"
               },
-              "delay-to-dismiss": {
+              "delayToDismiss": {
                 ".write": "!data.exists() && newData.exists()"
               },
-              "dismiss-inactive": {
+              "dismissInactive": {
                 ".write": "!data.exists() && newData.exists()"
               },
-              "limit-users": {
+              "limitUsers": {
                 ".write": "!data.exists() && newData.exists()"
               },
               "persistent": {
                 ".write": "!data.exists() && newData.exists()"
               },
-              "requires-password": {
+              "requiresPassword": {
                 ".write": "!data.exists() && newData.exists()"
               },
-              "time-to-live-if-empty": {
+              "timeToLiveIfEmpty": {
                 ".write": "!data.exists() && newData.exists()"
               },
-              "welcome-message": {
+              "welcomeMessage": {
                 ".write": "root.child('_g/'+$group_id+'/u/p/0/uid').val() === auth.uid",
                 ".validate": "newData.isString() && newData.val().length < 10240"
               }
@@ -119,7 +119,7 @@
               "cr": {
                 ".validate": "!data.exists() && newData.exists()"
               },
-              "sign-provider": {
+              "signProvider": {
                 ".validate": "!data.exists() && newData.exists()"
               },
               "model": {

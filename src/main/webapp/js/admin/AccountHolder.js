@@ -36,7 +36,7 @@ function AccountHolder(main) {
 
     var keys = {
         "p/ch": "Updated",
-        "p/tos-confirmed": "Terms of service confirmed",
+        "p/tosConfirmed": "Terms of service confirmed",
         "p/name": "Name",
         "group": "Group"
     };

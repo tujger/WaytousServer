@@ -106,17 +106,17 @@ function CreateHolder(main) {
 
         if(!inputId.value) return;
 
-        var options = {
-            "group_id": inputId.value,
-            "requires-password": inputRequiresPassword.checked,
-            "password": inputPassword.value ? inputPassword.value : null,
-            "welcome-message": inputWelcomeMessage.value,
-            "persistent": inputPersistent.checked,
-            "time-to-live-if-empty": inputTtl.value,
-            "limit-users": inputLimitUsers.value,
-            "dismiss-inactive": inputDismissInactive.checked,
-            "delay-to-dismiss": inputDelay.value
-        };
+        var options = {};
+        options.group_id = inputId.value;
+        options[DATABASE.REQUIRES_PASSWORD] = inputRequiresPassword.checked;
+        options[DATABASE.PASSWORD] = inputPassword.value ? inputPassword.value : null;
+        options[DATABASE.WELCOME_MESSAGE] = inputWelcomeMessage.value;
+        options[DATABASE.PERSISTENT] = inputPersistent.checked;
+        options[DATABASE.TIME_TO_LIVE_IF_EMPTY] = inputTtl.value;
+        options[DATABASE.LIMIT_USERS] = inputLimitUsers.value;
+        options[DATABASE.DISMISS_INACTIVE] = inputDismissInactive.checked;
+        options[DATABASE.DELAY_TO_DISMISS] = inputDelay.value;
+
         u.post("/admin/rest/group/create", JSON.stringify(options))
             .then(function(){
                 u.toast.show("Group "+inputId.value+" has created.");

@@ -49,10 +49,9 @@ public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
 
         new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.PUBLIC).child(String.valueOf(getUserNumber())).child(getKey()))
                 .addOnCompleteListener(dataSnapshot -> {
-                    Serializable oldValue = (Serializable) dataSnapshot.getValue();
 
-                    if ((oldValue != null && getValue() != null)
-                            || isSwitchBoolean()) {
+                    Serializable oldValue = (Serializable) dataSnapshot.getValue();
+                    if ((oldValue != null && getValue() != null) || isSwitchBoolean()) {
                         res.put(Rest.OLD_VALUE, oldValue);
 
                         if(isSwitchBoolean()) {
