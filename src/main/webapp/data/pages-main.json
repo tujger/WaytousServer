@@ -59,5 +59,20 @@
       "title": "about",
       "type": "about"
     }
-  ]
+  ],
+  {
+    "explicit": true,
+    "section": "main",
+    "category": 0
+  },
+  {
+    "explicit": true,
+    "section": "main",
+    "category": 5
+  },
+  {
+    "explicit": true,
+    "section": "main",
+    "category": 9
+  }
 ]
