@@ -332,8 +332,7 @@ body {
     }
     .td.option input {
         width: 100%;
-        border-style: solid;
-        border-width: 1px;
+        border: 1px solid;
         font-size:16px;
         height: 25px;
     }

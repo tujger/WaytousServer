@@ -64,8 +64,7 @@
 .map {
     width: 100%;
     height: 100%;
-    border-style: groove;
-    border-width: 1px;
+    border: 1px groove;
     box-sizing: border-box;
 }
 

@@ -11,16 +11,13 @@
     padding: 5px;
     margin: 5px;
     font-size: 16px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
+    border: 1px solid black;
     display: none;
 }
 .alert-dialog {
     background-color: beige !important;
     color: red;
-    padding: 30px;
-    padding-bottom: 20px;
+    padding: 30px 30px 20px;
     width: 500px;
     max-width: 80%;
     z-index: 20000 !important;
@@ -62,9 +59,7 @@
     color: chocolate;
 }
 .selected {
-    border-color: lime;
-    border-width: 2px;
-    border-style: ridge;
+    border: 2px ridge lime;
     padding: 3px !important;
 }
 .question {
@@ -175,15 +170,11 @@ p.bottom-desc {
 }
 .user-button:hover {
     /*background-color: #dddd99;*/
-    border-color: green;
-    border-style: solid;
-    border-width: 2px;
+    border: 2px solid green;
     padding: 3px;
 }
 .user-button-selected {
-    border-color: lime;
-    border-style: ridge;
-    border-width: 2px;
+    border: 2px ridge lime;
     padding: 3px;
 }
 .user-button-away {
@@ -191,9 +182,7 @@ p.bottom-desc {
 }
 .user-button-hover {
     /*background-color: #dddd99;*/
-    border-color: cyan;
-    border-style: solid;
-    border-width: 2px;
+    border: 2px solid cyan;
     padding: 3px;
 }
 .user-button-icon {
@@ -209,9 +198,7 @@ p.bottom-desc {
     width: 12px;
     height: 12px;
     text-align: center;
-    border-width: 1px;
-    border-color: white;
-    border-style: solid;
+    border: 1px solid white;
     position: relative;
     right: 8px;
     top: -8px;
@@ -316,7 +303,7 @@ p.bottom-desc {
     color: red;
     font-size: 50px;
     font-weight: bold;
-    font-family: Times;
+    font-family: "Times";
     cursor: default;
 }
 .loading {
@@ -338,11 +325,9 @@ p.bottom-desc {
     font-size: 10px;
     height: 30%;
     width: 100%;
-    white-space: pre;
     overflow-y: scroll;
     background-color: rgba(211, 211, 211, 0.6);
-    border-top-style: solid;
-    border-top-width: 1px;
+    border-top: 1px solid;
     z-index: 1000;
     white-space: pre-wrap;
 }
@@ -372,7 +357,7 @@ p.bottom-desc {
 }
 .chat-dialog-message-private::before {
     content: "lock";
-    font-family: 'Material Icons';
+    font-family: "Material Icons";
     font-feature-settings: "liga" 1;
     font-style: normal;
     -webkit-font-feature-settings: 'liga';
@@ -401,7 +386,7 @@ p.bottom-desc {
     height: 24px;
 }
 .chat-dialog-reply-button {
-    font-family: 'Material Icons';
+    font-family: "Material Icons";
     font-feature-settings: "liga" 1;
     font-style: normal;
     font-size: 24px;
@@ -586,8 +571,7 @@ p.bottom-desc {
 .saved-locations-dialog-item-image {
     order: 1;
     height: 120px;
-    border-style: solid;
-    border-width: 1px;
+    border: 1px solid;
     flex: 1 0 30%;
     margin-right: 5px;
     align-items: center;
@@ -701,8 +685,7 @@ p.bottom-desc {
     left: 10px;
     max-width: 500px;
     overflow-y: scroll;
-    border-top-style: solid;
-    border-top-width: 1px;
+    border-top: 1px solid;
     white-space: pre-wrap;
 }
 .wizard-dialog-item {
@@ -736,16 +719,11 @@ p.bottom-desc {
     height: 80px;
     width: 80px;
     object-fit: cover;
-    border-color: darkgray;
-    border-width: 2px;
-    border-style: solid;
+    border: 2px solid darkgray;
     margin-right: 20px;
-    background-image: url(/images/navigation_twinks.svg);
     background-size: 40px;
-    background-repeat: no-repeat;
-    background-position: 20px 20px;
     background-blend-mode: difference;
-    background-color: blanchedalmond;
+    background: blanchedalmond url(/images/navigation_twinks.svg) no-repeat 20px 20px;
 }
 .user-profile-dialog-resume {
     text-align: right;
@@ -976,7 +954,6 @@ p.bottom-desc {
         transform: none !important;
         width: 100% !important;
         max-height: 100%;
-        max-width: 100%;
         border: none;
     }
     .chat-dialog-message {
@@ -1117,9 +1094,7 @@ p.bottom-desc {
         height: 100%;
     }
     .map-recenter {
-        padding: 10px;
-        padding-left: 20px;
-        padding-right: 20px;
+        padding: 10px 20px;
         font-size: 20px;
     }
     .place-search {
