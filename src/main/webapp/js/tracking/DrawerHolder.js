@@ -58,8 +58,11 @@ function DrawerHolder(main) {
             className: "dialog-about-third"
         });
 
-        var sections = {};
-        sections[DRAWER.SECTION_MAP] = u.lang.map;
+        var categories = {};
+        categories[DRAWER.SECTION_MAP] = {
+            title: u.lang.map,
+            explicit: true
+        };
 
         drawer = new u.drawer({
             title: main.appName,
@@ -85,7 +88,7 @@ function DrawerHolder(main) {
                     return false;
                 }}).place(HTML.SPAN, "\nBuild " + window.data.version)
             },
-            sections: sections,
+            sections: categories,
             collapsible: [DRAWER.SECTION_MAP]
         }, document.body);
 

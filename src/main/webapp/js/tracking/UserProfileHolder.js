@@ -370,7 +370,7 @@ function UserProfileHolder(main) {
                             initProfileDialog("email_signin");
                         }
                     }).place(HTML.DIV, {
-                        className: "dialog-item-icon",
+                        className: "dialog-item-icon icon notranslate",
                         innerHTML: "mail_outline"
                     }).place(HTML.DIV, {
                         innerHTML: u.lang.sign_in_with_email

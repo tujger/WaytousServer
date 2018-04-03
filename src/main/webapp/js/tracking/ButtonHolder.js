@@ -38,8 +38,8 @@ function ButtonHolder(main) {
                 label: "Users",
                 className: "user-buttons-title",
                 button: {
-                    icon: "view_headline",
-                    className: "user-buttons-title-button notranslate",
+                    icon: "",
+                    className: "user-buttons-title-button",
                     onclick: function() {
                         var minimized = u.load("button:minimized");
                         u.save("button:minimized", !minimized);
