@@ -791,6 +791,7 @@ p.bottom-desc {
     .actionbar {
         height: 50px;
         justify-content: center;
+        background: #4c93af;
     }
     .actionbar-label {
         filter: drop-shadow(1px 1px gray);

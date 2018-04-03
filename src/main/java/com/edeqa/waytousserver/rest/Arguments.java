@@ -1,6 +1,7 @@
 package com.edeqa.waytousserver.rest;
 
 import com.edeqa.waytous.Options;
+import com.edeqa.waytousserver.helpers.Common;
 
 import org.json.JSONObject;
 
@@ -79,5 +80,10 @@ public class Arguments extends com.edeqa.edequate.rest.Arguments {
     @Override
     public String getAppName() {
         return OPTIONS.getAppName();
+    }
+
+    @Override
+    public String getVersion() {
+        return "1." + Common.SERVER_BUILD;
     }
 }
