@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.servers;
 
-import com.edeqa.edequate.rest.Arguments;
 import com.edeqa.edequate.rest.Files;
+import com.edeqa.edequate.rest.system.Arguments;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.rest.Api;
 import com.edeqa.waytousserver.rest.InitialData;

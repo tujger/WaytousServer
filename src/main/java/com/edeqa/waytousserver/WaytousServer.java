@@ -3,10 +3,11 @@ package com.edeqa.waytousserver;
 import com.edeqa.edequate.EdequateServer;
 import com.edeqa.edequate.helpers.DigestAuthenticator;
 import com.edeqa.edequate.helpers.ServletHandlerOptions;
+import com.edeqa.edequate.helpers.Version;
 import com.edeqa.edequate.rest.SecureContext;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
-import com.edeqa.waytousserver.rest.Arguments;
+import com.edeqa.waytousserver.rest.system.Arguments;
 import com.edeqa.waytousserver.servers.AdminServletHandler;
 import com.edeqa.waytousserver.servers.DataProcessorFirebase;
 import com.edeqa.waytousserver.servers.MainServletHandler;
@@ -38,6 +39,8 @@ public class WaytousServer extends EdequateServer {
     public static void main(final String[] args ) throws Exception {
 
         Misc.log(LOG, "====== Waytous server v1."+SERVER_BUILD+". Copyright (C) 2017-18, Edeqa. http://www.edeqa.com ======");
+        Misc.log(LOG, "====== based on Edequate v" + Version.getVersion() + ". Copyright (C) 2017-18, Edeqa. http://www.edeqa.com ======");
+
 
         setArguments(new Arguments());
         getArguments().call(null, args);

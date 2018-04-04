@@ -9,8 +9,8 @@ import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Mime;
 import com.edeqa.helpers.MimeType;
 import com.edeqa.helpers.Misc;
-import com.edeqa.waytousserver.rest.Arguments;
 import com.edeqa.waytousserver.rest.DynamicLink;
+import com.edeqa.waytousserver.rest.system.Arguments;
 
 import java.io.IOException;
 import java.net.URI;
@@ -35,8 +35,7 @@ public class RedirectServletHandler extends AbstractServletHandler {
 
             Misc.log(LOG, "[" + requestWrapper.getRemoteAddress() + "]", uri.getPath(), (referer != null ? "referer: " + referer : ""));
 
-            ArrayList<String> parts = new ArrayList<>();
-            parts.addAll(Arrays.asList(uri.getPath().split("/")));
+            ArrayList<String> parts = new ArrayList<>(Arrays.asList(uri.getPath().split("/")));
 
             String tokenId = null;
 

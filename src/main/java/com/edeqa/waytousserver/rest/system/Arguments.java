@@ -1,4 +1,4 @@
-package com.edeqa.waytousserver.rest;
+package com.edeqa.waytousserver.rest.system;
 
 import com.edeqa.waytous.Options;
 import com.edeqa.waytousserver.helpers.Common;
@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import static com.edeqa.waytous.Constants.OPTIONS;
 
 @SuppressWarnings("unused")
-public class Arguments extends com.edeqa.edequate.rest.Arguments {
+public class Arguments extends com.edeqa.edequate.rest.system.Arguments {
 
     public static final String TYPE = "/rest/arguments";
 
