@@ -471,7 +471,7 @@ function TrackingHolder(main) {
             key: DATABASE.TERMS_OF_SERVICE_CONFIRMED,
             log: true,
             onsavelocalvalue: function(key, newValue, oldValue) {
-                console.log("LOCAL", key, newValue, oldValue)
+                console.log("LOCAL", key, newValue, oldValue);
                 if(newValue !== undefined && newValue !== null && newValue.constructor === Boolean) {
                     u.save("tracking:terms_of_service_confirmed", newValue);
                     if(newValue) window.location.reload();

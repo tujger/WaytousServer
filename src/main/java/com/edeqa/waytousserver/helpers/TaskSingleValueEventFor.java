@@ -29,10 +29,8 @@ public class TaskSingleValueEventFor<T> {
 
     private Runnable1<T> onCompleteListener;
     private Runnable1<T> onSuccessListener;
-    private Runnable1<Throwable> onFailureListener = error -> {
-        //noinspection HardCodedStringLiteral
-        error.printStackTrace();
-    };
+    //noinspection HardCodedStringLiteral
+    private Runnable1<Throwable> onFailureListener = Throwable::printStackTrace;
 
     public TaskSingleValueEventFor() {
     }
@@ -105,8 +103,10 @@ public class TaskSingleValueEventFor<T> {
             try {
                 Tasks.await(task);
                 DataSnapshot dataSnapshot = task.getResult();
-                if(onSuccessListener != null) onSuccessListener.call((T) dataSnapshot);
-                if(onCompleteListener != null) onCompleteListener.call((T) dataSnapshot);
+                if(onSuccessListener != null) //noinspection unchecked
+                    onSuccessListener.call((T) dataSnapshot);
+                if(onCompleteListener != null) //noinspection unchecked
+                    onCompleteListener.call((T) dataSnapshot);
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
                 if(onFailureListener != null) onFailureListener.call(e);
@@ -130,8 +130,10 @@ public class TaskSingleValueEventFor<T> {
             }
 //            Common.log(LOG, res);
 
-            if(onSuccessListener != null) onSuccessListener.call((T) json);
-            if(onCompleteListener != null) onCompleteListener.call((T) json);
+            if(onSuccessListener != null) //noinspection unchecked
+                onSuccessListener.call((T) json);
+            if(onCompleteListener != null) //noinspection unchecked
+                onCompleteListener.call((T) json);
 
         } catch(Exception e) {
             Misc.err(LOG, "restRequest:error:"+ref.getDatabase().getReference() + ref.getPath(), e.getMessage());

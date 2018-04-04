@@ -63,7 +63,7 @@ function NavigationHolder(main) {
                         menuItemShow.hide();
                     }
                     if(main.me.location && user.location) {
-                        var distance = google.maps.geometry.spherical.computeDistanceBetween(utils.latLng(main.me.location), utils.latLng(user.location))
+                        var distance = google.maps.geometry.spherical.computeDistanceBetween(utils.latLng(main.me.location), utils.latLng(user.location));
                         if(distance < 20) {
                             menuItemShow.hide();
                         }

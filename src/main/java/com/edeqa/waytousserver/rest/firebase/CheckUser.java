@@ -139,6 +139,7 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
 
             final TaskSingleValueEventFor userSearchTask = new TaskSingleValueEventFor<DataSnapshot>().addOnCompleteListener(dataSnapshot -> {
                 if (dataSnapshot.getValue() != null) {
+                    //noinspection unchecked
                     ArrayList<HashMap<String, Object>> users = (ArrayList<HashMap<String, Object>>) dataSnapshot.getValue();
                     for (HashMap<String, Object> user : users) {
                         if (user != null && user.containsKey(REQUEST_UID)) {

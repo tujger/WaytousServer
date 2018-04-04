@@ -1158,8 +1158,8 @@ function Utils(main) {
         this.ready = function() {
             this._ref = getRef();
             if(!this._ref) return false;
-            if(!firebase || !firebase.auth() || !firebase.auth().currentUser || !firebase.auth().currentUser.uid) return false;
-            return true;
+            return !(!firebase || !firebase.auth() || !firebase.auth().currentUser || !firebase.auth().currentUser.uid);
+
         };
 
         function onsaveremotevalueWithTimestamp(key, newValue, oldValue) {
@@ -1224,7 +1224,7 @@ function Utils(main) {
             var path = [];
             if(options.key) path.push(options.key);
             if(key) path.push(key);
-            if(path.length > 0) path.join("/")
+            if(path.length > 0) path.join("/");
 
             this._ref = getRef(path.length > 0 ? path.join("/") : undefined);
             if(!this._ref) return false;

@@ -225,62 +225,67 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
             }
 
             String req = request.getString(REQUEST);
-            if ("test".equals(req)) {
-                Misc.log(LOG, "onMessage:testMessage:" + conn.getRemoteSocketAddress(), message);
-                response.put(RESPONSE_STATUS, RESPONSE_STATUS_UPDATED);
-                response.put(RESPONSE_MESSAGE, "OK");
-                conn.send(response.toString());
-                conn.close();
-            } else if (REQUEST_NEW_GROUP.equals(req)) {
-                if (uid != null) {
-                    final GroupRequest groupRequest = new GroupRequest();
-                    final UserRequest userRequest = new UserRequest(conn);
-                    userRequest.parse(request);
-                    ((NewGroup) getFireBus().getHolder(NewGroup.TYPE))
-                            .setUserRequest(userRequest)
-                            .call(response, groupRequest);
-                } else {
-                    ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
-                            .setUserRequest(new UserRequest(conn))
-                            .call(response,"Cannot create group (uid not defined).");
-                }
-            } else if (REQUEST_JOIN_GROUP.equals(req)) {
-                if (request.has(REQUEST_TOKEN)) {
-                    final String groupId = request.getString(REQUEST_TOKEN);
-                    final UserRequest userRequest = new UserRequest(conn)
-                            .setGroupId(groupId)
-                            .setUid(uid);
-                    userRequest.parse(request);
-                    getUserRequests().add(userRequest);
+            switch (req) {
+                case "test":
+                    Misc.log(LOG, "onMessage:testMessage:" + conn.getRemoteSocketAddress(), message);
+                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_UPDATED);
+                    response.put(RESPONSE_MESSAGE, "OK");
+                    conn.send(response.toString());
+                    conn.close();
+                    break;
+                case REQUEST_NEW_GROUP:
+                    if (uid != null) {
+                        final GroupRequest groupRequest = new GroupRequest();
+                        final UserRequest userRequest = new UserRequest(conn);
+                        userRequest.parse(request);
+                        ((NewGroup) getFireBus().getHolder(NewGroup.TYPE))
+                                .setUserRequest(userRequest)
+                                .call(response, groupRequest);
+                    } else {
+                        ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                                .setUserRequest(new UserRequest(conn))
+                                .call(response, "Cannot create group (uid not defined).");
+                    }
+                    break;
+                case REQUEST_JOIN_GROUP:
+                    if (request.has(REQUEST_TOKEN)) {
+                        final String groupId = request.getString(REQUEST_TOKEN);
+                        final UserRequest userRequest = new UserRequest(conn)
+                                                                .setGroupId(groupId)
+                                                                .setUid(uid);
+                        userRequest.parse(request);
+                        getUserRequests().add(userRequest);
 
-                    ((JoinGroup) getFireBus().getHolder(JoinGroup.TYPE))
-                            .call(response, userRequest);
-                } else {
-                    ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
-                            .setUserRequest(new UserRequest(conn))
-                            .call(response,"Wrong request (group not defined).");
-                }
-            } else if (REQUEST_CHECK_USER.equals(req)) {
-                if (request.has(REQUEST_HASH)) {
-                    final String hash = request.getString((REQUEST_HASH));
-
-                    Misc.log(LOG, "onMessage:checkResponse:" + conn.getRemoteSocketAddress(), "hash:" + hash);
-                    final UserRequest userRequest = getUserRequests().findByConnection(conn);
-                    if (userRequest != null) {
-                        userRequest.setDataProcessorConnection(conn);
-                        ((CheckUser) getFireBus().getHolder(CheckUser.TYPE))
-                                .setHash(hash)
+                        ((JoinGroup) getFireBus().getHolder(JoinGroup.TYPE))
                                 .call(response, userRequest);
                     } else {
                         ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                                 .setUserRequest(new UserRequest(conn))
-                                .call(response,"Cannot join to group (user not authorized).");
+                                .call(response, "Wrong request (group not defined).");
                     }
-                } else {
-                    ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
-                            .setUserRequest(new UserRequest(conn))
-                            .call(response,"Cannot join to group (hash not defined).");
-                }
+                    break;
+                case REQUEST_CHECK_USER:
+                    if (request.has(REQUEST_HASH)) {
+                        final String hash = request.getString((REQUEST_HASH));
+
+                        Misc.log(LOG, "onMessage:checkResponse:" + conn.getRemoteSocketAddress(), "hash:" + hash);
+                        final UserRequest userRequest = getUserRequests().findByConnection(conn);
+                        if (userRequest != null) {
+                            userRequest.setDataProcessorConnection(conn);
+                            ((CheckUser) getFireBus().getHolder(CheckUser.TYPE))
+                                    .setHash(hash)
+                                    .call(response, userRequest);
+                        } else {
+                            ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                                    .setUserRequest(new UserRequest(conn))
+                                    .call(response, "Cannot join to group (user not authorized).");
+                        }
+                    } else {
+                        ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                                .setUserRequest(new UserRequest(conn))
+                                .call(response, "Cannot join to group (hash not defined).");
+                    }
+                    break;
             }
         } catch (Exception e) {
             Misc.err(LOG, "onMessage:error:" + e.getMessage(), "req:" + message);

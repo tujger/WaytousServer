@@ -61,8 +61,7 @@ public class TrackingServletHandler extends AbstractServletHandler {
 
         Misc.log(LOG, "[" + requestWrapper.getRemoteAddress().getAddress().getHostAddress() + ":" + requestWrapper.getRemoteAddress().getPort() + "]", host + uri.getPath() + (referer != null ? ", referer: " + referer : ""));
 
-        ArrayList<String> parts = new ArrayList<>();
-        parts.addAll(Arrays.asList(uri.getPath().split("/")));
+        ArrayList<String> parts = new ArrayList<>(Arrays.asList(uri.getPath().split("/")));
 
 //        File root = new File(OPTIONS.getWebRootDirectory());
 //        File file = new File(root + uri.getPath()).getCanonicalFile();

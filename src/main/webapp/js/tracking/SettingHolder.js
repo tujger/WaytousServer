@@ -143,11 +143,7 @@ function SettingHolder(main) {
                 case HTML.SELECT:
                     if(item.default != undefined) {
                         for(var j = 0; j < options[i].options.length; j++) {
-                            if(options[i].options[j].value == item.default) {
-                                options[i].options[j].selected = true;
-                            } else {
-                                options[i].options[j].selected = false;
-                            }
+                            options[i].options[j].selected = options[i].options[j].value == item.default;
                         }
                     }
                     break;

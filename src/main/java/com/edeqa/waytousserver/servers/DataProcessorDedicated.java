@@ -137,12 +137,9 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
             }
 
             final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-            executor.schedule(new Runnable() {
-                @Override
-                public void run() {
-                    if(token.isEmpty() && new Date().getTime() - token.getChanged() >= LIFETIME_INACTIVE_GROUP) {
-                        groups.remove(token.getId());
-                    }
+            executor.schedule(() -> {
+                if(token.isEmpty() && new Date().getTime() - token.getChanged() >= LIFETIME_INACTIVE_GROUP) {
+                    groups.remove(token.getId());
                 }
             }, LIFETIME_INACTIVE_GROUP +10, TimeUnit.SECONDS);
 
@@ -178,17 +175,18 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
             if (!request.has(REQUEST)) return;
 
             String req = request.getString(REQUEST);
-            if (REQUEST_NEW_GROUP.equals(req)) {
-                if (request.has(REQUEST_UID)) {
-                    MyGroup token = new MyGroup();
-                    MyUser user = new MyUser(conn, request.getString(REQUEST_UID));
-                    user.setManufacturer(request.getString(REQUEST_MANUFACTURER));
-                    user.setModel(request.getString(REQUEST_MODEL));
-                    user.setOs(request.getString(REQUEST_OS));
-                    if (request.has(USER_NAME)) user.setName(request.getString(USER_NAME));
+            switch (req) {
+                case REQUEST_NEW_GROUP:
+                    if (request.has(REQUEST_UID)) {
+                        MyGroup token = new MyGroup();
+                        MyUser user = new MyUser(conn, request.getString(REQUEST_UID));
+                        user.setManufacturer(request.getString(REQUEST_MANUFACTURER));
+                        user.setModel(request.getString(REQUEST_MODEL));
+                        user.setOs(request.getString(REQUEST_OS));
+                        if (request.has(USER_NAME)) user.setName(request.getString(USER_NAME));
 
-                    token.addUser(user);
-                    groups.put(token.getId(), token);
+                        token.addUser(user);
+                        groups.put(token.getId(), token);
 
 //                    if(request.has(REQUEST_MODEL)){
 //                        user.setModel(request.getString(REQUEST_MODEL));
@@ -199,104 +197,108 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
 //                    if(request.has(REQUEST_OS)){
 //                        user.setOs(request.getString(REQUEST_OS));
 //                    }
-                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
-                    response.put(RESPONSE_TOKEN, token.getId());
-                    response.put(RESPONSE_NUMBER, user.getNumber());
+                        response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
+                        response.put(RESPONSE_TOKEN, token.getId());
+                        response.put(RESPONSE_NUMBER, user.getNumber());
 
-                    ipToToken.put(ip, token);
-                    ipToUser.put(ip, user);
-                    System.out.println("NEW:token created and accepted:" + token);
+                        ipToToken.put(ip, token);
+                        ipToUser.put(ip, user);
+                        System.out.println("NEW:token created and accepted:" + token);
 
-                } else {
-                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
-                    response.put(RESPONSE_MESSAGE, "Your device id is not defined");
-                    disconnect = true;
-                }
+                    } else {
+                        response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
+                        response.put(RESPONSE_MESSAGE, "Your device id is not defined");
+                        disconnect = true;
+                    }
 
-                System.out.println("NEW:response:" + response);
+                    System.out.println("NEW:response:" + response);
 
-                Misc.pause(2);//FIXME remove pause
+                    Misc.pause(2);//FIXME remove pause
 
-                conn.send(response.toString());
-            } else if (REQUEST_JOIN_GROUP.equals(req)) {
-                if (request.has(REQUEST_TOKEN)) {
-                    String tokenId = request.getString(REQUEST_TOKEN);
-                    if (groups.containsKey(tokenId)) {
-                        MyGroup token = groups.get(tokenId);
 
-                        if (request.has(REQUEST_UID)) {
-                            String uid = request.getString(REQUEST_UID);
-                            MyUser user = null;
-                            for (Map.Entry<String, MyUser> x : token.users.entrySet()) {
-                                if (uid.equals(x.getValue().getUid())) {
-                                    user = x.getValue();
-                                    break;
+                    conn.send(response.toString());
+                    break;
+                case REQUEST_JOIN_GROUP:
+                    if (request.has(REQUEST_TOKEN)) {
+                        String tokenId = request.getString(REQUEST_TOKEN);
+                        if (groups.containsKey(tokenId)) {
+                            MyGroup token = groups.get(tokenId);
+
+                            if (request.has(REQUEST_UID)) {
+                                String uid = request.getString(REQUEST_UID);
+                                MyUser user = null;
+                                for (Map.Entry<String, MyUser> x : token.users.entrySet()) {
+                                    if (uid.equals(x.getValue().getUid())) {
+                                        user = x.getValue();
+                                        break;
+                                    }
                                 }
-                            }
-                            if (user != null) {
-                                user.setChanged();
+                                if (user != null) {
+                                    user.setChanged();
+                                    UserRequest userRequest = new UserRequest(conn);
+                                    userRequest.setGroupId(token.getId());
+                                    if (request.has(USER_NAME)) {
+                                        userRequest.setName(request.getString(USER_NAME));
+                                    }
+                                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
+                                    response.put(RESPONSE_CONTROL, userRequest.getControl());
+//                                ipToCheck.put(ip, check);
+                                } else {
+                                    user = new MyUser(conn, request.getString(REQUEST_UID));
+                                    user.setManufacturer(request.getString(REQUEST_MANUFACTURER));
+                                    user.setModel(request.getString(REQUEST_MODEL));
+                                    user.setOs(request.getString(REQUEST_OS));
+                                    if (request.has(USER_NAME) && request.getString(USER_NAME) != null && request.getString(USER_NAME).length() > 0) {
+                                        user.setName(request.getString(USER_NAME));
+                                    }
+                                    token.addUser(user);
+
+                                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
+                                    response.put(RESPONSE_NUMBER, user.getNumber());
+
+                                    ipToToken.put(ip, token);
+                                    ipToUser.put(ip, user);
+
+                                    token.sendInitialTo(response, user);
+
+                                    JSONObject o = new JSONObject();
+                                    o.put(RESPONSE_STATUS, RESPONSE_STATUS_UPDATED);
+                                    o.put(USER_COLOR, user.getColor());
+                                    o.put(USER_JOINED, user.getNumber());
+                                    if (user.getName() != null && user.getName().length() > 0) {
+                                        o.put(USER_NAME, user.getName());
+                                    }
+                                    token.sendToAllFrom(o, user);
+                                    return;
+                                }
+
+                            } else {
                                 UserRequest userRequest = new UserRequest(conn);
                                 userRequest.setGroupId(token.getId());
-                                if (request.has(USER_NAME)) {
-                                    userRequest.setName(request.getString(USER_NAME));
-                                }
+
                                 response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
                                 response.put(RESPONSE_CONTROL, userRequest.getControl());
-//                                ipToCheck.put(ip, check);
-                            } else {
-                                user = new MyUser(conn, request.getString(REQUEST_UID));
-                                user.setManufacturer(request.getString(REQUEST_MANUFACTURER));
-                                user.setModel(request.getString(REQUEST_MODEL));
-                                user.setOs(request.getString(REQUEST_OS));
-                                if (request.has(USER_NAME) && request.getString(USER_NAME) != null && request.getString(USER_NAME).length() > 0) {
-                                    user.setName(request.getString(USER_NAME));
-                                }
-                                token.addUser(user);
-
-                                response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
-                                response.put(RESPONSE_NUMBER, user.getNumber());
-
-                                ipToToken.put(ip, token);
-                                ipToUser.put(ip, user);
-
-                                token.sendInitialTo(response, user);
-
-                                JSONObject o = new JSONObject();
-                                o.put(RESPONSE_STATUS, RESPONSE_STATUS_UPDATED);
-                                o.put(USER_COLOR, user.getColor());
-                                o.put(USER_JOINED, user.getNumber());
-                                if (user.getName() != null && user.getName().length() > 0) {
-                                    o.put(USER_NAME, user.getName());
-                                }
-                                token.sendToAllFrom(o, user);
-                                return;
-                            }
-
-                        } else {
-                            UserRequest userRequest = new UserRequest(conn);
-                            userRequest.setGroupId(token.getId());
-
-                            response.put(RESPONSE_STATUS, RESPONSE_STATUS_CHECK);
-                            response.put(RESPONSE_CONTROL, userRequest.getControl());
 //                            ipToCheck.put(ip, check);
+                            }
+                        } else {
+                            response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
+                            response.put(RESPONSE_MESSAGE, "This group is expired.");
+                            disconnect = true;
                         }
                     } else {
                         response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
-                        response.put(RESPONSE_MESSAGE, "This group is expired.");
+                        response.put(RESPONSE_MESSAGE, "Wrong request (token not defined).");
                         disconnect = true;
                     }
-                } else {
-                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
-                    response.put(RESPONSE_MESSAGE, "Wrong request (token not defined).");
-                    disconnect = true;
-                }
-                Misc.pause(2);//FIXME remove pause
-                conn.send(response.toString());
-                System.out.println("JOIN:response:" + response);
-            } else if (REQUEST_CHECK_USER.equals(req)) {
-                if (request.has(REQUEST_HASH)) {
-                    String hash = request.getString((REQUEST_HASH));
-                    System.out.println(("CHECK:requested device: [hash=" + hash + "]"));
+                    Misc.pause(2);//FIXME remove pause
+
+                    conn.send(response.toString());
+                    System.out.println("JOIN:response:" + response);
+                    break;
+                case REQUEST_CHECK_USER:
+                    if (request.has(REQUEST_HASH)) {
+                        String hash = request.getString((REQUEST_HASH));
+                        System.out.println(("CHECK:requested device: [hash=" + hash + "]"));
 /*                    if (ipToCheck.containsKey(ip)) {
                         CheckReq check = ipToCheck.get(ip);
 
@@ -353,47 +355,51 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                         response.put(RESPONSE_MESSAGE, "Cannot join to group (user not authorized).");
                         disconnect = true;
                     }*/
-                } else {
-                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
-                    response.put(RESPONSE_MESSAGE, "Cannot join to group (hash not defined).");
-                    disconnect = true;
-                }
-
-                System.out.println("CHECK:response:" + response);
-                Misc.pause(2);//FIXME remove pause
-                conn.send(response.toString());
-            } else {
-                if (ipToToken.containsKey(ip)) {
-                    MyGroup token = ipToToken.get(ip);
-                    MyUser user = ipToUser.get(ip);
-                    user.setChanged();
-
-                    Map<String, AbstractTrackingAction> requestHolders = (Map<String, AbstractTrackingAction>) EventBus.getOrCreate(AbstractTrackingAction.EVENTBUS).getHolders();
-
-                        if (requestHolders.containsKey(req)) {
-                        JSONObject o = new JSONObject();
-                        o.put(RESPONSE_STATUS, req);
-
-                        if(requestHolders.get(req).perform(token, user, request, o)) {
-                            token.updateChanged();
-
-                            if (request.has(RESPONSE_PRIVATE)) {
-                                o.put(RESPONSE_PRIVATE, request.getInt(RESPONSE_PRIVATE));
-                                token.sendToFrom(o, request.getInt(RESPONSE_PRIVATE), user);
-                            } else {
-                                token.sendToAllFrom(o, user);
-                            }
-                        }
-
+                    } else {
+                        response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
+                        response.put(RESPONSE_MESSAGE, "Cannot join to group (hash not defined).");
+                        disconnect = true;
                     }
 
-                } else {
-                    System.out.println("UPDATE:token not found");
-                    response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
-                    response.put(RESPONSE_MESSAGE, "Group not exists.");
+                    System.out.println("CHECK:response:" + response);
+                    Misc.pause(2);//FIXME remove pause
+
                     conn.send(response.toString());
-                    conn.close();
-                }
+                    break;
+                default:
+                    if (ipToToken.containsKey(ip)) {
+                        MyGroup token = ipToToken.get(ip);
+                        MyUser user = ipToUser.get(ip);
+                        user.setChanged();
+
+                        //noinspection unchecked
+                        Map<String, AbstractTrackingAction> requestHolders = (Map<String, AbstractTrackingAction>) EventBus.getOrCreate(AbstractTrackingAction.EVENTBUS).getHolders();
+
+                        if (requestHolders.containsKey(req)) {
+                            JSONObject o = new JSONObject();
+                            o.put(RESPONSE_STATUS, req);
+
+                            if (requestHolders.get(req).perform(token, user, request, o)) {
+                                token.updateChanged();
+
+                                if (request.has(RESPONSE_PRIVATE)) {
+                                    o.put(RESPONSE_PRIVATE, request.getInt(RESPONSE_PRIVATE));
+                                    token.sendToFrom(o, request.getInt(RESPONSE_PRIVATE), user);
+                                } else {
+                                    token.sendToAllFrom(o, user);
+                                }
+                            }
+
+                        }
+
+                    } else {
+                        System.out.println("UPDATE:token not found");
+                        response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
+                        response.put(RESPONSE_MESSAGE, "Group not exists.");
+                        conn.send(response.toString());
+                        conn.close();
+                    }
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();

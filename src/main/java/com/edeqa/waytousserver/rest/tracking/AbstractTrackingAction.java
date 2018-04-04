@@ -21,15 +21,15 @@ public abstract class AbstractTrackingAction extends AbstractEntityHolder implem
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
     }
 
     @Override
-    public void finish() throws Exception {
+    public void finish() {
     }
 
     @Override
-    public boolean onEvent(String eventName, Object eventObject) throws Exception {
+    public boolean onEvent(String eventName, Object eventObject) {
         return true;
     }
 
