@@ -64,16 +64,12 @@ public class JoinGroup extends AbstractFirebaseAction<JoinGroup, UserRequest> {
                 if (found) {
                     userRequest.setNumber(count);
                     final MyUser user = userRequest.fetchUser();
-                    ((CreateAccount) getFireBus().getHolder(CreateAccount.TYPE)).setOnSuccess(() -> {
-                        ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
-                                .setGroupId(userRequest.getGroupId())
-                                .setAction(REQUEST_JOIN_GROUP)
-                                .call(null, user);
-                    }).setOnError(error -> {
-                        ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
-                                .setUserRequest(userRequest)
-                                .call(json,"Cannot create group (code 17).");
-                    }).call(null, user);
+                    ((CreateAccount) getFireBus().getHolder(CreateAccount.TYPE)).setOnSuccess(() -> ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
+                            .setGroupId(userRequest.getGroupId())
+                            .setAction(REQUEST_JOIN_GROUP)
+                            .call(null, user)).setOnError(error -> ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
+                            .setUserRequest(userRequest)
+                            .call(json,"Cannot create group (code 17).")).call(null, user);
                 } else {
                     if(groupRequest.getLimitUsers() > 0 && count > groupRequest.getLimitUsers()) {
                         ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))

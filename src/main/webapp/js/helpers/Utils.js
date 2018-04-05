@@ -20,9 +20,9 @@ function Utils(main) {
             g = (color & 0xFF00) >>> 8,
             r = (color & 0xFF0000) >>> 16;
 
-        r = r.toString(16);if(r.length == 1) r = "0"+r;
-        g = g.toString(16);if(g.length == 1) g = "0"+g;
-        b = b.toString(16);if(b.length == 1) b = "0"+b;
+        r = r.toString(16);if(r.length === 1) r = "0"+r;
+        g = g.toString(16);if(g.length === 1) g = "0"+g;
+        b = b.toString(16);if(b.length === 1) b = "0"+b;
 
         return "#"+r+g+b;
     }
@@ -140,8 +140,6 @@ function Utils(main) {
         //     if(postCallback) postCallback();
         // }, duration+1);
         postCallback();
-        var a = null;
-        return a;
     }
 
     function getEncryptedHash(s) {
@@ -479,7 +477,7 @@ function Utils(main) {
             }
         },
         _is_popup_blocked: function(scope, popup_window){
-            if ((popup_window.innerHeight > 0)==false){ scope._displayError(); }
+            if (popup_window.innerHeight <= 0){ scope._displayError(); }
         },
         _displayError: function(){
             console.log("Popup Blocker is enabled! Please add this site to your exception list.");
@@ -724,14 +722,14 @@ function Utils(main) {
                 self._ref.child(options.key).on("child_added", function(data) {
                     options.ongetvalue(data.key, data.val());
 
-                    if (data.key == lastKey) {
+                    if (data.key === lastKey) {
                         self._ref.child(options.key).off();
                         options.onfinish(Sync.Mode.GET_REMOTE, options.key);
                     }
                 }, function (error) {
                     options.onerror(key, error);
 
-                    if (data.key == lastKey) {
+                    if (data.key === lastKey) {
                         self._ref.child(options.key).off();
                         options.onfinish(Sync.Mode.GET_REMOTE, options.key);
                     }
@@ -758,7 +756,7 @@ function Utils(main) {
                     onerror(key, "Remote value [" + (remote ? remote.constructor.name : null) +"] is not equivalent to local value [" + (local ? local.constructor.name : null) + "], use 'syncValues' for sync objects.");
                     return;
                 }
-                if(remote == local) return;
+                if(remote === local) return;
 
                 switch(mode) {
                     case Sync.Mode.UPDATE_LOCAL:
@@ -767,7 +765,7 @@ function Utils(main) {
                         } else if(remote && !local) {
                             process = true;
                         } else {
-                            if(local.constructor === Object && local[DATABASE.SYNCED] && (local[DATABASE.SYNCED] == firebase.database.ServerValue.TIMESTAMP || local[DATABASE.SYNCED] < remote[DATABASE.SYNCED])) {
+                            if(local.constructor === Object && local[DATABASE.SYNCED] && (local[DATABASE.SYNCED] === firebase.database.ServerValue.TIMESTAMP || local[DATABASE.SYNCED] < remote[DATABASE.SYNCED])) {
                                 process = true;
                             }
                         }
@@ -807,7 +805,7 @@ function Utils(main) {
                             process = true;
                         } else if(remote && !local) {
                         } else {
-                            if(local.constructor === Object && (!local[DATABASE.SYNCED] || local[DATABASE.SYNCED] == firebase.database.ServerValue.TIMESTAMP || local[DATABASE.SYNCED] > remote[DATABASE.SYNCED])) {
+                            if(local.constructor === Object && (!local[DATABASE.SYNCED] || local[DATABASE.SYNCED] === firebase.database.ServerValue.TIMESTAMP || local[DATABASE.SYNCED] > remote[DATABASE.SYNCED])) {
                                 local[DATABASE.SYNCED] = firebase.database.ServerValue.TIMESTAMP;
                                 process = true;
                             }
@@ -1034,7 +1032,7 @@ function Utils(main) {
                         onfinish(mode, key, newValue, oldValue);
 
                         counter ++;
-                        if(remoteUpdated > 0 && counter == keys.length) {
+                        if(remoteUpdated > 0 && counter === keys.length) {
                             u.save("synced:" + options.type, new Date().getTime());
                             updateTimestamp();
                         }
@@ -1080,7 +1078,7 @@ function Utils(main) {
         };
 
         function onfinish(mode, key, newValue, oldValue) {
-            if(options.debug && mode != Sync.Mode.SKIP) console.warn(mode, key, "[new]:", newValue, "[old]:", oldValue);
+            if(options.debug && mode !== Sync.Mode.SKIP) console.warn(mode, key, "[new]:", newValue, "[old]:", oldValue);
             try {
                 options.onfinish(mode, key, newValue);
             } catch(e) {

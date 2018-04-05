@@ -2,7 +2,7 @@
 EMPTY=true
 for i in "$@"
 do
-case $i in
+case ${i} in
     -b|--build)
     EMPTY=false
     BUILD=true
@@ -53,7 +53,7 @@ case $i in
 esac
 done
 
-if [ $EMPTY == true ]; then
+if [ ${EMPTY} == true ]; then
     echo tasks.sh -v=VERSION -s -rc -ri -b -r -d -c -l
     echo All keys are optional, see details
     echo    -b, --build - build/rebuild image
@@ -67,87 +67,87 @@ if [ $EMPTY == true ]; then
     echo    -c, --console - console in container
     exit 1
 fi
-if [ $STOP ]; then
+if [ ${STOP} ]; then
     echo --- Stop container
     docker stop waytous
 fi
-if [ $REMOVE ]; then
+if [ ${REMOVE} ]; then
     echo --- Remove containers
     docker rm $(docker images -q)
 fi
-if [ $REMOVEIMAGES ]; then
+if [ ${REMOVEIMAGES} ]; then
     echo --- Remove images forced
     docker rmi -f $(docker images -q)
 fi
-if [ $BUILD ]; then
-    if [ $VERSION ]; then
-        echo --- Set version: $VERSION
+if [ ${BUILD} ]; then
+    if [ ${VERSION} ]; then
+        echo --- Set version: ${VERSION}
     else
         echo --- Define version: -v=VERSION
         exit 1;
     fi
     echo --- Build image
-    docker build -t edeqa/waytous-server:$VERSION .. -f ./Dockerfile.$VERSION
+    docker build -t edeqa/waytous-server:${VERSION} .. -f ./Dockerfile.${VERSION}
 fi
-if [ $PUSH ]; then
-    if [ $VERSION ]; then
-        echo --- Set version: $VERSION
+if [ ${PUSH} ]; then
+    if [ ${VERSION} ]; then
+        echo --- Set version: ${VERSION}
     else
         echo --- Define version: -v=VERSION
         exit 1;
     fi
     echo --- Publish image in repository
-    docker push edeqa/waytous-server:$VERSION
+    docker push edeqa/waytous-server:${VERSION}
 fi
-if [ $RUN ]; then
-    if [ $START ]; then
+if [ ${RUN} ]; then
+    if [ ${START} ]; then
         echo Error: define only one of following: -r, -d, --start
         exit 1;
     fi
-    if [ $DETACHED ]; then
+    if [ ${DETACHED} ]; then
         echo Error: define only one of following: -r, -d, --start
         exit 1;
     fi
-    if [ $VERSION ]; then
-        echo --- Set version: $VERSION
+    if [ ${VERSION} ]; then
+        echo --- Set version: ${VERSION}
     else
         echo --- Define version: -v=VERSION
         exit 1;
     fi
     echo --- Initialize and start container
-    docker run --name waytous -p 8080:8080 -p 8100:8100 -p 8101:8101 -p 8200:8200 -p 8201:8201 -p 8443:8443 -p 8989:8989 edeqa/waytous-server:$VERSION
+    docker run --name waytous -p 8080:8080 -p 8100:8100 -p 8101:8101 -p 8200:8200 -p 8201:8201 -p 8443:8443 -p 8989:8989 edeqa/waytous-server:${VERSION}
 #    docker run -p 8080:8080 -p 8100:8100 -p 8101:8101 -p 8200:8200 -p 8201:8201 -p 8443:8443 -p 8989:8989 edeqa/waytous-server:1.50
 fi
-if [ $DETACHED ]; then
-    if [ $START ]; then
+if [ ${DETACHED} ]; then
+    if [ ${START} ]; then
         echo Error: define only one of following: -r, -d, --start
         exit 1;
     fi
-    if [ $VERSION ]; then
-        echo --- Set version: $VERSION
+    if [ ${VERSION} ]; then
+        echo --- Set version: ${VERSION}
     else
         echo --- Define version: -v=VERSION
         exit 1;
     fi
     echo --- Initialize and start container detached, see waytous.log
-    docker run -d --name waytous -p 8080:8080 -p 8100:8100 -p 8101:8101 -p 8200:8200 -p 8201:8201 -p 8443:8443 -p 8989:8989 edeqa/waytous-server:$VERSION &> waytous.log
+    docker run -d --name waytous -p 8080:8080 -p 8100:8100 -p 8101:8101 -p 8200:8200 -p 8201:8201 -p 8443:8443 -p 8989:8989 edeqa/waytous-server:${VERSION} &> waytous.log
 #    docker run -p 8080:8080 -p 8100:8100 -p 8101:8101 -p 8200:8200 -p 8201:8201 -p 8443:8443 -p 8989:8989 edeqa/waytous-server:1.50
 fi
-if [ $START ]; then
+if [ ${START} ]; then
     echo --- Start container
     docker start waytous
 fi
-if [ $CONSOLE ]; then
-    if [ $VERSION ]; then
-        echo --- Set version: $VERSION
+if [ ${CONSOLE} ]; then
+    if [ ${VERSION} ]; then
+        echo --- Set version: ${VERSION}
     else
         echo --- Define version: -v=VERSION
         exit 1;
     fi
     echo --- Console in container
-    docker run -i -t edeqa/waytous-server:$VERSION /bin/bash
+    docker run -i -t edeqa/waytous-server:${VERSION} /bin/bash
 fi
-if [ $LIST ]; then
+if [ ${LIST} ]; then
     echo --- List images
     docker images
 fi

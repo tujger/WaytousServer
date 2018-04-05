@@ -203,7 +203,7 @@ function DistanceHolder(main) {
                     strokeColor: "rgb(100,100,100)",
                     strokeOpacity: 0.6,
                     strokeWeight: 2,
-                    map: main.map,
+                    map: main.map
                 });
 
                 this.views.distance.marker = new google.maps.Marker({

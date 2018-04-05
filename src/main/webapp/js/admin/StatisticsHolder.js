@@ -28,6 +28,7 @@ function StatisticsHolder(main) {
     var usersChartOptions;
     var accountsChartOptions;
     var active;
+    var database;
 
     var actions = {};
     actions[DATABASE.STAT_GROUPS_CREATED_PERSISTENT] = "Group created (persistent)";
@@ -356,7 +357,7 @@ function StatisticsHolder(main) {
             }
             index = usersStat.getFilteredRows([{column:0, value:data.key}])[0];
             if(index !== undefined) {
-                for(var i in usersData) {
+                for(i in usersData) {
                     usersStat.setValue(index, +i, usersData[i]);
                 }
             } else {
@@ -372,7 +373,7 @@ function StatisticsHolder(main) {
             }
             index = accountsStat.getFilteredRows([{column:0, value:data.key}])[0];
             if(index !== undefined) {
-                for(var i in accountsData) {
+                for(i in accountsData) {
                     accountsStat.setValue(index, +i, accountsData[i]);
                 }
             } else {

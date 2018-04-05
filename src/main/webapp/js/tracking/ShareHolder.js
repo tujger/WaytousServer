@@ -12,6 +12,7 @@ function ShareHolder(main) {
 
     var shareBlockedDialog;
     var shareDialog;
+    var itemLink;
 
     function start() {
 
@@ -58,8 +59,8 @@ function ShareHolder(main) {
            items: [
                {type:HTML.DIV, innerHTML: u.lang.popup_blocked_dialog_1 },
                {type:HTML.DIV, enclosed:true, innerHTML: u.lang.popup_blocked_dialog_2 },
-               {type:HTML.DIV, innerHTML: u.lang.popup_blocked_dialog_3 },
-        //                   {type:HTML.DIV, innerHTML: main.tracking.getTrackingUri()}
+               {type:HTML.DIV, innerHTML: u.lang.popup_blocked_dialog_3 }
+               //                   {type:HTML.DIV, innerHTML: main.tracking.getTrackingUri()}
            ],
            positive: {
                label: u.lang.close
@@ -108,7 +109,7 @@ function ShareHolder(main) {
                                 method: "share",
                                 display: "popup",
                                 href: itemLink.value,
-                                caption: "Follow me at ${WEB_PAGE}",
+                                caption: "Follow me at ${WEB_PAGE}"
                             }, function(response){
                                 console.log("A",response);
                             });

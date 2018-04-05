@@ -59,12 +59,12 @@ function SampleHolder(main) {
             },
             2: {
                 title: u.lang.sample_title_2,
-                body: u.lang.sample_body_2,
+                body: u.lang.sample_body_2
             },
             3: {
                 title: u.lang.sample_title_3,
                 body: u.lang.sample_body_3,
-                ignore: true,
+                ignore: true
             }
         }
     }

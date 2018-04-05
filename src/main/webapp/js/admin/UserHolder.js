@@ -18,6 +18,7 @@ function UserHolder(main) {
     var track;
     var limit = 1000;
     var marker;
+    var buttons;
 
     this.type = "user";
     this.title = "User";

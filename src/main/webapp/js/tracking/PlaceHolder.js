@@ -172,7 +172,7 @@ function PlaceHolder(main) {
                         items: [
                             { type: HTML.HIDDEN },
                             { type: HTML.INPUT, label: u.lang.name },
-                            { type: "textarea", label: u.lang.description },
+                            { type: "textarea", label: u.lang.description }
                         ],
                         className: "place-edit-dialog",
                         positive: {

@@ -92,6 +92,6 @@ function AddressHolder(main) {
         start:start,
         onEvent:onEvent,
         createView:createView,
-        onChangeLocation:onChangeLocation,
+        onChangeLocation:onChangeLocation
     }
 }

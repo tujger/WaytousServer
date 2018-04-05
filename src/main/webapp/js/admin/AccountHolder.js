@@ -14,6 +14,7 @@ function AccountHolder(main) {
     var tableSummary;
     var tableHistory;
     var utils = main && main.arguments.utils;
+    var database;
 
     var modes = {
         ra: "Add remote value",
@@ -237,7 +238,7 @@ function AccountHolder(main) {
         u.create(HTML.BUTTON, { innerHTML:"Delete account", onclick: deleteAccount}, div);
     }
 
-    function deleteAccount(e){
+    function deleteAccount(){
         u.clear(buttons);
         u.create({className:"question", innerHTML: "Are you sure you want to delete account "+accountId+"?"}, buttons);
         u.create(HTML.BUTTON,{ className:"question", innerHTML:"Yes", onclick: function() {

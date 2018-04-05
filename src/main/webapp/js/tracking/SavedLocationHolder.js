@@ -216,7 +216,7 @@ function SavedLocationHolder(main) {
                     },
                     negative: {
                         label: u.lang.cancel
-                    },
+                    }
                 }, main.right);
 
                 if(loc) {
@@ -363,7 +363,7 @@ function SavedLocationHolder(main) {
                 locationsDialog = locationsDialog || u.dialog({
                     title: {
                         label: u.lang.saved_locations_d.format(0),
-                        filter: true,
+                        filter: true
                     },
                     resizeable: true,
                     items: [],
@@ -382,7 +382,7 @@ function SavedLocationHolder(main) {
                     if(loc && loc.la && loc.lo) {
                         var div = locationsDialog.add({
                             type: HTML.DIV,
-                            className: "saved-location-item",
+                            className: "saved-location-item"
                         });
                         locationsDialog.setTitle(u.lang.saved_locations_d.format(locationsDialog.items.length || 0));
                         var url = "https://maps.googleapis.com/maps/api/staticmap?center=" +loc.la + "," + loc.lo + "&zoom=15&size=200x200&sensor=false" + "&markers=color:darkgreen|"+loc.la+","+loc.lo + "&key="+data.firebase_config.apiKey;
@@ -515,10 +515,9 @@ function SavedLocationHolder(main) {
     }
 
     function createView(user){
-        var view = {
+        return {
             user: user
         };
-        return view;
     }
 
     function fetchAddressFor(number) {
@@ -626,6 +625,6 @@ function SavedLocationHolder(main) {
         createView:createView,
         saveable:true,
         perform:perform,
-        loadsaved:-1,
+        loadsaved:-1
     }
 }

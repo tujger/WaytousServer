@@ -18,7 +18,7 @@ function Main() {
                 console.log("ServiceWorker registration successful with scope:", registration);
             })
             .catch(function(err) {
-                if(err.code == 18) {
+                if(err.code === 18) {
                     console.warn(err);
                     return;
                 }
@@ -116,7 +116,7 @@ function Main() {
              className: "alert-dialog",
              items: [
                  { type: HTML.DIV, label: u.lang.error_while_loading_service },
-                 { type: HTML.DIV, enclosed: true, body: "" },
+                 { type: HTML.DIV, enclosed: true, body: "" }
              ],
              positive: {
                  label: u.create(HTML.SPAN, "Reload"),

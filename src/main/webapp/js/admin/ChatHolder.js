@@ -17,6 +17,7 @@ function ChatHolder(main) {
     var ons = [];
     var bound;
     var maximumMessagesLoad = 1000;
+    var database;
 
     this.start = function() {
         database = firebase.database();

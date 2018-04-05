@@ -2,7 +2,7 @@
 EMPTY=true
 for i in "$@"
 do
-case $i in
+case ${i} in
     -r|--restart)
     EMPTY=false
     RESTART=true
@@ -49,8 +49,8 @@ case $i in
 esac
 done
 
-if [ $EMPTY == true ]; then
-    echo aws.sh -n=[name] -u -uu -r $EMPTY
+if [ ${EMPTY} == true ]; then
+    echo aws.sh -n=[name] -u -uu -r ${EMPTY}
     echo "    " -n, --name - login name, default is "ec2-user"
     echo "    " -u, --update - update configs
     echo "    " -uu, --update-server - update WaytousServer.war and deploy it on server
@@ -61,57 +61,57 @@ if [ $EMPTY == true ]; then
     echo "    " --get-log - get waytous.log
     exit 1
 fi
-if [ $USERNAME ]; then
-    echo --- Username: $USERNAME
+if [ ${USERNAME} ]; then
+    echo --- Username: ${USERNAME}
 else
     echo --- Username is not defined, using default "ec2-user". Redefine it: -n=username
     USERNAME="ec2-user"
 fi
-if [ $FOLDER ]; then
+if [ ${FOLDER} ]; then
     FOLDER=FOLDER
 else
     FOLDER="prod"
 fi
-if [ $UPDATE_SERVER ]; then
-    echo --- Updating server to $FOLDER...
-    scp -i conf/aws/aws_credentials.pem build/libs/WaytousServer-1.51.war $USERNAME@wayto.us:WaytousServer.war
+if [ ${UPDATE_SERVER} ]; then
+    echo --- Updating server to ${FOLDER}...
+    scp -i conf/aws/aws_credentials.pem build/libs/WaytousServer-1.51.war ${USERNAME}@wayto.us:WaytousServer.war
 
-    ssh -i conf/aws/aws_credentials.pem $USERNAME@wayto.us << RECREATEFOLDER
+    ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us << RECREATEFOLDER
         pkill -f java
-        rm -r $FOLDER
-        mkdir $FOLDER
-        mv WaytousServer.war $FOLDER
-        cd $FOLDER
+        rm -r ${FOLDER}
+        mkdir ${FOLDER}
+        mv WaytousServer.war ${FOLDER}
+        cd ${FOLDER}
         mkdir .well-known
         mkdir .well-known/acme-challenge
         unzip -o WaytousServer.war
         rm WaytousServer.war
 RECREATEFOLDER
 fi
-if [ $UPDATE ] || [ $UPDATE_SERVER ]; then
+if [ ${UPDATE} ] || [ ${UPDATE_SERVER} ]; then
     echo --- Updating options and credentials...
-    ssh -i conf/aws/aws_credentials.pem $USERNAME@wayto.us "mkdir conf"
-    scp -i conf/aws/aws_credentials.pem conf/aws/options_aws.json $USERNAME@wayto.us:conf/options_aws.json
-    scp -i conf/aws/aws_credentials.pem conf/letsencrypt/letsencrypt.jks $USERNAME@wayto.us:conf/aws.jks
-    scp -i conf/aws/aws_credentials.pem conf/waytous-gamma-firebase-adminsdk-77ij5-540bdb1a17.json $USERNAME@wayto.us:conf/waytous-gamma-firebase-adminsdk-77ij5-540bdb1a17.json
-    scp -i conf/aws/aws_credentials.pem conf/aws/googlee7b16def95e75693.html $USERNAME@wayto.us:prod/googlee7b16def95e75693.html
+    ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us "mkdir conf"
+    scp -i conf/aws/aws_credentials.pem conf/aws/options_aws.json ${USERNAME}@wayto.us:conf/options_aws.json
+    scp -i conf/aws/aws_credentials.pem conf/letsencrypt/letsencrypt.jks ${USERNAME}@wayto.us:conf/aws.jks
+    scp -i conf/aws/aws_credentials.pem conf/waytous-gamma-firebase-adminsdk-77ij5-540bdb1a17.json ${USERNAME}@wayto.us:conf/waytous-gamma-firebase-adminsdk-77ij5-540bdb1a17.json
+    scp -i conf/aws/aws_credentials.pem conf/aws/googlee7b16def95e75693.html ${USERNAME}@wayto.us:prod/googlee7b16def95e75693.html
 fi
-if [ $UPLOAD_FILE ]; then
-    echo --- Uploading file $UPLOAD_FILE...
-    if [ $DESTINATION_PATH ]; then
-        scp -i conf/aws/aws_credentials.pem $UPLOAD_FILE $USERNAME@wayto.us:$DESTINATION_PATH
+if [ ${UPLOAD_FILE} ]; then
+    echo --- Uploading file ${UPLOAD_FILE}...
+    if [ ${DESTINATION_PATH} ]; then
+        scp -i conf/aws/aws_credentials.pem ${UPLOAD_FILE} ${USERNAME}@wayto.us:${DESTINATION_PATH}
     else
         echo --- Define --destination-path=PATH_TO_FILE
         exit 1
     fi
 fi
-if [ $GETLOG ]; then
+if [ ${GETLOG} ]; then
     echo --- Getting waytous.log -> aws-waytous.log...
-    scp -i conf/aws/aws_credentials.pem $USERNAME@wayto.us:waytous.log aws-waytous.log
+    scp -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us:waytous.log aws-waytous.log
 fi
-if [ $RESTART ]; then
+if [ ${RESTART} ]; then
     echo --- Restarting server...
-    ssh -i conf/aws/aws_credentials.pem $USERNAME@wayto.us "pkill -f java"
+    ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us "pkill -f java"
 
 #scp -i ./conf/aws/aws_credentials.pem ./HiIsjKW8S6DO_gRsjD_owSMfVvL-CTdSzdZdoIUTJCM ec2-user@wayto.us:prod/.well-known/acme-challenge/HiIsjKW8S6DO_gRsjD_owSMfVvL-CTdSzdZdoIUTJCM
 #scp -i ./conf/aws/aws_credentials.pem ./pM0MgYHg_xNpfq8EibrA8ckIqLtLH9Ul_qI-r4xgU4M ec2-user@wayto.us:prod/.well-known/acme-challenge/pM0MgYHg_xNpfq8EibrA8ckIqLtLH9Ul_qI-r4xgU4M
@@ -120,15 +120,15 @@ if [ $RESTART ]; then
 #scp -i ./conf/aws/aws_credentials.pem ./conf/assetlinks.json ec2-user@wayto.us:prod/.well-known/assetlinks.json
 
 
-    ssh -i conf/aws/aws_credentials.pem $USERNAME@wayto.us << STARTSERVER
-        cd $FOLDER/WEB-INF/classes
+    ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us << STARTSERVER
+        cd ${FOLDER}/WEB-INF/classes
         /usr/bin/java -classpath .:../lib/guava-20.0.jar:../lib/* com.edeqa.waytousserver.WaytousServer ../../../conf/options_aws.json &> ../../../waytous.log
 STARTSERVER
 fi
-if [ $SESSION ]; then
-    if [ $USERNAME ]; then
+if [ ${SESSION} ]; then
+    if [ ${USERNAME} ]; then
         echo --- Starting session...
-        ssh -i conf/aws/aws_credentials.pem $USERNAME@wayto.us
+        ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us
     else
         echo --- Session not started. Define -n=USER_NAME
         exit 1

@@ -14,7 +14,6 @@ import com.edeqa.waytousserver.rest.InitialData;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +51,7 @@ public class TrackingServletHandler extends AbstractServletHandler {
     }
 
     @Override
-    public void perform(RequestWrapper requestWrapper) throws IOException {
+    public void perform(RequestWrapper requestWrapper) {
 
         URI uri = requestWrapper.getRequestURI();
 

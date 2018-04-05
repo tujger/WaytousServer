@@ -167,7 +167,7 @@ function PropertiesHolder(main) {
             selected: myUser.selected,
             changed: myUser.changed,
             enabled: delta <= 120,
-            getDisplayName: getDisplayName.bind(myUser),
+            getDisplayName: getDisplayName.bind(myUser)
         };
 
         delete myUser.color;

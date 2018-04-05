@@ -10,6 +10,7 @@ function HomeHolder() {
     this.title = "Home";
     this.menu = "Home";
     this.icon = "home";
+    var div;
 
     this.start = function() {
         div = document.getElementsByClassName("layout")[0];

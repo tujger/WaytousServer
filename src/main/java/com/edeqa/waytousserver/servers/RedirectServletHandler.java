@@ -12,7 +12,6 @@ import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.rest.DynamicLink;
 import com.edeqa.waytousserver.rest.system.Arguments;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +26,7 @@ public class RedirectServletHandler extends AbstractServletHandler {
     private final static String LOG = "Redirect";
 
     @Override
-    public void perform(RequestWrapper requestWrapper) throws IOException {
+    public void perform(RequestWrapper requestWrapper) {
         try {
             URI uri = requestWrapper.getRequestURI();
             String host = requestWrapper.getRequestedHost();

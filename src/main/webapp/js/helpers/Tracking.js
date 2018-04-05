@@ -8,6 +8,7 @@
 function TrackingFB() {
 
 	var socket;
+	var firebaseToken;
 
     var start = function() {
         messaging.getToken().then(function(currentToken) {

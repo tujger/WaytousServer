@@ -7,7 +7,6 @@
 
 function TrackingFB(main) {
 
-    var link;
     var trackingListener;
     var json;
     var newTracking;
@@ -19,6 +18,8 @@ function TrackingFB(main) {
     var refAccounts;
     var refStat;
     var updateTask;
+    var webSocketListener;
+
     var refs = [];
 
     function start() {
@@ -110,13 +111,13 @@ function TrackingFB(main) {
     function WebSocketListener(link, reconnect) {
 
         var sendOriginal = send;
-        var onopen =  function(event) {
+        var onopen =  function() {
             opened = true;
             if(newTracking) { // create group
                 put(REQUEST.REQUEST, REQUEST.NEW_GROUP);
                 put(REQUEST.UID, utils.getUuid());
             } else if(reconnect) { // reconnect to group
-                parts = link.split("/");
+                var parts = link.split("/");
                 var groupId = parts[parts.length-1];
                 setToken(groupId);
 
@@ -162,7 +163,6 @@ function TrackingFB(main) {
                     }
                     break;
                 case RESPONSE.STATUS_ACCEPTED:
-                    var groupCreated = newTracking;
                     newTracking = false;
                     send = sendOriginal;
                     if(o[RESPONSE.SIGN]) {
@@ -170,7 +170,7 @@ function TrackingFB(main) {
                         delete o[RESPONSE.SIGN];
 
                         try {
-                            firebase.auth().signInWithCustomToken(authToken).then(function (e) {
+                            firebase.auth().signInWithCustomToken(authToken).then(function () {
 
                                 // setStatus(EVENTS.TRACKING_ACTIVE);
                                 if (o[RESPONSE.TOKEN]) {
@@ -248,19 +248,17 @@ function TrackingFB(main) {
         };
 
         var onerror = function(event) {
-                console.error("Websocket processing failed, will try to use XHR instead of " + link + ".");
+                console.error("Websocket processing failed, will try to use XHR instead of " + link + ".", event);
             if(status === EVENTS.TRACKING_DISABLED) return;
             xhrModeStart(link);
         };
 
         var xhrModeStart = function(link) {
-            var uri = new URL(link);
-            link = "/rest/join"/* + uri.pathname*/;
-//            link = "https://" + uri.hostname + (window.data.HTTPS_PORT == 443 ? "" : ":" + window.data.HTTPS_PORT) + "/rest/v1/join"/* + uri.pathname*/;
+            link = "/rest/join";
 
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() { //
-                if (xhr.readyState != 4) return;
+                if (xhr.readyState !== 4) return;
                 xhrModeCheck(link,xhr.response);
             };
             send = function(jsonMessage){
@@ -282,7 +280,7 @@ function TrackingFB(main) {
 
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() { //
-                if (xhr.readyState != 4) return;
+                if (xhr.readyState !== 4) return;
                 onmessage({data:xhr.response});
             };
             send = function(jsonMessage){
@@ -314,7 +312,7 @@ function TrackingFB(main) {
             webSocket.onerror = onerror;
 
             setTimeout(function(){
-                if(webSocket instanceof WebSocket && webSocket.readyState != WebSocket.OPEN) {
+                if(webSocket instanceof WebSocket && webSocket.readyState !== WebSocket.OPEN) {
                     webSocket.close();
                 }
             }, window.data.is_stand_alone ? 15000 : 100);
@@ -381,7 +379,7 @@ function TrackingFB(main) {
             delete jsonMessage[REQUEST.PUSH];
             delete jsonMessage[REQUEST.DELIVERY_CONFIRMATION];
 
-            var path,refPath;
+            var path;
             if(jsonMessage.to) {
                 var to = jsonMessage.to;
                 delete jsonMessage.to;

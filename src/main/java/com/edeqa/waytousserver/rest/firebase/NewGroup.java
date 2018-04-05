@@ -33,20 +33,18 @@ public class NewGroup extends AbstractFirebaseAction<NewGroup, GroupRequest> {
         ((CreateAccount) getFireBus().getHolder(CreateAccount.TYPE)).setOnSuccess(() -> {
                     //noinspection unchecked
                     final Runnable1<JSONObject>[] onresult = new Runnable1[3];
-                    onresult[0] = jsonRequestNewGroup -> {
-                        ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
-                                .setGroupId(groupRequest.getId())
-                                .setAction(REQUEST_NEW_GROUP)
-                                .setOnSuccess(jsonSuccess -> {
-                                    getUserRequest().send(jsonSuccess.toString());
-                                    getUserRequest().close();
-                                })
-                                .setOnError(jsonError -> {
-                                    getUserRequest().send(jsonError.toString());
-                                    getUserRequest().close();
-                                })
-                                .call(null, getUserRequest().fetchUser());
-                    };
+                    onresult[0] = jsonRequestNewGroup -> ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
+                            .setGroupId(groupRequest.getId())
+                            .setAction(REQUEST_NEW_GROUP)
+                            .setOnSuccess(jsonSuccess -> {
+                                getUserRequest().send(jsonSuccess.toString());
+                                getUserRequest().close();
+                            })
+                            .setOnError(jsonError -> {
+                                getUserRequest().send(jsonError.toString());
+                                getUserRequest().close();
+                            })
+                            .call(null, getUserRequest().fetchUser());
                     onresult[1] = jsonFetchNewId -> {
                         groupRequest.fetchNewId();
                         onresult[2].call(jsonFetchNewId);

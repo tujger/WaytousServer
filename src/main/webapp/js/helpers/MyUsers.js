@@ -134,6 +134,6 @@ function MyUsers(main) {
         users:users,
         getCountSelected:getCountSelected,
         getCountActive:getCountActive,
-        setMyNumber:setMyNumber,
+        setMyNumber:setMyNumber
     }
 }

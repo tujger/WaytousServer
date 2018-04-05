@@ -34,7 +34,7 @@ import static com.edeqa.waytous.Constants.USER_NUMBER;
  */
 
 public class MyGroup {
-    public Map<String,MyUser> users = new HashMap<>();
+    public final Map<String,MyUser> users = new HashMap<>();
     private Long created;
     private Long changed;
     private String id;
