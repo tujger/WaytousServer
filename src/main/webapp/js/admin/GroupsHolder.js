@@ -9,7 +9,7 @@ function GroupsHolder(main) {
     this.type = "groups";
     this.title = "Groups";
     this.menu = "Groups";
-    this.icon = "group";
+    this.icon = "supervisor_account";
 
     var tableSummary;
     var tableGroups;

@@ -39,10 +39,10 @@ function CreateHolder(main) {
                 },
                 {
                     type: HTML.CHECKBOX, label: "Requires password", onchange: function() {
-                    dialog.items[2].disabled = !this.checked;
-                    dialog.items[2].parentNode.classList[this.checked ? "remove" : "add"]("disabled");
-                    dialog.items[2].focus();
-                } },
+                        dialog.items[2].disabled = !this.checked;
+                        dialog.items[2].parentNode.classList[this.checked ? "remove" : "add"]("disabled");
+                        dialog.items[2].focus();
+                    } },
                 { type: HTML.PASSWORD, itemClassName: "disabled", disabled: true, label: "&#150; password" },
                 { type: HTML.INPUT, label: "Welcome message" },
                 {
@@ -55,11 +55,11 @@ function CreateHolder(main) {
                 },
                 { type: HTML.NUMBER, label: "&#150; time to live, min", oninput: validate_ttl, value: 24 * 60 },
                 { type: HTML.CHECKBOX, label: "Dismiss inactive users", onchange: function() {
-                    // noinspection PointlessBooleanExpressionJS
-                    dialog.items[7].disabled = !!this.checked;
-                    dialog.items[7].parentNode.classList[this.checked ? "add" : "remove"]("disabled");
-                    dialog.items[7].focus();
-                }, checked: true },
+                        // noinspection PointlessBooleanExpressionJS
+                        dialog.items[7].disabled = !!this.checked;
+                        dialog.items[7].parentNode.classList[this.checked ? "add" : "remove"]("disabled");
+                        dialog.items[7].focus();
+                    }, checked: true },
                 { type: HTML.NUMBER, itemClassName: "", label: "&#150; delay to dismiss, sec", title:"Minimal value 300", onchange: validate_delay, oninput: validate_delay, value: 3600 },
                 { type: HTML.NUMBER, label: "Limit users" }
             ],
@@ -68,7 +68,10 @@ function CreateHolder(main) {
                 onclick: validate_submit
             },
             negative: {
-                label: u.create(HTML.SPAN, "Cancel")
+                label: u.create(HTML.SPAN, "Cancel"),
+                onclick: function() {
+                    main.turn("groups");
+                }
             },
             help: function() {
                 console.log("HELP");
@@ -117,14 +120,13 @@ function CreateHolder(main) {
         options[DATABASE.DISMISS_INACTIVE] = inputDismissInactive.checked;
         options[DATABASE.DELAY_TO_DISMISS] = inputDelay.value;
 
-        u.post("/admin/rest/group/create", JSON.stringify(options))
-            .then(function(){
-                u.toast.show("Group "+inputId.value+" has created.");
-                main.turn("group", inputId.value);
-            }).catch(function(code,xhr){
+        u.post("/admin/rest/group/create", JSON.stringify(options)).then(function(){
+            u.toast.show("Group "+inputId.value+" has created.");
+            main.turn("group", inputId.value);
+        }).catch(function(code,xhr){
             console.error(code,xhr);
             var res = JSON.parse(xhr.responseText) || {};
-            u.toast.show(res.message || xhr.statusText);
+            u.toast.error(res.message || xhr.statusText);
         });
         return false;
     }
