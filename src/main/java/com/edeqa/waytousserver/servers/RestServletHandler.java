@@ -41,7 +41,7 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
 
         registerAction(new Api());
 
-        registerAction(new Files().setFilenameFilter((dir, name) -> name.contains("Holder")).setWebDirectory(arguments.getWebRootDirectory()).setChildDirectory("js/main").setActionName("/rest/panth"));
+        registerAction(new Files().setFilenameFilter((dir, name) -> name.contains("Holder")).setWebDirectory(arguments.getWebRootDirectory()).setChildDirectory("js/panth").setActionName("/rest/panth"));
 
     }
 
