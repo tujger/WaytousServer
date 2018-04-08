@@ -72,10 +72,10 @@ abstract public class AbstractDataProcessor {
     public void onWebSocketPing(DataProcessorConnection conn, Framedata f) {
         try {
 //            UserRequest userRequest = getUserRequests().findByConnection(conn);
-//            if(userRequest != null) userRequest.setChanged();
+//            if(userRequest != null) userRequest.setDefined();
 //            String ip = conn.getRemoteSocketAddress().toString();
 //            if (ipToUser.containsKey(ip)) {
-//                ipToUser.get(ip).setChanged();
+//                ipToUser.get(ip).setDefined();
 //            }
 //            System.out.println("PING:" + conn.getRemoteSocketAddress() + ":" + f);
         } catch (Exception e) {

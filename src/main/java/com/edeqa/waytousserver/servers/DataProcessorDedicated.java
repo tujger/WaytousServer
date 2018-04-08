@@ -317,7 +317,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
                             response.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
                             response.put(RESPONSE_NUMBER, user.getNumber());
                             user.setConnection(conn);
-                            user.setChanged();
+                            user.setDefined();
                             if (check.getName() != null && check.getName().length() > 0) {
                                 user.setName(check.getName());
                             }

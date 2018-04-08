@@ -254,7 +254,7 @@ public class MyGroup {
             URL url = new URL("https://android.googleapis.com/gcm/send");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-            conn.setRequestProperty("Resource-Type", "application/json");
+            conn.setRequestProperty("Page-Type", "application/json");
             conn.setRequestProperty("Authorization", "key=" + OPTIONS.getFirebaseApiKey());
             conn.setRequestMethod("POST");
 

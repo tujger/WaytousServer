@@ -37,20 +37,20 @@
     </servlet-mapping>
 
     <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>all</web-resource-name>
+        <web-page-collection>
+            <web-page-name>all</web-page-name>
             <url-pattern>/*</url-pattern>
-        </web-resource-collection>
+        </web-page-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
 
     <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>all</web-resource-name>
+        <web-page-collection>
+            <web-page-name>all</web-page-name>
             <url-pattern>/admin/*</url-pattern>
-        </web-resource-collection>
+        </web-page-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
