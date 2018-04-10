@@ -78,6 +78,8 @@ if [ ${UPDATE_SERVER} ]; then
 
     ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us << RECREATEFOLDER
         pkill -f java
+        mv ${FOLDER}/webapp/data .
+        mv ${FOLDER}/webapp/content .
         rm -r ${FOLDER}
         mkdir ${FOLDER}
         mv WaytousServer.war ${FOLDER}
@@ -86,6 +88,8 @@ if [ ${UPDATE_SERVER} ]; then
         mkdir .well-known/acme-challenge
         unzip -o WaytousServer.war
         rm WaytousServer.war
+        mv ./data ${FOLDER}/webapp
+        mv ./content ${FOLDER}/webapp
 RECREATEFOLDER
 fi
 if [ ${UPDATE} ] || [ ${UPDATE_SERVER} ]; then
