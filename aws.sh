@@ -117,12 +117,11 @@ if [ ${RESTART} ]; then
     echo --- Restarting server...
     ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us "pkill -f java"
 
-#scp -i ./conf/aws/aws_credentials.pem ./HiIsjKW8S6DO_gRsjD_owSMfVvL-CTdSzdZdoIUTJCM ec2-user@wayto.us:prod/.well-known/acme-challenge/HiIsjKW8S6DO_gRsjD_owSMfVvL-CTdSzdZdoIUTJCM
-#scp -i ./conf/aws/aws_credentials.pem ./pM0MgYHg_xNpfq8EibrA8ckIqLtLH9Ul_qI-r4xgU4M ec2-user@wayto.us:prod/.well-known/acme-challenge/pM0MgYHg_xNpfq8EibrA8ckIqLtLH9Ul_qI-r4xgU4M
-#scp -i ./conf/aws/aws_credentials.pem ./U4sLxx7cBoePpKPX96Hy_5gW9qVzVTdL7BSThpvPtaY ec2-user@wayto.us:prod/.well-known/acme-challenge/U4sLxx7cBoePpKPX96Hy_5gW9qVzVTdL7BSThpvPtaY
-#scp -i ./conf/aws/aws_credentials.pem ./ZBG1N29AuNNwYGO_M8E2j1_VNridX0gTB0dITA7Itqg ec2-user@wayto.us:prod/.well-known/acme-challenge/ZBG1N29AuNNwYGO_M8E2j1_VNridX0gTB0dITA7Itqg
+#scp -i ./conf/aws/aws_credentials.pem ./2tvHGXt2rjLbSjJ7Jfi_oA9sHUS8imFmZ_vhXnqpFPQ ec2-user@wayto.us:prod/.well-known/acme-challenge/2tvHGXt2rjLbSjJ7Jfi_oA9sHUS8imFmZ_vhXnqpFPQ
+#scp -i ./conf/aws/aws_credentials.pem ./hEfBi09vcyqxrc08cd5uJcW99ldEXkd8SkpRrGu4AuE ec2-user@wayto.us:prod/.well-known/acme-challenge/hEfBi09vcyqxrc08cd5uJcW99ldEXkd8SkpRrGu4AuE
+#scp -i ./conf/aws/aws_credentials.pem ./tbuHOCtTSP6AOppQ9jBEhK-6FwHi8rHjayQUQfqzzsM ec2-user@wayto.us:prod/.well-known/acme-challenge/tbuHOCtTSP6AOppQ9jBEhK-6FwHi8rHjayQUQfqzzsM
+#scp -i ./conf/aws/aws_credentials.pem ./ZZcX-fx7zeZl4OiepdNwUE5MNpYD892YpyNcM8QqXrA ec2-user@wayto.us:prod/.well-known/acme-challenge/ZZcX-fx7zeZl4OiepdNwUE5MNpYD892YpyNcM8QqXrA
 #scp -i ./conf/aws/aws_credentials.pem ./conf/assetlinks.json ec2-user@wayto.us:prod/.well-known/assetlinks.json
-
 
     ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us << STARTSERVER
         cd ${FOLDER}/WEB-INF/classes
