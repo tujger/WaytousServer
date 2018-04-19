@@ -490,7 +490,7 @@ function Utils(main) {
             itemsClassName: "about-dialog-items",
             buttonsClassName: "about-dialog-buttons",
             items: [
-                { innerHTML: "${APP_NAME} v.1.${SERVER_BUILD}" },
+                { innerHTML: "${APP_NAME} v.${SERVER_VERSION}.${SERVER_BUILD}" },
                 { content: u.create(HTML.DIV)
                     .place(HTML.A, { className: "about-dialog-link", href: "/", target: "_blank", rel:"noopener", innerHTML: u.lang.support || "Home"})
                     .place(HTML.A, { className: "about-dialog-link", href: "/support/", target: "_blank",rel:"noopener", innerHTML: u.lang.support || "Support"})

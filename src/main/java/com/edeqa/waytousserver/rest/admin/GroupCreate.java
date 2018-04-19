@@ -91,7 +91,7 @@ public class GroupCreate extends AbstractAction<RequestWrapper> {
                         user.setSignProvider(SignProvider.ADMIN);
                         user.setName(request.getUserName());
                         user.setOs(System.getProperty("os.name"));
-                        user.setModel(OPTIONS.getAppName() + " 1." + Common.SERVER_BUILD);
+                        user.setModel(OPTIONS.getAppName() + " " + Common.SERVER_VERSION + "." + Common.SERVER_BUILD);
 
                         Common.getInstance().getDataProcessor().registerUser(groupRequest.getId(), user, REQUEST_NEW_GROUP, request::sendResult, jsonError -> request.sendError(500, jsonError));
                     }, jsonError -> request.sendError(500, jsonError));

@@ -84,6 +84,6 @@ public class Arguments extends com.edeqa.edequate.rest.system.Arguments {
 
     @Override
     public String getVersion() {
-        return "1." + Common.SERVER_BUILD;
+        return String.format("%d.%d", Common.SERVER_VERSION, Common.SERVER_BUILD);
     }
 }

@@ -35,6 +35,7 @@ import static com.edeqa.waytous.Constants.OPTIONS;
 
 public class Common {
 
+    public final static int SERVER_VERSION = 2;
     public final static int SERVER_BUILD = 60;
     public final static String FIREBASE_JAVASCRIPT_VERSION = "4.9.0"; // https://firebase.google.com/docs/web/setup
 

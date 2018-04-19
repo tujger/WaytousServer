@@ -23,7 +23,7 @@ repositories {
 }
 
 group 'com.edeqa'
-version '1.60'
+version '2.60'
 
 /**
  * NOTE!

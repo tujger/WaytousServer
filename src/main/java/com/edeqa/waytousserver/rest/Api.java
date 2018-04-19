@@ -32,7 +32,7 @@ public class Api extends AbstractAction<RequestWrapper> {
         boolean success = false;
         if(getOptions().has(VERSION)) {
             JSONObject resultObject = new JSONObject();
-            resultObject.put(VERSION_NAME, "1." + Common.SERVER_BUILD);
+            resultObject.put(VERSION_NAME, Common.SERVER_VERSION + "." + Common.SERVER_BUILD);
             resultObject.put(VERSION_CODE, Common.SERVER_BUILD);
             json.put(VERSION, resultObject);
             success = true;

@@ -25,6 +25,7 @@ public class MainServletHandler extends com.edeqa.edequate.MainServletHandler {
     private static final String PATTERN_APP_NAME = "\\$\\{APP_NAME\\}";
     private static final String PATTERN_REFERER = "\\$\\{REFERER\\}";
     private static final String PATTERN_SERVER_BUILD = "\\$\\{SERVER_BUILD\\}";
+    private static final String PATTERN_SERVER_VERSION = "\\$\\{SERVER_VERSION\\}";
     private static final String PATTERN_SUPPORT_EMAIL = "\\$\\{SUPPORT_EMAIL\\}";
     private static final String PATTERN_WEB_PAGE = "\\$\\{WEB_PAGE\\}";
 
@@ -49,6 +50,7 @@ public class MainServletHandler extends com.edeqa.edequate.MainServletHandler {
         setReplacements(new Replacements());
 
         getReplacements().add(new Replacement().setPattern(PATTERN_SERVER_BUILD).setReplace("" + Common.SERVER_BUILD));
+        getReplacements().add(new Replacement().setPattern(PATTERN_SERVER_VERSION).setReplace("" + Common.SERVER_VERSION));
         getReplacements().add(new Replacement().setPattern(PATTERN_APP_NAME).setReplace(OPTIONS.getAppName() + (OPTIONS.isDebugMode() ? " &beta;" : "")));
         getReplacements().add(new Replacement().setPattern(PATTERN_SUPPORT_EMAIL).setReplace(OPTIONS.getSupportEmail()));
         getReplacements().add(new Replacement().setPattern(PATTERN_WEB_PAGE).setReplace(OPTIONS.getAppLink()));

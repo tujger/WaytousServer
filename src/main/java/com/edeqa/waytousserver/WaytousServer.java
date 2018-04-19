@@ -23,6 +23,7 @@ import java.net.InetAddress;
 
 import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
+import static com.edeqa.waytousserver.helpers.Common.SERVER_VERSION;
 
 
 /**
@@ -38,7 +39,7 @@ public class WaytousServer extends EdequateServer {
     @SuppressWarnings("AppEngineForbiddenCode")
     public static void main(final String[] args ) throws Exception {
 
-        Misc.log(LOG, "====== Waytous server v1."+SERVER_BUILD+". Copyright (C) 2017-18, Edeqa. http://www.edeqa.com ======");
+        Misc.log(LOG, "====== Waytous server v" + SERVER_VERSION + "." + SERVER_BUILD + ". Copyright (C) 2017-18, Edeqa. http://www.edeqa.com ======");
         Misc.log(LOG, "====== based on Edequate v" + Version.getVersion() + ". Copyright (C) 2017-18, Edeqa. http://www.edeqa.com ======");
 
 

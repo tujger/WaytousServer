@@ -35,7 +35,6 @@ public class InitialData extends AbstractAction<RequestWrapper> {
         json.put("WSS_PORT", OPTIONS.getWssPortDedicated());
         json.put("firebase_config", OPTIONS.getFirebaseConfig());
 
-
         if(isAdmin()) {
             json.put("sign", Common.getInstance().getDataProcessor().createCustomToken("Viewer"));
             json.put("access", ((AdminToken) EventBus.getOrCreate(AbstractFirebaseAction.EVENTBUS).getHolder(AdminToken.TYPE)).fetchToken());
