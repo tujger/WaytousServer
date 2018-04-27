@@ -74,7 +74,7 @@ else
 fi
 if [ ${UPDATE_SERVER} ]; then
     echo --- Updating server to ${FOLDER}...
-    scp -i conf/aws/aws_credentials.pem build/libs/WaytousServer-1.51.war ${USERNAME}@wayto.us:WaytousServer.war
+    scp -i conf/aws/aws_credentials.pem build/libs/WaytousServer-2.60.war ${USERNAME}@wayto.us:WaytousServer.war
 
     ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us << RECREATEFOLDER
         pkill -f java
@@ -88,8 +88,8 @@ if [ ${UPDATE_SERVER} ]; then
         mkdir .well-known/acme-challenge
         unzip -o WaytousServer.war
         rm WaytousServer.war
-        mv ./data ${FOLDER}/webapp
-        mv ./content ${FOLDER}/webapp
+#        mv ./data ${FOLDER}/webapp
+#        mv ./content ${FOLDER}/webapp
 RECREATEFOLDER
 fi
 if [ ${UPDATE} ] || [ ${UPDATE_SERVER} ]; then
