@@ -23,10 +23,8 @@ function SavedLocationHolder(main) {
     var locationShareDialog;
     var locationSendDialog;
     var locationDeleteDialog;
-    var shareBlockedDialog;
     var locationsDialog;
     var drawerMenuItem;
-    var showNavigation = false;
 
     function start() {
     }

@@ -5,7 +5,7 @@
  * Created 2/9/17.
  */
 
-function TrackingFB() {
+function Tracking() {
 
 	var socket;
 	var firebaseToken;

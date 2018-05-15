@@ -53,7 +53,6 @@ function Main() {
         });
 
         window.addEventListener("load", function() { window. scrollTo(0, 0); });
-//        document.addEventListener("touchmove", function(e) { e.preventDefault() });
     };
 
     function initializeHeader() {
@@ -87,11 +86,6 @@ function Main() {
             .place(HTML.META, {name:"msapplication-TileImage", content:"/icons/mstile-144x144.png"})
             .place(HTML.META, {name:"msapplication-config", content:"/icons/browserconfig.xml"})
             .place(HTML.META, {name:"theme-color", content:"#aaeeee"});
-            //.place(HTML.SCRIPT, {innerHTML: "window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;\n" +
-            //"ga('create', 'UA-104070698-1', 'auto');\n" +
-            //"ga('send', 'pageview');"})
-            //.place(HTML.SCRIPT, {src: "https://www.google-analytics.com/analytics.js", async: true});
-
         if(window.data && window.data.google_analytics_tracking_id) {
             document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + window.data.google_analytics_tracking_id, async:""})
                 .place(HTML.SCRIPT, {innerHTML: "window.dataLayer = window.dataLayer || [];\n" +
@@ -133,9 +127,7 @@ function Main() {
     function loadScripts(){
         var files = window.data.is_debug_mode ? [
             // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js", // https://firebase.google.com/docs/web/setup
-            // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
-            // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js",
-            "https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js", // https://cdnjs.com/libraries/fingerprintjs2
+            "https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.8.0/fingerprint2.min.js", // https://cdnjs.com/libraries/fingerprintjs2
             "/js/helpers/Utils.js",
             "/js/helpers/MyUser.js",
             "/js/helpers/MyUsers.js",
@@ -223,38 +215,6 @@ function Main() {
 
     function initialize() {
 
-//        if(!firebase || !firebase.database || !firebase.auth) {
-//            console.error("Failed firebase loading, trying again...");
-////debugger;
-//            var files = [];
-//            if(!firebase) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js");
-//            if(!firebase.database) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-database.js");
-//            if(!firebase.auth) files.push("https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js");
-//
-//            var loaded = 0;
-//            var failed = false;
-//            for(var i in files) {
-//                var file = files[i];
-//                u.require(file, main).then(function() {
-//                    if(failed) return;
-//                    loaded++;
-//                    u.loading(Math.ceil(loaded / files.length * 100) + "%");
-//                    if(loaded === u.keys(files).length) {
-//                        initialize.call(main);
-//                    }
-//                }).catch(function(code, moduleName, event) {
-//                    console.log(code, moduleName, event.srcElement.src);
-//                    if(failed) return;
-//                    failed = true;
-//
-//                    u.lang.updateNode(main.alert.items[1].body, u.lang.error_while_loading_s_code_s.format(moduleName,code));
-//                    main.alert.open();
-//                });
-//            }
-//
-//            return;
-//        }
-        // firebase.initializeApp(window.data.firebase_config);
         database = firebase.database();
 
         firebase.auth().onAuthStateChanged(function(user) {
@@ -265,7 +225,6 @@ function Main() {
 
         setTimeout(function(){
             main.users = users = new MyUsers(main);
-
             if(!me){
                 main.me = me = new MyUser(main);
                 me.user = true;
@@ -273,7 +232,6 @@ function Main() {
                 me.number = 0;
                 me.active = true;
                 me.selected = true;
-
                 if(u.load("properties:name")){
                     me.name = u.load("properties:name");
                 }

@@ -491,11 +491,12 @@ function Utils(main) {
             buttonsClassName: "about-dialog-buttons",
             items: [
                 { innerHTML: "${APP_NAME} v.${SERVER_VERSION}.${SERVER_BUILD}" },
+                { className: "about-dialog-link", innerHTML: "(%s)".sprintf(new Date(1526357427271).toDateString()) },
                 { content: u.create(HTML.DIV)
-                    .place(HTML.A, { className: "about-dialog-link", href: "/", target: "_blank", rel:"noopener", innerHTML: u.lang.support || "Home"})
-                    .place(HTML.A, { className: "about-dialog-link", href: "/support/", target: "_blank",rel:"noopener", innerHTML: u.lang.support || "Support"})
-                    .place(HTML.A, { className: "about-dialog-link", href: "/help/", target: "_blank", rel:"noopener", innerHTML: u.lang.help || "Help"})
-                    .place(HTML.A, { className: "about-dialog-link", href: "/feedback/", target: "_blank", rel:"noopener", innerHTML: u.lang.feedback || "Feedback" })
+                    .place(HTML.A, { className: "about-dialog-link", href: "/", target: "_blank", rel:"noopener", innerHTML: u.lang.home || "Home"})
+                    .place(HTML.A, { className: "about-dialog-link", href: "/main/support/", target: "_blank",rel:"noopener", innerHTML: u.lang.support || "Support"})
+                    .place(HTML.A, { className: "about-dialog-link", href: "/main/help/", target: "_blank", rel:"noopener", innerHTML: u.lang.help || "Help"})
+                    .place(HTML.A, { className: "about-dialog-link", href: "/main/feedback/", target: "_blank", rel:"noopener", innerHTML: u.lang.feedback || "Feedback" })
                 },
                 { innerHTML: "&nbsp;" },
                 { content: [

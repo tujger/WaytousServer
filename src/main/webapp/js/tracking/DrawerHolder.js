@@ -27,7 +27,7 @@ function DrawerHolder(main) {
         dialogAbout.add({
             enclosed: true,
             label: u.lang.privacy_policy,
-            body: u.lang.loading.outerHTML,
+            body: u.lang.loading,
             onopen: function(e) {
                 var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);
                 u.post("/rest/content", {resource: "privacy-policy.html", locale: lang}).then(function(xhr){
@@ -40,7 +40,7 @@ function DrawerHolder(main) {
         dialogAbout.add({
             enclosed: true,
             label: u.lang.terms_of_service,
-            body: u.lang.loading.outerHTML,
+            body: u.lang.loading,
             className: "dialog-about-terms",
             onopen: function(e) {
                 var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);
@@ -54,8 +54,16 @@ function DrawerHolder(main) {
         dialogAbout.add({
             enclosed: true,
             label: u.lang.third_party_components,
-            body: "Third party components",
-            className: "dialog-about-third"
+            body: u.lang.loading,
+            className: "dialog-about-third",
+            onopen: function(e) {
+                var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);
+                u.post("/rest/content", {resource: "third-party-components.html", locale: lang}).then(function(xhr){
+                    e.body.innerHTML = xhr.response;
+                }).catch(function(error, json) {
+                    e.body.innerHTML = u.lang.error;
+                });
+            }
         });
 
         var categories = {};

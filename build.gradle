@@ -23,7 +23,7 @@ repositories {
 }
 
 group 'com.edeqa'
-version '2.60'
+version '2.61'
 
 /**
  * NOTE!
@@ -83,7 +83,7 @@ dependencies {
     if (installationType == 'google-appengine') {
 //        appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.54'
         compile 'com.google.appengine:appengine-api-1.0-sdk:+'
-        compile 'com.google.firebase:firebase-server-sdk:+'
+        compile 'com.google.firebase:firebase-server-sdk:3.0.3'
         compile 'com.google.guava:guava:23.6-jre'
         compile 'javax.servlet:javax.servlet-api:3.1.0'
         compile 'org.apache.httpcomponents:httpclient:4.5.4'
@@ -95,7 +95,7 @@ dependencies {
 
 // server rows
     if (installationType == 'standalone-server') {
-        compile 'com.google.firebase:firebase-admin:+'
+        compile 'com.google.firebase:firebase-admin:5.8.0'
         compile 'javax.servlet:javax.servlet-api:3.1.0'
     }
     compile fileTree(dir: 'libs', include: ['*.jar'])
