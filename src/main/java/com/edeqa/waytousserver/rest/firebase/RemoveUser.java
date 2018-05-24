@@ -7,16 +7,13 @@ import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
-import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.tasks.OnFailureListener;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import static com.edeqa.waytous.Constants.REQUEST_UID;
 
@@ -46,7 +43,7 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
         res.put(Rest.GROUP_ID, getGroupId());
         res.put(Rest.USER_NUMBER, getUserNumber());
 
-        final OnFailureListener onFailureListener = error -> {
+        final Runnable1<Throwable> onFailureListener = error -> {
             res.put(STATUS, STATUS_ERROR);
             res.put(MESSAGE, error.getMessage());
             Misc.log("RemoveUser", getUserNumber(), "from group", getGroupId(), "failed:", error.getMessage());
@@ -74,26 +71,24 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
                                                     updates.put(Firebase.PUBLIC + "/" + entry.getKey() + "/" + getUserNumber(), null);
                                                 }
                                             }
-
-                                            ApiFuture<Void> removeUserTask = refGroups.child(getGroupId()).updateChildrenAsync(updates);
-                                            try {
-                                                removeUserTask.get();
-                                                res.put(STATUS, STATUS_SUCCESS);
-                                                Misc.log("RemoveUser", getUserNumber(), "[" + value.toString() + "]", "removed from group", getGroupId());
-                                                getOnSuccess().call(res);
-                                                ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
-                                                        .setGroupId(getGroupId())
-                                                        .setAction(AbstractDataProcessor.Action.USER_REMOVED)
-                                                        .call(null, value.toString());
-
-                                            } catch (InterruptedException | ExecutionException e) {
-                                                onFailureListener.onFailure(e);
-                                            }
+                                            refGroups.child(getGroupId()).updateChildren(updates, (error, ref) -> {
+                                                if(error == null) {
+                                                    res.put(STATUS, STATUS_SUCCESS);
+                                                    Misc.log("RemoveUser", getUserNumber(), "[" + value.toString() + "]", "removed from group", getGroupId());
+                                                    getOnSuccess().call(res);
+                                                    ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
+                                                            .setGroupId(getGroupId())
+                                                            .setAction(AbstractDataProcessor.Action.USER_REMOVED)
+                                                            .call(null, value.toString());
+                                                } else {
+                                                    onFailureListener.call(error.toException());
+                                                }
+                                            });
                                         }
                                     }
                                 }).start();
                     } else {
-                        onFailureListener.onFailure(new Exception("User not found."));
+                        onFailureListener.call(new Exception("User not found."));
                     }
                 }).start();
     }

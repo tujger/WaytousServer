@@ -5,7 +5,6 @@ import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
-import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 
@@ -72,13 +71,14 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
                     } else {
                         Misc.log("CreateAccount", "updating for uid:", user.getUid(), accountPrivateData);
                     }
-                    ApiFuture<Void> updateAccountTask = refAccounts.child(user.getUid()).child(Firebase.PRIVATE).updateChildrenAsync(accountPrivateData);
-                    try {
-                        updateAccountTask.get();
-                    } catch (Exception e) {
-                        Misc.err("CreateAccount", "failed for uid:", user.getUid(), e);
-                        getOnError().call(e);
-                    }
+                    refAccounts.child(user.getUid()).child(Firebase.PRIVATE).updateChildren(accountPrivateData, (error, ref) -> {
+                        if(error == null) {
+
+                        } else {
+                            Misc.err("CreateAccount", "failed for uid:", user.getUid(), error.toException());
+                            getOnError().call(error.toException());
+                        }
+                    });
                 })
                 .addOnFailureListener(error -> {
                     Misc.err("CreateAccount", "failed for uid:", user.getUid(), error);

@@ -2,6 +2,7 @@ package com.edeqa.waytousserver.helpers;
 
 public class FirebaseGroup {
 
+    public String welcomeMessage;
     public Long ch;
     public Long cr;
     public Integer timeToLiveIfEmpty;
@@ -25,6 +26,7 @@ public class FirebaseGroup {
                        ", requiresPassword=" + requiresPassword +
                        ", persistent=" + persistent +
                        ", dismissInactive=" + dismissInactive +
+                       ", welcomeMessage=" + welcomeMessage +
                        '}';
     }
 }

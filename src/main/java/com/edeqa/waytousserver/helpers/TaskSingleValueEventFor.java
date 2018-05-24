@@ -9,13 +9,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.tasks.Task;
-import com.google.firebase.tasks.TaskCompletionSource;
-import com.google.firebase.tasks.Tasks;
 
 import org.json.JSONObject;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created 6/13/2017.
@@ -86,32 +81,55 @@ public class TaskSingleValueEventFor<T> {
                         });
 */
         } else {
-            final TaskCompletionSource<DataSnapshot> tcs = new TaskCompletionSource<>();
+//            final TaskCompletionSource<DataSnapshot> tcs = new TaskCompletionSource<>();
+//            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    tcs.setResult(dataSnapshot);
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                    tcs.setException(databaseError.toException());
+//                    databaseError.toException().printStackTrace();
+//                }
+//            });
+//            Task<DataSnapshot> task = tcs.getTask();
+//            try {
+//                Tasks.await(task);
+//                DataSnapshot dataSnapshot = task.getResult();
+//                if(onSuccessListener != null) //noinspection unchecked
+//                    onSuccessListener.call((T) dataSnapshot);
+//                if(onCompleteListener != null) //noinspection unchecked
+//                    onCompleteListener.call((T) dataSnapshot);
+//            } catch (ExecutionException | InterruptedException e) {
+//                e.printStackTrace();
+//                if(onFailureListener != null) onFailureListener.call(e);
+//                if(onCompleteListener != null) onCompleteListener.call(null);
+//            }
+
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    tcs.setResult(dataSnapshot);
+                    try {
+                        if (onSuccessListener != null) //noinspection unchecked
+                            onSuccessListener.call((T) dataSnapshot);
+                        if (onCompleteListener != null) //noinspection unchecked
+                            onCompleteListener.call((T) dataSnapshot);
+                    } catch (Exception e) {
+                        Misc.err(LOG, "failed:", e);
+                        if (onFailureListener != null) onFailureListener.call(e);
+                    }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    tcs.setException(databaseError.toException());
                     databaseError.toException().printStackTrace();
+                    if (onFailureListener != null) onFailureListener.call(databaseError.toException());
+                    if (onCompleteListener != null) onCompleteListener.call(null);
                 }
             });
-            Task<DataSnapshot> task = tcs.getTask();
-            try {
-                Tasks.await(task);
-                DataSnapshot dataSnapshot = task.getResult();
-                if(onSuccessListener != null) //noinspection unchecked
-                    onSuccessListener.call((T) dataSnapshot);
-                if(onCompleteListener != null) //noinspection unchecked
-                    onCompleteListener.call((T) dataSnapshot);
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-                if(onFailureListener != null) onFailureListener.call(e);
-                if(onCompleteListener != null) onCompleteListener.call(null);
-            }
+
         }
     }
 

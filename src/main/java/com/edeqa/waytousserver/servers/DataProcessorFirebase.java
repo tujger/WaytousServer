@@ -33,6 +33,7 @@ import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.edeqa.waytousserver.rest.tracking.Message;
 import com.edeqa.waytousserver.rest.tracking.SavedLocation;
 import com.edeqa.waytousserver.rest.tracking.Tracking;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +45,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -158,15 +158,19 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
 //                break;
             }
         }
+        setServerMode(true);
         if (isServerMode()) {
             try {
-                Class tempClass = Class.forName("com.google.firebase.auth.FirebaseCredentials");
-                //noinspection unchecked
-                Method fromCertificate = tempClass.getDeclaredMethod("fromCertificate", InputStream.class);
+//                Class tempClass = Class.forName("com.google.firebase.auth.FirebaseCredentials");
 
-                assert method != null;
-                builder = (FirebaseOptions.Builder) method.invoke(builder, fromCertificate.invoke(null, new FileInputStream(OPTIONS.getFirebasePrivateKeyFile())));
-//                builder = (FirebaseOptions.Builder) method.invoke(builder, FirebaseCredentials.fromCertificate(new FileInputStream(OPTIONS.getFirebasePrivateKeyFile())));
+                //noinspection unchecked
+//                Method fromCertificate = tempClass.getDeclaredMethod("fromCertificate", InputStream.class);
+//                assert method != null;
+//                builder = (FirebaseOptions.Builder) method.invoke(builder, fromCertificate.invoke(null, new FileInputStream(OPTIONS.getFirebasePrivateKeyFile())));
+
+
+                FileInputStream serviceAccount = new FileInputStream(OPTIONS.getFirebasePrivateKeyFile());
+                builder = new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(serviceAccount));
             } catch (Exception e) {
                 e.printStackTrace();
             }

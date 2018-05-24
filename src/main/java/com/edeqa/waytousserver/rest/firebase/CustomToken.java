@@ -66,7 +66,11 @@ public class CustomToken extends AbstractFirebaseAction<CustomToken, String> {
                 }
             } else {
                 HashMap<String, Serializable> token = new HashMap<>();
-                token.put("token", String.valueOf(FirebaseAuth.getInstance().createCustomToken(uid)));
+                try {
+                    token.put("token", String.valueOf(FirebaseAuth.getInstance().createCustomToken(uid)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 token.put("timestamp", now);
                 tokens.put(uid, token);
             }

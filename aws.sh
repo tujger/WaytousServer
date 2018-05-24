@@ -74,7 +74,7 @@ else
 fi
 if [ ${UPDATE_SERVER} ]; then
     echo --- Updating server to ${FOLDER}...
-    scp -i conf/aws/aws_credentials.pem build/libs/WaytousServer-2.60.war ${USERNAME}@wayto.us:WaytousServer.war
+    scp -i conf/aws/aws_credentials.pem build/libs/WaytousServer-2.61.war ${USERNAME}@wayto.us:WaytousServer.war
 
     ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us << RECREATEFOLDER
         pkill -f java

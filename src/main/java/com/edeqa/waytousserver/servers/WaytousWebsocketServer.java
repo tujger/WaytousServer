@@ -73,6 +73,7 @@ public class WaytousWebsocketServer extends WebSocketServer {
     @Override
     public void onError(WebSocket conn, Exception ex) {
         Misc.err(LOG, "[" + conn.getRemoteSocketAddress() + "]", "onError:", ex.getMessage());
+        System.out.println(Misc.toStringDeep(conn));
         Common.getInstance().getDataProcessor().onError(new WebsocketDPConnection(conn), ex);
     }
 

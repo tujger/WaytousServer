@@ -5,10 +5,8 @@ import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
-import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.tasks.OnFailureListener;
 
 import org.json.JSONObject;
 
@@ -40,7 +38,7 @@ public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
         final JSONObject res = new JSONObject();
         res.put(Rest.PROPERTY, getKey());
 
-        final OnFailureListener onFailureListener = error -> {
+        final Runnable1<Throwable> onFailureListener = error -> {
             res.put(STATUS, STATUS_ERROR);
             res.put(MESSAGE, error.getMessage());
             Misc.log("UserProperty", "'" + getKey() + "'", "for user", getUserNumber(), "in group", getGroupId(), "not modified, error:", error.getMessage());
@@ -58,17 +56,16 @@ public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
                             if(oldValue == null) oldValue = false;
                             setValue(!(Boolean)oldValue);
                         }
-
-                        ApiFuture<Void> task = refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.PUBLIC).child(String.valueOf(getUserNumber())).child(getKey()).setValueAsync(getValue());
-                        try {
-                            task.get();
-                            res.put(STATUS, STATUS_SUCCESS);
-                            getOnSuccess().call(res);
-                        } catch (Exception e) {
-                            onFailureListener.onFailure(e);
-                        }
+                        refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.PUBLIC).child(String.valueOf(getUserNumber())).child(getKey()).setValue(getValue(), (error, ref) -> {
+                            if(error == null) {
+                                res.put(STATUS, STATUS_SUCCESS);
+                                getOnSuccess().call(res);
+                            } else {
+                                onFailureListener.call(error.toException());
+                            }
+                        });
                     } else {
-                        onFailureListener.onFailure(new Exception("Invalid property."));
+                        onFailureListener.call(new Exception("Invalid property."));
                     }
                 }).start();
     }

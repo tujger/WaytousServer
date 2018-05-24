@@ -5,11 +5,8 @@ import com.edeqa.helpers.interfaces.Runnable1;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
-import com.google.api.core.ApiFuture;
 
 import org.json.JSONObject;
-
-import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("unused")
 public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String> {
@@ -29,26 +26,25 @@ public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String>
         json = new JSONObject();
         json.put(Rest.UID, accountId);
 
-        ApiFuture<Void> deleteAccountTask = getFirebaseReference().child(Firebase.SECTION_USERS).child(accountId).removeValueAsync();
-        try {
-            deleteAccountTask.get();
+        JSONObject finalJson = json;
+        getFirebaseReference().child(Firebase.SECTION_USERS).child(accountId).removeValue((error, ref) -> {
+            if(error == null) {
+                finalJson.put(STATUS, STATUS_SUCCESS);
+                Misc.log("DeleteAccount", accountId, "deleted");
+                getOnSuccess().call(finalJson);
 
-            json.put(STATUS, STATUS_SUCCESS);
-            Misc.log("DeleteAccount", accountId, "deleted");
-            getOnSuccess().call(json);
-
-            ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
-                    .setAction(AbstractDataProcessor.Action.ACCOUNT_DELETED)
-                    .setMessage(accountId + " deleted.")
-                    .call(null, accountId);
-
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            json.put(STATUS, STATUS_ERROR);
-            json.put(MESSAGE, e.getMessage());
-            Misc.err("DeleteAccount", accountId, "not deleted, error:" + e.getMessage());
-            getOnError().call(json);
-        }
+                ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
+                        .setAction(AbstractDataProcessor.Action.ACCOUNT_DELETED)
+                        .setMessage(accountId + " deleted.")
+                        .call(null, accountId);
+            } else {
+                error.toException().printStackTrace();
+                finalJson.put(STATUS, STATUS_ERROR);
+                finalJson.put(MESSAGE, error.toException().getMessage());
+                Misc.err("DeleteAccount", accountId, "not deleted, error:" + error.toException().getMessage());
+                getOnError().call(finalJson);
+            }
+        });
     }
 
     public Runnable1<JSONObject> getOnSuccess() {

@@ -7,8 +7,8 @@ import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
 import com.edeqa.waytousserver.helpers.UserRequest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
-import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import org.json.JSONObject;
@@ -66,26 +66,28 @@ public class CheckUser extends AbstractFirebaseAction<CheckUser, UserRequest> {
                                 if (userRequest.getName() != null && userRequest.getName().length() > 0) {
                                     update.put(USER_NAME, userRequest.getName());
                                 }
-
                                 ((CreateAccount) getFireBus().getHolder(CreateAccount.TYPE)).setOnSuccess(() -> {
-                                    ApiFuture<Void> updateUserTask = refGroup.child(Firebase.USERS).child(Firebase.PUBLIC).child("" + userRequest.getNumber()).updateChildrenAsync(update);
-                                    try {
-                                        updateUserTask.get();
-                                        json.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
-                                        json.put(RESPONSE_NUMBER, userRequest.getNumber());
-                                        json.put(RESPONSE_SIGN, customToken);
+                                    refGroup.child(Firebase.USERS).child(Firebase.PUBLIC).child("" + userRequest.getNumber()).updateChildren(update, new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(DatabaseError error, DatabaseReference ref) {
+                                            if(error == null) {
+                                                json.put(RESPONSE_STATUS, RESPONSE_STATUS_ACCEPTED);
+                                                json.put(RESPONSE_NUMBER, userRequest.getNumber());
+                                                json.put(RESPONSE_SIGN, customToken);
 
-                                        userRequest.send(json.toString());
+                                                userRequest.send(json.toString());
 
-                                        Misc.log("CheckUser", "joined:", userRequest, "signToken: [provided]"/*+customToken*/);
+                                                Misc.log("CheckUser", "joined:", userRequest, "signToken: [provided]"/*+customToken*/);
 
-                                        ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
-                                                .setGroupId(userRequest.getGroupId())
-                                                .setAction(AbstractDataProcessor.Action.USER_RECONNECTED)
-                                                .call(null, userRequest.getUid());
-                                    } catch (Exception e) {
-                                        Misc.err("CheckUser", "failed joining:", e);
-                                    }
+                                                ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
+                                                        .setGroupId(userRequest.getGroupId())
+                                                        .setAction(AbstractDataProcessor.Action.USER_RECONNECTED)
+                                                        .call(null, userRequest.getUid());
+                                            } else {
+                                                Misc.err("CheckUser", "failed joining:", error.toException());
+                                            }
+                                        }
+                                    });
                                 }).setOnError(error -> {
                                     Misc.err("CheckUser", "failed:", userRequest, "[" + error + "]");
                                     ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))

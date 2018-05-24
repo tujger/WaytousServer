@@ -23,15 +23,17 @@ public class CleanStatistics extends AbstractFirebaseAction<CleanStatistics, Obj
     public void call(JSONObject json, Object object) {
         final JSONObject res = new JSONObject();
 
-        getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MESSAGES).setValue(null).addOnSuccessListener(result -> {
-            res.put(STATUS, STATUS_SUCCESS);
-            Misc.log("CleanStatistics", "done");
-            getOnSuccess().call(res);
-        }).addOnFailureListener(error -> {
-            res.put(STATUS, STATUS_ERROR);
-            res.put(MESSAGE, error.getMessage());
-            Misc.err("CleanStatistics", "failed:", error.getMessage());
-            getOnError().call(res);
+        getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MESSAGES).setValue(null, (error, ref) -> {
+            if(error != null) {
+                res.put(STATUS, STATUS_ERROR);
+                res.put(MESSAGE, error.getMessage());
+                Misc.err("CleanStatistics", "failed:", error.getMessage());
+                getOnError().call(res);
+            } else {
+                res.put(STATUS, STATUS_SUCCESS);
+                Misc.log("CleanStatistics", "done");
+                getOnSuccess().call(res);
+            }
         });
     }
 

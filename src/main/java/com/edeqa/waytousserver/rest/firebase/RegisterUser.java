@@ -6,9 +6,6 @@ import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
-import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutureCallback;
-import com.google.api.core.ApiFutures;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 
@@ -107,32 +104,8 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
         }
         childUpdates.put(Firebase.USERS + "/" + Firebase.PRIVATE + "/" + user.getNumber(), userPrivateData);
 
-        ApiFuture<Void> updateUserTask = refGroup.updateChildrenAsync(childUpdates);
-        ApiFutures.addCallback(updateUserTask, new ApiFutureCallback<Void>() {
-            @Override
-            public void onFailure(Throwable e) {
-                e.printStackTrace();
-                if(getOnError() != null) getOnError().call(response);
-
-                response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
-                response.put(RESPONSE_MESSAGE, "Cannot register (code 18).");
-                Misc.err("RegisterUser", user, "not registered in group:", getGroupId(), "error:", e);
-                if (getOnError() != null) {
-                    getOnError().call(response);
-                } else {
-                    user.connection.send(response.toString());
-                    user.connection.close();
-                }
-                ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
-                        .setGroupId(getGroupId())
-                        .setAction(AbstractDataProcessor.Action.USER_REJECTED)
-                        .setMessage(e.getMessage())
-                        .call(null, user.getUid());
-                clear();
-            }
-
-            @Override
-            public void onSuccess(Void result) {
+        refGroup.updateChildren(childUpdates, (error, ref) -> {
+            if(error == null) {
                 Misc.log("RegisterUser", getAction(), "with number", user.getNumber(), "[" + user.getUid() + "]", "in group", getGroupId(), records);
 
                 if(getAction() != null) {
@@ -155,6 +128,27 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
                         .setAction(AbstractDataProcessor.Action.USER_JOINED)
                         .call(null, user.getUid());
                 clear();
+
+            } else {
+                error.toException().printStackTrace();
+                if(getOnError() != null) getOnError().call(response);
+
+                response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
+                response.put(RESPONSE_MESSAGE, "Cannot register (code 18).");
+                Misc.err("RegisterUser", user, "not registered in group:", getGroupId(), "error:", error.toException());
+                if (getOnError() != null) {
+                    getOnError().call(response);
+                } else {
+                    user.connection.send(response.toString());
+                    user.connection.close();
+                }
+                ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
+                        .setGroupId(getGroupId())
+                        .setAction(AbstractDataProcessor.Action.USER_REJECTED)
+                        .setMessage(error.toException().getMessage())
+                        .call(null, user.getUid());
+                clear();
+
             }
         });
     }
