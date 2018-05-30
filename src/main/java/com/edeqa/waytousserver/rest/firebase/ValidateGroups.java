@@ -14,11 +14,14 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("unused")
 public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Object> {
 
     public static final String TYPE = "/rest/firebase/validate/groups";
+
+    private Runnable onFinish;
 
     @Override
     public String getType() {
@@ -46,12 +49,15 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
                 Misc.log("ValidateGroups", "found groups:", jsonGroups.length() + ", checking online users");
 
                 Iterator<String> iter = jsonGroups.keys();
+                AtomicInteger count = new AtomicInteger(0);
                 while (iter.hasNext()) {
                     final String group = iter.next();
                     if (group.startsWith("_") || "overview".equals(group)) {
                         Misc.log("ValidateGroups", "skips:", group);
                         continue;
                     }
+
+                    count.getAndIncrement();
 
                     new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Firebase.OPTIONS)).addOnCompleteListener(dataSnapshot -> {
                         Map value = (Map) dataSnapshot.getValue();
@@ -65,26 +71,29 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
                                     .setAction(AbstractDataProcessor.Action.GROUP_DELETED)
                                     .setMessage("lost group removing: " + group)
                                     .call(null, groupRequest);
-                            return;
+                        } else {
+                            Object object = value.get(Firebase.REQUIRES_PASSWORD);
+                            groupRequest.setRequiresPassword(object != null && (boolean) object);
+
+                            object = value.get(Firebase.DISMISS_INACTIVE);
+                            groupRequest.setDismissInactive(object != null && (boolean) object);
+
+                            object = value.get(Firebase.PERSISTENT);
+                            groupRequest.setPersistent(object != null && (boolean) object);
+
+                            object = value.get(Firebase.DELAY_TO_DISMISS);
+                            groupRequest.setDelayToDismiss(object != null ? Long.parseLong("0" + object.toString()) : 0);
+
+                            object = value.get(Firebase.TIME_TO_LIVE_IF_EMPTY);
+                            groupRequest.setTimeToLiveIfEmpty(object != null ? Long.parseLong("0" + object.toString()) : 0);
+
+                            new ValidateUsers()
+                                    .call(null, groupRequest);
                         }
-
-                        Object object = value.get(Firebase.REQUIRES_PASSWORD);
-                        groupRequest.setRequiresPassword(object != null && (boolean) object);
-
-                        object = value.get(Firebase.DISMISS_INACTIVE);
-                        groupRequest.setDismissInactive(object != null && (boolean) object);
-
-                        object = value.get(Firebase.PERSISTENT);
-                        groupRequest.setPersistent(object != null && (boolean) object);
-
-                        object = value.get(Firebase.DELAY_TO_DISMISS);
-                        groupRequest.setDelayToDismiss(object != null ? Long.parseLong("0" + object.toString()) : 0);
-
-                        object = value.get(Firebase.TIME_TO_LIVE_IF_EMPTY);
-                        groupRequest.setTimeToLiveIfEmpty(object != null ? Long.parseLong("0" + object.toString()) : 0);
-
-                        new ValidateUsers()
-                                .call(null, groupRequest);
+                        count.decrementAndGet();
+                        if(count.get() == 0 && getOnFinish() != null) {
+                            getOnFinish().run();
+                        }
                     }).start();
                 }
             } catch (Exception e) {
@@ -212,5 +221,14 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
             e.printStackTrace();
         }*/
 
+    }
+
+    public Runnable getOnFinish() {
+        return onFinish;
+    }
+
+    public ValidateGroups setOnFinish(Runnable onFinish) {
+        this.onFinish = onFinish;
+        return this;
     }
 }

@@ -64,7 +64,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }
 
     @Override
-    public void validateGroups() {
+    public void validateGroups(Runnable callback) {
         //noinspection InfiniteLoopStatement
         while(true) {
             try {

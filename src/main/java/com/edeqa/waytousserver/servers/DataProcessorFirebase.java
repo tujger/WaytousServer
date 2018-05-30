@@ -388,8 +388,8 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
                 .call(null, null);
     }
 
-    public void validateGroups() {
-        new ValidateGroups()
+    public void validateGroups(Runnable callback) {
+        new ValidateGroups().setOnFinish(callback)
                 .call(null, null);
     }
 

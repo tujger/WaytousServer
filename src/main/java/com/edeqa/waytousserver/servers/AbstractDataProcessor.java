@@ -26,7 +26,7 @@ abstract public class AbstractDataProcessor {
     private final UserRequests userRequests;
     private boolean serverMode = false;
 
-    abstract public void validateGroups();
+    abstract public void validateGroups(Runnable callback);
 
     abstract public void validateUsers();
 

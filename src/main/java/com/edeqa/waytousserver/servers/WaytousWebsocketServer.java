@@ -34,7 +34,9 @@ public class WaytousWebsocketServer extends WebSocketServer {
 
         if(!WaytousWebsocketServer.isValidationStarted() && !OPTIONS.isDebugMode()) {
             ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-            executor.scheduleAtFixedRate(() -> Common.getInstance().getDataProcessor().validateGroups(), 0, LIFETIME_INACTIVE_GROUP, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(() -> Common.getInstance().getDataProcessor().validateGroups(
+                    () -> WaytousWebsocketServer.setValidationStarted(false)
+            ), 0, LIFETIME_INACTIVE_GROUP, TimeUnit.SECONDS);
             WaytousWebsocketServer.setValidationStarted(true);
         }
     }
