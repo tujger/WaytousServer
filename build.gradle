@@ -107,11 +107,32 @@ import com.eriwen.gradle.js.tasks.MinifyJsTask
 
 def all = file("${projectDir}/src/main/webapp/js/all.js")
 def allMap = file("${projectDir}/src/main/webapp/all.sourcemap.json")
+def edequate = file("${buildDir}/exploded-app/js/Edequate.js")
+def edequateMap = file("${buildDir}/exploded-app/Edequate.sourcemap.json")
+
+
+task updateChanged(type: Copy) {
+    from "${project(':Edequate').projectDir}/src/main/webapp", "${projectDir}/src/main/webapp"
+    into "${buildDir}/exploded-app"
+    exclude "**/.idea/*"
+}
 
 minifyJs {
     source = "${projectDir}/src/main/webapp/js"
     dest = all
     sourceMap = allMap
+    closure {
+        warningLevel = 'QUIET'
+        compilationLevel = 'SIMPLE_OPTIMIZATIONS'
+        compilerOptions.languageIn = 'ECMASCRIPT6'
+        compilerOptions.languageOut = 'ECMASCRIPT5'
+    }
+}
+
+task minifyEdequate(type: MinifyJsTask) {
+    source = "${project(':Edequate').projectDir}/src/main/webapp/js/Edequate.js"
+    dest = edequate
+    sourceMap = edequateMap
     closure {
         warningLevel = 'QUIET'
         compilationLevel = 'SIMPLE_OPTIMIZATIONS'
@@ -146,10 +167,14 @@ task minifyAllJS {
 }
 
 war {
+    it.dependsOn updateChanged
+    tasks.updateChanged.execute()
     it.dependsOn minifyJs
     all.delete()
     allMap.delete()
     tasks.minifyJs.execute()
+    it.dependsOn minifyEdequate
+    tasks.minifyEdequate.execute()
     it.dependsOn minifyAllJS
 
     print "Final stage...\n"
@@ -179,12 +204,6 @@ if (installationType == 'google-appengine') {
         contextPath = '/'
         servletContainer = "jetty9"
     }
-}
-
-task updateChanged(type: Copy) {
-    from "${project(':Edequate').projectDir}/src/main/webapp", "${projectDir}/src/main/webapp"
-    into "${buildDir}/exploded-app"
-    exclude "**/.idea/*"
 }
 
 war.dependsOn(':Edequate:war')
