@@ -190,17 +190,17 @@ function TrackingFB(main) {
                                 }
                                 o[RESPONSE.INITIAL] = true;
 
-                                try {
-                                    trackingListener.onAccept(o);
-                                } catch (e) {
-                                    console.error(e.message);
-                                }
-
                                 refRoot = database.ref();
                                 refGroup = refRoot.child(DATABASE.SECTION_GROUPS).child(getToken());
                                 refAccounts = refRoot.child(DATABASE.SECTION_USERS);
                                 refStat = refRoot.child(DATABASE.SECTION_STAT);
                                 refRoot.database.goOnline();
+
+                                try {
+                                    trackingListener.onAccept(o);
+                                } catch (e) {
+                                    console.error(e.message);
+                                }
 
                                 if(main.me && main.me.number != undefined) {
                                     refGroup.child(DATABASE.USERS).child(DATABASE.PUBLIC).child(main.me.number).child(DATABASE.ACTIVE).set(true);
