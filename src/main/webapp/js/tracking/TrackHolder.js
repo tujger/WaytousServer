@@ -41,15 +41,15 @@ function TrackHolder(main) {
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
                 if(user && user.type === "user" && user.location && !user.views.track.show) {
-                    object.add(MENU.SECTION_VIEWS,EVENTS.SHOW_TRACK, u.lang.show_track,"title",function(){
+                    object.add({section:MENU.SECTION_VIEWS, id:EVENTS.SHOW_TRACK, name:u.lang.show_track, icon:"title", callback:function(){
                         user.fire(EVENTS.SHOW_TRACK);
                         drawerPopulate();
-                    });
+                    }});
                 } else if(user.views.track.show) {
-                    object.add(MENU.SECTION_VIEWS,EVENTS.HIDE_TRACK,u.lang.hide_track,"format_strikethrough",function(){
+                    object.add({section:MENU.SECTION_VIEWS, id:EVENTS.HIDE_TRACK, name:u.lang.hide_track, icon:"format_strikethrough", callback:function(){
                         user.fire(EVENTS.HIDE_TRACK);
                         drawerPopulate();
-                    });
+                    }});
                 }
                 break;
             case EVENTS.SELECT_USER:

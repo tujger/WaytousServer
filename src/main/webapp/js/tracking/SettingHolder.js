@@ -40,7 +40,7 @@ function SettingHolder(main) {
 
         optionsDialog = u.dialog({
             title: {
-                label: u.lang.options,
+                label: u.lang.settings,
                 filter: true
             },
             className: "options-dialog",

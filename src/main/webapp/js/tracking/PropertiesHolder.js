@@ -76,9 +76,9 @@ function PropertiesHolder(main) {
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
                 if(user.number == main.me.number) {
-                    object.add(MENU.SECTION_PRIMARY, self.type + "_set_my_name", u.lang.set_my_name, "face", function () {
+                    object.add({section:MENU.SECTION_PRIMARY, id:self.type + "_set_my_name", name:u.lang.set_my_name, icon:"face", callback:function () {
                         setMyName.call(user);
-                    });
+                    }});
                 }
                 break;
             case EVENTS.SELECT_USER:

@@ -58,6 +58,7 @@ function MessageHolder(main) {
         reply = chat.footer;
         replyTo = u.create(HTML.INPUT, {type:HTML.HIDDEN, value:""}, reply);
         replyInput = u.create(HTML.INPUT, {
+            type: "text",
             className: "chat-dialog-reply-input",
             tabindex:5,
             maxlength: MESSAGE_MAX_LENGTH,
@@ -109,11 +110,11 @@ function MessageHolder(main) {
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
                 if(user.type === "user" && user !== main.me) {
-                    object.add(MENU.SECTION_COMMUNICATION, type + "_1", u.lang.private_message, "chat", function () {
+                    object.add({section:MENU.SECTION_COMMUNICATION, id:type + "_1", name:u.lang.private_message, icon:"chat", callback:function () {
                         chat.open();
                         replyTo.value = user.properties.number;
                         replyInput.focus();
-                    });
+                    }});
                 }
                 break;
             case EVENTS.SHOW_MESSAGES:

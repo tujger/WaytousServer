@@ -10,21 +10,38 @@ button:hover, button:active {
 }
 .dialog-title {
     background-color: #4c93af;
+    color: white;
 }
 .dialog-title-button {
     color: inherit;
 }
 .dialog-button {
     background-color: #4c93af;
+    color: white;
 }
 .dialog-button:hover, .dialog-button:focus {
     background-color: #2e5d7d;
 }
+.dialog-button:active:hover {
+    background-color: rgba(46, 93, 125, 0.7);
+}
+.dialog-button.dialog-help-button {
+    background: none;
+    color: #4c93af;
+}
+.dialog-progress-bar {
+    background: #4c93af linear-gradient(to right, green 0%, red 100%);
+}
+
 .drawer {
     background-color: azure;
 }
 .drawer-header {
     background: linear-gradient(135deg, #2e5d7d 0%,#32667b 54%,#819bc7 100%);
+}
+
+.progress-dialog-circle {
+    border-right-color: transparent;
 }
 /* media specific classes */
 @media screen and (max-width: 1000px) {

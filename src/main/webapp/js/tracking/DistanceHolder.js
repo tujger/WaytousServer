@@ -75,15 +75,15 @@ function DistanceHolder(main) {
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
                 if(user && user !== main.me && user.location && !user.views.distance.show) {
-                    object.add(MENU.SECTION_VIEWS, EVENTS.SHOW_DISTANCE, u.lang.show_distance, "settings_ethernet", function(){
+                    object.add({section:MENU.SECTION_VIEWS, id:EVENTS.SHOW_DISTANCE, name:u.lang.show_distance, icon:"settings_ethernet", callback:function(){
                         user.fire(EVENTS.SHOW_DISTANCE);
                         drawerPopulate();
-                    });
+                    }});
                 } else if(user && user !== main.me && user.views.distance.show) {
-                    object.add(MENU.SECTION_VIEWS, EVENTS.HIDE_DISTANCE, u.lang.hide_distance, "code", function(){
+                    object.add({section:MENU.SECTION_VIEWS, id:EVENTS.HIDE_DISTANCE, name:u.lang.hide_distance, icon:"code", callback:function(){
                         user.fire(EVENTS.HIDE_DISTANCE);
                         drawerPopulate();
-                    });
+                    }});
                 }
                 break;
             case EVENTS.SHOW_DISTANCE:

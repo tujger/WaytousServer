@@ -52,25 +52,25 @@ function SavedLocationHolder(main) {
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
                 if(user && (user.type === "user" || user.saveable) && user.location && !user.saved_location) {
-                    object.add(MENU.SECTION_NAVIGATION, EVENT.SAVE_LOCATION, u.lang.save_location, "pin_drop", function () {
+                    object.add({section:MENU.SECTION_NAVIGATION, id:EVENT.SAVE_LOCATION, name:u.lang.save_location, icon:"pin_drop", callback:function () {
                         user.fire(EVENTS.SAVE_LOCATION);
-                    });
+                    }});
                 }
                 if(user.type === type) {
-                    object.add(MENU.SECTION_EDIT, EVENT.EDIT_SAVED_LOCATION, u.lang.edit, "mode_edit", function () {
+                    object.add({section:MENU.SECTION_EDIT, id:EVENT.EDIT_SAVED_LOCATION, name:u.lang.edit, icon:"mode_edit", callback:function () {
                         main.fire(EVENTS.EDIT_SAVED_LOCATION, user.number - 10000);
-                    });
-                    object.add(MENU.SECTION_VIEWS, EVENT.HIDE_SAVED_LOCATION, u.lang.hide, "pin_drop", function () {
+                    }});
+                    object.add({section:MENU.SECTION_VIEWS, id:EVENT.HIDE_SAVED_LOCATION, name:u.lang.hide, icon:"pin_drop", callback:function () {
                         main.fire(EVENTS.HIDE_SAVED_LOCATION, user.number - 10000);
-                    });
+                    }});
                     if(main.tracking && main.tracking.getStatus() === EVENTS.TRACKING_ACTIVE) {
-                        object.add(MENU.SECTION_COMMUNICATION, EVENT.SEND_SAVED_LOCATION, u.lang.send_to_group, "chat", function () {
+                        object.add({section:MENU.SECTION_COMMUNICATION, id:EVENT.SEND_SAVED_LOCATION, name:u.lang.send_to_group, icon:"chat", callback:function () {
                             main.fire(EVENTS.SEND_SAVED_LOCATION, user.number - 10000);
-                        });
+                        }});
                     }
-                    object.add(MENU.SECTION_COMMUNICATION, EVENT.SHARE_SAVED_LOCATION, u.lang.share, "share", function () {
+                    object.add({section:MENU.SECTION_COMMUNICATION, id:EVENT.SHARE_SAVED_LOCATION, name:u.lang.share, icon:"share", callback:function () {
                         main.fire(EVENTS.SHARE_SAVED_LOCATION, user.number - 10000);
-                    });
+                    }});
                 }
                 break;
             case EVENTS.SAVE_LOCATION:

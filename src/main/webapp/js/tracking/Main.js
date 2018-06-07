@@ -57,10 +57,17 @@ function Main() {
 
     function initializeHeader() {
 
+        var theme = u.load("theme") || "edequate-aterial";
+
         document.head
             .place(HTML.META, {name:"viewport", content:"width=device-width, initial-scale=1, user-scalable=no"})
             .place(HTML.META, {name:"description", content:window.data.description})
-            .place(HTML.STYLE, {innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/edequate.css');@import url('/css/waytous-colors.css');@import url('/css/tracking.css');"})
+            .place(HTML.LINK, {href: "https://fonts.googleapis.com/icon?family=Material+Icons", rel:HTML.STYLESHEET})
+            .place(HTML.LINK, {id:"theme-" + theme, href: "/css/" + theme + ".css", rel:HTML.STYLESHEET})
+            .place(HTML.LINK, {href: "/css/waytous-colors.css", rel:HTML.STYLESHEET})
+            .place(HTML.LINK, {href: "/css/tracking.css", rel:HTML.STYLESHEET})
+            // .place(HTML.STYLE, {id:"theme-edequate-material", innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/edequate-material.css');@import url('/css/waytous-colors.css');@import url('/css/tracking.css');"})
+            // .place(HTML.STYLE, {id:"theme-edequate",innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/edequate.css');@import url('/css/waytous-colors.css');@import url('/css/tracking.css');"})
             .place(HTML.LINK, {rel:"apple-touch-icon", href:"/icons/apple-touch-icon.png"})
             .place(HTML.LINK, {rel:"apple-touch-icon", sizes:"60x60", href:"/icons/apple-touch-icon-60x60.png"})
             .place(HTML.LINK, {rel:"apple-touch-icon", sizes:"76x76", href:"/icons/apple-touch-icon-76x76.png"})
@@ -86,6 +93,8 @@ function Main() {
             .place(HTML.META, {name:"msapplication-TileImage", content:"/icons/mstile-144x144.png"})
             .place(HTML.META, {name:"msapplication-config", content:"/icons/browserconfig.xml"})
             .place(HTML.META, {name:"theme-color", content:"#aaeeee"});
+
+
         if(window.data && window.data.google_analytics_tracking_id) {
             document.head.place(HTML.SCRIPT, {src:"https://www.googletagmanager.com/gtag/js?id=" + window.data.google_analytics_tracking_id, async:""})
                 .place(HTML.SCRIPT, {innerHTML: "window.dataLayer = window.dataLayer || [];\n" +
@@ -285,11 +294,29 @@ function Main() {
                             values: {"": u.lang.default, "en": u.lang.english, "ru": u.lang.russian }
                         },
                         {
+                            id:"main:theme",
+                            type: HTML.SELECT,
+                            label: u.lang.theme,
+                            default: u.load("theme") || "edequate-material",
+                            onaccept: function(e, event) {
+                                var theme = (this.value || "edequate-material").toLowerCase();
+                                u.save("theme", theme);
+
+                                var meta = u.byId("theme-edequate") || u.byId("theme-edequate-material");
+
+                                document.head.replaceChild(u.create(HTML.LINK, {id:"theme-" + theme, href: "/css/" + theme + ".css", rel:HTML.STYLESHEET}), meta);
+
+                                // u.create(HTML.STYLE, {id:"theme-" + theme, innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/" + theme + ".css');@import url('/css/waytous-colors.css');@import url('/css/tracking.css');"})
+
+                            },
+                            values: {"edequate": "Classic", "edequate-material": "Material" }
+                        },
+                        {
                             id:"main:reset_dialogs",
                             type: HTML.BUTTON,
                             label: u.lang.dialogs_positions,
                             itemClassName: "media-hidden",
-                            className: "dialog-button",
+                            className: "dialog-button blinking",
                             innerHTML: u.lang.reset,
                             onclick: function(e, event) {
                                 for(var x in localStorage) {

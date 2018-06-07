@@ -60,7 +60,13 @@ function UserProfileHolder(main) {
             profileDialog = u.dialog({
                 title: {
                     label: u.lang.user_profile,
-                    filter: false
+                    filter: false,
+                    button: {
+                        className: "user-profile-dialog-menu-button",
+                        onclick: function() {
+                            menu.open(this);
+                        }
+                    }
                 },
                 className: "user-profile-dialog",
                 itemsClassName: "user-profile-dialog-message",
@@ -72,9 +78,8 @@ function UserProfileHolder(main) {
             menu = u.menu({
                 items: [
                     {
-                        type: HTML.DIV,
-                        innerHTML: u.lang.update_your_name,
-                        onclick: function() {
+                        title: u.lang.update_your_name,
+                        callback: function() {
                             nameUpdateDialog = nameUpdateDialog || u.dialog({
                                 positive: {
                                     label: u.lang.yes,
@@ -97,16 +102,14 @@ function UserProfileHolder(main) {
                         }
                     },
                     {
-                        type: HTML.DIV,
-                        innerHTML: u.lang.synchronize,
-                        onclick: function() {
+                        title: u.lang.synchronize,
+                        callback: function() {
                             main.fire(EVENTS.SYNC_PROFILE);
                         }
                     },
                     {
-                        type: HTML.DIV,
-                        innerHTML: u.lang.sign_out,
-                        onclick: function() {
+                        title: u.lang.sign_out,
+                        callback: function() {
                             u.save("uuid");
                             u.save(REQUEST.SIGN_PROVIDER);
                             signOtherLogin(function(result) {
@@ -383,8 +386,7 @@ function UserProfileHolder(main) {
 
         if(user) {
             profileDialog.setHeader({
-                type: HTML.DIV,
-                className: "user-profile-dialog-header"
+                type: HTML.DIV
             })
                 .place(HTML.IMG, {className: "user-profile-dialog-avatar", src: user.photoURL})
                 .appendChild(u.create({className: "user-profile-dialog-resume"})
@@ -399,15 +401,6 @@ function UserProfileHolder(main) {
                                 innerHTML: user.email ? user.email : "",
                                 className: "user-profile-dialog-email"
                             })
-                    })
-                    .place({
-                        children: [u.create(HTML.BUTTON, {
-                            innerHTML: "more_vert",
-                            className: "icon dialog-button user-profile-dialog-menu-button",
-                            onclick: function () {
-                                menu.open(this);
-                            }
-                        })]
                     })
                 );
         }

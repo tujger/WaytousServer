@@ -67,17 +67,17 @@ function CameraHolder(main) {
                 if(main.users.getCountSelected() === 1 && user.properties.selected) break;
 
                 var select, unselect;
-                select = object.add(MENU.SECTION_PRIMARY, EVENTS.SELECT_USER, u.lang.select, "select_all", function () {
+                select = object.add({section:MENU.SECTION_PRIMARY, id:EVENTS.SELECT_USER, name:u.lang.select, icon:"select_all", callback:function () {
                     select.hide();
                     unselect.show();
                     user.fire(EVENTS.SELECT_USER);
-                });
+                }});
                 unselect_icon = unselect_icon || u.create(HTML.PATH, unselect_path, u.create(HTML.SVG, unselect_svg)).parentNode;
-                unselect = object.add(MENU.SECTION_PRIMARY, EVENTS.UNSELECT_USER, u.lang.unselect, unselect_icon, function () {
+                unselect = object.add({section:MENU.SECTION_PRIMARY, id:EVENTS.UNSELECT_USER, name:u.lang.unselect, icon:unselect_icon, callback:function () {
                     select.show();
                     unselect.hide();
                     user.fire(EVENTS.UNSELECT_USER);
-                });
+                }});
                 select.hide();
                 unselect.hide();
                 setTimeout(function(){

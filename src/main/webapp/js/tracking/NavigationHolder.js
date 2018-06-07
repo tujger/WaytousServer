@@ -54,11 +54,11 @@ function NavigationHolder(main) {
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
                 if(user && user !== main.me && !user.views.navigation.show) {
-                    var menuItemShow = object.add(MENU.SECTION_VIEWS, EVENTS.SHOW_NAVIGATION, u.lang.show_navigation, "navigation", function(){
+                    var menuItemShow = object.add({section:MENU.SECTION_VIEWS, id:EVENTS.SHOW_NAVIGATION, name:u.lang.show_navigation, icon:"navigation", callback:function(){
                         user.fire(EVENTS.SHOW_NAVIGATION);
                         menuItemShow.hide();
                         drawerPopulate();
-                    });
+                    }});
                     if(!main.me.location || !user.location) {
                         menuItemShow.hide();
                     }
@@ -69,20 +69,20 @@ function NavigationHolder(main) {
                         }
                     }
                 } else if(user.views.navigation.show) {
-                    object.add(MENU.SECTION_VIEWS, EVENTS.HIDE_NAVIGATION, u.lang.hide_navigation, u.create(HTML.IMG, {
+                    object.add({section:MENU.SECTION_VIEWS, id:EVENTS.HIDE_NAVIGATION, name:u.lang.hide_navigation, icon:u.create(HTML.IMG, {
                         src: "/images/navigation_outline.svg",
                         className: "icon user-context-menu-item-icon"
-                    }), function(){
+                    }), callback:function(){
                         user.fire(EVENTS.HIDE_NAVIGATION);
                         drawerPopulate();
-                    });
+                    }});
                 }
                 if(user && user !== main.me && user.location && main.me.location) {
-                    object.add(MENU.SECTION_VIEWS, "gmap", u.lang.navigate_with_google_maps, "directions", function(){
+                    object.add({section:MENU.SECTION_VIEWS, id:"gmap", name:u.lang.navigate_with_google_maps, icon:"directions", callback:function(){
                         var req = "https://maps.google.com/?saddr=" + main.me.location.coords.latitude + "," + main.me.location.coords.longitude + "&daddr=" + + user.location.coords.latitude + "," + user.location.coords.longitude;
 
                         window.open(req, "_blank");
-                    });
+                    }});
                 }
                 break;
             case EVENTS.SHOW_NAVIGATION:

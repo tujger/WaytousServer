@@ -18,18 +18,18 @@ function SampleHolder(main) {
         console.warn("EVENT",this && this.number || "Main", EVENT, object);
         switch (EVENT){
             case EVENTS.CREATE_DRAWER:
-                var menuItem = object.add(DRAWER.SECTION_PRIMARY, EVENTS.SAMPLE_EVENT, u.lang.sample_item, "ac_unit", function(){
+                var menuItem = object.add({section:DRAWER.SECTION_PRIMARY, id:EVENTS.SAMPLE_EVENT, name:u.lang.sample_item, icon:"ac_unit", callback:function(){
                     console.log("SAMPLEEVENTDRAWERCALLBACK", EVENT);
-                });
+                }});
                 menuItem.classList.add("disabled");
                 break;
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
                 if(user) {
-                    object.add(MENU.SECTION_PRIMARY, EVENT.SAMPLE_EVENT, u.lang.sample_menu, "ac_unit", function () {
+                    object.add({section:MENU.SECTION_PRIMARY, id:EVENT.SAMPLE_EVENT, name:u.lang.sample_menu, icon:"ac_unit", callback:function () {
                         u.save("sample:show:"+user.number, true);
                         console.log("SAMPLEEVENTMENUCALLBACK", user);
-                    });
+                    }});
                 }
                 break;
             default:

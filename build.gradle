@@ -173,8 +173,8 @@ war {
     all.delete()
     allMap.delete()
     tasks.minifyJs.execute()
-    it.dependsOn minifyEdequate
-    tasks.minifyEdequate.execute()
+//    it.dependsOn minifyEdequate
+//    tasks.minifyEdequate.execute()
     it.dependsOn minifyAllJS
 
     print "Final stage...\n"

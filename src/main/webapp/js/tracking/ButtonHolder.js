@@ -54,22 +54,29 @@ function ButtonHolder(main) {
             itemsClassName: "user-buttons-items"
         }, main.right);
 
-        contextMenuLayout = u.create(HTML.DIV, {
-            className: "user-context-menu shadow noselect hidden",
-            tabindex: 2,
-            onblur: function(){
-                contextMenuLayout.scrollTop = 0;
-                contextMenuLayout.hide(HIDING.OPACITY);
-                setTimeout(function() {
-                    contextMenuLayout.classList.remove("user-context-menu-list");
-                }, 150);
-            }, onmouseleave: function(){
-                contextMenuLayout.hide(HIDING.OPACITY);
-            }, onmouseenter: function(){
-                clearTimeout(delayDismiss);
-            }
-        }, main.right);
-        contextMenu = new ContextMenu();
+        contextMenu = u.menu({
+            className: "user-context-menu noselect hidden",
+            delayToClose: 2000,
+            items: [
+            ]
+        });
+
+        // contextMenuLayout = u.create(HTML.DIV, {
+        //     className: "user-context-menu shadow noselect hidden",
+        //     tabindex: 2,
+        //     onblur: function(){
+        //         contextMenuLayout.scrollTop = 0;
+        //         contextMenuLayout.hide(HIDING.OPACITY);
+        //         setTimeout(function() {
+        //             contextMenuLayout.classList.remove("user-context-menu-list");
+        //         }, 150);
+        //     }, onmouseleave: function(){
+        //         contextMenuLayout.hide(HIDING.OPACITY);
+        //     }, onmouseenter: function(){
+        //         clearTimeout(delayDismiss);
+        //     }
+        // }, main.right);
+        contextMenu1 = new ContextMenu();
     }
 
     function onEvent(EVENT,object){
@@ -223,25 +230,25 @@ function ButtonHolder(main) {
 
         var firstClick;
         var b = u.create(HTML.DIV, {
-            className:"user-button hidden" + (user.locations && user.locations.length > 0 ? "" : " disabled") + (user.type === "user" ? " user-button-away" : ""),
+            className:"user-button blinking hidden" + (user.locations && user.locations.length > 0 ? "" : " disabled") + (user.type === "user" ? " user-button-away" : ""),
             dataNumber:user.number,
             style:{backgroundColor:color},
             onclick: function() {
                 user.fire(EVENTS.SELECT_SINGLE_USER);
-                openContextMenu(user, false);
+                openContextMenu(user);
                 var thisClick = new Date().getTime();
                 firstClick = firstClick || 0;
                 if(thisClick - firstClick < 500) {
                     setTimeout(function(){
                         user.fire(EVENTS.CAMERA_ZOOM);
-                        contextMenuLayout.hide(HIDING.OPACITY);
+                        contextMenu.hide(HIDING.OPACITY);
                     },0);
                 }
                 firstClick = thisClick;
             },
             onlongclick: function() {
                 main.toast.show(user.properties.getDisplayName());
-                openContextMenu(user, true);
+                openContextMenu(user);
             },
             onmouseenter: function(e) {
                 user.fire(EVENTS.MOUSE_OVER,e);
@@ -299,30 +306,31 @@ function ButtonHolder(main) {
     }
 
     function openContextMenu(user) {
-        u.clear(contextMenuLayout);
+        contextMenu.clearItems();
+        // u.clear(contextMenu);
         sections = [];
-        for(var i = 0; i < 10; i ++) {
-            sections[i] = u.create(HTML.DIV, {className:"user-context-menu-section hidden"}, contextMenuLayout);
-        }
+        // for(var i = 0; i < 10; i ++) {
+        //     sections[i] = u.create(HTML.DIV, {className:"user-context-menu-section hidden"}, contextMenu);
+        // }
         user.fire(EVENTS.CREATE_CONTEXT_MENU, contextMenu);
 
         setTimeout(function(){
             var size = user.views.button.button.getBoundingClientRect();
-            contextMenuLayout.show(HIDING.OPACITY);
-            contextMenuLayout.style.top = Math.floor(size.top) + "px";
-            if(size.left - main.right.offsetLeft - contextMenuLayout.offsetWidth -10 > 0) {
-                contextMenuLayout.style.left = Math.floor(size.left - contextMenuLayout.offsetWidth -10) + "px";
-            } else {
-                contextMenuLayout.style.left = Math.floor(size.right + 10) + "px";
-            }
-            if(main.right.offsetTop + main.right.offsetHeight < contextMenuLayout.offsetTop + contextMenuLayout.offsetHeight) {
-                contextMenuLayout.style.top = (main.right.offsetTop + main.right.offsetHeight - contextMenuLayout.offsetHeight - 5) + "px";
-            }
+            contextMenu.open(user.views.button.button);
+            // contextMenu.style.top = Math.floor(size.top) + "px";
+            // if(size.left - main.right.offsetLeft - contextMenu.offsetWidth -10 > 0) {
+            //     contextMenu.style.left = Math.floor(size.left - contextMenu.offsetWidth -10) + "px";
+            // } else {
+            //     contextMenu.style.left = Math.floor(size.right + 10) + "px";
+            // }
+            // if(main.right.offsetTop + main.right.offsetHeight < contextMenu.offsetTop + contextMenu.offsetHeight) {
+            //     contextMenu.style.top = (main.right.offsetTop + main.right.offsetHeight - contextMenu.offsetHeight - 5) + "px";
+            // }
 
-            clearTimeout(delayDismiss);
-            delayDismiss = setTimeout(function(){
-                contextMenuLayout.hide(HIDING.OPACITY);
-            },2000);
+            // clearTimeout(delayDismiss);
+            // delayDismiss = setTimeout(function(){
+            //     contextMenu.hide(HIDING.OPACITY);
+            // },2000);
         },0);
     }
 
@@ -332,18 +340,18 @@ function ButtonHolder(main) {
                 className:"user-context-menu-item",
                 onclick: function() {
                     setTimeout(function(){
-                        contextMenuLayout.blur();
+                        contextMenu.blur();
                         callback();
                     }, 0);
                 },
                 onlongclick: function(){
-                    clearTimeout(delayDismiss);
-                    contextMenuLayout.classList.add("user-context-menu-list");
+                    // clearTimeout(delayDismiss);
+                    contextMenu.classList.add("user-context-menu-list");
                 }
             }, sections[section]);
             if(icon) {
                 if(icon.constructor === String) {
-                    u.create(HTML.DIV, { className:"user-context-menu-item-icon notranslate", innerHTML: icon }, th);
+                    u.create(HTML.DIV, { className:"icon user-context-menu-item-icon notranslate", innerHTML: icon }, th);
                 } else {
                     th.appendChild(icon);
                 }

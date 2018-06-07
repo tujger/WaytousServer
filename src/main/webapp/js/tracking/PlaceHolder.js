@@ -96,20 +96,20 @@ function PlaceHolder(main) {
             case EVENTS.CREATE_CONTEXT_MENU:
                 var user = this;
                 if(user.type == type) {
-                    object.add(MENU.SECTION_VIEWS, EVENT.HIDE_PLACE, u.lang.hide_place, "location_off", function () {
+                    object.add({section:MENU.SECTION_VIEWS, id:EVENT.HIDE_PLACE, name:u.lang.hide_place, icon:"location_off", callback:function () {
                         user.fire(EVENTS.HIDE_PLACE);
-                    });
-                    object.add(MENU.SECTION_VIEWS, EVENT.HIDE_PLACE, u.lang.edit, "mode_edit", function () {
+                    }});
+                    object.add({section:MENU.SECTION_VIEWS, id:EVENT.HIDE_PLACE, name:u.lang.edit, icon:"mode_edit", callback:function () {
                         user.fire(EVENTS.EDIT_PLACE);
-                    });
+                    }});
                     /*if(main.tracking && main.tracking.getStatus() == EVENTS.TRACKING_ACTIVE) {
-                        object.add(MENU.SECTION_COMMUNICATION, EVENT.SEND_PLACE, "Send to group", "chat", function () {
+                        object.add({section:MENU.SECTION_COMMUNICATION, id:EVENT.SEND_PLACE, name:"Send to group", icon:"chat", callback:function () {
                             user.fire(EVENTS.SEND_PLACE);
-                        });
+                        }});
                     }
-                    object.add(MENU.SECTION_COMMUNICATION, EVENT.SHARE_PLACE, "Share", "share", function () {
+                    object.add({section:MENU.SECTION_COMMUNICATION, id:EVENT.SHARE_PLACE, name:"Share", icon:"share", callback:function () {
                         user.fire(EVENTS.SHARE_PLACE);
-                    });*/
+                    }});*/
                 }
                 break;
             case EVENTS.MAP_READY:
