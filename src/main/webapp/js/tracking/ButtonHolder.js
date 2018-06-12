@@ -307,30 +307,11 @@ function ButtonHolder(main) {
 
     function openContextMenu(user) {
         contextMenu.clearItems();
-        // u.clear(contextMenu);
         sections = [];
-        // for(var i = 0; i < 10; i ++) {
-        //     sections[i] = u.create(HTML.DIV, {className:"user-context-menu-section hidden"}, contextMenu);
-        // }
         user.fire(EVENTS.CREATE_CONTEXT_MENU, contextMenu);
 
         setTimeout(function(){
-            var size = user.views.button.button.getBoundingClientRect();
-            contextMenu.open(user.views.button.button);
-            // contextMenu.style.top = Math.floor(size.top) + "px";
-            // if(size.left - main.right.offsetLeft - contextMenu.offsetWidth -10 > 0) {
-            //     contextMenu.style.left = Math.floor(size.left - contextMenu.offsetWidth -10) + "px";
-            // } else {
-            //     contextMenu.style.left = Math.floor(size.right + 10) + "px";
-            // }
-            // if(main.right.offsetTop + main.right.offsetHeight < contextMenu.offsetTop + contextMenu.offsetHeight) {
-            //     contextMenu.style.top = (main.right.offsetTop + main.right.offsetHeight - contextMenu.offsetHeight - 5) + "px";
-            // }
-
-            // clearTimeout(delayDismiss);
-            // delayDismiss = setTimeout(function(){
-            //     contextMenu.hide(HIDING.OPACITY);
-            // },2000);
+            contextMenu.open(user.views.button.button, "left");
         },0);
     }
 

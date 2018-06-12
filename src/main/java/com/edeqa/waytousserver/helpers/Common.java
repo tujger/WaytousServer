@@ -17,7 +17,6 @@ import javax.servlet.ServletException;
 import static com.edeqa.helpers.HtmlGenerator.A;
 import static com.edeqa.helpers.HtmlGenerator.CLASS;
 import static com.edeqa.helpers.HtmlGenerator.DIV;
-import static com.edeqa.helpers.HtmlGenerator.HEIGHT;
 import static com.edeqa.helpers.HtmlGenerator.HREF;
 import static com.edeqa.helpers.HtmlGenerator.IMG;
 import static com.edeqa.helpers.HtmlGenerator.LINK;
@@ -26,7 +25,6 @@ import static com.edeqa.helpers.HtmlGenerator.REL;
 import static com.edeqa.helpers.HtmlGenerator.SRC;
 import static com.edeqa.helpers.HtmlGenerator.STYLESHEET;
 import static com.edeqa.helpers.HtmlGenerator.TYPE;
-import static com.edeqa.helpers.HtmlGenerator.WIDTH;
 import static com.edeqa.waytous.Constants.OPTIONS;
 
 /**
@@ -36,8 +34,8 @@ import static com.edeqa.waytous.Constants.OPTIONS;
 public class Common {
 
     public final static int SERVER_VERSION = 2;
-    public final static int SERVER_BUILD = 61;
-    public final static String FIREBASE_JAVASCRIPT_VERSION = "4.9.0"; // https://firebase.google.com/docs/web/setup
+    public final static int SERVER_BUILD = 62;
+    public final static String FIREBASE_JAVASCRIPT_VERSION = "5.0.4"; // https://firebase.google.com/docs/web/setup
 
     private volatile AbstractDataProcessor dataProcessor;
 
@@ -92,7 +90,7 @@ public class Common {
         noscript.add(LINK).with(TYPE, Mime.TEXT_CSS).with(REL, STYLESHEET).with(HREF, "/css/noscript.css");
 
         HtmlGenerator.Tag header = noscript.add(DIV).with(CLASS, "header");
-        header.add(IMG).with(SRC, "/images/logo.svg").with(WIDTH, 24).with(HEIGHT, 24);
+        header.add(IMG).with(SRC, "/images/logo.svg");//.with(WIDTH, 24).with(HEIGHT, 24);
         header.with(" Waytous");
 
         noscript.add(DIV).with(CLASS, "text").with("This service requires to allow Javascript. Please enable Javascript in your browser or use other browser that supports Javascript and try again.");

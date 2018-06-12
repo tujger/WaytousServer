@@ -65,6 +65,7 @@ if [ ${EMPTY} == true ]; then
     echo    -rc, --remove-containers - remove all containers
     echo    -ri, --remove-images - remove all images forced
     echo    -c, --console - console in container
+    echo    -p, --push - push into repository
     exit 1
 fi
 if [ ${STOP} ]; then
@@ -115,7 +116,7 @@ if [ ${RUN} ]; then
         exit 1;
     fi
     echo --- Initialize and start container
-    docker run --name waytous -p 8080:8080 -p 8100:8100 -p 8101:8101 -p 8200:8200 -p 8201:8201 -p 8443:8443 -p 8989:8989 edeqa/waytous-server:${VERSION}
+    docker run -p 8080:8080 -p 8100:8100 -p 8101:8101 -p 8200:8200 -p 8201:8201 -p 8443:8443 -p 8989:8989 edeqa/waytous-server:${VERSION}
 #    docker run -p 8080:8080 -p 8100:8100 -p 8101:8101 -p 8200:8200 -p 8201:8201 -p 8443:8443 -p 8989:8989 edeqa/waytous-server:1.50
 fi
 if [ ${DETACHED} ]; then

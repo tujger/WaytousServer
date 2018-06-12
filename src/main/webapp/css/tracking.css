@@ -374,9 +374,10 @@ p.bottom-desc {
     padding-right: 10px;
     padding-bottom: 8px;
     white-space: pre-wrap;
+    line-height: 14px;
 }
 .chat-dialog-reply {
-    flex: 1 0 30px;
+    flex: 0 0 30px;
     display: flex;
     align-items: flex-end;
 }
@@ -385,16 +386,14 @@ p.bottom-desc {
     height: 24px;
 }
 .chat-dialog-reply-button {
-    font-family: "Material Icons";
-    font-feature-settings: "liga" 1;
-    font-style: normal;
     font-size: 24px;
-    -webkit-font-feature-settings: 'liga';
-    -webkit-font-smoothing: antialiased;
     width: 40px;
     background: none;
     border: none;
     outline: none;
+    margin: 0;
+    padding: 4px;
+    height: auto;
 }
 .chat-dialog-reply-button:hover {
     color: blue;

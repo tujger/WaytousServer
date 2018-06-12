@@ -92,7 +92,9 @@ public class TrackingServletHandler extends AbstractServletHandler {
         new InitialData().call(o, requestWrapper);
 //        o.put("request", parts);
 
-        html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/" + FIREBASE_JAVASCRIPT_VERSION + "/firebase.js").with("nonce", "waytous");
+        html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/" + FIREBASE_JAVASCRIPT_VERSION + "/firebase-app.js").with("nonce", "waytous");
+        html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/" + FIREBASE_JAVASCRIPT_VERSION + "/firebase-auth.js").with("nonce", "waytous");
+        html.getHead().add(SCRIPT).with(SRC, "https://www.gstatic.com/firebasejs/" + FIREBASE_JAVASCRIPT_VERSION + "/firebase-database.js").with("nonce", "waytous");
 //        html.getHead().add(SCRIPT).with("var inline = 1;").with("nonce", "waytous");
         html.getHead().add(SCRIPT).with("data", o).with("nonce", "waytous");
         html.getHead().add(SCRIPT).with("firebase.initializeApp(window.data.firebase_config);").with("nonce", "waytous");

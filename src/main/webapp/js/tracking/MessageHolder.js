@@ -71,7 +71,7 @@ function MessageHolder(main) {
                 this.focus();
             }
         }, reply);
-        replyButton = u.create(HTML.BUTTON, {className: "chat-dialog-reply-button", innerHTML:"send", onclick:sendUserMessage}, reply);
+        replyButton = u.create(HTML.BUTTON, {className: "chat-dialog-reply-button button-flat icon notranslate blinking", innerHTML:"send", onclick:sendUserMessage}, reply);
 
         incomingMessageSound = u.load("message:incoming") || defaultIncomingMessageSound;
         sound = u.create(HTML.AUDIO, {className:"hidden", preload:"", src:"/sounds/"+incomingMessageSound, last:0, playButLast:function(){

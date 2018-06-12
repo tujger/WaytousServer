@@ -37,7 +37,9 @@
                     {src:'/admin/rest/initial', isJSON:true},
                     '/js/Main.js','/js/helpers/Utils.js',
                     '/js/helpers/Constants.js',
-                    'https://www.gstatic.com/firebasejs/4.9.0/firebase.js'
+                    'https://www.gstatic.com/firebasejs/4.9.0/firebase-app.js',
+                    'https://www.gstatic.com/firebasejs/4.9.0/firebase-auth.js',
+                    'https://www.gstatic.com/firebasejs/4.9.0/firebase-database.js'
                 ], u).then(function(json, main, utils){
                     data = json;
                     firebase.initializeApp(data.firebase_config);
