@@ -32,3 +32,5 @@ options_developer.json
 /aws-waytous.log
 /aws-waytous.log...
 /docker/waytous.log
+/generate_zerossl_jks.sh
+/aws.sh

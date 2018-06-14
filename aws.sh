@@ -15,6 +15,10 @@ case ${i} in
     EMPTY=false
     UPDATE_SERVER=true
     ;;
+    -v=*|--verification-file=*)
+    EMPTY=false
+    VERIFICATION="${i#*=}"
+    ;;
     -n=*|--name=*)
     EMPTY=false
     USERNAME="${i#*=}"
@@ -57,6 +61,7 @@ if [ ${EMPTY} == true ]; then
     echo "    " -r, --restart - start/restart server
     echo "    " -s, --session - ssh session
     echo "    " --upload-file=SOURCE_FILE
+    echo "    " -v=SOURCE_FILE, --verification-file=SOURCE_FILE - upload verification file into "/.well-known/acme-challenge/" folder
     echo "    " --destination-path=DESTINATION_FILE
     echo "    " --get-log - get waytous.log
     exit 1
@@ -74,7 +79,7 @@ else
 fi
 if [ ${UPDATE_SERVER} ]; then
     echo --- Updating server to ${FOLDER}...
-    scp -i conf/aws/aws_credentials.pem build/libs/WaytousServer-2.61.war ${USERNAME}@wayto.us:WaytousServer.war
+    scp -i conf/aws/aws_credentials.pem build/libs/WaytousServer-2.62.war ${USERNAME}@wayto.us:WaytousServer.war
 
     ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us << RECREATEFOLDER
         pkill -f java
@@ -110,19 +115,17 @@ if [ ${UPLOAD_FILE} ]; then
     fi
 fi
 if [ ${GETLOG} ]; then
-    echo --- Getting waytous.log -> aws-waytous.log...
+    echo --- Getting waytous.log => aws-waytous.log...
     scp -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us:waytous.log aws-waytous.log
+fi
+if [ ${VERIFICATION} ]; then
+#scp -i ./conf/aws/aws_credentials.pem ./2tvHGXt2rjLbSjJ7Jfi_oA9sHUS8imFmZ_vhXnqpFPQ ec2-user@wayto.us:prod/.well-known/acme-challenge/2tvHGXt2rjLbSjJ7Jfi_oA9sHUS8imFmZ_vhXnqpFPQ
+    echo --- Uploading ${VERIFICATION} => .well-known/acme-challenge/
+    scp -i conf/aws/aws_credentials.pem ./${VERIFICATION} ${USERNAME}@wayto.us:prod/.well-known/acme-challenge/${VERIFICATION}
 fi
 if [ ${RESTART} ]; then
     echo --- Restarting server...
     ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us "pkill -f java"
-
-#scp -i ./conf/aws/aws_credentials.pem ./2tvHGXt2rjLbSjJ7Jfi_oA9sHUS8imFmZ_vhXnqpFPQ ec2-user@wayto.us:prod/.well-known/acme-challenge/2tvHGXt2rjLbSjJ7Jfi_oA9sHUS8imFmZ_vhXnqpFPQ
-#scp -i ./conf/aws/aws_credentials.pem ./hEfBi09vcyqxrc08cd5uJcW99ldEXkd8SkpRrGu4AuE ec2-user@wayto.us:prod/.well-known/acme-challenge/hEfBi09vcyqxrc08cd5uJcW99ldEXkd8SkpRrGu4AuE
-#scp -i ./conf/aws/aws_credentials.pem ./tbuHOCtTSP6AOppQ9jBEhK-6FwHi8rHjayQUQfqzzsM ec2-user@wayto.us:prod/.well-known/acme-challenge/tbuHOCtTSP6AOppQ9jBEhK-6FwHi8rHjayQUQfqzzsM
-#scp -i ./conf/aws/aws_credentials.pem ./ZZcX-fx7zeZl4OiepdNwUE5MNpYD892YpyNcM8QqXrA ec2-user@wayto.us:prod/.well-known/acme-challenge/ZZcX-fx7zeZl4OiepdNwUE5MNpYD892YpyNcM8QqXrA
-#scp -i ./conf/aws/aws_credentials.pem ./conf/assetlinks.json ec2-user@wayto.us:prod/.well-known/assetlinks.json
-
     ssh -i conf/aws/aws_credentials.pem ${USERNAME}@wayto.us << STARTSERVER
         cd ${FOLDER}/WEB-INF/classes
         /usr/bin/java -classpath .:../lib/guava-20.0.jar:../lib/* com.edeqa.waytousserver.WaytousServer ../../../conf/options_aws.json &> ../../../waytous.log

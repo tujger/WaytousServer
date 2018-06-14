@@ -6,7 +6,6 @@
  */
 
 function Main() {
-    var firebaseVersion = "4.9.0";
     var users;
     var me;
     var main = window.Waytous = this;
@@ -57,7 +56,7 @@ function Main() {
 
     function initializeHeader() {
 
-        var theme = u.load("theme") || "edequate-aterial";
+        var theme = u.load("theme") || "edequate-material";
 
         document.head
             .place(HTML.META, {name:"viewport", content:"width=device-width, initial-scale=1, user-scalable=no"})

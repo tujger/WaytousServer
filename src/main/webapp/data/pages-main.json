@@ -68,6 +68,17 @@
           "type": "about"
         }
       ]
+    },
+    {
+      "category": 10,
+      "pages": [
+        {
+          "resource": "terms-of-service.html",
+          "title": "Terms of Service",
+          "type": "terms",
+          "persistent": true
+        }
+      ]
     }
   ]
 }

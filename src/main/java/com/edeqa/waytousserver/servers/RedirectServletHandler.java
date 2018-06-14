@@ -53,6 +53,7 @@ public class RedirectServletHandler extends AbstractServletHandler {
                             .setResultCode(200)
                             .call(null, requestWrapper);
                 } else {
+                    Misc.err(LOG, "not found", webPath.path());
                     requestWrapper.sendError(404, "Not found");
                 }
             } else if(uri.getPath().startsWith("/track/") && tokenId != null) {

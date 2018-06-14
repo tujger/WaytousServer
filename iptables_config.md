@@ -1,6 +1,6 @@
 ### iptables config for Waytous server
 
-_Note: still not working_
+_**Note: still not working**_
 
     #!/bin/bash
     
