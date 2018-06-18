@@ -52,8 +52,7 @@ function StatisticsHolder(main) {
     this.resume = function() {
         var self = this;
         u.clear(div);
-        u.require("https://www.google.com/jsapi")
-            .then(function () {
+        u.require("https://www.google.com/jsapi", function () {
                 google.load("visualization", "1.1", { "callback": renderInterface, "packages": ["corechart", "line"] });
             })
             .catch(function(){

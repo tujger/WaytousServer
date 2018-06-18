@@ -43,7 +43,7 @@ function Main() {
         main.appName = "${APP_NAME}";
 
         u.loading("0%");
-        u.require("/js/helpers/Constants.js").then(function(){
+        u.require("/js/helpers/Constants.js", function(){
             loadResources("tracking.json", function() {
                 initializeHeader();
                 initializeProperties();

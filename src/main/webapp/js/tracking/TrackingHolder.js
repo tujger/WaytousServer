@@ -80,7 +80,7 @@ function TrackingHolder(main) {
                         startTracking(group);
                         //
                         //setTimeout(function () {
-                        //    u.require("/js/helpers/TrackingFB.js").then(startTracking.bind(self));
+                        //    u.require("/js/helpers/TrackingFB.js", startTracking.bind(self));
                         //}, 0);
                     }
                 } else {
@@ -159,7 +159,7 @@ function TrackingHolder(main) {
         if(u.load("tracking:terms_of_service_confirmed")) {
             //if(group) {
                 //setTimeout(function(){
-                u.require("/js/helpers/TrackingFB.js").then(startTrackingReady.bind(self));
+                u.require("/js/helpers/TrackingFB.js", startTrackingReady.bind(self));
                 //}, 0);
                 //startTrackingReady();
             //} else {
@@ -228,7 +228,7 @@ function TrackingHolder(main) {
                             onfinish: function(mode, key, value) {
                                 // if(value) {
                                     u.save("tracking:terms_of_service_confirmed", true);
-                                    u.require("/js/helpers/TrackingFB.js").then(startTrackingReady.bind(self));
+                                    u.require("/js/helpers/TrackingFB.js", startTrackingReady.bind(self));
                                 // } else {
                                 //     console.error("Unable to start tracking");
                                 //     main.toast.show("Unable to start tracking");
@@ -243,7 +243,7 @@ function TrackingHolder(main) {
                             sync.overrideRemoteValue(true);
                         } else {
                             u.save("tracking:terms_of_service_confirmed", true);
-                            u.require("/js/helpers/TrackingFB.js").then(startTrackingReady.bind(self));
+                            u.require("/js/helpers/TrackingFB.js", startTrackingReady.bind(self));
                             //startTracking(agreementDialog.groupId);
                         }
                     } else {

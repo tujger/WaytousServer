@@ -911,6 +911,12 @@ p.bottom-desc {
     .user-context-menu-list .user-context-menu-item-title {
         font-size: initial;
     }
+    .user-profile-dialog .dialog-title-label {
+        margin-left: 20px;
+    }
+    .user-profile-dialog .dialog-title-button {
+        order: 3;
+    }
     .console {
         left: 0;
         font-size: 9px;
@@ -1082,6 +1088,7 @@ p.bottom-desc {
         border-radius: 0;
     }
     .place-search-items {
+        margin: 0;
     }
     .place-search-input {
         outline: none;

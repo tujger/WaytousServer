@@ -64,10 +64,10 @@
   "map": "Map",
 
   "alpha_1": "Thank you for using the",
-  "alpha_2": "BETA version of ${APP_NAME}.",
+  "alpha_2": "BETA version of Waytous.",
   "alpha_3": "&nbsp;",
   "alpha_4": "Please if you found some errors, weird behaviour, new great idea or just because - feel free to send us an e-mail:",
-  "alpha_5": "<a href=\"mailto:${SUPPORT_EMAIL}\">${SUPPORT_EMAIL}</a>.",
+  "alpha_5": "<a href=\"mailto:support@edeqa.com\">support@edeqa.com</a>.",
   "alpha_6": "&nbsp;",
   "alpha_7": "<a href=\"/\" target=\"_blank\" rel=\"noopener\">Go to the main page of project (new window).</a>",
 
@@ -119,7 +119,7 @@
   "gps_help_8_body": "<ul><li>Open the Settings app. <li>Touch Location. <li>Make sure \"Location\" is turned on.</ul>",
 
   "gps_help_9_title": "Allow geolocation - Chrome (Android)",
-  "gps_help_9_body": "<ul><li>Touch the menu at the upper right corner of the screen. <li>Touch Settings > Site Settings > Location. <li>Make sure Location is enabled on the top of the screen (not blocked). <li>Find ${WEB_PAGE} in the list & click it. <li>To grant access to your location, turn on Location access or click to allow.</ul>",
+  "gps_help_9_body": "<ul><li>Touch the menu at the upper right corner of the screen. <li>Touch Settings > Site Settings > Location. <li>Make sure Location is enabled on the top of the screen (not blocked). <li>Find <tt>https://www.waytous.net</tt> in the list & click it. <li>To grant access to your location, turn on Location access or click to allow.</ul>",
 
   "gps_help_10_title": "Allow geolocation - Chrome (Windows)",
   "gps_help_10_body": "<ul><li>Open Chrome. <li>In the top right, click the Chrome menu. <li>Click Settings > Show advanced settings. <li>In the \"Privacy\" section, click Content settings. <li>In the dialog that appears, scroll down to the \"Location\" section. Select your default permission for future location requests: <ul><li>Allow all sites to track your physical location - select this option to let all sites automatically see your location. <li>Ask when a site tries to track your physical location - select this option if you want Google Chrome to alert you whenever a site wants to see your location. <li>Do not allow any site to track your physical location - select this option to automatically deny requests for your location.</ul> <li>Click Manage exceptions if you want to remove permissions you gave before to specific sites.</ul>",
@@ -254,7 +254,7 @@
 
   "tracking_help_title": "Tracking",
   "tracking_help_title_1": "You have created new group",
-  "tracking_help_body_1": "You have created the new tracking group. Now, you may invite your friends to follow you using their ${APP_NAME} client or mobile or desktop browser. Click the main menu item to share the link. Or you may use it yourself for some reasons. <p>Note: the group will be deleted after 15 minutes of inactivity. <p><span class='help-dialog-link-inline' onclick='Waytous.fire(EVENTS.HIDE_HELP);Waytous.fire(EVENTS.SHARE_LINK)'>Click here to invite your friends.</span> ",
+  "tracking_help_body_1": "You have created the new tracking group. Now, you may invite your friends to follow you using their Waytous client or mobile or desktop browser. Click the main menu item to share the link. Or you may use it yourself for some reasons. <p>Note: the group will be deleted after 15 minutes of inactivity. <p><span class='help-dialog-link-inline' onclick='Waytous.fire(EVENTS.HIDE_HELP);Waytous.fire(EVENTS.SHARE_LINK)'>Click here to invite your friends.</span> ",
 
   "sound_on_join": "Sound on join",
   "none": "None",

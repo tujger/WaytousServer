@@ -40,7 +40,7 @@
                     'https://www.gstatic.com/firebasejs/4.9.0/firebase-app.js',
                     'https://www.gstatic.com/firebasejs/4.9.0/firebase-auth.js',
                     'https://www.gstatic.com/firebasejs/4.9.0/firebase-database.js'
-                ], u).then(function(json, main, utils){
+                ], u, function(json, main, utils){
                     data = json;
                     firebase.initializeApp(data.firebase_config);
                     firebase.auth().signInWithCustomToken(data.sign).then(function(){

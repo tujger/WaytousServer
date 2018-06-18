@@ -194,7 +194,7 @@ function GpsHolder(main) {
             console.log("Alternative geolocation failed",error,xhr);
         });
         return;
-        u.require("//js.maxmind.com/js/apis/geoip2/v2.1/geoip2.js").then(function(geoip2) {
+        u.require("//js.maxmind.com/js/apis/geoip2/v2.1/geoip2.js", function(geoip2) {
             console.log("Alternative geolocation applied",geoip2);
 
             geoip2.insights(function(json){

@@ -68,10 +68,10 @@
   "map": "Карта",
 
   "alpha_1": "Спасибо за то, что воспользовались",
-  "alpha_2": "БЕТА версией ${APP_NAME}.",
+  "alpha_2": "БЕТА версией Waytous.",
   "alpha_3": "&nbsp;",
   "alpha_4": "Пожалуйста, если вы обнаружите ошибки или странное поведение, либо придумаете, классную идею, ну или вообще просто так - не стесняйтесь написать нам письмо:",
-  "alpha_5": "<a href=\"mailto:${SUPPORT_EMAIL}\">${SUPPORT_EMAIL}</a>.",
+  "alpha_5": "<a href=\"mailto:support@edeqa.com\">support@edeqa.com</a>.",
   "alpha_6": "&nbsp;",
   "alpha_7": "<a href=\"/\" target=\"_blank\" rel=\"noopener\">Перейти на страницу проекта (в новом окне).</a>",
 

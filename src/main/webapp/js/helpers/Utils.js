@@ -491,7 +491,7 @@ function Utils(main) {
             buttonsClassName: "about-dialog-buttons",
             items: [
                 { innerHTML: "${APP_NAME} v.${SERVER_VERSION}.${SERVER_BUILD}" },
-                { className: "about-dialog-link", innerHTML: "(%s)".sprintf(new Date(1528863888158).toDateString()) },
+                { className: "about-dialog-link", innerHTML: "(%s)".sprintf(new Date(1529185408923).toDateString()) },
                 { content: u.create(HTML.DIV)
                     .place(HTML.A, { className: "about-dialog-link", href: "/", target: "_blank", rel:"noopener", innerHTML: u.lang.home || "Home"})
                     .place(HTML.A, { className: "about-dialog-link", href: "/main/support/", target: "_blank",rel:"noopener", innerHTML: u.lang.support || "Support"})
@@ -508,7 +508,7 @@ function Utils(main) {
                 {
                     enclosed: true,
                     label: u.lang.legal_information || "Legal information",
-                    body: u.lang.loading.outerHTML,
+                    body: u.lang.loading && u.lang.loading.outerHTML || "Loading...",
                     className: "dialog-about-terms",
                     onopen: function(e) {
                         var lang = (u.load("lang") || navigator.language).toLowerCase().slice(0,2);

@@ -40,10 +40,9 @@
             data-callback="
                 u.require([
                     {src:'/rest/initial', isJSON:true},
-                    '/js/Main.js','/js/helpers/Utils.js',
-                    '/js/helpers/Constants.js',
+                    '/js/Main.js','/js/helpers/Utils.js','/js/helpers/Constants.js',
                     'https://www.gstatic.com/firebasejs/4.9.0/firebase.js'
-                ], u).then(function(json, main, utils){
+                ], u, function(json, main, utils){
                     data = json;
                     (function checkVersion(){var l=localStorage;if(l){var w='waytous:version';var d=data.version;var i=parseInt(l[w]||0);if(i<d){l[w]=d;console.warn('Forced reloading because of version '+d+' is newer than '+i);window.location.reload(true);}}})();
 
