@@ -32,11 +32,18 @@
       "explicit": true,
       "pages": [
         {
-          "icon": "help",
+          "icon": "vpn_lock",
           "menu": "privacy",
           "resource": "privacy-policy.html",
           "title": "privacy_policy",
           "type": "privacy"
+        },
+        {
+          "icon": "receipt",
+          "menu": "terms",
+          "resource": "terms-of-service.html",
+          "title": "terms_of_service",
+          "type": "terms"
         },
         {
           "icon": "mail_outline",
@@ -66,17 +73,6 @@
           "resource": "main-about.html",
           "title": "about",
           "type": "about"
-        }
-      ]
-    },
-    {
-      "category": 10,
-      "pages": [
-        {
-          "resource": "terms-of-service.html",
-          "title": "Terms of Service",
-          "type": "terms",
-          "persistent": true
         }
       ]
     }
