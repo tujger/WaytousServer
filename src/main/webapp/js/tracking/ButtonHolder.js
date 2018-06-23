@@ -49,7 +49,7 @@ function ButtonHolder(main) {
             },
             className: "user-buttons",
             tabindex: 1,
-            resizeable: true,
+            resizeable: "horizontal",
             items: [],
             itemsClassName: "user-buttons-items"
         }, main.right);
