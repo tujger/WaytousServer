@@ -75,6 +75,7 @@ function DrawerHolder(main) {
         drawer = new u.drawer({
             title: main.appName,
             subtitle: u.lang.be_always_on_the_same_way,
+            flexible: true,
             logo: {
                 src:"/images/logo.svg",
                 onclick: function(){

@@ -65,8 +65,6 @@ function Main() {
             .place(HTML.LINK, {id:"theme-" + theme, href: "/css/" + theme + ".css", rel:HTML.STYLESHEET})
             .place(HTML.LINK, {href: "/css/waytous-colors.css", rel:HTML.STYLESHEET})
             .place(HTML.LINK, {href: "/css/tracking.css", rel:HTML.STYLESHEET})
-            // .place(HTML.STYLE, {id:"theme-edequate-material", innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/edequate-material.css');@import url('/css/waytous-colors.css');@import url('/css/tracking.css');"})
-            // .place(HTML.STYLE, {id:"theme-edequate",innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/edequate.css');@import url('/css/waytous-colors.css');@import url('/css/tracking.css');"})
             .place(HTML.LINK, {rel:"apple-touch-icon", href:"/icons/apple-touch-icon.png"})
             .place(HTML.LINK, {rel:"apple-touch-icon", sizes:"60x60", href:"/icons/apple-touch-icon-60x60.png"})
             .place(HTML.LINK, {rel:"apple-touch-icon", sizes:"76x76", href:"/icons/apple-touch-icon-76x76.png"})
@@ -101,11 +99,9 @@ function Main() {
                 "gtag('js', new Date());\n" +
                 "gtag('config', '" + window.data.google_analytics_tracking_id + "');"});
         }
-
     }
 
     function initializeProperties() {
-        main.help = help;
         main.options = options;
         main.me = me;
         main.initialize = initialize;
@@ -160,8 +156,6 @@ function Main() {
             "/js/tracking/TrackHolder.js",
             "/js/tracking/UserProfileHolder.js",
             "/js/tracking/SettingHolder.js"
-//            "/js/tracking/WelcomeHolder.js",
-//             "/js/tracking/SampleHolder.js",
         ] : [
             // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-app.js", // https://firebase.google.com/docs/web/setup
             // "https://www.gstatic.com/firebasejs/"+firebaseVersion+"/firebase-auth.js",
@@ -261,16 +255,6 @@ function Main() {
         }
     }
 
-    function help(){
-        return {
-            title: u.lang.general,
-            1: {
-                title: "Abcdef",
-                body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras pellentesque aliquam tellus, quis finibus odio faucibus sed. Nunc nec dictum ipsum, a efficitur sem. Nullam suscipit quis neque in cursus. Etiam tempus imperdiet scelerisque. Integer ut nisi at est varius rutrum quis eget urna. "
-            }
-        }
-    }
-
     function options(){
         return {
             id: "general",
@@ -300,13 +284,8 @@ function Main() {
                             onaccept: function(e, event) {
                                 var theme = (this.value || "edequate-material").toLowerCase();
                                 u.save("theme", theme);
-
                                 var meta = u.byId("theme-edequate") || u.byId("theme-edequate-material");
-
                                 document.head.replaceChild(u.create(HTML.LINK, {id:"theme-" + theme, href: "/css/" + theme + ".css", rel:HTML.STYLESHEET}), meta);
-
-                                // u.create(HTML.STYLE, {id:"theme-" + theme, innerHTML: "@import url('https://fonts.googleapis.com/icon?family=Material+Icons');@import url('/css/" + theme + ".css');@import url('/css/waytous-colors.css');@import url('/css/tracking.css');"})
-
                             },
                             values: {"edequate": "Classic", "edequate-material": "Material" }
                         },
@@ -383,9 +362,7 @@ function Main() {
     return {
         start: start,
         main:main,
-//        fire:fire,
         initialize:initialize,
-        // help:help,
         options:options
     }
 }

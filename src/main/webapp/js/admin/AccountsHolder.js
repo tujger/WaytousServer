@@ -256,10 +256,9 @@ function AccountsHolder(main) {
             no.hide();
             u.toast.show("Accounts clean is performing.");
             u.get("/admin/rest/accounts/clean")
-                .then(function(xhr){
-                }).catch(function(code,xhr){
-                var res = JSON.parse(xhr.responseText) || {};
-                u.toast.show(res.message || xhr.statusText);
+                .catch(function(error){
+                var res = JSON.parse(error.message) || {};
+                u.toast.show(res.message || error.code);
             });
         }}, question);
         var no = u.create(HTML.BUTTON,{innerHTML:"No", onclick: function(){
