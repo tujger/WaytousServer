@@ -51,7 +51,7 @@ function MessageHolder(main) {
             },
             footer: {
                 type: HTML.DIV,
-                className: "chat-dialog-reply hidden"
+                className: "hidden"
             }
         }, main.right);
 
@@ -59,7 +59,6 @@ function MessageHolder(main) {
         replyTo = u.create(HTML.INPUT, {type:HTML.HIDDEN, value:""}, reply);
         replyInput = u.create(HTML.INPUT, {
             type: "text",
-            className: "chat-dialog-reply-input",
             tabindex:5,
             maxlength: MESSAGE_MAX_LENGTH,
             onkeyup:function(e){
@@ -71,7 +70,7 @@ function MessageHolder(main) {
                 this.focus();
             }
         }, reply);
-        replyButton = u.create(HTML.BUTTON, {className: "chat-dialog-reply-button button-flat icon notranslate blinking", innerHTML:"send", onclick:sendUserMessage}, reply);
+        replyButton = u.create(HTML.BUTTON, {className: "button-flat icon notranslate blinking", innerHTML:"send", onclick:sendUserMessage}, reply);
 
         incomingMessageSound = u.load("message:incoming") || defaultIncomingMessageSound;
         sound = u.create(HTML.AUDIO, {className:"hidden", preload:"", src:"/sounds/"+incomingMessageSound, last:0, playButLast:function(){

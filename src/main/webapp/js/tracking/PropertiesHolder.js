@@ -14,6 +14,7 @@ function PropertiesHolder(main) {
     this.start = function() {
         setNameDialog = u.dialog({
             title: u.lang.set_my_name,
+            className: "set-name-dialog",
             queue: true,
             priority: 9,
             items: [

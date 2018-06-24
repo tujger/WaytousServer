@@ -176,13 +176,12 @@ function TrackingHolder(main) {
             title: u.lang.information,
             className: "wizard-dialog",
             items: [
-                { type: HTML.DIV, className: "wizard-dialog-item", innerHTML: u.lang.you_may_create_the_group },
+                { type: HTML.DIV, innerHTML: u.lang.you_may_create_the_group },
                 {
                     type: HTML.DIV,
                     enclosed: true,
                     label: u.lang.terms_of_service_click,
                     body: u.lang.loading.outerHTML,
-                    className: "wizard-dialog-item",
                     innerHTML: u.lang.loading,
                     onopen: function(e) {
                         if(!e.loaded) {
@@ -206,10 +205,10 @@ function TrackingHolder(main) {
                     onclick: function() {
                         if(this.checked) {
                             u.lang.updateNode(agreementDialog.positive, !!agreementDialog.groupId ? u.lang.join_group : u.lang.create_group);
-                            agreementDialog.positive.classList.remove("wizard-dialog-button-disabled");
+                            agreementDialog.positive.classList.remove("disabled");
                             agreementDialog.positive.disabled = false;
                         } else {
-                            agreementDialog.positive.classList.add("wizard-dialog-button-disabled");
+                            agreementDialog.positive.classList.add("disabled");
                             agreementDialog.positive.disabled = true;
                         }
                     }
@@ -217,7 +216,7 @@ function TrackingHolder(main) {
             ],
             positive: {
                 label: u.lang.close,
-                className: "wizard-dialog-button-create wizard-dialog-button-disabled",
+                className: "disabled",
                 disabled: true,
                 onclick: function(items) {
                     if(items[2].checked) {

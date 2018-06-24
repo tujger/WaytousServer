@@ -162,7 +162,6 @@ function GpsHolder(main) {
 
 
     function locationUpdateListener(position, force) {
-
         if(!position || !position.coords) return;
         // position = geoTrackFilter.normalizeLocation(position);
         var last = force ? null : (main.me && main.me.location);
@@ -191,7 +190,7 @@ function GpsHolder(main) {
         u.getJSON("//www.googleapis.com/geolocation/v1/geolocate?key=" + window.data.firebase_config.apiKey, {}).then(function(json){
             console.log("Alternative geolocation applied",json);
         }).catch(function(error, xhr) {
-            console.log("Alternative geolocation failed",error,xhr);
+            console.error("Alternative geolocation failed",error,xhr);
         });
         return;
         u.require("//js.maxmind.com/js/apis/geoip2/v2.1/geoip2.js", function(geoip2) {

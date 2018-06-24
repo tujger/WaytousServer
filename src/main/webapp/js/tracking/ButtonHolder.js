@@ -36,10 +36,8 @@ function ButtonHolder(main) {
             id: "button",
             title: {
                 label: "Users",
-                className: "user-buttons-title",
                 button: {
                     icon: "",
-                    className: "user-buttons-title-button",
                     onclick: function() {
                         var minimized = u.load("button:minimized");
                         u.save("button:minimized", !minimized);
@@ -50,8 +48,7 @@ function ButtonHolder(main) {
             className: "user-buttons",
             tabindex: 1,
             resizeable: "horizontal",
-            items: [],
-            itemsClassName: "user-buttons-items"
+            items: []
         }, main.right);
 
         contextMenu = u.menu({

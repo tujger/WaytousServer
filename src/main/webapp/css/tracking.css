@@ -112,15 +112,12 @@
   padding: 0 24px;
   width: 100%;
 }
-
 .kd-tabbed-vert.header-links .kd-tabbutton {
   padding: 0;
 }
-
 .kd-tabbed-vert.header-links .kd-tabbutton.selected a {
   color: #03a9f4;
 }
-
 .kd-tabbed-vert.header-links .kd-tabbutton a:focus {
   text-decoration: none;
 }
@@ -141,7 +138,7 @@ p.bottom-desc {
     width: initial;
     -webkit-overflow-scrolling: touch;
 }
-.user-buttons-title {
+.user-buttons .dialog-title {
     padding: 4px 0;
     min-height: initial;
     flex: 0 0;
@@ -153,7 +150,7 @@ p.bottom-desc {
     font-weight: 400;
     padding: 0 4px;
 }
-.user-buttons-title-button {
+.user-buttons .dialog-title-button {
     left: auto !important;
     right: 0 !important;
     font-size: 14px;
@@ -164,10 +161,10 @@ p.bottom-desc {
     margin: 0;
     min-height: 14px;
 }
-.user-buttons-title-button::before {
+.user-buttons .dialog-title-button::before {
     content: "view_headline";
 }
-.user-buttons-items {
+.user-buttons .dialog-items {
     position: initial;
     border-radius: 5px;
     background-color: transparent;
@@ -203,6 +200,7 @@ p.bottom-desc {
     font-size: 24px;
     width: 24px;
     height: 24px;
+    line-height: 24px;
 }
 .user-button-badge {
     background-color: red;
@@ -252,9 +250,9 @@ p.bottom-desc {
     top: 10px;
     /*background-color: rgba(211, 211, 211, 0.7);*/
 }
-.user-context-menu-section {
+/*.user-context-menu-section {
     border-bottom: 1px solid rgba(0, 0, 0, .12);
-}
+}*/
 .user-context-menu .dialog-item {
     display: flex;
     align-items: center;
@@ -296,17 +294,6 @@ p.bottom-desc {
     padding: 10px;
 }
 
-.alpha {
-    position: absolute;
-    top: 0;
-    left: 20px;
-    z-index: 9999;
-    color: red;
-    font-size: 50px;
-    font-weight: bold;
-    font-family: Times,serif;
-    cursor: default;
-}
 .loading {
     position: fixed;
     top: 0;
@@ -376,16 +363,16 @@ p.bottom-desc {
     white-space: pre-wrap;
     line-height: 14px;
 }
-.chat-dialog-reply {
+.chat-dialog .dialog-footer {
     flex: 0 0 30px;
     display: flex;
     align-items: flex-end;
 }
-.chat-dialog-reply-input {
+.chat-dialog .dialog-footer input {
     width: 100%;
     height: 24px;
 }
-.chat-dialog-reply-button {
+.chat-dialog .dialog-footer button {
     font-size: 24px;
     width: 40px;
     background: none;
@@ -395,11 +382,11 @@ p.bottom-desc {
     padding: 4px;
     height: auto;
 }
-.chat-dialog-reply-button:hover {
+.chat-dialog .dialog-footer button:hover {
     color: blue;
     background: none;
 }
-.chat-dialog-reply-button:active {
+.chat-dialog .dialog-footer button:active {
     color: cyan;
 }
 .streetview-dialog {
@@ -479,8 +466,6 @@ p.bottom-desc {
 .help-dialog {
     z-index: 9000 !important;
 }
-.help-dialog-item {
-}
 .help-dialog-item-title {
     font-size: larger;
     font-weight: bold;
@@ -497,14 +482,14 @@ p.bottom-desc {
     font-weight: bold;
     cursor: pointer;
 }
-.help-dialog-module-title {
+.help-dialog .dialog-item {
     width: 100%;
     margin-top: 10px;
     font-weight: bold;
     min-height: 25px;
     justify-content: flex-start;
 }
-.help-dialog-module-item {
+.help-dialog .dialog-item-enclosed {
     width: 100%;
     margin-top: 0;
 }
@@ -561,7 +546,7 @@ p.bottom-desc {
     font-size: small;
     font-weight: bold;
 }
-.saved-locations-dialog-item-image {
+.saved-locations-dialog .dialog-item img {
     order: 1;
     height: 120px;
     border: 1px solid;
@@ -654,53 +639,18 @@ p.bottom-desc {
 .dialog-item-input-link {
     max-width: 100%;
 }
-.dialog-item-button {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    margin: 1px !important;
-}
-.dialog-item-icon {
-    color: black;
-    /*
-    padding-right: 5px;
-    color: black;
-    filter: invert(100%);
-    height: 16px;
-    width: 16px;
-    */
-}
 .dialog-header .menu-item-icon {
     padding-left: 5px;
 }
 .wizard-dialog {
-    position: absolute;
     top: 10px;
     left: 10px;
-    overflow-y: scroll;
-    white-space: pre-wrap;
-}
-.wizard-dialog-item {
-
 }
 .wizard-dialog-item-agree {
     margin-top: 10px;
     display: block;
     text-align: center;
     font-weight: bold;
-}
-.wizard-dialog-button-create {
-
-}
-.wizard-dialog-button-disabled {
-    background-color: lightgray;
-}
-.wizard-dialog-button-disabled:focus {
-    background-color: lightgray;
-}
-.wizard-dialog-button-disabled:hover {
-    background-color: lightgray;
 }
 .user-profile-dialog-avatar {
     height: 80px;
@@ -732,7 +682,7 @@ p.bottom-desc {
     color: gray;
     text-decoration: none;
 }
-.user-profile-dialog-menu-button::before {
+.user-profile-dialog .dialog-title-button::before {
     content: "more_vert";
 }
 .user-profile-forgot-password {
@@ -777,12 +727,6 @@ p.bottom-desc {
         top: -4px;
         left: auto;
     }
-    .alpha {
-        left: auto;
-        right: 10px;
-        bottom: 30px;
-        top: auto;
-    }
     .version {
         position: fixed;
         font-size: 10px;
@@ -800,10 +744,10 @@ p.bottom-desc {
         right: auto;
         transform: translateX(-50%) !important;
     }
-    .user-buttons-title {
+    .user-buttons .dialog-title {
         display: none;
     }
-    .user-buttons-items {
+    .user-buttons .dialog-items {
         display: flex !important;
         flex-direction: row;
         width: 100%;
@@ -937,7 +881,7 @@ p.bottom-desc {
     }
     .chat-dialog-reply {
     }
-    .chat-dialog-reply-button {
+    .chat-dialog .dialog-footer button {
         min-width: 40px;
         height: 32px;
         padding: 0;
@@ -951,7 +895,7 @@ p.bottom-desc {
         max-width: 100%;
         border-bottom: none;
     }
-    .streetview-dialog-items {
+    .streetview-dialog .dialog-items {
         flex: 1 1;
     }
     .streetview-dialog-view {
@@ -973,11 +917,6 @@ p.bottom-desc {
         max-width: 100%;
         border: none;
     }
-    .help-dialog-buttons {
-        flex: 1 0 42px;
-        display: flex;
-        align-items: flex-end;
-    }
     .saved-locations-dialog {
         left: 0 !important;
         right: 0 !important;
@@ -988,8 +927,6 @@ p.bottom-desc {
         max-height: 100%;
         max-width: 100%;
         border: none;
-    }
-    .saved-locations-dialog-items {
     }
     .saved-locations-dialog-item {
     }
@@ -1047,7 +984,7 @@ p.bottom-desc {
     .saved-locations-dialog-item-description {
         margin-bottom: 36px;
     }
-    .saved-locations-dialog-item-image {
+    .saved-locations-dialog .dialog-item img {
         height: 100px;
         flex: 0 0 120px;
     }
@@ -1106,15 +1043,15 @@ p.bottom-desc {
         padding: 10px;
         font-size: 26px;
     }
-    .options-dialog {
+    /*.options-dialog {
         min-width: inherit;
-    }
+    }*/
     .wizard-dialog {
         top: auto !important;
         bottom: 20px !important;
         transform: translate(-50%,0%) !important;
     }
-    /*.user-profile-dialog-menu-button {*/
+    /*.user-profile-dialog .dialog-title-button {*/
         /*width: 32px;*/
         /*height: 24px;*/
     /*}*/

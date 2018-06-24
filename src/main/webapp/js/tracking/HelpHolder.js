@@ -29,11 +29,11 @@ function HelpHolder(main) {
                 break;
             case EVENTS.SHOW_HELP:
                 dialog = dialog || u.dialog({
+                    className: "help-dialog",
                     title: {
                         label: u.lang.help,
                         filter: true
                     },
-                    buttonsClassName: "help-dialog-buttons",
                     negative: {
                         label: u.lang.close,
                         onclick: function(){}
@@ -71,7 +71,6 @@ function HelpHolder(main) {
                             title = title || modules[i].type;
                             dialog.add({
                                 type:HTML.DIV,
-                                className:"help-dialog-module-title",
                                 innerHTML: title
                             });
                             for(var j in help) {
@@ -90,7 +89,6 @@ function HelpHolder(main) {
 
                                 dialog.add({
                                     type:HTML.DIV,
-                                    className:"help-dialog-module-item",
                                     enclosed:true,
                                     label:j + ". " + title,
                                     body:body

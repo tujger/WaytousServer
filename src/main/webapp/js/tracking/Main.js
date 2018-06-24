@@ -111,7 +111,7 @@ function Main() {
         main.right.appendChild(main.toast);
         main.alert = main.alert || u.dialog({
              queue: true,
-             className: "alert-dialog",
+             className: "alert-dialog hidden",
              items: [
                  { type: HTML.DIV, label: u.lang.error_while_loading_service },
                  { type: HTML.DIV, enclosed: true, body: "" }

@@ -62,14 +62,12 @@ function UserProfileHolder(main) {
                     label: u.lang.user_profile,
                     filter: false,
                     button: {
-                        className: "user-profile-dialog-menu-button",
                         onclick: function() {
                             menu.open(this);
                         }
                     }
                 },
                 className: "user-profile-dialog",
-                itemsClassName: "user-profile-dialog-message",
                 tabindex: 3,
                 negative: {
                     label: u.lang.close
@@ -311,7 +309,7 @@ function UserProfileHolder(main) {
             case "anonymous":
                 profileDialog.add({
                     content: u.create(HTML.BUTTON, {
-                        className: "dialog-button dialog-item-button",
+                        className: "dialog-button",
                         onclick: function () {
                             signOtherLogin(function () {
                                 console.log("LOGIN FACEBOOK", this);
@@ -332,7 +330,7 @@ function UserProfileHolder(main) {
                 });
                 profileDialog.add({
                     content: u.create(HTML.BUTTON, {
-                        className: "dialog-button dialog-item-button",
+                        className: "dialog-button",
                         onclick: function () {
                             signOtherLogin(function () {
                                 console.log("LOGIN GOOGLE", this);
@@ -350,7 +348,7 @@ function UserProfileHolder(main) {
                 });
                 profileDialog.add({
                     content: u.create(HTML.BUTTON, {
-                        className: "dialog-button dialog-item-button",
+                        className: "dialog-button",
                         onclick: function () {
                             signOtherLogin(function () {
                                 console.log("LOGIN TWITTER", this);
@@ -368,7 +366,7 @@ function UserProfileHolder(main) {
                 });
                 profileDialog.add({
                     content: u.create(HTML.BUTTON, {
-                        className: "dialog-button dialog-item-button",
+                        className: "dialog-button",
                         onclick: function () {
                             initProfileDialog("email_signin");
                         }

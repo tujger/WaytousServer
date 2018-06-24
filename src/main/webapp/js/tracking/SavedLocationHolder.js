@@ -366,7 +366,6 @@ function SavedLocationHolder(main) {
                     resizeable: true,
                     items: [],
                     className: "saved-locations-dialog",
-                    itemsClassName: "saved-locations-dialog-items",
                     onopen: function(){},
                     onclose: function(){},
                     negative: {
@@ -379,15 +378,14 @@ function SavedLocationHolder(main) {
                     var loc = u.load("saved_location:"+i);
                     if(loc && loc.la && loc.lo) {
                         var div = locationsDialog.add({
-                            type: HTML.DIV,
-                            className: "saved-location-item"
+                            type: HTML.DIV
                         });
                         locationsDialog.setTitle(u.lang.saved_locations_d.format(locationsDialog.items.length || 0));
                         var url = "https://maps.googleapis.com/maps/api/staticmap?center=" +loc.la + "," + loc.lo + "&zoom=15&size=200x200&sensor=false" + "&markers=color:darkgreen|"+loc.la+","+loc.lo + "&key="+data.firebase_config.apiKey;
 
                         u.create(HTML.IMG, {
                             src: url,
-                            className: "icon saved-locations-dialog-item-image",
+                            className: "icon",
                             onload: function(e) {
 //                                console.log(e);
                             },
