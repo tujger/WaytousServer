@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.GroupRequest;
@@ -14,8 +14,8 @@ public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
 
     public static final String TYPE = "/rest/firebase/delete/group";
 
-    private Runnable1<JSONObject> onSuccess;
-    private Runnable1<JSONObject> onError;
+    private Consumer<JSONObject> onSuccess;
+    private Consumer<JSONObject> onError;
 
     @Override
     public String getType() {
@@ -32,7 +32,7 @@ public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
             if(error == null) {
                 finalJson.put(STATUS, STATUS_SUCCESS);
                 Misc.log("DeleteGroup", groupId);
-                getOnSuccess().call(finalJson);
+                getOnSuccess().accept(finalJson);
 
                 ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                         .setAction(AbstractDataProcessor.Action.GROUP_DELETED)
@@ -43,26 +43,26 @@ public class DeleteGroup extends AbstractFirebaseAction<DeleteGroup, String> {
                 finalJson.put(STATUS, STATUS_ERROR);
                 finalJson.put(MESSAGE, error.toException().getMessage());
                 Misc.err("DeleteGroup", groupId, "not deleted, error:" + error.toException().getMessage());
-                getOnError().call(finalJson);
+                getOnError().accept(finalJson);
 
             }
         });
     }
 
-    public Runnable1<JSONObject> getOnSuccess() {
+    public Consumer<JSONObject> getOnSuccess() {
         return onSuccess;
     }
 
-    public DeleteGroup setOnSuccess(Runnable1<JSONObject> onSuccess) {
+    public DeleteGroup setOnSuccess(Consumer<JSONObject> onSuccess) {
         this.onSuccess = onSuccess;
         return this;
     }
 
-    public Runnable1<JSONObject> getOnError() {
+    public Consumer<JSONObject> getOnError() {
         return onError;
     }
 
-    public DeleteGroup setOnError(Runnable1<JSONObject> onError) {
+    public DeleteGroup setOnError(Consumer<JSONObject> onError) {
         this.onError = onError;
         return this;
     }

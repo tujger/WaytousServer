@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
@@ -22,8 +22,8 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
 
     public static final String TYPE = "/rest/firebase/remove/user";
 
-    private Runnable1<JSONObject> onSuccess;
-    private Runnable1<JSONObject> onError;
+    private Consumer<JSONObject> onSuccess;
+    private Consumer<JSONObject> onError;
     private String groupId;
     private Long userNumber;
     private String action;
@@ -43,11 +43,11 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
         res.put(Rest.GROUP_ID, getGroupId());
         res.put(Rest.USER_NUMBER, getUserNumber());
 
-        final Runnable1<Throwable> onFailureListener = error -> {
+        final Consumer<Throwable> onFailureListener = error -> {
             res.put(STATUS, STATUS_ERROR);
             res.put(MESSAGE, error.getMessage());
             Misc.log("RemoveUser", getUserNumber(), "from group", getGroupId(), "failed:", error.getMessage());
-            getOnError().call(res);
+            getOnError().accept(res);
         };
 
         new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.PRIVATE).child(String.valueOf(getUserNumber())).child(REQUEST_UID))
@@ -75,38 +75,38 @@ public class RemoveUser extends AbstractFirebaseAction<RemoveUser, Object> {
                                                 if(error == null) {
                                                     res.put(STATUS, STATUS_SUCCESS);
                                                     Misc.log("RemoveUser", getUserNumber(), "[" + value.toString() + "]", "removed from group", getGroupId());
-                                                    getOnSuccess().call(res);
+                                                    getOnSuccess().accept(res);
                                                     ((StatisticsUser) getFireBus().getHolder(StatisticsUser.TYPE))
                                                             .setGroupId(getGroupId())
                                                             .setAction(AbstractDataProcessor.Action.USER_REMOVED)
                                                             .call(null, value.toString());
                                                 } else {
-                                                    onFailureListener.call(error.toException());
+                                                    onFailureListener.accept(error.toException());
                                                 }
                                             });
                                         }
                                     }
                                 }).start();
                     } else {
-                        onFailureListener.call(new Exception("User not found."));
+                        onFailureListener.accept(new Exception("User not found."));
                     }
                 }).start();
     }
 
-    public Runnable1<JSONObject> getOnSuccess() {
+    public Consumer<JSONObject> getOnSuccess() {
         return onSuccess;
     }
 
-    public RemoveUser setOnSuccess(Runnable1<JSONObject> onSuccess) {
+    public RemoveUser setOnSuccess(Consumer<JSONObject> onSuccess) {
         this.onSuccess = onSuccess;
         return this;
     }
 
-    public Runnable1<JSONObject> getOnError() {
+    public Consumer<JSONObject> getOnError() {
         return onError;
     }
 
-    public RemoveUser setOnError(Runnable1<JSONObject> onError) {
+    public RemoveUser setOnError(Consumer<JSONObject> onError) {
         this.onError = onError;
         return this;
     }

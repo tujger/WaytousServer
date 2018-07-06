@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.UserRequest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
@@ -32,7 +32,7 @@ public class NewGroup extends AbstractFirebaseAction<NewGroup, GroupRequest> {
         Misc.log("NewGroup", "from", getUserRequest());
         ((CreateAccount) getFireBus().getHolder(CreateAccount.TYPE)).setOnSuccess(() -> {
                     //noinspection unchecked
-                    final Runnable1<JSONObject>[] onresult = new Runnable1[3];
+                    final Consumer<JSONObject>[] onresult = new Consumer[3];
                     onresult[0] = jsonRequestNewGroup -> ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
                             .setGroupId(groupRequest.getId())
                             .setAction(REQUEST_NEW_GROUP)
@@ -47,7 +47,7 @@ public class NewGroup extends AbstractFirebaseAction<NewGroup, GroupRequest> {
                             .call(null, getUserRequest().fetchUser());
                     onresult[1] = jsonFetchNewId -> {
                         groupRequest.fetchNewId();
-                        onresult[2].call(jsonFetchNewId);
+                        onresult[2].accept(jsonFetchNewId);
                     };
                     onresult[2] = jsonGroupCreated -> {
                         ((CreateGroup) getFireBus().getHolder(CreateGroup.TYPE))
@@ -60,7 +60,7 @@ public class NewGroup extends AbstractFirebaseAction<NewGroup, GroupRequest> {
                                 .setValue(groupRequest.getId())
                                 .call(null, getUserRequest().getUid());
                     };
-                    onresult[2].call(new JSONObject());
+                    onresult[2].accept(new JSONObject());
                 })
                 .setOnError(error -> {
                     System.out.println("FAULT");

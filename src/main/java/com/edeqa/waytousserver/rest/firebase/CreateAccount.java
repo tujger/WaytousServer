@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
@@ -24,7 +24,7 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
     public static final String TYPE = "/rest/firebase/create/account";
 
     private Runnable onSuccess;
-    private Runnable1<Throwable> onError;
+    private Consumer<Throwable> onError;
 
     @Override
     public String getType() {
@@ -76,13 +76,13 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
 
                         } else {
                             Misc.err("CreateAccount", "failed for uid:", user.getUid(), error.toException());
-                            getOnError().call(error.toException());
+                            getOnError().accept(error.toException());
                         }
                     });
                 })
                 .addOnFailureListener(error -> {
                     Misc.err("CreateAccount", "failed for uid:", user.getUid(), error);
-                    getOnError().call(error);
+                    getOnError().accept(error);
                 });
         createAccountTask.start();
     }
@@ -101,11 +101,11 @@ public class CreateAccount extends AbstractFirebaseAction<CreateAccount, MyUser>
         return this;
     }
 
-    public Runnable1<Throwable> getOnError() {
+    public Consumer<Throwable> getOnError() {
         return onError;
     }
 
-    public CreateAccount setOnError(Runnable1<Throwable> onError) {
+    public CreateAccount setOnError(Consumer<Throwable> onError) {
         this.onError = onError;
         return this;
     }

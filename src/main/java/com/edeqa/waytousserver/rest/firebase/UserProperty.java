@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
@@ -21,8 +21,8 @@ public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
     private Long userNumber;
     private String key;
     private Serializable value;
-    private Runnable1<JSONObject> onSuccess;
-    private Runnable1<JSONObject> onError;
+    private Consumer<JSONObject> onSuccess;
+    private Consumer<JSONObject> onError;
     private boolean switchBoolean;
 
     @Override
@@ -38,11 +38,11 @@ public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
         final JSONObject res = new JSONObject();
         res.put(Rest.PROPERTY, getKey());
 
-        final Runnable1<Throwable> onFailureListener = error -> {
+        final Consumer<Throwable> onFailureListener = error -> {
             res.put(STATUS, STATUS_ERROR);
             res.put(MESSAGE, error.getMessage());
             Misc.log("UserProperty", "'" + getKey() + "'", "for user", getUserNumber(), "in group", getGroupId(), "not modified, error:", error.getMessage());
-            getOnError().call(res);
+            getOnError().accept(res);
         };
 
         new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.PUBLIC).child(String.valueOf(getUserNumber())).child(getKey()))
@@ -59,13 +59,13 @@ public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
                         refGroups.child(getGroupId()).child(Firebase.USERS).child(Firebase.PUBLIC).child(String.valueOf(getUserNumber())).child(getKey()).setValue(getValue(), (error, ref) -> {
                             if(error == null) {
                                 res.put(STATUS, STATUS_SUCCESS);
-                                getOnSuccess().call(res);
+                                getOnSuccess().accept(res);
                             } else {
-                                onFailureListener.call(error.toException());
+                                onFailureListener.accept(error.toException());
                             }
                         });
                     } else {
-                        onFailureListener.call(new Exception("Invalid property."));
+                        onFailureListener.accept(new Exception("Invalid property."));
                     }
                 }).start();
     }
@@ -79,20 +79,20 @@ public class UserProperty extends AbstractFirebaseAction<UserProperty, Object> {
         return this;
     }
 
-    public Runnable1<JSONObject> getOnSuccess() {
+    public Consumer<JSONObject> getOnSuccess() {
         return onSuccess;
     }
 
-    public UserProperty setOnSuccess(Runnable1<JSONObject> onSuccess) {
+    public UserProperty setOnSuccess(Consumer<JSONObject> onSuccess) {
         this.onSuccess = onSuccess;
         return this;
     }
 
-    public Runnable1<JSONObject> getOnError() {
+    public Consumer<JSONObject> getOnError() {
         return onError;
     }
 
-    public UserProperty setOnError(Runnable1<JSONObject> onError) {
+    public UserProperty setOnError(Consumer<JSONObject> onError) {
         this.onError = onError;
         return this;
     }

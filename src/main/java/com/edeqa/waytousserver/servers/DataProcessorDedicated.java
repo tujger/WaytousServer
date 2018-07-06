@@ -2,7 +2,7 @@ package com.edeqa.waytousserver.servers;
 
 import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyGroup;
 import com.edeqa.waytousserver.helpers.MyUser;
@@ -410,27 +410,27 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }
 
     @Override
-    public void createGroup(GroupRequest groupRequest, Runnable1 onsuccess, Runnable1 onerror) {
+    public void createGroup(GroupRequest groupRequest, Consumer onsuccess, Consumer onerror) {
         // TODO
     }
 
     @Override
-    public void deleteGroup(String groupId, Runnable1 onsuccess, Runnable1 onerror) {
+    public void deleteGroup(String groupId, Consumer onsuccess, Consumer onerror) {
         // TODO
     }
 
     @Override
-    public void switchOptionInGroup(String groupId, String property, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+    public void switchOptionInGroup(String groupId, String property, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror) {
         // TODO
     }
 
     @Override
-    public void modifyOptionInGroup(String groupId, String property, Serializable value, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+    public void modifyOptionInGroup(String groupId, String property, Serializable value, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror) {
         // TODO
     }
 
     @Override
-    public void registerUser(String groupId, MyUser user, String action, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+    public void registerUser(String groupId, MyUser user, String action, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror) {
 
     }
 
@@ -468,17 +468,17 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }*/
 
     @Override
-    public void removeUserFromGroup(String groupId, Long userNumber, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+    public void removeUserFromGroup(String groupId, Long userNumber, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror) {
         // TODO
     }
 
     @Override
-    public void deleteAccount(String accountId, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+    public void deleteAccount(String accountId, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror) {
 
     }
 
     @Override
-    public void switchPropertyForUser(String groupId, Long userNumber, String property, Boolean value, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+    public void switchPropertyForUser(String groupId, Long userNumber, String property, Boolean value, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror) {
         // TODO
     }
 
@@ -488,7 +488,7 @@ public class DataProcessorDedicated extends AbstractDataProcessor {
     }
 
     @Override
-    public void cleanStatisticsMessages(Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+    public void cleanStatisticsMessages(Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror) {
 
     }
 

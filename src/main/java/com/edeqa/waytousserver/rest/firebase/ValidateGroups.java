@@ -114,7 +114,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
                 if(Constants.DATABASE.SECTION_GROUPS.equals(group) || "overview".equals(group)) continue;
 
                 new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Constants.DATABASE.OPTIONS))
-                        .addOnCompleteListener(new Runnable1<DataSnapshot>() {
+                        .addOnCompleteListener(new Consumer<DataSnapshot>() {
                             @Override
                             public void onEvent(DataSnapshot dataSnapshot) {
                                 Map value = (Map) dataSnapshot.getValue();
@@ -155,7 +155,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
                                 else timeToLiveIfEmpty = 0;
 
                                 new TaskSingleValueEventFor<DataSnapshot>(refGroups.child(group).child(Constants.DATABASE.SECTION_USERS_DATA))
-                                        .addOnCompleteListener(new Runnable1<DataSnapshot>() {
+                                        .addOnCompleteListener(new Consumer<DataSnapshot>() {
                                             @Override
                                             public void onEvent(DataSnapshot dataSnapshot) {
                                                 Common.log(LOG, "Users validation for group:", group);

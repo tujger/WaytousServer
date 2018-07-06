@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.FirebaseGroup;
 import com.edeqa.waytousserver.helpers.GroupRequest;
@@ -109,9 +109,9 @@ public class JoinGroup extends AbstractFirebaseAction<JoinGroup, UserRequest> {
                             .setUserRequest(userRequest)
                             .call(json,"This group is expired (JG-3).");
                 }
-            }).addOnFailureListener(new Runnable1<Throwable>() {
+            }).addOnFailureListener(new Consumer<Throwable>() {
                 @Override
-                public void call(Throwable arg) {
+                public void accept(Throwable arg) {
                     Misc.err("JoinGroup", "failed:", arg);
                     ((RejectUser) getFireBus().getHolder(RejectUser.TYPE))
                             .setUserRequest(userRequest)

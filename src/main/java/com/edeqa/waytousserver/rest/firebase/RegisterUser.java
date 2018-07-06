@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.rest.tracking.AbstractTrackingAction;
@@ -36,8 +36,8 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
 
     public static final String TYPE = "/rest/firebase/register/user";
 
-    private Runnable1<JSONObject> onSuccess;
-    private Runnable1<JSONObject> onError;
+    private Consumer<JSONObject> onSuccess;
+    private Consumer<JSONObject> onError;
     private String groupId;
     private String action;
 
@@ -118,7 +118,7 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
                     response.put(RESPONSE_SIGN, customToken);
                 }
                 if(getOnSuccess() != null) {
-                    getOnSuccess().call(response);
+                    getOnSuccess().accept(response);
                 } else {
                     user.connection.send(response.toString());
                     user.connection.close();
@@ -131,13 +131,13 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
 
             } else {
                 error.toException().printStackTrace();
-                if(getOnError() != null) getOnError().call(response);
+                if(getOnError() != null) getOnError().accept(response);
 
                 response.put(RESPONSE_STATUS, RESPONSE_STATUS_ERROR);
                 response.put(RESPONSE_MESSAGE, "Cannot register (code 18).");
                 Misc.err("RegisterUser", user, "not registered in group:", getGroupId(), "error:", error.toException());
                 if (getOnError() != null) {
-                    getOnError().call(response);
+                    getOnError().accept(response);
                 } else {
                     user.connection.send(response.toString());
                     user.connection.close();
@@ -160,20 +160,20 @@ public class RegisterUser extends AbstractFirebaseAction<RegisterUser, MyUser> {
         setGroupId(null);
     }
 
-    public Runnable1<JSONObject> getOnSuccess() {
+    public Consumer<JSONObject> getOnSuccess() {
         return onSuccess;
     }
 
-    public RegisterUser setOnSuccess(Runnable1<JSONObject> onSuccess) {
+    public RegisterUser setOnSuccess(Consumer<JSONObject> onSuccess) {
         this.onSuccess = onSuccess;
         return this;
     }
 
-    public Runnable1<JSONObject> getOnError() {
+    public Consumer<JSONObject> getOnError() {
         return onError;
     }
 
-    public RegisterUser setOnError(Runnable1<JSONObject> onError) {
+    public RegisterUser setOnError(Consumer<JSONObject> onError) {
         this.onError = onError;
         return this;
     }

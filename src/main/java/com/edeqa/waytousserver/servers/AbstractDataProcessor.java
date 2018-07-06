@@ -1,6 +1,6 @@
 package com.edeqa.waytousserver.servers;
 
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyGroup;
@@ -83,21 +83,21 @@ abstract public class AbstractDataProcessor {
         }
     }
 
-    abstract public void createGroup(GroupRequest groupRequest, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    abstract public void createGroup(GroupRequest groupRequest, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror);
 
-    abstract public void deleteGroup(String groupId, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    abstract public void deleteGroup(String groupId, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror);
 
-    abstract public void switchOptionInGroup(String groupId, String option, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    abstract public void switchOptionInGroup(String groupId, String option, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror);
 
-    abstract public void modifyOptionInGroup(String groupId, String option, Serializable value, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    abstract public void modifyOptionInGroup(String groupId, String option, Serializable value, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror);
 
-    public abstract void registerUser(String groupId, MyUser user, String action, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    public abstract void registerUser(String groupId, MyUser user, String action, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror);
 
-    abstract public void removeUserFromGroup(String groupId, Long userNumber, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    abstract public void removeUserFromGroup(String groupId, Long userNumber, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror);
 
-    public abstract void deleteAccount(String accountId, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    public abstract void deleteAccount(String accountId, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror);
 
-    abstract public void switchPropertyForUser(String groupId, Long userNumber, String property, Boolean value, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    abstract public void switchPropertyForUser(String groupId, Long userNumber, String property, Boolean value, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror);
 
     public ConcurrentHashMap<String, MyGroup> getGroups() {
         return groups;
@@ -113,7 +113,7 @@ abstract public class AbstractDataProcessor {
 
     public abstract String createCustomToken(String id);
 
-    public abstract void cleanStatisticsMessages(Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror);
+    public abstract void cleanStatisticsMessages(Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror);
 
     public UserRequests getUserRequests() {
         return userRequests;

@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.servers.AbstractDataProcessor;
@@ -13,8 +13,8 @@ public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String>
 
     public static final String TYPE = "/rest/firebase/delete/account";
 
-    private Runnable1<JSONObject> onSuccess;
-    private Runnable1<JSONObject> onError;
+    private Consumer<JSONObject> onSuccess;
+    private Consumer<JSONObject> onError;
 
     @Override
     public String getType() {
@@ -31,7 +31,7 @@ public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String>
             if(error == null) {
                 finalJson.put(STATUS, STATUS_SUCCESS);
                 Misc.log("DeleteAccount", accountId, "deleted");
-                getOnSuccess().call(finalJson);
+                getOnSuccess().accept(finalJson);
 
                 ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
                         .setAction(AbstractDataProcessor.Action.ACCOUNT_DELETED)
@@ -42,25 +42,25 @@ public class DeleteAccount extends AbstractFirebaseAction<DeleteAccount, String>
                 finalJson.put(STATUS, STATUS_ERROR);
                 finalJson.put(MESSAGE, error.toException().getMessage());
                 Misc.err("DeleteAccount", accountId, "not deleted, error:" + error.toException().getMessage());
-                getOnError().call(finalJson);
+                getOnError().accept(finalJson);
             }
         });
     }
 
-    public Runnable1<JSONObject> getOnSuccess() {
+    public Consumer<JSONObject> getOnSuccess() {
         return onSuccess;
     }
 
-    public DeleteAccount setOnSuccess(Runnable1<JSONObject> onSuccess) {
+    public DeleteAccount setOnSuccess(Consumer<JSONObject> onSuccess) {
         this.onSuccess = onSuccess;
         return this;
     }
 
-    public Runnable1<JSONObject> getOnError() {
+    public Consumer<JSONObject> getOnError() {
         return onError;
     }
 
-    public DeleteAccount setOnError(Runnable1<JSONObject> onError) {
+    public DeleteAccount setOnError(Consumer<JSONObject> onError) {
         this.onError = onError;
         return this;
     }

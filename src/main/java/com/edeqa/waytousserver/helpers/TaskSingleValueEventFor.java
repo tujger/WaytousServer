@@ -2,7 +2,7 @@ package com.edeqa.waytousserver.helpers;
 
 import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytousserver.rest.firebase.AbstractFirebaseAction;
 import com.edeqa.waytousserver.rest.firebase.AdminToken;
 import com.google.firebase.database.DataSnapshot;
@@ -22,10 +22,10 @@ public class TaskSingleValueEventFor<T> {
     private boolean firebaseRest = false;
     private boolean checkExisting;
 
-    private Runnable1<T> onCompleteListener;
-    private Runnable1<T> onSuccessListener;
+    private Consumer<T> onCompleteListener;
+    private Consumer<T> onSuccessListener;
     //noinspection HardCodedStringLiteral
-    private Runnable1<Throwable> onFailureListener = Throwable::printStackTrace;
+    private Consumer<Throwable> onFailureListener = Throwable::printStackTrace;
 
     public TaskSingleValueEventFor() {
     }
@@ -39,17 +39,17 @@ public class TaskSingleValueEventFor<T> {
         return this;
     }
 
-    public TaskSingleValueEventFor<T> addOnCompleteListener(Runnable1<T> listener) {
+    public TaskSingleValueEventFor<T> addOnCompleteListener(Consumer<T> listener) {
         onCompleteListener = listener;
         return this;
     }
 
-    public TaskSingleValueEventFor<T> addOnSuccessListener(Runnable1<T> listener) {
+    public TaskSingleValueEventFor<T> addOnSuccessListener(Consumer<T> listener) {
         onSuccessListener = listener;
         return this;
     }
 
-    public TaskSingleValueEventFor<T> addOnFailureListener(Runnable1<Throwable> listener) {
+    public TaskSingleValueEventFor<T> addOnFailureListener(Consumer<Throwable> listener) {
         onFailureListener = listener;
         return this;
     }
@@ -99,13 +99,13 @@ public class TaskSingleValueEventFor<T> {
 //                Tasks.await(task);
 //                DataSnapshot dataSnapshot = task.getResult();
 //                if(onSuccessListener != null) //noinspection unchecked
-//                    onSuccessListener.call((T) dataSnapshot);
+//                    onSuccessListener.accept((T) dataSnapshot);
 //                if(onCompleteListener != null) //noinspection unchecked
-//                    onCompleteListener.call((T) dataSnapshot);
+//                    onCompleteListener.accept((T) dataSnapshot);
 //            } catch (ExecutionException | InterruptedException e) {
 //                e.printStackTrace();
-//                if(onFailureListener != null) onFailureListener.call(e);
-//                if(onCompleteListener != null) onCompleteListener.call(null);
+//                if(onFailureListener != null) onFailureListener.accept(e);
+//                if(onCompleteListener != null) onCompleteListener.accept(null);
 //            }
 
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -113,20 +113,20 @@ public class TaskSingleValueEventFor<T> {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     try {
                         if (onSuccessListener != null) //noinspection unchecked
-                            onSuccessListener.call((T) dataSnapshot);
+                            onSuccessListener.accept((T) dataSnapshot);
                         if (onCompleteListener != null) //noinspection unchecked
-                            onCompleteListener.call((T) dataSnapshot);
+                            onCompleteListener.accept((T) dataSnapshot);
                     } catch (Exception e) {
                         Misc.err(LOG, "failed:", e);
-                        if (onFailureListener != null) onFailureListener.call(e);
+                        if (onFailureListener != null) onFailureListener.accept(e);
                     }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     databaseError.toException().printStackTrace();
-                    if (onFailureListener != null) onFailureListener.call(databaseError.toException());
-                    if (onCompleteListener != null) onCompleteListener.call(null);
+                    if (onFailureListener != null) onFailureListener.accept(databaseError.toException());
+                    if (onCompleteListener != null) onCompleteListener.accept(null);
                 }
             });
 
@@ -149,14 +149,14 @@ public class TaskSingleValueEventFor<T> {
 //            Common.log(LOG, res);
 
             if(onSuccessListener != null) //noinspection unchecked
-                onSuccessListener.call((T) json);
+                onSuccessListener.accept((T) json);
             if(onCompleteListener != null) //noinspection unchecked
-                onCompleteListener.call((T) json);
+                onCompleteListener.accept((T) json);
 
         } catch(Exception e) {
             Misc.err(LOG, "restRequest:error:"+ref.getDatabase().getReference() + ref.getPath(), e.getMessage());
-            if(onFailureListener != null) onFailureListener.call(e);
-            if(onCompleteListener != null) onCompleteListener.call(null);
+            if(onFailureListener != null) onFailureListener.accept(e);
+            if(onCompleteListener != null) onCompleteListener.accept(null);
         }
     }
 

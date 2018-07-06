@@ -67,8 +67,8 @@ public class GroupCreate extends AbstractAction<RequestWrapper> {
             }
 
 
-        /*final Runnable1<JSONObject>[] onresult = new Runnable1[2];
-        onresult[0] = new Runnable1<JSONObject>() {
+        /*final Consumer<JSONObject>[] onresult = new Consumer[2];
+        onresult[0] = new Consumer<JSONObject>() {
             @Override
             public void onEvent(JSONObject json) {
                 ref.child(Constants.DATABASE.SECTION_GROUPS).child(group.getId()).setValue(user.getUid());
@@ -78,7 +78,7 @@ public class GroupCreate extends AbstractAction<RequestWrapper> {
                 registerUser(group.getId(), user, request);
             }
         };
-        onresult[1] = new Runnable1<JSONObject>() {
+        onresult[1] = new Consumer<JSONObject>() {
             @Override
             public void onEvent(JSONObject json) {
                 group.fetchNewId();

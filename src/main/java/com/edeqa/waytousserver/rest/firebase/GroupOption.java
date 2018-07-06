@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytous.Firebase;
 import com.edeqa.waytous.Rest;
 import com.edeqa.waytousserver.helpers.TaskSingleValueEventFor;
@@ -20,8 +20,8 @@ public class GroupOption extends AbstractFirebaseAction<GroupOption, Object> {
     private String groupId;
     private String key;
     private Serializable value;
-    private Runnable1<JSONObject> onSuccess;
-    private Runnable1<JSONObject> onError;
+    private Consumer<JSONObject> onSuccess;
+    private Consumer<JSONObject> onError;
     private boolean switchBoolean;
 
     @Override
@@ -38,11 +38,11 @@ public class GroupOption extends AbstractFirebaseAction<GroupOption, Object> {
 
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
-        final Runnable1<Throwable> onFailureListener = error -> {
+        final Consumer<Throwable> onFailureListener = error -> {
             res.put(STATUS, STATUS_ERROR);
             res.put(MESSAGE, error.getMessage());
             Misc.log("GroupOption", "'" + getKey() + "'", "for group", getGroupId(), "not modified, error:", error.getMessage());
-            getOnError().call(res);
+            getOnError().accept(res);
         };
 
         if(Firebase.DELAY_TO_DISMISS.equals(getKey())
@@ -66,9 +66,9 @@ public class GroupOption extends AbstractFirebaseAction<GroupOption, Object> {
                         refGroups.child(getGroupId()).child(Firebase.OPTIONS).child(getKey()).setValue(getValue(), (error, ref) -> {
                             if(error == null) {
                                 res.put(STATUS, STATUS_SUCCESS);
-                                getOnSuccess().call(res);
+                                getOnSuccess().accept(res);
                             } else {
-                                onFailureListener.call(error.toException());
+                                onFailureListener.accept(error.toException());
                             }
                         });
 
@@ -77,7 +77,7 @@ public class GroupOption extends AbstractFirebaseAction<GroupOption, Object> {
 //                            }
                     }).start();
         } else {
-            onFailureListener.call(new Exception("Incorrect option name."));
+            onFailureListener.accept(new Exception("Incorrect option name."));
         }
     }
 
@@ -90,20 +90,20 @@ public class GroupOption extends AbstractFirebaseAction<GroupOption, Object> {
         return this;
     }
 
-    public Runnable1<JSONObject> getOnSuccess() {
+    public Consumer<JSONObject> getOnSuccess() {
         return onSuccess;
     }
 
-    public GroupOption setOnSuccess(Runnable1<JSONObject> onSuccess) {
+    public GroupOption setOnSuccess(Consumer<JSONObject> onSuccess) {
         this.onSuccess = onSuccess;
         return this;
     }
 
-    public Runnable1<JSONObject> getOnError() {
+    public Consumer<JSONObject> getOnError() {
         return onError;
     }
 
-    public GroupOption setOnError(Runnable1<JSONObject> onError) {
+    public GroupOption setOnError(Consumer<JSONObject> onError) {
         this.onError = onError;
         return this;
     }

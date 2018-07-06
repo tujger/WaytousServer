@@ -2,7 +2,7 @@ package com.edeqa.waytousserver.servers;
 
 import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytousserver.helpers.GroupRequest;
 import com.edeqa.waytousserver.helpers.MyUser;
 import com.edeqa.waytousserver.helpers.UserRequest;
@@ -299,7 +299,7 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
     }
 
     @Override
-    public void createGroup(final GroupRequest groupRequest, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public void createGroup(final GroupRequest groupRequest, final Consumer<JSONObject> onsuccess, final Consumer<JSONObject> onerror) {
         ((CreateGroup) getFireBus().getHolder(CreateGroup.TYPE))
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
@@ -307,7 +307,7 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
     }
 
     @Override
-    public void deleteGroup(final String groupId, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public void deleteGroup(final String groupId, final Consumer<JSONObject> onsuccess, final Consumer<JSONObject> onerror) {
         new DeleteGroup()
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
@@ -315,7 +315,7 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
     }
 
     @Override
-    public void switchOptionInGroup(final String groupId, final String option, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public void switchOptionInGroup(final String groupId, final String option, final Consumer<JSONObject> onsuccess, final Consumer<JSONObject> onerror) {
         new GroupOption()
                 .setGroupId(groupId)
                 .setKey(option)
@@ -326,7 +326,7 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
     }
 
     @Override
-    public void modifyOptionInGroup(final String groupId, final String option, final Serializable value, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public void modifyOptionInGroup(final String groupId, final String option, final Serializable value, final Consumer<JSONObject> onsuccess, final Consumer<JSONObject> onerror) {
         new GroupOption()
                 .setGroupId(groupId)
                 .setKey(option)
@@ -337,7 +337,7 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
     }
 
     @Override
-    public void registerUser(String groupId, MyUser user, String action, Runnable1<JSONObject> onsuccess, Runnable1<JSONObject> onerror) {
+    public void registerUser(String groupId, MyUser user, String action, Consumer<JSONObject> onsuccess, Consumer<JSONObject> onerror) {
         ((RegisterUser) getFireBus().getHolder(RegisterUser.TYPE))
                 .setGroupId(groupId)
                 .setAction(action)
@@ -359,7 +359,7 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
 //    }
 
     @Override
-    public void removeUserFromGroup(final String groupId, final Long userNumber, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public void removeUserFromGroup(final String groupId, final Long userNumber, final Consumer<JSONObject> onsuccess, final Consumer<JSONObject> onerror) {
         new RemoveUser()
                 .setGroupId(groupId)
                 .setUserNumber(userNumber)
@@ -369,7 +369,7 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
     }
 
     @Override
-    public void deleteAccount(final String accountId, Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public void deleteAccount(final String accountId, Consumer<JSONObject> onsuccess, final Consumer<JSONObject> onerror) {
         new DeleteAccount()
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)
@@ -377,7 +377,7 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
     }
 
     @Override
-    public void switchPropertyForUser(final String groupId, final Long userNumber, final String property, final Boolean value, final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public void switchPropertyForUser(final String groupId, final Long userNumber, final String property, final Boolean value, final Consumer<JSONObject> onsuccess, final Consumer<JSONObject> onerror) {
         new UserProperty()
                 .setGroupId(groupId)
                 .setUserNumber(userNumber)
@@ -409,7 +409,7 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
     }
 
     @Override
-    public void cleanStatisticsMessages(final Runnable1<JSONObject> onsuccess, final Runnable1<JSONObject> onerror) {
+    public void cleanStatisticsMessages(final Consumer<JSONObject> onsuccess, final Consumer<JSONObject> onerror) {
         new CleanStatistics()
                 .setOnSuccess(onsuccess)
                 .setOnError(onerror)

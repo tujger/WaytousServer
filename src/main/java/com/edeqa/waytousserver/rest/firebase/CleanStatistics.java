@@ -1,7 +1,7 @@
 package com.edeqa.waytousserver.rest.firebase;
 
 import com.edeqa.helpers.Misc;
-import com.edeqa.helpers.interfaces.Runnable1;
+import com.edeqa.helpers.interfaces.Consumer;
 import com.edeqa.waytous.Firebase;
 
 import org.json.JSONObject;
@@ -11,8 +11,8 @@ public class CleanStatistics extends AbstractFirebaseAction<CleanStatistics, Obj
 
     public static final String TYPE = "/rest/firebase/clean/statistics";
 
-    private Runnable1<JSONObject> onSuccess;
-    private Runnable1<JSONObject> onError;
+    private Consumer<JSONObject> onSuccess;
+    private Consumer<JSONObject> onError;
 
     @Override
     public String getType() {
@@ -28,29 +28,29 @@ public class CleanStatistics extends AbstractFirebaseAction<CleanStatistics, Obj
                 res.put(STATUS, STATUS_ERROR);
                 res.put(MESSAGE, error.getMessage());
                 Misc.err("CleanStatistics", "failed:", error.getMessage());
-                getOnError().call(res);
+                getOnError().accept(res);
             } else {
                 res.put(STATUS, STATUS_SUCCESS);
                 Misc.log("CleanStatistics", "done");
-                getOnSuccess().call(res);
+                getOnSuccess().accept(res);
             }
         });
     }
 
-    public Runnable1<JSONObject> getOnSuccess() {
+    public Consumer<JSONObject> getOnSuccess() {
         return onSuccess;
     }
 
-    public CleanStatistics setOnSuccess(Runnable1<JSONObject> onSuccess) {
+    public CleanStatistics setOnSuccess(Consumer<JSONObject> onSuccess) {
         this.onSuccess = onSuccess;
         return this;
     }
 
-    public Runnable1<JSONObject> getOnError() {
+    public Consumer<JSONObject> getOnError() {
         return onError;
     }
 
-    public CleanStatistics setOnError(Runnable1<JSONObject> onError) {
+    public CleanStatistics setOnError(Consumer<JSONObject> onError) {
         this.onError = onError;
         return this;
     }
