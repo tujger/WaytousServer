@@ -2,6 +2,7 @@ package com.edeqa.waytousserver.rest;
 
 import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
+import com.edeqa.edequate.helpers.Version;
 import com.edeqa.waytousserver.helpers.Common;
 
 import org.json.JSONArray;
@@ -35,6 +36,12 @@ public class Api extends AbstractAction<RequestWrapper> {
             resultObject.put(VERSION_NAME, Common.SERVER_VERSION + "." + Common.SERVER_BUILD);
             resultObject.put(VERSION_CODE, Common.SERVER_BUILD);
             json.put(VERSION, resultObject);
+
+            JSONObject edequateObject = new JSONObject();
+            edequateObject.put(VERSION_CODE, Version.getVersionCode());
+            edequateObject.put(VERSION_NAME, Version.getVersionName());
+            edequateObject.put(VERSION, Version.getVersion());
+            json.put("edequate", edequateObject);
             success = true;
         }
 
