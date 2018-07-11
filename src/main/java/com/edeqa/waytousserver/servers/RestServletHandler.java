@@ -1,7 +1,6 @@
 package com.edeqa.waytousserver.servers;
 
 import com.edeqa.edequate.rest.Files;
-import com.edeqa.edequate.rest.IgnoredPath;
 import com.edeqa.edequate.rest.system.Arguments;
 import com.edeqa.waytousserver.helpers.Common;
 import com.edeqa.waytousserver.rest.Api;
@@ -34,7 +33,6 @@ public class RestServletHandler extends com.edeqa.edequate.RestServletHandler {
         registerAction(new Join());
         registerAction(new TosAgreement());
         registerAction(new Version());
-        registerAction(new IgnoredPath());
         registerAction(new Files().setFilenameFilter((dir, name) -> name.endsWith(".mp3")).setComparator((o1, o2) -> {
             if("none.mp3".equals(o1.getName())) return -1;
             return o1.getName().compareToIgnoreCase(o2.getName());
