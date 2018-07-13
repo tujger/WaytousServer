@@ -4,7 +4,6 @@ import com.edeqa.edequate.EdequateServer;
 import com.edeqa.edequate.helpers.DigestAuthenticator;
 import com.edeqa.edequate.helpers.ServletHandlerOptions;
 import com.edeqa.edequate.helpers.Version;
-import com.edeqa.edequate.helpers.WebPath;
 import com.edeqa.edequate.rest.SecureContext;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
@@ -19,10 +18,8 @@ import com.edeqa.waytousserver.servers.WaytousWebsocketServer;
 
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
-import org.json.JSONObject;
 
 import java.net.InetAddress;
-import java.util.Iterator;
 
 import static com.edeqa.waytous.Constants.OPTIONS;
 import static com.edeqa.waytousserver.helpers.Common.SERVER_BUILD;
@@ -56,7 +53,7 @@ public class WaytousServer extends EdequateServer {
     }
 
     protected static void setupServletHandlers(){
-        RedirectServletHandler redirectServer = new RedirectServletHandler();
+        RedirectServletHandler redirectServer = (RedirectServletHandler) new RedirectServletHandler().applyRedirections(getServer()).applyRedirections(getSslServer());
         MainServletHandler mainServer = new MainServletHandler();
         RestServletHandler restServer = new RestServletHandler();
         TrackingServletHandler trackingServer = new TrackingServletHandler();
@@ -75,19 +72,6 @@ public class WaytousServer extends EdequateServer {
         ServletHandlerOptions.getOrCreate(getAdminServer()).putIfAbsent(new ServletHandlerOptions().setContext("/admin/logout").setServletHandler(adminServer));
         ServletHandlerOptions.getOrCreate(getAdminServer()).putIfAbsent(new ServletHandlerOptions().setContext("/admin/restore").setServletHandler(adminServer));
         ServletHandlerOptions.getOrCreate(getAdminServer()).putIfAbsent(new ServletHandlerOptions().setContext("/rest").setServletHandler(restServer));
-
-        try {
-            WebPath ignoredPaths = new WebPath(getArguments().getWebRootDirectory(), "data/.ignored.json");
-            if(ignoredPaths.path().exists()) {
-                JSONObject paths = new JSONObject(ignoredPaths.content());
-                Iterator<String> iter = paths.keys();
-                while (iter.hasNext()) {
-                    ServletHandlerOptions.getOrCreate(getSslServer()).putIfAbsent(new ServletHandlerOptions().setContext("/" + iter.next()).setServletHandler(restServer));
-                }
-            }
-        } catch (Exception e) {
-            Misc.err(LOG, "failed, error:", e);
-        }
     }
 
     protected static void startServer() throws Exception {
