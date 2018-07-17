@@ -6,10 +6,13 @@
   },
   "phpadmin": {},
   ".well-known": {
-    "mode": "content"
+    "mime": "application/unknown"
+  },
+  "robots.txt": {
+    "mime": "text/plain"
   },
   "googlee7b16def95e75693.html": {
-    "mode": "content"
+    "mime": "text/html"
   },
   "command.php": {},
   "wp-login.php": {},
@@ -83,6 +86,7 @@
   "dbadmin": {},
   "images/vuln2.php": {},
   "tools": {},
+  "jmx-console": {},
   "xx.php": {},
   "scripts": {}
 }
