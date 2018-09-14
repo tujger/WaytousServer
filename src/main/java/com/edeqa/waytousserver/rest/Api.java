@@ -85,12 +85,15 @@ public class Api extends AbstractAction<RequestWrapper> {
                 new Thread(() -> {
                     Misc.log("Api", "-> summary server:", groupId);
 
-                    JSONObject summary = new JSONObject();
+                    JSONObject summaryJson = new JSONObject();
 
                     Uptime uptime = (Uptime) ((EventBus<AbstractAction>) EventBus.getOrCreate(RESTBUS)).getHolder(Uptime.TYPE);
-                    uptime.call(summary, null);
 
-                    json.put("summary_server", summary);
+                    JSONObject uptimeJson = new JSONObject();
+                    summaryJson.put("uptime", uptimeJson);
+                    uptime.call(uptimeJson, null);
+
+                    json.put("summary_server", summaryJson);
                     json.put(STATUS, STATUS_SUCCESS);
                     if(actionsDone.incrementAndGet() == actionsNumber.get()) {
                         request.sendResult(json);
