@@ -3,6 +3,8 @@ package com.edeqa.waytousserver.rest;
 import com.edeqa.edequate.abstracts.AbstractAction;
 import com.edeqa.edequate.helpers.RequestWrapper;
 import com.edeqa.edequate.helpers.Version;
+import com.edeqa.edequate.rest.Uptime;
+import com.edeqa.eventbus.EventBus;
 import com.edeqa.helpers.Misc;
 import com.edeqa.waytousserver.helpers.Common;
 
@@ -85,7 +87,8 @@ public class Api extends AbstractAction<RequestWrapper> {
 
                     JSONObject summary = new JSONObject();
 
-
+                    Uptime uptime = (Uptime) ((EventBus<AbstractAction>) EventBus.getOrCreate(RESTBUS)).getHolder(Uptime.TYPE);
+                    uptime.call(summary, null);
 
                     json.put("summary_server", summary);
                     json.put(STATUS, STATUS_SUCCESS);
