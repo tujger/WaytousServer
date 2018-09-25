@@ -9,7 +9,7 @@ function CreateHolder(main) {
     var div;
 
     // this.category = DRAWER.SECTION_EXPLORE;
-    this.type = "create";
+    this.type = "groups/create";
     this.title = "Create group";
     // this.menu = "Create group";
     // this.icon = "group_add";
