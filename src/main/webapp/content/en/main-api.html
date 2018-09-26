@@ -1,1 +1,169 @@
-<p>API is coming soon.
+<p>
+<h2>Rest calls</h2>
+
+<p>
+    Regular request: <code>https://domain.com/PATH?OPTIONS</code>.
+</p>
+<p>
+    Example: <code>https://domain.com/rest/api?version</code>
+</p>
+
+<p>
+    Regular response:
+    <pre>
+    {
+        request: String,
+        code: Int,
+        extra: Object,
+        message: Object,
+        status: String
+    }
+    </pre>
+    Here:
+<ul>
+    <li>
+        Request - copy of requested path
+    </li>
+    <li>
+        Code means what the message contains:
+        <br>1 - String; if status=error then means "Action not defined",
+        <br>2 - List; if status=error then means "Runtime error",
+        <br>3 - JSON,
+        <br>4 - HTML,
+        <br>302 - redirect, then message contains redirect link,
+        <br>400 and above - error codes (and also status=error)
+    </li>
+    <li>
+        Extra (see details)
+    </li>
+    <li>
+        Message (see details)
+    </li>
+    <li>
+        Status:
+        <br>success
+        <br>error
+    </li>
+</ul>
+
+<table class="waytous-api">
+<thead>
+    <tr>
+        <th>
+            Module
+        </th>
+        <th>
+            Path
+        </th>
+        <th>
+            Options
+        </th>
+        <th>
+            Details
+        </th>
+        <th>
+            Example
+        </th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td rowspan="3">
+            Api
+        </td>
+        <td rowspan="3">
+            rest/api
+        </td>
+        <td>
+            version
+        </td>
+        <td>
+            version: {version_name: String, version_code: Int},
+            <br>
+            edequate: {version_name: String, version_code: Int, version: String}
+        </td>
+        <td>
+            <iframe src="/rest/api?version">
+            </iframe>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            summary
+        </td>
+        <td>
+            summary_server: {uptime: {message: String, code: Int}}
+        </td>
+        <td>
+            <iframe src="/rest/api?summary">
+            </iframe>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            summary=STRING
+        </td>
+        <td>
+            summary_group: ???
+        </td>
+        <td>
+            <iframe src="/rest/api?summary=TEST">
+            </iframe>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            Locales
+        </td>
+        <td>
+            rest/locales
+        </td>
+        <td>
+        </td>
+        <td>
+            message: {??: String}
+        </td>
+        <td>
+            <iframe src="/rest/locales">
+            </iframe>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            Uptime
+        </td>
+        <td>
+            rest/uptime
+        </td>
+        <td>
+        </td>
+        <td>
+            extra: Int, message: String
+        </td>
+        <td>
+            <iframe src="/rest/uptime">
+            </iframe>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            Version
+        </td>
+        <td>
+            rest/version
+        </td>
+        <td>
+        </td>
+        <td>
+            code: Int, message: String, extra: String
+        </td>
+        <td>
+            <iframe src="/rest/uptime">
+            </iframe>
+        </td>
+    </tr>
+</tbody>
+</table>

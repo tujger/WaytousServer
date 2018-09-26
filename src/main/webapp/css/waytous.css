@@ -1,0 +1,22 @@
+/**
+ * Created 1/19/17.
+ */
+table.waytous-api {
+    font-size: smaller;
+}
+
+table.waytous-api th, table.waytous-api td {
+    border-top: 1px solid black;
+    min-width: 100px;
+    vertical-align: top;
+}
+
+table.waytous-api iframe {
+    border-width: 0;
+    height: 50px;
+    overflow-y: auto;
+    width: 200px;
+}
+
+
+
