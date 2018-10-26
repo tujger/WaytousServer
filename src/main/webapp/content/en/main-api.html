@@ -68,6 +68,36 @@
 </thead>
 <tbody>
     <tr>
+        <td rowspan="2">
+            Any
+        </td>
+        <td rowspan="2">
+        </td>
+        <td>
+            callback=onsuccess
+        </td>
+        <td>
+            onsuccess({response}}
+        </td>
+        <td>
+            <iframe src="/rest/api?version&callback=onsuccess">
+            </iframe>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            fallback=onerror
+        </td>
+        <td>
+            onerror({response}}
+        </td>
+        <td>
+            <iframe src="/rest/api?blablabla&fallback=onerror">
+            </iframe>
+        </td>
+    </tr>
+
+    <tr>
         <td rowspan="3">
             Api
         </td>
