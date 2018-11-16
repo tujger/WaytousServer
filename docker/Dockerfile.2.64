@@ -1,0 +1,11 @@
+# Dockerfile
+FROM java
+MAINTAINER Edward Mukhutdinov <tujger@gmail.com>
+EXPOSE 8080:8080 8443:8443 8989:8989 8100:8100 8101:8101 8200:8200 8201:8201
+COPY conf/docker/options_docker.json /home/waytous/conf/options_docker.json
+COPY conf/waytous-beta-firebase-adminsdk-twi5v-a17e79f8afe.json /home/waytous/conf/waytous-beta-firebase-adminsdk-twi5v-a17e79f8afe.json
+COPY conf/debug-beta.jks /home/waytous/conf/debug-beta.jks
+COPY build/libs/WaytousServer-2.64.war /home/waytous/WaytousServer.war
+RUN ["unzip", "/home/waytous/WaytousServer.war", "-d", "/home/waytous"]
+ADD docker/run.sh /home/waytous/run.sh
+CMD [ "/home/waytous/run.sh" ]

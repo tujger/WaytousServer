@@ -170,12 +170,17 @@ function NavigationHolder(main) {
 
         var user = this;
         //var req = "https://crossorigin.me/https://maps.googleapis.com/maps/api/directions/json?"
+        // var req = "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/directions/json?"
+        //            var req = "https://maps.googleapis.com/maps/api/directions/json?"
         var req = "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/directions/json?"
-            //            var req = "https://maps.googleapis.com/maps/api/directions/json?"
+            + "key=" + window.data.firebase_config.apiKey + "&"
             + "origin=" + main.me.location.coords.latitude + "," + main.me.location.coords.longitude + "&"
             + "destination=" + this.location.coords.latitude + "," + this.location.coords.longitude + "&"
             + "alternatives=false&"
             + "mode=";
+
+        // https://maps.googleapis.com/maps/api/directions/json?key=" + window.data.firebase_config.apiKey "
+        // maps.googleapis.com/maps/api/js?key=AIzaBcDeFgHiJkLmNoPqRsTuVwXyZ
 
         var mode = u.load("navigation:mode") || NAVIGATION_MODE_DRIVING;
 

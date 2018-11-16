@@ -491,7 +491,7 @@ function Utils(main) {
             buttonsClassName: "about-dialog-buttons",
             items: [
                 { innerHTML: "${APP_NAME} v.${SERVER_VERSION}.${SERVER_BUILD}" },
-                { className: "about-dialog-link", innerHTML: "(%s)".sprintf(new Date(1529185408923).toDateString()) },
+                { className: "about-dialog-link", innerHTML: "(%s)".sprintf(new Date(1542346572124).toDateString()) },
                 { content: u.create(HTML.DIV)
                     .place(HTML.A, { className: "about-dialog-link", href: "/", target: "_blank", rel:"noopener", innerHTML: u.lang.home || "Home"})
                     .place(HTML.A, { className: "about-dialog-link", href: "/main/support/", target: "_blank",rel:"noopener", innerHTML: u.lang.support || "Support"})
