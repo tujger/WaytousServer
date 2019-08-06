@@ -97,6 +97,8 @@ dependencies {
     if (installationType == 'standalone-server') {
         compile 'com.google.firebase:firebase-admin:+'
         compile 'javax.servlet:javax.servlet-api:+'
+        compile "org.json:json:20171018"
+        compile group: 'com.google.oauth-client', name: 'google-oauth-client-jetty', version: '+'
     }
     compile fileTree(dir: 'libs', include: ['*.jar'])
 //    testCompile group: 'junit', name: 'junit', version: '4.12'
@@ -196,6 +198,8 @@ if (installationType == 'google-appengine') {
         deploy {
             stopPreviousVersion = true  // default - stop the current version
             promote = true              // default - & make this the current version
+            projectId = "waytous-beta"
+            version = '${version}'
         }
     }
     gretty {

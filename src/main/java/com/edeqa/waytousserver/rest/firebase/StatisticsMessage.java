@@ -32,6 +32,7 @@ public class StatisticsMessage extends AbstractFirebaseAction<StatisticsMessage,
         }
         payload.put(MESSAGE, getMessage());
         getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MESSAGES).child(today).setValueAsync(payload);
+//        getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MESSAGES).child(today).setValue(payload);//FIXME
         clear();
     }
 

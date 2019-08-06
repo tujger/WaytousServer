@@ -32,6 +32,7 @@ public class ValidateAccounts extends AbstractFirebaseAction<ValidateAccounts, O
         final DatabaseReference refAccounts = getFirebaseReference().child(Firebase.SECTION_USERS);
 
         getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_ACCOUNTS_CLEANED).setValueAsync(ServerValue.TIMESTAMP);
+//        getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_ACCOUNTS_CLEANED).setValue(ServerValue.TIMESTAMP);//FIXME
 
         Misc.log("ValidateAccounts", "is performing, checking online users");
 
@@ -63,6 +64,7 @@ public class ValidateAccounts extends AbstractFirebaseAction<ValidateAccounts, O
                                 Misc.log("ValidateAccounts", "removes:", uid, "expired for:", message);
 
                                 refAccounts.child(uid).setValueAsync(null);
+//                                refAccounts.child(uid).setValue(null);//FIXME
                                 ((StatisticsAccount) getFireBus().getHolder(StatisticsAccount.TYPE))
                                         .setAction(AbstractDataProcessor.Action.ACCOUNT_DELETED)
                                         .setKey(null)

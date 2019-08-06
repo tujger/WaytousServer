@@ -85,6 +85,7 @@ public class StatisticsAccount extends AbstractFirebaseAction<StatisticsAccount,
                 map.put(Firebase.VALUE, "[" + getValue().getClass().getSimpleName() + "]");
             }
             refAccounts.child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValueAsync(map);
+//            refAccounts.child(accountId).child(Firebase.PRIVATE).child(Firebase.HISTORY).push().setValue(map);//FIXME
             Misc.log("StatisticsAccount", "register", accountId, "with action", getAction());
         } else {
             clear();

@@ -45,6 +45,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -149,7 +150,7 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
         Method[] methods = builderClass.getDeclaredMethods();
         Method method = null;
         for (Method m : methods) {
-            if ("setCredential".equals(m.getName())) {
+            if ("setCredentials".equals(m.getName())) {
                 method = m;
                 setServerMode(true);
                 break;
@@ -161,16 +162,16 @@ public class DataProcessorFirebase extends AbstractDataProcessor {
         setServerMode(true);
         if (isServerMode()) {
             try {
-//                Class tempClass = Class.forName("com.google.firebase.auth.FirebaseCredentials");
-
-                //noinspection unchecked
-//                Method fromCertificate = tempClass.getDeclaredMethod("fromCertificate", InputStream.class);
-//                assert method != null;
-//                builder = (FirebaseOptions.Builder) method.invoke(builder, fromCertificate.invoke(null, new FileInputStream(OPTIONS.getFirebasePrivateKeyFile())));
+                Class tempClass = Class.forName("com.google.auth.oauth2.GoogleCredentials");
+//
+//                noinspection unchecked
+                Method fromStream = tempClass.getDeclaredMethod("fromStream", InputStream.class);
+                assert method != null;
+                builder = (FirebaseOptions.Builder) method.invoke(builder, fromStream.invoke(null, new FileInputStream(OPTIONS.getFirebasePrivateKeyFile())));
 
 
                 FileInputStream serviceAccount = new FileInputStream(OPTIONS.getFirebasePrivateKeyFile());
-                builder = new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(serviceAccount));
+                builder = new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(serviceAccount));//FIXME
             } catch (Exception e) {
                 e.printStackTrace();
             }

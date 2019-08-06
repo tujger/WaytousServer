@@ -16,7 +16,6 @@ import com.edeqa.waytousserver.servers.RestServletHandler;
 import com.edeqa.waytousserver.servers.TrackingServletHandler;
 import com.edeqa.waytousserver.servers.WaytousWebsocketServer;
 
-import org.java_websocket.WebSocketImpl;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 
 import java.net.InetAddress;
@@ -100,7 +99,7 @@ public class WaytousServer extends EdequateServer {
 
         new Thread(() -> {
             try {
-                WebSocketImpl.DEBUG = false;
+//                WebSocketImpl.DEBUG = false;
                 Misc.log(LOG, "starting", WaytousWebsocketServer.class.getSimpleName(), "with", DataProcessorFirebase.class.getSimpleName(), "on port", OPTIONS.getWsPortFirebase());
                 wsServer.start();
                 Misc.log(LOG, "starting", WaytousWebsocketServer.class.getSimpleName(), "with", DataProcessorFirebase.class.getSimpleName(), "on secured port", OPTIONS.getWssPortFirebase());

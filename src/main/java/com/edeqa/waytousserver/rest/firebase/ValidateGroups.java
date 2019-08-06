@@ -34,6 +34,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
         final DatabaseReference refGroups = getFirebaseReference().child(Firebase.SECTION_GROUPS);
 
         getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_GROUPS_CLEANED).setValueAsync(ServerValue.TIMESTAMP);
+//        getFirebaseReference().child(Firebase.SECTION_STAT).child(Firebase.STAT_MISC).child(Firebase.STAT_MISC_GROUPS_CLEANED).setValue(ServerValue.TIMESTAMP);//FIXME
 
         Map<String, String> map = new HashMap<>();
 //        map.put("group", groupRequest.getId());
@@ -67,6 +68,7 @@ public class ValidateGroups extends AbstractFirebaseAction<ValidateGroups, Objec
                         if (value == null) {
                             Misc.log("ValidateGroups", "removes lost group");
                             refGroups.child(group).removeValueAsync();
+//                            refGroups.child(group).removeValue();//FIXME
                             ((StatisticsGroup) getFireBus().getHolder(StatisticsGroup.TYPE))
                                     .setAction(AbstractDataProcessor.Action.GROUP_DELETED)
                                     .setMessage("lost group removing: " + group)
